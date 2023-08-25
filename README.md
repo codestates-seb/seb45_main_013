@@ -1,9 +1,9 @@
 <div align=center>
 
 
-# [📃 백지장 📃](http://seb045022pre.shop/)
+# [🐾 펫밀리가 떳다]
 
-## Stackoverflow 클론 코딩
+## 펫시터부터 병원예약까지 반려동물 케어 서비스 플랫폼 🐾
 
 [배포 링크](http://petmily.shop/)
 
