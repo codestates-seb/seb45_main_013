@@ -2,11 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches:
-     -main
-     -dev
-     -be/dev
-
+    branches: [ "be/dev" ]
 
 jobs:
   build:
@@ -27,6 +23,6 @@ jobs:
       - name: Docker build
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          docker build -t seb45-13-main . 
-          docker tag seb45-13-main mikiri611/seb45-13-main:${GITHUB_SHA::7}
-          docker push mikiri611/seb45-13-main:${GITHUB_SHA::7}
+          docker build -t spring-cicd . 
+          docker tag spring-cicd ${{ secrets.DOCKER_HUB_USERNAME }}/spring-cicd:${GITHUB_SHA::7}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/spring-cicd:${GITHUB_SHA::7}
