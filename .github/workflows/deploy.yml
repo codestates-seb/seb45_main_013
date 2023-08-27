@@ -33,6 +33,13 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '11'
+        
+    - name: Setup Gradle
+      uses: actions/setup-java@v2
+      with:
+         java-version: 11
+         distribution: 'gradle'
+         distribution-version: '7.2'
 
     # (3) Gradle build (Test 제외)
     - name: Build with Gradle
