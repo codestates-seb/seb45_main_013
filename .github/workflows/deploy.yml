@@ -10,8 +10,8 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: cibuket
-  CODE_DEPLOY_APPLICATION_NAME: codedeploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: codedeploy
+  CODE_DEPLOY_APPLICATION_NAME: mainproject_cicd
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: codedeploy-appli
 
 permissions:
   contents: read
