@@ -8,7 +8,7 @@ public class CITestController {
 
     @GetMapping("/hello")
     public String helloworld(){
-        return "Hello!!";
+        return "Hello hello!!";
     }
 
 }
