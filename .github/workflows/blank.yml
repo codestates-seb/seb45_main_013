@@ -3,7 +3,7 @@ name: Build and Deploy Spring Boot to AWS EC2
 
 on:
   push:
-    branches: [ be/dev ]
+    branches: [ main ]
 
 env:
   PROJECT_NAME: SEB45-13-main
