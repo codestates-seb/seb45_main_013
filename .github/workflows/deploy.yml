@@ -53,6 +53,7 @@ jobs:
     - name: Upload to AWS S3
       run: |
         aws deploy push \
+          cd /home/runner/work/fork_seb45_main_013/fork_seb45_main_013/BE
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --ignore-hidden-files \
           --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
