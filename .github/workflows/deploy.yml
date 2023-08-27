@@ -52,7 +52,6 @@ jobs:
     # (5) 빌드 결과물을 S3 버킷에 업로드
     - name: Upload to AWS S3
       run: |
-        cd /home/runner/work/fork_seb45_main_013/fork_seb45_main_013/BE 
         aws deploy push \
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --ignore-hidden-files \
