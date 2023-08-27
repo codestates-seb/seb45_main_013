@@ -7,9 +7,9 @@ plugins {
 group = 'shop.petmily'
 version = '0.0.1-SNAPSHOT'
 
-//jar {
-//	enabled = false
-//}
+jar {
+	enabled = false
+}
 
 java {
 	sourceCompatibility = '11'
