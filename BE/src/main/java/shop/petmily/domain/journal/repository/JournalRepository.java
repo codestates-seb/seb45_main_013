@@ -1,4 +1,6 @@
 package shop.petmily.domain.journal.repository;
 
-public class JournalRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface JournalRepository extends JpaRepository {
 }
