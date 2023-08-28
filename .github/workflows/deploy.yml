@@ -39,7 +39,6 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
       working-directory: ${{ env.working-directory }}
-      arguments: clean build -x test
   #    uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
   #    with:
   #      gradle-version: 7.2
