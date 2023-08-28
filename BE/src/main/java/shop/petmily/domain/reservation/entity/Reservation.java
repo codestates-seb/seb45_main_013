@@ -39,7 +39,7 @@ public class Reservation {
     private String progress;
 
     // 예약자 정보
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
