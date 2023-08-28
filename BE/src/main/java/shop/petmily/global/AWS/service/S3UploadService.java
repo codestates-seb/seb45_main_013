@@ -32,4 +32,9 @@ public class S3UploadService {
 
         return savePath.replace(bucket, "bucketUrl");
     }
+
+    public void deleteFile(String fileName){
+        String originalFileName = fileName.substring(fileName.lastIndexOf("com/") + 4);
+        amazonS3.deleteObject(bucket, originalFileName);
+    }
 }

@@ -23,37 +23,30 @@ public class PetService {
         this.uploadService = uploadService;
     }
 
-    public Pet createPet(Pet pet, List<MultipartFile> files) throws IOException {
+    public Pet createPet(Pet pet, MultipartFile file) throws IOException {
         LocalDateTime now = LocalDateTime.now();
 
         pet.setCreatedAt(now);
         pet.setLastModifiedAt(now);
 
-        List<String> photos = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            try {
-                String photoPath = uploadService.saveFile(file);
-                photos.add(photoPath);
-            } catch (IOException e) {
-                // 예외 처리
-                e.printStackTrace();
-                // 실패한 파일 처리에 대한 로직 추가 가능
-            }
-        }
-        pet.setPhoto(photos);
-
+        if(file != null) pet.setPhoto(uploadService.saveFile(file));
 
         return repository.save(pet);
     }
 
-    public Pet updatePet(Pet pet){
+    public Pet updatePet(Pet pet, MultipartFile file) throws IOException {
         Pet verifiedPet = verifiedPet(pet.getPetId());
 
         Optional.ofNullable(pet.getAge())
                 .ifPresent(age -> verifiedPet.setAge(age));
         Optional.ofNullable(pet.getWeight())
                 .ifPresent(weight -> verifiedPet.setWeight(weight));
+
+        if(file != null) {
+            uploadService.deleteFile(verifiedPet.getPhoto());
+            verifiedPet.setPhoto(uploadService.saveFile(file));
+        }
+
         verifiedPet.setLastModifiedAt(LocalDateTime.now());
 
         return repository.save(verifiedPet);
