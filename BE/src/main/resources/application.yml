@@ -1,1 +1,70 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
+      settings:
+        web-allow-others: true
+  datasource:
+#    # RDS 관련설정
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://${MAINPROJECT_RDS_URL}:3306/petmily
+#    username: ${MAINPROJECT_RDS_SECRET_ID}
+#    password: ${MAINPROJECT_RDS_SECRET_PASSWORD}
+#    jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+#        format_sql: true
+    url: jdbc:h2:mem:test
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      data-locations: classpath*:db/h2/data.sql
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${G_CLIENT_ID}                   # 시스템 환경 변수
+            client-secret: ${G_CLIENT_SECRET}           # 시스템 환경 변수
+            scope:
+              - email
+              - profile
+
+cloud:
+  aws:
+    s3:
+      bucket: ${MAINPROJECT_S3_NAME}
+    credentials:
+      access-key: ${MAINPROJECT_S3_ACCESSKEY}
+      secret-key: ${MAINPROJECT_S3_SECRETKEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
+server:
+  servlet:
+    encoding:
+      force-response: true
+jwt:
+  key: ${JWT_SECRET_KEY}                             # 시스템 환경 변수
+  access-token-expiration-minutes: 300              # 30분
+  refresh-token-expiration-minutes: 86400            # 1일
