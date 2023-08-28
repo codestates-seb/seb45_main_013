@@ -30,6 +30,17 @@ spring:
     init:
       data-locations: classpath*:db/h2/data.sql
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${G_CLIENT_ID}                   # 시스템 환경 변수
+            client-secret: ${G_CLIENT_SECRET}           # 시스템 환경 변수
+            scope:
+              - email
+              - profile
+
 cloud:
   aws:
     s3:
@@ -42,3 +53,18 @@ cloud:
       auto: false
     stack:
       auto: false
+
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
+server:
+  servlet:
+    encoding:
+      force-response: true
+jwt:
+  key: ${JWT_SECRET_KEY}                             # 시스템 환경 변수
+  access-token-expiration-minutes: 300              # 30분
+  refresh-token-expiration-minutes: 86400            # 1일
