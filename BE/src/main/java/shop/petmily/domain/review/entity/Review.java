@@ -7,6 +7,8 @@ import shop.petmily.domain.reservation.entity.Reservation;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +28,13 @@ public class Review {
 
     @Range(min = 1, max = 5)
     private int star;
+
+    @ElementCollection
+    private List<String> photos = new ArrayList<>();
+
+    public void addPhotos(String photo){
+        photos.add(photo);
+    }
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,6 +24,8 @@ public class ReviewResponseDto {
     private LocalDateTime createdAt;
 
     private LocalDateTime lastModifiedAt;
+
+    private List<String> photos;
 
     private String body;
 
