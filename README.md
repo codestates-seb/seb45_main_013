@@ -7,7 +7,7 @@
 
 [배포 링크](http://petmily.shop/)
 
-[팀 노션](https://zrr.kr/bFkU)
+<!--[팀 노션](https://zrr.kr/bFkU)-->
 
 | 이름   | 역할   | 그룹     |
 | ------ | ------ | -------- |
