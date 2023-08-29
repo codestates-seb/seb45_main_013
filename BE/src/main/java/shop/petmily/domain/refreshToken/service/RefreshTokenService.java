@@ -1,6 +1,7 @@
 package shop.petmily.domain.refreshToken.service;
 
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.petsitter.entity.Petsitter;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.domain.refreshToken.repository.RefreshTokenRepository;
 import shop.petmily.global.exception.BusinessLogicException;
@@ -35,5 +36,10 @@ public class RefreshTokenService {
     @Transactional(readOnly = true)
     public RefreshToken findRefreshToken(Member member) {
         return refreshTokenRepository.findByMember(member).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TOKEN_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public RefreshToken findRefreshToken(Petsitter petsitter) {
+        return refreshTokenRepository.findByPetsitter(petsitter).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TOKEN_NOT_FOUND));
     }
 }

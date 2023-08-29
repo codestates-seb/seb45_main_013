@@ -1,6 +1,7 @@
 package shop.petmily.global.security.config;
 
 import shop.petmily.domain.member.service.MemberService;
+import shop.petmily.domain.petsitter.service.PetsitterService;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
 import shop.petmily.global.security.filter.JwtAuthenticationFilter;
 import shop.petmily.global.security.filter.JwtVerificationFilter;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils customAuthorityUtils;
     private final MemberService memberService;
+    private final PetsitterService petsitterService;
     private final RefreshTokenService refreshTokenService;
 
     @Bean
@@ -56,16 +58,16 @@ public class SecurityConfig {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll() //스웨거 관련설정
-                        .antMatchers(HttpMethod.POST, "/members/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/members").permitAll()
-                        .antMatchers(HttpMethod.GET, "/members/**").hasRole("USER")
-                        .antMatchers(HttpMethod.PATCH, "/members/**").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/members/**").hasRole("USER")
+//                        .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll() //스웨거 관련설정
+//                        .antMatchers(HttpMethod.POST, "/members/**").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/members").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/members/**").hasRole("USER")
+//                        .antMatchers(HttpMethod.PATCH, "/members/**").hasRole("USER")
+//                        .antMatchers(HttpMethod.DELETE, "/members/**").hasRole("USER")
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(new OAuth2MemberSuccessHandler(jwtTokenizer, customAuthorityUtils, memberService, refreshTokenService))
+                        .successHandler(new OAuth2MemberSuccessHandler(jwtTokenizer, customAuthorityUtils, memberService, petsitterService ,refreshTokenService))
                 );
         return http.build();
     }

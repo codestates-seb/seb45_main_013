@@ -1,4 +1,4 @@
-package shop.petmily.global.argu;
+package shop.petmily.global.argu.member;
 
 import shop.petmily.global.dto.TokenPrincipalDto;
 import org.springframework.core.MethodParameter;

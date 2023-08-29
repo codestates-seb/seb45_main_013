@@ -1,11 +1,10 @@
-package shop.petmily.domain.member.entity;
+package shop.petmily.domain.petsitter.entity;
 
-import shop.petmily.domain.pet.entity.Pet;
-import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.domain.role.Role;
 
 import javax.persistence.*;
@@ -20,12 +19,12 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Petsitter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    private Long memberId;
+    @Column(name = "petsitter_id")
+    private Long petsitterId;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -42,24 +41,36 @@ public class Member {
     @Column(length = 255, unique = true, nullable = false)
     private String phone;
 
-    @Column(length = 255, unique = true, nullable = false)
+    @Column(length = 255, nullable = false)
     private String address;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
-    private List<Pet> pets = new ArrayList<>();
+    @Column(length = 255, nullable = false)
+    private String possiblePetType;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @Column(length = 255, nullable = false)
+    private String possibleDay;
+
+    @Column(length = 255, nullable = false)
+    private String possibleTimeStart;
+
+    @Column(length = 255, nullable = false)
+    private String possibleTimeEnd;
+
+    @Column(length = 255, nullable = false)
+    private String possibleLocation;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
 //    @ManyToMany(cascade = CascadeType.PERSIST)
-//    @JoinTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+//    @JoinTable(name = "petsitter_roles", joinColumns = @JoinColumn(name = "petsitter_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 //    private Set<Role> roles = new HashSet<>();
 
     @Enumerated(value = EnumType.STRING)
     @Column(length = 255, nullable = false)
-    private MemberStatus status = MemberStatus.MEMBER_ACTIVE;
+    private PetsitterStatus status = PetsitterStatus.PETSITTER_ACTIVE;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "petsitter", cascade = CascadeType.REMOVE)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Column(name = "create_at")
@@ -68,22 +79,22 @@ public class Member {
     @Column(name = "last_modified_at")
     private LocalDateTime lastModifiedAt = LocalDateTime.now();
 
-    private boolean isPetSitter = false;
+    private boolean isPetSitter = true;
 
-    public enum MemberStatus {
+    public enum PetsitterStatus {
 
-        MEMBER_ACTIVE("활동"),
-        MEMBER_SLEEP("휴면"),
-        MEMBER_QUIT("탈퇴");
+        PETSITTER_ACTIVE("활동"),
+        PETSITTER_SLEEP("휴면"),
+        PETSITTER_QUIT("탈퇴");
 
         @Getter
         private String status;
 
-        MemberStatus(String status) {
+        PetsitterStatus(String status) {
             this.status = status;
         }
     }
-    public Member(Long memberId) {
-        this.memberId = memberId;
+    public Petsitter(Long petsitterId) {
+        this.petsitterId = petsitterId;
     }
 }

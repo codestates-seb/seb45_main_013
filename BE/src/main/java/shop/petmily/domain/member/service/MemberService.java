@@ -3,6 +3,8 @@ package shop.petmily.domain.member.service;
 import shop.petmily.domain.member.dto.MemberGetResponseDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.repository.MemberRepository;
+import shop.petmily.domain.role.Role;
+import shop.petmily.domain.role.RoleRepository;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
 
@@ -29,8 +32,10 @@ public class MemberService {
 
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
-        List<String> roles = customAuthorityUtils.createRoles(member.getEmail());
+        List<String> roles = customAuthorityUtils.createRoles(member);
         member.setRoles(roles);
+//        Optional<Role> userRole = roleRepository.findByName("ROLE_MEMBER");
+//        member.addRole(userRole.get());
         Member saveMember = memberRepository.save(member);
 
         return saveMember;
@@ -89,8 +94,8 @@ public class MemberService {
         if(findMember.isPresent()){
             return findMember.get();
         }
-        List<String> roles = customAuthorityUtils.createRoles(member.getEmail());
-        member.setRoles(roles);
+//        List<String> roles = customAuthorityUtils.createRoles(member);
+//        member.setRoles(roles);
         verifyExistsEmail(member.getEmail());
         return memberRepository.save(member);
     }

@@ -1,4 +1,4 @@
-package shop.petmily.global.argu;
+package shop.petmily.global.argu.member;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

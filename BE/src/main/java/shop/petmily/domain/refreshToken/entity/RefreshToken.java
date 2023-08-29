@@ -4,6 +4,7 @@ import shop.petmily.domain.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.petmily.domain.petsitter.entity.Petsitter;
 
 import javax.persistence.*;
 
@@ -21,6 +22,10 @@ public class RefreshToken {
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "PETSITTER_ID")
+    private Petsitter petsitter;
 
     @Column(name = "REFRESH_TOKEN", nullable = false)
     private String value;
