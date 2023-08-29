@@ -4,7 +4,13 @@
   box-sizing: border-box;
 }
 
+#root {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
 body {
-  margin: 0;
+  background-color: antiquewhite;
   font-family: 'Noto Sans KR', 'Roboto', sans-serif;
 }

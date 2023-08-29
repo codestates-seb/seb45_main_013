@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{html,js,ts}'],
+  content: ['./src/**/*.{html,js,ts,tsx}'],
   theme: {
+    screens: {
+      360: '360px',
+      600: '600px',
+    },
     colors: {
       white: '#ffffff',
       black: '#000000',
@@ -48,7 +52,17 @@ module.exports = {
       56: '56px',
       60: '60px',
     },
-    extend: {},
+    extend: {
+      width: {
+        360: '360px',
+      },
+      minWidth: {
+        360: '360px',
+      },
+      maxWidth: {
+        600: '600px',
+      },
+    },
   },
   plugins: [],
 };
