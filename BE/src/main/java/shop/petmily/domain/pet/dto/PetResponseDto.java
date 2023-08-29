@@ -3,7 +3,7 @@ package shop.petmily.domain.pet.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -22,5 +22,9 @@ public class PetResponseDto {
 
     private int weight;
 
-    private List<String> photo;
+    private String photo;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime lastModifiedAt;
 }
