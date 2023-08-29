@@ -15,7 +15,8 @@ public enum ExceptionCode {
     TOKEN_NOT_FOUND(404, "존재하지 토큰이 아닙니다."),
     RESERVATION_NOT_EXIST(404, "존재하지 않는 예약정보입니다."),
     JOURNAL_NOT_EXIST(404, "존재하지 않는 펫시터 일지입니다."),
-    REVIEW_NOT_EXIST(404, "존재하지 않는 리뷰 입니다.")
+    REVIEW_NOT_EXIST(404, "존재하지 않는 리뷰 입니다."),
+    PET_NOT_EXIST(404, "존재하지 않는 반려동물입니다.")
     ;
 
     @Getter

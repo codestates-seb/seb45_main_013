@@ -8,6 +8,10 @@ public class PetPatchDto {
 
     public void setPetId(long petId) {this.petId = petId;}
 
+    private long memberId;
+
+    public void setMemberId(long memberId) {this.memberId = memberId;}
+
     private int age;
 
     private int weight;
