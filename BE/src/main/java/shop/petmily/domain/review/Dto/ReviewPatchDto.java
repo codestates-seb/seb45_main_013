@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.Column;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -23,11 +24,10 @@ public class ReviewPatchDto {
         this.memberId = memberId;
     }
 
-    private long petSitterId;
-
-    @Column(length = 10000, nullable = false)
     private String body;
 
     @Range(min = 1, max = 5)
     private int star;
+
+    private List<String> photos;
 }
