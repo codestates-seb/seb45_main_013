@@ -4,7 +4,7 @@ import shop.petmily.domain.member.dto.*;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.mapper.MemberMapper;
 import shop.petmily.domain.member.service.MemberService;
-import shop.petmily.global.argu.LoginMemberId;
+import shop.petmily.global.argu.member.LoginMemberId;
 import shop.petmily.global.dto.LoginMemberResponseDto;
 import shop.petmily.global.dto.SingleResponseDto;
 import shop.petmily.global.utils.UriCreator;

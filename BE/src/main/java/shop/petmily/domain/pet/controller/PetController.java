@@ -10,11 +10,10 @@ import shop.petmily.domain.pet.dto.PetPostDto;
 import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.pet.mapper.PetMapper;
 import shop.petmily.domain.pet.service.PetService;
-import shop.petmily.global.argu.LoginMemberId;
+import shop.petmily.global.argu.member.LoginMemberId;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
-import java.util.List;
 
 @RequestMapping("/pets")
 @RestController
