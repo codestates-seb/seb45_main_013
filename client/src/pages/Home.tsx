@@ -1,5 +1,13 @@
+import styled from 'styled-components';
+
+const Container = styled.div`
+  border: 1px solid blue;
+  height: 100px;
+  width: 100px;
+`;
+
 const Home = () => {
-  return <div className="h-[calc(100vh-52px)] bg-myColor-blue">home</div>;
+  return <Container>home</Container>;
 };
 
 export default Home;
