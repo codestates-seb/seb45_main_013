@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
+import { styled } from 'styled-components';
 
 import Header from './components/Header';
 import Home from './pages/Home';
@@ -12,9 +13,14 @@ import Cares from './pages/Cares';
 import SignupMembers from './pages/SignupMembers';
 import SignupPetsitter from './pages/SignupPetsitter';
 
+const Container = styled.div`
+  max-width: 600px;
+  min-width: 360px;
+`;
+
 function App() {
   return (
-    <div>
+    <Container>
       <BrowserRouter>
         <Header />
         <Routes>
@@ -31,7 +37,7 @@ function App() {
           <Route path="/cares/:petsitterId/:reservationId/journal" element={<Cares />}></Route>
         </Routes>
       </BrowserRouter>
-    </div>
+    </Container>
   );
 }
 
