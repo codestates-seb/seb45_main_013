@@ -15,11 +15,15 @@ public enum ExceptionCode {
     NOT_IMPLEMENTATION(501, "구현되지 않은 기능입니다."),
     INVALID_MEMBER_STATUS(400, "잘못된 회원 상태입니다."),
     NOT_ALLOW_MEMBER(401, "올바른 회원이 아닙니다."),
+    NOT_ALLOW_PETSITTER(401, "올바른 펫시터가 아닙니다"),
     TOKEN_NOT_FOUND(404, "존재하지 토큰이 아닙니다."),
     RESERVATION_NOT_EXIST(404, "존재하지 않는 예약정보입니다."),
     JOURNAL_NOT_EXIST(404, "존재하지 않는 펫시터 일지입니다."),
     REVIEW_NOT_EXIST(404, "존재하지 않는 리뷰 입니다."),
-    PET_NOT_EXIST(404, "존재하지 않는 반려동물입니다.")
+    PET_NOT_EXIST(404, "존재하지 않는 반려동물입니다."),
+    ALREADY_CONFIRMED(500, "이미 확정된 예약입니다."),
+    ALREADY_BEEN_CANCELLED(500, "이미 취소된 예약입니다.")
+
     ;
 
     @Getter
