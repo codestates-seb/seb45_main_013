@@ -53,9 +53,15 @@ public class ReservationService {
     }
 
     // 예약 전체 조회
-    public Page<Reservation> findReservations(int page, int size, long id) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("reservationId").descending());
-        Page<Reservation> reservations = reservationRepository.findAllById(id, pageRequest);
+    public Page<Reservation> findMemberReservations(int page, int size, long id) {
+        PageRequest pageRequest = PageRequest.of(page-1, size, Sort.Direction.DESC,("reservationId"));
+        Page<Reservation> reservations = reservationRepository.findByMember_MemberId(id, pageRequest);
+        return reservations;
+    }
+
+    public Page<Reservation> findPetsitterReservations(int page, int size, long id) {
+        PageRequest pageRequest = PageRequest.of(page-1, size, Sort.Direction.DESC,("reservationId"));
+        Page<Reservation> reservations = reservationRepository.findByPetsitter_PetsitterId(id, pageRequest);
         return reservations;
     }
 

@@ -50,27 +50,12 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 예약 전체 조회 (멤버) (jwt 아직 x)
+    // 예약 전체 조회 (멤버) (jwt 아직 x) memberid jwt로 받아오는걸로 변경필요
     @GetMapping("/member")
     public ResponseEntity getReservationsForMember(@RequestParam("page") @Positive int page,
                                                    @RequestParam("size") @Positive int size,
                                                    @RequestParam("id") @Positive long memberId) {
-        return makeReservationPage(page, size, memberId);
-    }
-
-    // 예약 전체 조회 (펫시터) (jwt 아직 x)
-    @GetMapping("/petSitter")
-    public ResponseEntity getReservationsForPetSitter(@RequestParam("page") @Positive int page,
-                                                      @RequestParam("size") @Positive int size,
-                                                      @RequestParam("petSitterId") @Positive long petSitterId) {
-        return makeReservationPage(page, size, petSitterId);
-    }
-
-    // 메서드 추출 (예약 전체 조회)
-    public ResponseEntity makeReservationPage(@RequestParam("page") @Positive int page,
-                                              @RequestParam("size") @Positive int size,
-                                              @Positive long id) {
-        Page<Reservation> reservationPage = service.findReservations(page, size, id);
+        Page<Reservation> reservationPage = service.findMemberReservations(page, size, memberId);
         ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
@@ -81,6 +66,39 @@ public class ReservationController {
 
         return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
     }
+
+    // 예약 전체 조회 (펫시터) (jwt 아직 x) petsiterid jwt로 받아오는걸로 변경필요
+    @GetMapping("/petSitter")
+    public ResponseEntity getReservationsForPetSitter(@RequestParam("page") @Positive int page,
+                                                      @RequestParam("size") @Positive int size,
+                                                      @RequestParam("petSitterId") @Positive long petSitterId) {
+        Page<Reservation> reservationPage = service.findPetsitterReservations(page, size, petSitterId);
+        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
+
+        List<Reservation> reservations = reservationPage.getContent();
+        List<ReservationResponseDto> response =
+                reservations.stream()
+                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
+                        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
+    }
+
+//    // 메서드 추출 (예약 전체 조회)
+//    public ResponseEntity makeReservationPage(@RequestParam("page") @Positive int page,
+//                                              @RequestParam("size") @Positive int size,
+//                                              @Positive long id) {
+//        Page<Reservation> reservationPage = service.findMemberReservations(page, size, id);
+//        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
+//
+//        List<Reservation> reservations = reservationPage.getContent();
+//        List<ReservationResponseDto> response =
+//                reservations.stream()
+//                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
+//                        .collect(Collectors.toList());
+//
+//        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
+//    }
 
 
 
@@ -98,18 +116,18 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 예약 확정 (펫시터)
-    @PatchMapping("/{reservation-id}")
+    // 예약 확정 (펫시터)petsiterid jwt로 받아오는걸로 변경필요
+    @PatchMapping("/{reservation-id}/confirm")
     public HttpStatus confirmReservation(@PathVariable("reservation-id") @Positive long reservationId) {
-//        service.confirmReservationStatus(reservationId, jwtUtils.getPetSitterId());
+        service.confirmReservationStatus(reservationId, jwtUtils.getMemberId());
 
         return HttpStatus.OK;
     }
 
-    // 예약 취소 (펫시터)
-    @PatchMapping("/{reservation-id}")
+    // 예약 취소 (펫시터)petsiterid jwt로 받아오는걸로 변경필요
+    @PatchMapping("/{reservation-id}/cancel")
     public HttpStatus cancelReservationStatus(@PathVariable("reservation-id") @Positive long reservationId) {
-//        service.cancelReservationStatus(reservationId, jwtUtils.getPetSitterId());
+        service.cancelReservationStatus(reservationId, jwtUtils.getMemberId());
 
         return HttpStatus.OK;
     }
