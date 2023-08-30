@@ -19,7 +19,7 @@ public class ReviewResponseDto {
 
     private long reservationId;
 
-    private long petSitterId;
+    private long petsitterId;
 
     private LocalDateTime createdAt;
 

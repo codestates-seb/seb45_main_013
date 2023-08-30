@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -18,14 +19,12 @@ public class JournalPatchDto {
         this.journalId = journalId;
     }
 
-    private long memberId;
-
-    private long petSitterId;
-
-    public void setPetSitterId(long petSitterId) {
-        this.petSitterId = petSitterId;
+    private long petsitterId;
+    public void setPetsitterId(long petsitterId) {
+        this.petsitterId = petsitterId;
     }
 
-    @Column(length = 10000, nullable = false)
     private String body;
+
+    private List<String> photos;
 }

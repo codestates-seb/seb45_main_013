@@ -1,10 +1,14 @@
 package shop.petmily.domain.reservation.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import shop.petmily.domain.pet.entity.Pet;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
 public class ReservationResponseDto {
     private long reservationId;
     private long memberId;

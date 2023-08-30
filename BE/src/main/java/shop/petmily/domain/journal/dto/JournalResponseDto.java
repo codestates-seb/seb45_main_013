@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class JournalResponseDto {
 
     private long reservationId;
 
-    private long petSitterId;
+    private long petsitterId;
 
     private long memberId;
 
@@ -25,5 +26,7 @@ public class JournalResponseDto {
     private LocalDateTime lastModifiedAt;
 
     private String body;
+
+    private List<String> photos;
 
 }
