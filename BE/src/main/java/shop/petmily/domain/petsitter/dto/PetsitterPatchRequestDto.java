@@ -25,6 +25,15 @@ public class PetsitterPatchRequestDto {
 
     private String address;
 
+    private String possiblePetType;
+
+    private String possibleDay;
+
+    private String possibleTimeStart;
+
+    private String possibleTimeEnd;
+
+    private String possibleLocation;
     public void setPetsitterId(long petsitterId) {
         this.petsitterId = petsitterId;
     }
