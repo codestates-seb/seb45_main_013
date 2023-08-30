@@ -1,13 +1,10 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-styled-components-order", "stylelint-config-prettier"],
+  "extends": ["stylelint-config-standard", "stylelint-styled-components-order"],
   "overrides": [
     {
       "files": ["**/*.tsx"],
       "customSyntax": "@stylelint/postcss-css-in-js"
     }
   ],
-  "rules": {
-    "order/order": ["custom-properties", "declarations"],
-    "order/properties-order": ["width", "height"]
-  }
+  "rules": {}
 }
