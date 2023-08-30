@@ -3,6 +3,7 @@ package shop.petmily.domain.reservation.entity;
 import lombok.*;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.pet.entity.Pet;
+import shop.petmily.domain.petsitter.entity.Petsitter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class Reservation {
     private long reservationId;
 
     @Column(length = 500, nullable = false)
-    private String body; // 예약 시 요구 사항
+    private String body;
 
     @Column(nullable = false)
     private String reservationTimeStart;
@@ -35,20 +36,20 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime lastModifiedAt;
 
-    @Column(nullable = false)
-    private String progress;
+    @Enumerated(EnumType.STRING)
+    private Progress progress;
 
-    // 예약자 정보
+    // 회원(예약자) 정보
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
     // 펫시터 정보
-//    @ManyToOne
-//    @JoinColumn("petSitter_id")
-//    private PetSitter petSitter;
+    @ManyToOne
+    @JoinColumn(name = "petsitter_id")
+    private Petsitter petsitter;
 
-//    private List<Pet> pets;
-
-
+    // 아직 Pet 쪽에서 Reservation이랑 매핑 X
+    @OneToMany(mappedBy = "reservation")
+    private List<Pet> pets;
 }

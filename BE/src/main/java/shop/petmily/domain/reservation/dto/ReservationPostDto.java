@@ -11,8 +11,6 @@ import java.util.List;
 public class ReservationPostDto {
     private long memberId;
 
-    private long petSitterId;
-
     private String body;
 
     private String reservationTimeStart;
@@ -20,4 +18,7 @@ public class ReservationPostDto {
     private String reservationTimeEnd;
 
     private List<Pet> pets;
+
+    //null 이었다가 나중에 정보 저장
+    private long petSitterId;
 }
