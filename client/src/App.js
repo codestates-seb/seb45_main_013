@@ -14,8 +14,8 @@ import SignupMembers from './pages/SignupMembers';
 import SignupPetsitter from './pages/SignupPetsitter';
 
 const Container = styled.div`
-  max-width: 600px;
   min-width: 360px;
+  max-width: 600px;
 `;
 
 function App() {

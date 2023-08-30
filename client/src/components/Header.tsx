@@ -5,19 +5,24 @@ import Button from './Button';
 
 const HeaderContatiner = styled.header`
   display: flex;
+
   width: 100%;
   height: 52px;
-  background-color: ${(props) => props.theme.colors.white};
   padding: 10px ${(props) => props.theme.spacing[8]};
   border-bottom: 2px solid ${(props) => props.theme.colors.mainBlue};
+
+  background-color: ${(props) => props.theme.colors.white};
 `;
 
 const HeaderWrap = styled.div`
-  width: 100%;
   display: flex;
   justify-content: space-between;
-  gap: ${(props) => props.theme.spacing[32]};
+
+  width: 100%;
+
   background-color: ${(props) => props.theme.colors.white};
+
+  gap: ${(props) => props.theme.spacing[32]};
 `;
 
 const LogoContainer = styled.div`
@@ -29,6 +34,7 @@ const LogoImg = styled.img``;
 const Nav = styled.nav`
   display: flex;
   align-items: center;
+
   gap: ${(props) => props.theme.spacing[4]};
 `;
 
