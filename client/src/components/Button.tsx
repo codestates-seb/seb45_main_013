@@ -18,7 +18,12 @@ const StyledButton = styled.button`
   justify-content: center;
 `;
 
-const Button = ({ text, link }) => {
+interface ButtonProps {
+  text: string;
+  link?: string;
+}
+
+const Button = ({ text, link }: ButtonProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     if (link) {

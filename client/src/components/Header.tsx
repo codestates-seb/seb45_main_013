@@ -17,7 +17,6 @@ const HeaderWrap = styled.div`
   display: flex;
   justify-content: space-between;
   gap: ${(props) => props.theme.spacing[32]};
-  // align-items: center;
   background-color: ${(props) => props.theme.colors.white};
 `;
 
