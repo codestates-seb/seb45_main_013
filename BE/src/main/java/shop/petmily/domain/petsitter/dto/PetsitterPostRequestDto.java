@@ -33,13 +33,13 @@ public class PetsitterPostRequestDto {
 
     private String address;
 
-    private String possiblePetType;
-
-    private String possibleDay;
-
-    private String possibleTimeStart;
-
-    private String possibleTimeEnd;
-
-    private String possibleLocation;
+//    private String possiblePetType;
+//
+//    private String possibleDay;
+//
+//    private String possibleTimeStart;
+//
+//    private String possibleTimeEnd;
+//
+//    private String possibleLocation;
 }

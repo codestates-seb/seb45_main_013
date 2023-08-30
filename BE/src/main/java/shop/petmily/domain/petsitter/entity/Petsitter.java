@@ -44,19 +44,19 @@ public class Petsitter {
     @Column(length = 255, nullable = false)
     private String address;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String possiblePetType;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String possibleDay;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String possibleTimeStart;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String possibleTimeEnd;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String possibleLocation;
 
     @ElementCollection(fetch = FetchType.EAGER)

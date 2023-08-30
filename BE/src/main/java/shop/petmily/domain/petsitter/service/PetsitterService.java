@@ -45,10 +45,26 @@ public class PetsitterService {
     public Petsitter updatePetsitter(Petsitter petsitter) {
         Petsitter findPetsitter = findVerifiedPetsitter(petsitter.getPetsitterId());
 
+        Optional.ofNullable(petsitter.getName())
+                .ifPresent(name -> findPetsitter.setName(name));
         Optional.ofNullable(petsitter.getDisplayName())
-                .ifPresent(name -> findPetsitter.setDisplayName(name));
+                .ifPresent(displayName -> findPetsitter.setDisplayName(displayName));
         Optional.ofNullable(petsitter.getPassword())
                 .ifPresent(password -> findPetsitter.setPassword(passwordEncoder.encode(password)));
+        Optional.ofNullable(petsitter.getPhone())
+                .ifPresent(phone -> findPetsitter.setPhone(phone));
+        Optional.ofNullable(petsitter.getAddress())
+                .ifPresent(address -> findPetsitter.setAddress(address));
+        Optional.ofNullable(petsitter.getPossiblePetType())
+                .ifPresent(possiblePetType -> findPetsitter.setPossiblePetType(possiblePetType));
+        Optional.ofNullable(petsitter.getPossibleDay())
+                .ifPresent(possibleDay -> findPetsitter.setPossibleDay(possibleDay));
+        Optional.ofNullable(petsitter.getPossibleTimeStart())
+                .ifPresent(possibleTimeStart -> findPetsitter.setPossibleTimeStart(possibleTimeStart));
+        Optional.ofNullable(petsitter.getPossibleTimeEnd())
+                .ifPresent(possibleTimeEnd -> findPetsitter.setPossibleTimeEnd(possibleTimeEnd));
+        Optional.ofNullable(petsitter.getPossibleLocation())
+                .ifPresent(possibleLocation -> findPetsitter.setPossibleLocation(possibleLocation));
 
         return petsitterRepository.save(findPetsitter);
     }
