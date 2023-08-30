@@ -17,6 +17,6 @@ public interface ReservationMapper {
     @Mapping(source = "memberId", target = "member.memberId")
     Reservation reservationPatchDtoToReservation(ReservationPatchDto reservationPatchDto);
 
-    @Mapping(source = "memberId", target = "member.memberId")
+    @Mapping(source = "member.memberId", target = "memberId")
     ReservationResponseDto reservationToReservationResponseDto(Reservation reservation);
 }
