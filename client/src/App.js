@@ -14,7 +14,7 @@ import SignupPetsitter from './pages/SignupPetsitter';
 
 function App() {
   return (
-    <div className="max-w-600 min-w-360">
+    <div>
       <BrowserRouter>
         <Header />
         <Routes>
