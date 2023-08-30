@@ -48,8 +48,4 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "petsitter_id")
     private Petsitter petsitter;
-
-    // 아직 Pet 쪽에서 Reservation이랑 매핑 X
-    @OneToMany(mappedBy = "reservation")
-    private List<Pet> pets;
 }
