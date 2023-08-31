@@ -15,8 +15,8 @@ import SignupMembers from './pages/SignupMembers';
 import SignupPetsitter from './pages/SignupPetsitter';
 
 const Container = styled.div`
-  max-width: 600px;
   min-width: 360px;
+  max-width: 600px;
 `;
 
 function App() {
@@ -33,7 +33,6 @@ function App() {
           <Route path="/signup/petsitter" element={<SignupPetsitter />}></Route>
           <Route path="/main" element={<Main />}></Route>
           <Route path="/mypage" element={<Mypage />}></Route>
-          <Route path="/mypage/profile" element={<MyProfile />}></Route>
           <Route path="/cares/:memberId" element={<Reservation />}></Route>
           <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
           <Route path="/cares/:petsitterId" element={<Cares />}></Route>
