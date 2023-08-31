@@ -1,5 +1,14 @@
+import UserProfile from "../components/UserProfile";
+import MyPetmily from "../components/MyPetmily";
+
 const Mypage = () => {
-  return <div>Mypage</div>;
+return(
+  <>
+  <UserProfile/>
+  <MyPetmily/>
+  </>
+)
+
 };
 
 export default Mypage;
