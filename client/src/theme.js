@@ -13,13 +13,13 @@ export const theme = {
     gray10: '#2E2E2E',
     gray30: '#595959',
     gray60: '#A6A6A6',
-    primary: '#2962FF',
+    primary: '#D9D9D9',
   },
   lineColors: {
     coolGray90: '#F5F6F8',
     coolGray80: '#DEE2E9',
   },
-  fonts: ['Roboto', 'sans-serif'],
+  fonts: ['Noto Sans KR', 'Roboto', 'sans-serif'],
   fontSizes: {
     small: '12px',
     medium: '14px',
