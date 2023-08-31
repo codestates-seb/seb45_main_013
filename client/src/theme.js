@@ -21,9 +21,11 @@ export const theme = {
   },
   fonts: ['Roboto', 'sans-serif'],
   fontSizes: {
-    small: '14px',
-    medium: '16px',
-    large: '18px',
+    small: '12px',
+    medium: '14px',
+    large: '16px',
+    xLarge: '18px',
+    xxLarge: '20px',
   },
   fontWeights: {
     light: 400,
