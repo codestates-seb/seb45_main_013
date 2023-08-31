@@ -14,8 +14,14 @@ import SignupMembers from './pages/SignupMembers';
 import SignupPetsitter from './pages/SignupPetsitter';
 
 const Container = styled.div`
+  position: relative;
+
+  width: 100%;
   min-width: 360px;
-  max-width: 600px;
+
+  @media (width >= 600px) {
+    width: 600px;
+  }
 `;
 
 function App() {

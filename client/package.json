@@ -19,7 +19,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint:css": "stylelint --ignore-path .gitigonre './src/**/*.{js,jsx,ts,tsx}' --fix"
+    "lint:css": "stylelint --ignore-path .gitignore './src/**/*.{js,jsx,ts,tsx}' --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -45,10 +45,9 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "^5.1.26",
-    "postcss": "^8.4.28",
+    "postcss": "^8.4.29",
     "prettier": "^3.0.2",
     "stylelint": "^15.10.3",
-    "stylelint-config-prettier": "^9.0.5",
     "stylelint-config-standard": "^34.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-styled-components-order": "^1.0.6",

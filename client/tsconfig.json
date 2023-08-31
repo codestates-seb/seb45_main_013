@@ -17,8 +17,8 @@
     "target": "es5",
     "incremental": true // 증분 컴파일을 활성화하여 컴파일 속도를 높임
   },
-  "exclude": ["node_modules", "shorturl.js", "sentry.js", "injectEnv.js"], // 컴파일하지 않을 파일 또는 디렉토리를 지정
-  "include": ["**/*.ts", "**/*.tsx"] // 컴파일 할 파일 또는 디렉토리를 지정
+  "exclude": ["node_modules"], // 컴파일하지 않을 파일 또는 디렉토리를 지정
+  "include": ["src/**/*"] // 컴파일 할 파일 또는 디렉토리를 지정
 }
 
 // {

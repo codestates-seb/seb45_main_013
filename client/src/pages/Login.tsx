@@ -1,8 +1,12 @@
 import { styled } from 'styled-components';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import { Link } from 'react-router-dom';
 
 const MainContainer = styled.div`
+  display: flex;
+  justify-content: center;
+
   height: calc(100vh - 52px);
   padding: 60px;
 
@@ -15,7 +19,7 @@ const LoginContainer = styled.div`
   align-items: center;
   justify-content: center;
 
-  width: 100%;
+  width: 240px;
   height: 100%;
 `;
 
@@ -24,8 +28,9 @@ const InputContainer = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: ${(props) => props.theme.spacing[32]};
+
   width: 100%;
+  margin-top: ${(props) => props.theme.spacing[32]};
 
   gap: ${(props) => props.theme.spacing[8]};
 `;
@@ -33,9 +38,20 @@ const InputContainer = styled.form`
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${(props) => props.theme.spacing[12]};
+
   width: 100%;
   margin-top: ${(props) => props.theme.spacing[8]};
+
+  gap: ${(props) => props.theme.spacing[12]};
+`;
+
+const LinkContainer = styled.div`
+  margin-top: ${(props) => props.theme.spacing[12]};
+
+  a {
+    font-size: ${(props) => props.theme.fontSizes.medium};
+    text-decoration-line: none;
+  }
 `;
 
 const Login = () => {
@@ -48,9 +64,12 @@ const Login = () => {
           <Input type="password" label="비밀번호" />
         </InputContainer>
         <ButtonContainer>
-          <Button text="로 그 인" size="240" fontSize="16px" />
-          <Button text="Sign in with Google" size="240" usage="google" fontSize="16px" />
+          <Button text="로 그 인" fontSize="16" />
+          <Button text="Sign in with Google" usage="google" fontSize="16" />
         </ButtonContainer>
+        <LinkContainer>
+          <Link to="/signup">회원가입하기</Link>
+        </LinkContainer>
       </LoginContainer>
     </MainContainer>
   );
