@@ -17,21 +17,6 @@
     "target": "es5",
     "incremental": true // 증분 컴파일을 활성화하여 컴파일 속도를 높임
   },
-  "exclude": ["node_modules", "shorturl.js", "sentry.js", "injectEnv.js"], // 컴파일하지 않을 파일 또는 디렉토리를 지정
-  "include": ["**/*.ts", "**/*.tsx"] // 컴파일 할 파일 또는 디렉토리를 지정
+  "exclude": ["node_modules"], // 컴파일하지 않을 파일 또는 디렉토리를 지정
+  "include": ["src/*/"] // 컴파일 할 파일 또는 디렉토리를 지정
 }
-
-// {
-//   "compilerOptions": {
-//     "target": "es5", // ECMAScript 목표 버전 설정
-//     "module": "esnext", // 컴파일된 JavaScript 모듈 포맷 설정. "system"은 SystemJS 모듈 포멧을 사용한다는 의미.
-//     "noImplicitAny": true, // any 타입을 사용할 때에도 명시적으로 타입을 지정하도록 강제.
-//     "removeComments": true, // 컴파일된 JavaScript 코드에서 주석을 제거하는 옵션.
-//     "preserveConstEnums": true,
-//     "outDir": "dist",
-//     "allowJs": true, // js 파일도 번들 포함.
-//     "jsx": "react-jsx" // 생성될 JSX 코드 설정.
-//   },
-//   "include": ["src/**/*"], // 컴파일 포함
-//   "exclude": ["node_modules", "build", "**/*.(spec|test).ts"] // 컴파일 제외
-// }

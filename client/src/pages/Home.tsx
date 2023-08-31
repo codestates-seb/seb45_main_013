@@ -40,7 +40,6 @@ const ButtonContainer = styled.div`
   font-size: ${(props) => props.theme.fontSizes.small};
   margin-top: 32px;
   padding: ${(props) => props.theme.spacing[4]} ${(props) => props.theme.spacing[8]};
-  border: none;
   border-radius: ${(props) => props.theme.spacing[12]};
   background-color: ${(props) => props.theme.colors.mainBlue};
   color: #fff;
@@ -108,7 +107,7 @@ const Home = () => {
           <br /> 가족의 마음으로 보답해드립니다
         </TitleSubText>
         <ButtonContainer>
-          <Button text="펫시터 찾기" link="/login"></Button>
+          <Button size="160" text="펫시터 찾기" link="/login"></Button>
         </ButtonContainer>
       </TitleContainer>
       <AdBox>

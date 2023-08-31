@@ -1,8 +1,6 @@
 {
   "extends": [
     "stylelint-config-standard",
-    "stylelint-config-prettier",
-    "stylelint-config-styled-components",
     "stylelint-styled-components-order"
   ],
   "overrides": [

@@ -30,13 +30,23 @@ const PetsitterText = styled.div`
 `;
 
 const PetButtonContainer = styled.div`
-  padding-top: 4px;
-  padding-left: 224px;
+  width: 52px;
+  height: 29px;
+  margin-top: 4px;
+  margin-left: 224px;
+  margin-right: 80px;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  border-radius: 2px;
+  white-space: nowrap;
+  line-height: 29px;
 `;
 
 const TrainButtonContainer = styled.div`
-  padding-top: 4px;
-  padding-left: 76px;
+  margin-top: 4px;
+  margin-left: 76px;
+  margin-right: 232px;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  white-space: nowrap;
 `;
 
 const Adbox = styled.div`
