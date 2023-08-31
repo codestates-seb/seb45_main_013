@@ -1,0 +1,114 @@
+import styled from 'styled-components'
+import { IconButton, Icon } from './IconButton';
+
+// petmily 카드 컨테이너
+const Container=styled.div`
+background-color:${(props) => props.theme.colors.white};
+padding:${(props) => props.theme.spacing[16]} ;
+background-color:${(props) => props.theme.colors.white} ;
+display:flex;
+flex-direction:column
+`
+
+
+const Text=styled.div`
+color: ${(props) => props.theme.textColors.gray30};
+font-size:${(props) => props.theme.fontSizes.large};
+font-weight:${(props) => props.theme.fontWeights.bold};
+margin-bottom:${(props) => props.theme.spacing[12]} ;
+`
+
+// 등록된 petmily 카드
+const PetmilyCard=styled.div`
+    display:flex;
+    flex-direction: column;
+    width:328px;
+    border-radius: 4px;
+    box-shadow: 0px 2px 10px 0px #CDCDCD;
+    padding:${(props) => props.theme.spacing[12]} 
+`
+
+// 강아지 or 고양이
+const CatOrDog=styled.img`
+width: 30px;
+height: 30px;
+margin-left:${(props) => props.theme.spacing[8]} 
+` 
+
+const PetInfoContainer=styled.div`
+display:flex;
+flex-direction:column;
+align-items: center;
+`
+
+const PetImg=styled.img`
+width: 100px;
+height: 100px;
+border-radius: 50%;
+`
+const PetInfo=styled.div`
+color:${(props) => props.theme.textColors.gray00};
+font-size: ${(props) => props.theme.fontSizes.medium};
+font-weight: ${(props) => props.theme.fontWeights.bold};
+margin-top: ${(props) => props.theme.spacing[4]};
+`
+
+// 버튼 컨테이너 (수정, 삭제)
+const ButtonContainer=styled.div`
+  display:flex;
+  justify-content: flex-end;
+  gap:10px;
+`
+
+// 펫 추가 버튼 가운데
+const AddPet=styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: ${(props) => props.theme.spacing[16]};
+`
+
+// 유저의 펫 수 만큼 카드 만들기
+// 버튼 함수 작성하기
+
+const MyPetmily=()=>{
+  /* const handleEdit = () => {
+  };
+
+  const handleDelete = () => {
+  };
+
+  const handleAddPets = () => {
+  };
+   */
+return(
+    <Container>
+    <Text>나의 Petmily</Text>
+    <PetmilyCard>
+    <CatOrDog src="imgs/CatIcon.svg" alt="Img"/>
+    <PetInfoContainer>
+    <PetImg src="https://m.hollycat.co.kr/web/product/medium/202109/f5443b4361cbebfde529f9d29577b705.jpg" alt="Img"/>
+    <PetInfo>🚺 / 냥이</PetInfo>  
+    <PetInfo>브리티시 숏헤어</PetInfo>
+    <PetInfo>16살 / 12kg</PetInfo>
+    </PetInfoContainer> 
+    <ButtonContainer>
+        <IconButton /*onClick={handleEdit}*/>
+          <Icon src="imgs/EditIcon.svg" alt="Icon" />
+        </IconButton>
+        <IconButton /*onClick={handleDelete}*/>
+          <Icon src="imgs/DeleteIcon.svg" alt="Icon" />
+        </IconButton>
+      </ButtonContainer>
+      </PetmilyCard>
+
+      <AddPet>
+        <IconButton /*onClick={handleAddPets}*/>
+          <Icon src="imgs/PlusIcon.svg" alt="Icon" />
+        </IconButton>
+      </AddPet>
+    </Container>
+)
+}
+
+export default MyPetmily;

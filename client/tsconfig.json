@@ -1,37 +1,22 @@
 {
   "compilerOptions": {
-    "allowJs": true, // TypeScript 컴파일러가 JavaScript 파일도 컴파일
-    "jsx": "react-jsx", // JSX 구문을 사용
-    "lib": ["dom", "es2017"], // 사용할 라이브러리
-    "module": "esnext", // 사용할 모듈 시스템
-    "moduleResolution": "node", // 모듈 해석 방식
-    "noEmit": true, // 컴파일 결과를 출력하지 않도록 지정
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true, // 선언 파일 (.d.ts 파일)의 타입 체크를 비활성화. 컴파일 시간이 더 빨라짐
-    "outDir": "dist",
-    "strict": true,
-    "target": "es5",
-    "incremental": true // 증분 컴파일을 활성화하여 컴파일 속도를 높임
+  "allowJs": true, // TypeScript 컴파일러가 JavaScript 파일도 컴파일
+  "jsx": "react-jsx", // JSX 구문을 사용
+  "lib": ["dom", "es2017"], // 사용할 라이브러리
+  "module": "esnext", // 사용할 모듈 시스템
+  "moduleResolution": "node", // 모듈 해석 방식
+  "noEmit": true, // 컴파일 결과를 출력하지 않도록 지정
+  "noUnusedLocals": true,
+  "noUnusedParameters": true,
+  "allowSyntheticDefaultImports": true,
+  "sourceMap": true,
+  "resolveJsonModule": true,
+  "skipLibCheck": true, // 선언 파일 (.d.ts 파일)의 타입 체크를 비활성화. 컴파일 시간이 더 빨라짐
+  "outDir": "dist",
+  "strict": true,
+  "target": "es5",
+  "incremental": true // 증분 컴파일을 활성화하여 컴파일 속도를 높임
   },
   "exclude": ["node_modules"], // 컴파일하지 않을 파일 또는 디렉토리를 지정
   "include": ["src/**/*"] // 컴파일 할 파일 또는 디렉토리를 지정
-}
-
-// {
-//   "compilerOptions": {
-//     "target": "es5", // ECMAScript 목표 버전 설정
-//     "module": "esnext", // 컴파일된 JavaScript 모듈 포맷 설정. "system"은 SystemJS 모듈 포멧을 사용한다는 의미.
-//     "noImplicitAny": true, // any 타입을 사용할 때에도 명시적으로 타입을 지정하도록 강제.
-//     "removeComments": true, // 컴파일된 JavaScript 코드에서 주석을 제거하는 옵션.
-//     "preserveConstEnums": true,
-//     "outDir": "dist",
-//     "allowJs": true, // js 파일도 번들 포함.
-//     "jsx": "react-jsx" // 생성될 JSX 코드 설정.
-//   },
-//   "include": ["src/**/*"], // 컴파일 포함
-//   "exclude": ["node_modules", "build", "**/*.(spec|test).ts"] // 컴파일 제외
-// }
+ }
