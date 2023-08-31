@@ -31,6 +31,7 @@ function App() {
           <Route path="/signup/petsitter" element={<SignupPetsitter />}></Route>
           <Route path="/main" element={<Main />}></Route>
           <Route path="/mypage" element={<Mypage />}></Route>
+          <Route path="/reservation" element={<Reservation />}></Route>
           <Route path="/cares/:memberId" element={<Reservation />}></Route>
           <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
           <Route path="/cares/:petsitterId" element={<Cares />}></Route>

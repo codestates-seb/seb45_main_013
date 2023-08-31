@@ -87,7 +87,7 @@ const Main = () => {
           케어 서비스
         </PetsitterText>
         <PetButtonContainer>
-          <Button text="예약하기" link="/cares/:memberId"></Button>
+          <Button text="예약하기" link="/Reservation"></Button>
         </PetButtonContainer>
       </PetsitterForm>
       <Adbox>
@@ -103,7 +103,7 @@ const Main = () => {
           돌봄의 시작
         </TrainerText>
         <TrainButtonContainer>
-          <Button text="지원하기" link="/cares/:memberId"></Button>
+          <Button text="지원하기" link="/Mypage"></Button>
         </TrainButtonContainer>
       </TrainerForm>
     </MainContainer>
