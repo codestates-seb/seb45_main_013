@@ -2,12 +2,10 @@ package shop.petmily.domain.journal.entity;
 
 import lombok.*;
 import shop.petmily.domain.member.entity.Member;
-import shop.petmily.domain.petsitter.entity.Petsitter;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class Journal extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member customer;
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "petsitter_id")
