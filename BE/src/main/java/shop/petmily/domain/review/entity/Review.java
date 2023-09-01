@@ -3,11 +3,10 @@ package shop.petmily.domain.review.entity;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 import shop.petmily.domain.member.entity.Member;
-import shop.petmily.domain.petsitter.entity.Petsitter;
 import shop.petmily.domain.reservation.entity.Reservation;
+import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Review {
+public class Review extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reviewId;
@@ -35,12 +34,6 @@ public class Review {
         photos.add(photo);
     }
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime lastModifiedAt;
-
     @OneToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
@@ -51,5 +44,5 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "petsitter_id")
-    private Petsitter petsitter;
+    private Member petsitter;
 }

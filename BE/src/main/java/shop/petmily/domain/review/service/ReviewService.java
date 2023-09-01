@@ -51,10 +51,6 @@ public class ReviewService {
         }
         review.setPhotos(photos);
 
-        LocalDateTime now = LocalDateTime.now();
-        review.setCreatedAt(now);
-        review.setLastModifiedAt(now);
-
         reviewRepository.save(review);
 
         return review;
