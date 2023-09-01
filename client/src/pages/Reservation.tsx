@@ -26,7 +26,7 @@ const StatusContainer = styled.div`
 
 const StatusText = styled.h3`
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSizes.medium};
+  font-size: ${(props) => props.theme.fontSize.medium};
 `;
 
 const ImgContainer = styled.div``;
