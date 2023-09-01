@@ -24,11 +24,13 @@ public class MemberPostRequestDto {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z가-헿0-9]{4,}$", message = "4자 이상부터 가능하며 특수 문자가 없어야 합니다.")
-    private String displayName;
+    private String nickName;
 
     @NotBlank
     @Pattern(regexp = "^010\\d{4}\\d{4}$", message = "'010'으로 시작해야 하며 '-'를 제외한 총 11자리 숫자여야 합니다.")
     private String phone;
 
     private String address;
+
+    private boolean petsitterBoolean;
 }

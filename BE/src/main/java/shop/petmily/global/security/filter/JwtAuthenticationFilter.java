@@ -2,11 +2,8 @@ package shop.petmily.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import org.springframework.transaction.annotation.Transactional;
-import shop.petmily.domain.member.dto.MemberDto;
+import shop.petmily.domain.member.dto.MemberLoginDto;
 import shop.petmily.domain.member.entity.Member;
-import shop.petmily.domain.petsitter.dto.PetsitterDto;
-import shop.petmily.domain.petsitter.entity.Petsitter;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
 import shop.petmily.global.exception.ExceptionCode;
@@ -45,7 +42,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // 인증 시도
     @SneakyThrows
     @Override
-    @Transactional
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         ObjectMapper objectMapper = new ObjectMapper();
         LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
@@ -80,75 +76,31 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // 인증 성공시
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-//        Member member = (Member) authResult.getPrincipal();
-//
-//        String accessToken = delegateAccessToken(member);
-//        String refreshToken = delegateRefreshToken(member);
-//
-//        response.setHeader("Authorization", "Bearer" + accessToken);
-//        response.setHeader("Refresh", refreshToken);
-//
-//        RefreshToken refreshTokenEntity = new RefreshToken();
-//        refreshTokenEntity.setValue(refreshToken);
-//        refreshTokenEntity.setMember(member);
-//        refreshTokenService.addRefreshToken(refreshTokenEntity);
-//
-//        MemberDto.LoginResponse loginResponse = MemberDto.LoginResponse.builder()
-//                .accessToken(accessToken)
-//                .refreshToken(refreshToken)
-//                .memberId(member.getMemberId())
-//                .displayName(member.getDisplayName())
-//                .build();
-//
-//        String body = new Gson().toJson(loginResponse);
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        response.getWriter().write(body);
-        if (authResult.getPrincipal() instanceof Member) {
-            Member member = (Member) authResult.getPrincipal();
+        Member member = (Member) authResult.getPrincipal();
 
-            String accessToken = delegateAccessToken(member);
-            String refreshToken = delegateRefreshToken(member);
+        String accessToken = delegateAccessToken(member);
+        String refreshToken = delegateRefreshToken(member);
 
-            RefreshToken refreshTokenEntity = new RefreshToken();
-            refreshTokenEntity.setValue(refreshToken);
-            refreshTokenEntity.setMember(member);
-            refreshTokenService.addRefreshToken(refreshTokenEntity);
+        response.setHeader("Authorization", "Bearer" + accessToken);
+        response.setHeader("Refresh", refreshToken);
 
-            MemberDto.LoginResponse loginResponse = MemberDto.LoginResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .memberId(member.getMemberId())
-                    .displayName(member.getDisplayName())
-                    .build();
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setValue(refreshToken);
+        refreshTokenEntity.setMember(member);
+        refreshTokenService.addRefreshToken(refreshTokenEntity);
 
-            String body = new Gson().toJson(loginResponse);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(body);
-        } else if (authResult.getPrincipal() instanceof Petsitter) {
-            Petsitter petsitter = (Petsitter) authResult.getPrincipal();
+        MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .memberId(member.getMemberId())
+                .nickName(member.getNickName())
+                .build();
 
-            String accessToken = delegateAccessToken(petsitter);
-            String refreshToken = delegateRefreshToken(petsitter);
+        String body = new Gson().toJson(loginResponse);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(body);
 
-            RefreshToken refreshTokenEntity = new RefreshToken();
-            refreshTokenEntity.setValue(refreshToken);
-            refreshTokenEntity.setPetsitter(petsitter); // Assuming Petsitter extends Member or has a similar structure
-            refreshTokenService.addRefreshToken(refreshTokenEntity);
-
-            PetsitterDto.LoginResponse loginResponse = PetsitterDto.LoginResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .petsitterId(petsitter.getPetsitterId())
-                    .displayName(petsitter.getDisplayName())
-                    .build();
-
-            String body = new Gson().toJson(loginResponse);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(body);
-        }
     }
 
     // Access Token 생성 로직
@@ -156,7 +108,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", member.getEmail());
         claims.put("roles", member.getRoles());
-        claims.put("displayName", member.getDisplayName());
+        claims.put("nickName", member.getNickName());
         claims.put("id", member.getMemberId());
 
         String subject = member.getEmail();
@@ -167,35 +119,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         return accessToken;
     }
 
-    // Access Token 생성 로직
-    private String delegateAccessToken(Petsitter petsitter) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("email", petsitter.getEmail());
-        claims.put("roles", petsitter.getRoles());
-        claims.put("displayName", petsitter.getDisplayName());
-        claims.put("id", petsitter.getPetsitterId());
-
-        String subject = petsitter.getEmail();
-        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
-        String base64EncodedSecretKey = jwtTokenizer.base64EncodedSecretKey(jwtTokenizer.getSecretKey());
-
-        String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
-        return accessToken;
-    }
-
     // Refresh Token 생성 로직
     private String delegateRefreshToken(Member member) {
         String subject = member.getEmail();
-        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
-        String base63EncodedSecretKey = jwtTokenizer.base64EncodedSecretKey(jwtTokenizer.getSecretKey());
-
-        String refreshToken = jwtTokenizer.generateRefreshToken(subject, expiration,base63EncodedSecretKey);
-        return refreshToken;
-    }
-
-    // Refresh Token 생성 로직
-    private String delegateRefreshToken(Petsitter petsitter) {
-        String subject = petsitter.getEmail();
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
         String base63EncodedSecretKey = jwtTokenizer.base64EncodedSecretKey(jwtTokenizer.getSecretKey());
 

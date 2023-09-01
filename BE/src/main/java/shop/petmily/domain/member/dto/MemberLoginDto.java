@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
-public class MemberDto {
+public class MemberLoginDto {
 
     @Getter
     @Builder
@@ -32,7 +32,7 @@ public class MemberDto {
         private String accessToken;
         private String refreshToken;
         private Long memberId;
-        private String displayName;
+        private String nickName;
     }
 
     @Getter

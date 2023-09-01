@@ -8,22 +8,16 @@ public enum ExceptionCode {
     MEMBER_NOT_MODIFY(400, "수정권한이 없습니다."),
     PETSITTER_NOT_FOUND(404, "존재하지 않는 펫시터입니다."),
     PETSITTER_EXISTS(409, "존재하는 펫시터입니다."),
-    PETSITTER_NOT_MODIFY(400, "수정권한이 없습니다."),
     INVALID_EMAIL_FORMAT(400, "이메일 형식에 맞지 않습니다."),
     INVALID_PASSWORD_FORMAT(400, "영어와 숫자를 최소 1개 포함하여 8자 이상이어야합니다."),
     LOGIN_FAIL(400, "이메일 또는 비밀번호가 일치하지 않습니다."),
     NOT_IMPLEMENTATION(501, "구현되지 않은 기능입니다."),
     INVALID_MEMBER_STATUS(400, "잘못된 회원 상태입니다."),
     NOT_ALLOW_MEMBER(401, "올바른 회원이 아닙니다."),
-    NOT_ALLOW_PETSITTER(401, "올바른 펫시터가 아닙니다"),
     TOKEN_NOT_FOUND(404, "존재하지 토큰이 아닙니다."),
     RESERVATION_NOT_EXIST(404, "존재하지 않는 예약정보입니다."),
     JOURNAL_NOT_EXIST(404, "존재하지 않는 펫시터 일지입니다."),
-    REVIEW_NOT_EXIST(404, "존재하지 않는 리뷰 입니다."),
-    PET_NOT_EXIST(404, "존재하지 않는 반려동물입니다."),
-    ALREADY_CONFIRMED(500, "이미 확정된 예약입니다."),
-    ALREADY_BEEN_CANCELLED(500, "이미 취소된 예약입니다.")
-
+    REVIEW_NOT_EXIST(404, "존재하지 않는 리뷰 입니다.")
     ;
 
     @Getter

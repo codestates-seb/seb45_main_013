@@ -1,6 +1,7 @@
 package shop.petmily.domain.refreshToken.contorller;
 
-import shop.petmily.domain.member.dto.MemberDto;
+import org.springframework.transaction.annotation.Transactional;
+import shop.petmily.domain.member.dto.MemberLoginDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
@@ -14,9 +15,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.petmily.global.security.utils.CustomAuthorityUtils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,7 +31,9 @@ public class RefreshTokenController {
     private final JwtTokenizer jwtTokenizer;
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
+    private final CustomAuthorityUtils customAuthorityUtils;
 
+    @Transactional
     @ResponseStatus(value = HttpStatus.OK)
     @PostMapping // refreshToken으로 accessToken 재발급
     public ResponseEntity requestRefresh(@RequestHeader("Refresh") String requestHeader) {
@@ -36,12 +41,15 @@ public class RefreshTokenController {
 
         Claims refreshClaims = jwtTokenizer.parseRefreshToken(requestHeader);
         Member member = memberService.findMember(refreshClaims.get("sub").toString());
+        member.setRoles(customAuthorityUtils.chageRoles(member));
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", member.getEmail());
         claims.put("roles", member.getRoles());
-        claims.put("displayName", member.getDisplayName());
+        claims.put("nickName", member.getNickName());
         claims.put("id", member.getMemberId());
+
+
 
         String subject = member.getEmail();
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
@@ -52,11 +60,11 @@ public class RefreshTokenController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer" + accessToken);
 
-        MemberDto.LoginResponse loginResponse = MemberDto.LoginResponse.builder()
+        MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(requestHeader)
                 .memberId(member.getMemberId())
-                .displayName(member.getDisplayName())
+                .nickName(member.getNickName())
                 .build();
 
         return ResponseEntity.ok().headers(headers).body(loginResponse);

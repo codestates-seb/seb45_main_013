@@ -5,7 +5,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import shop.petmily.domain.member.entity.Member;
-import shop.petmily.domain.petsitter.entity.Petsitter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,10 +14,10 @@ public class CustomAuthorityUtils {
 
     private String adminMailAddress = "admin@google.com";
 
-    private final List<GrantedAuthority> ADMIN_ROLES = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_MEMBER", "\"ROLE_PETSITTER\"");
+    private final List<GrantedAuthority> ADMIN_ROLES = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_MEMBER", "ROLE_PETSITTER");
     private final List<GrantedAuthority> MEMBER_ROLES = AuthorityUtils.createAuthorityList("ROLE_MEMBER");
     private final List<GrantedAuthority> PETSITTER_ROLES = AuthorityUtils.createAuthorityList("ROLE_PETSITTER");
-    private final List<String> ADMIN_ROLES_STRING = List.of("ADMIN", "MEMBER");
+    private final List<String> ADMIN_ROLES_STRING = List.of("ADMIN", "MEMBER", "PETSITTER");
     private final List<String> MEMBER_ROLES_STRING = List.of("MEMBER");
     private final List<String> PETSITTER_ROLES_STRING = List.of("PETSITTER");
 
@@ -29,16 +28,23 @@ public class CustomAuthorityUtils {
     }
 
     public List<String> createRoles(Member member) {
-        if (member.isPetSitter()) {
+        if (member.isPetsitterBoolean()) {
+            return PETSITTER_ROLES_STRING;
+        } else if (member.isPetsitterBoolean() == false) {
+            return MEMBER_ROLES_STRING;
+        } else {
             return ADMIN_ROLES_STRING;
         }
-        return MEMBER_ROLES_STRING;
     }
 
-    public List<String> createRoles(Petsitter petsitter) {
-        if (petsitter.isPetSitter()) {
+    public List<String> chageRoles(Member member) {
+
+        if (member.isPetsitterBoolean()) {
+            return MEMBER_ROLES_STRING;
+        } else if (member.isPetsitterBoolean() == false) {
             return PETSITTER_ROLES_STRING;
+        } else {
+            return ADMIN_ROLES_STRING;
         }
-        return ADMIN_ROLES_STRING;
     }
 }
