@@ -6,7 +6,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px;
-  height: calc(100vh-52px);
   background-color: ${(props) => props.theme.colors.white};
 `;
 

@@ -6,7 +6,7 @@ import Input from '../components/Input';
 const MainContainer = styled.div`
   display: flex;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
   background-color: white;
 `;
 
