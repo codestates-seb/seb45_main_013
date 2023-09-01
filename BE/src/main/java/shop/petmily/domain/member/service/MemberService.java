@@ -1,8 +1,12 @@
 package shop.petmily.domain.member.service;
 
 import shop.petmily.domain.member.dto.MemberGetResponseDto;
+//import shop.petmily.domain.member.entity.Customer;
 import shop.petmily.domain.member.entity.Member;
+//import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.MemberRepository;
+import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
@@ -21,6 +25,8 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PetsitterService petsitterService;
+    private final PetsitterRepository petsitterRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
 
@@ -29,10 +35,13 @@ public class MemberService {
 
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
-        List<String> roles = customAuthorityUtils.createRoles(member.getEmail());
+        List<String> roles = customAuthorityUtils.createRoles(member);
         member.setRoles(roles);
         Member saveMember = memberRepository.save(member);
-
+        if (member.isPetsitterBoolean()) {
+            Petsitter petsitter = new Petsitter(saveMember);
+            petsitterService.addPetsitterProfile(petsitter);
+        }
         return saveMember;
     }
 
@@ -40,11 +49,25 @@ public class MemberService {
     public Member updateMember(Member member) {
         Member findMember = findVerifiedMember(member.getMemberId());
 
-        Optional.ofNullable(member.getDisplayName())
-                .ifPresent(name -> findMember.setDisplayName(name));
+        Optional.ofNullable(member.getNickName())
+                .ifPresent(nickName -> findMember.setNickName(nickName));
         Optional.ofNullable(member.getPassword())
                 .ifPresent(password -> findMember.setPassword(passwordEncoder.encode(password)));
-
+        Optional.ofNullable(member.getPhone())
+                .ifPresent(phone -> findMember.setPhone(phone));
+        Optional.ofNullable(member.getAddress())
+                .ifPresent(address -> findMember.setAddress(address));
+        Optional.ofNullable(member.isPetsitterBoolean())
+                .ifPresent(petsitterBoolean -> findMember.setPetsitterBoolean(petsitterBoolean));
+//        Optional.ofNullable(member.getRoles())
+//                .ifPresent(roles -> findMember.setRoles(roles));
+        Optional.ofNullable(member.getPhoto())
+                .ifPresent(photo -> findMember.setPhoto(photo));
+//        if (member.isPetsitterBoolean()) {
+//            Petsitter petsitter = petsitterService.findPetsitter(member);
+//            petsitterService.updatePetsitter(petsitter);
+//            petsitterRepository.save(petsitter);
+//        }
         return memberRepository.save(findMember);
     }
 
@@ -89,7 +112,7 @@ public class MemberService {
         if(findMember.isPresent()){
             return findMember.get();
         }
-        List<String> roles = customAuthorityUtils.createRoles(member.getEmail());
+        List<String> roles = customAuthorityUtils.createRoles(member);
         member.setRoles(roles);
         verifyExistsEmail(member.getEmail());
         return memberRepository.save(member);
@@ -100,10 +123,10 @@ public class MemberService {
 
         return MemberGetResponseDto.builder()
                 .email(member.getEmail())
-                .name(member.getName())
-                .displayName(member.getDisplayName())
+                .nickName(member.getNickName())
                 .phone(member.getPhone())
                 .address(member.getAddress())
+                .photo(member.getPhoto())
                 .build();
     }
 

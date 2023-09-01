@@ -56,12 +56,11 @@ public class SecurityConfig {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll() //스웨거 관련설정
-                        .antMatchers(HttpMethod.POST, "/members/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/members").permitAll()
-                        .antMatchers(HttpMethod.GET, "/members/**").hasRole("USER")
-                        .antMatchers(HttpMethod.PATCH, "/members/**").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE, "/members/**").hasRole("USER")
+//                        .antMatchers(HttpMethod.POST, "/members/**").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/members").permitAll()
+//                        .antMatchers(HttpMethod.GET, "/members/**").hasRole("USER")
+//                        .antMatchers(HttpMethod.PATCH, "/members/**").hasRole("USER")
+//                        .antMatchers(HttpMethod.DELETE, "/members/**").hasRole("USER")
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

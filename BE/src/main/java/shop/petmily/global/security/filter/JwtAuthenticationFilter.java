@@ -2,7 +2,7 @@ package shop.petmily.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import shop.petmily.domain.member.dto.MemberDto;
+import shop.petmily.domain.member.dto.MemberLoginDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
@@ -89,11 +89,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         refreshTokenEntity.setMember(member);
         refreshTokenService.addRefreshToken(refreshTokenEntity);
 
-        MemberDto.LoginResponse loginResponse = MemberDto.LoginResponse.builder()
+        MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .memberId(member.getMemberId())
-                .displayName(member.getDisplayName())
+                .nickName(member.getNickName())
                 .build();
 
         String body = new Gson().toJson(loginResponse);
@@ -108,7 +108,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", member.getEmail());
         claims.put("roles", member.getRoles());
-        claims.put("displayName", member.getDisplayName());
+        claims.put("nickName", member.getNickName());
         claims.put("id", member.getMemberId());
 
         String subject = member.getEmail();

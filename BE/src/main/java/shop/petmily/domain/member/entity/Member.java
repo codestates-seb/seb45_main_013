@@ -1,6 +1,6 @@
 package shop.petmily.domain.member.entity;
 
-import shop.petmily.domain.pet.entity.Pet;
+import org.hibernate.annotations.CreationTimestamp;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -24,42 +24,53 @@ public class Member {
     @Column(name = "member_id")
     private Long memberId;
 
-    @Column(nullable = false, unique = true)
+    @OneToOne(mappedBy = "member", cascade = CascadeType.PERSIST)
+    private Customer customer;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.PERSIST)
+    private Petsitter petsitter;
+
+    @Column(length = 30, unique = true, nullable = false)
     private String email;
+
+    @Column(length = 30, unique = true, nullable = false)
+    private String nickName;
 
     @Column(length = 255, nullable = false)
     private String password;
 
-    @Column(length = 255, unique = true, nullable = false)
+    @Column(nullable = false)
+    private boolean petsitterBoolean;
+
+    @Column(length = 255)
     private String name;
 
-    @Column(length = 255, unique = true, nullable = false)
-    private String displayName;
-
-    @Column(length = 255, unique = true, nullable = false)
+    @Column(length = 11, unique = true)
     private String phone;
 
-    @Column(length = 255, unique = true, nullable = false)
+    @Column(length = 30)
     private String address;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
-    private List<Pet> pets = new ArrayList<>();
+    @Column(length = 500)
+    private String photo;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(length = 255, nullable = false)
-    private MemberStatus status = MemberStatus.MEMBER_ACTIVE;
+    @CreationTimestamp
+    @Column(name = "create_at")
+    private LocalDateTime createAt;
+
+    @CreationTimestamp
+    @Column(name = "last_modified_at")
+    private LocalDateTime lastModifiedAt;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
-    @Column(name = "create_at")
-    private LocalDateTime createAt = LocalDateTime.now();
-
-    @Column(name = "last_modified_at")
-    private LocalDateTime lastModifiedAt = LocalDateTime.now();
+    @Enumerated(value = EnumType.STRING)
+    @Column(length = 255, nullable = false)
+    private MemberStatus status = MemberStatus.MEMBER_ACTIVE;
 
     public enum MemberStatus {
 
