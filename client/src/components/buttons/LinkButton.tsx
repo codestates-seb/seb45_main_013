@@ -23,6 +23,7 @@ const StyledLinkButton = styled.button<{ fontSize: string }>`
   a {
     text-decoration: none;
     color: white;
+    flex-shrink: 0;
 
     &:visited {
       text-decoration: none;
