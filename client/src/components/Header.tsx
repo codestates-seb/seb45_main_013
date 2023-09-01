@@ -1,14 +1,23 @@
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
-import Button from './Button';
-// import { useState } from 'react';
+import LinkButton from './buttons/LinkButton';
 
-const HeaderContatiner = styled.header`
+const Test = styled.header`
   display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+`;
+const HeaderContatiner = styled.div`
+  display: flex;
+  justify-content: center;
   width: 100%;
   height: 52px;
   padding: 10px 8px;
-  background-color: ${(props) => props.theme.colors.white};
+  background-color: white;
+  max-width: 600px;
   border-bottom: 2px solid ${(props) => props.theme.colors.mainBlue};
 `;
 
@@ -38,31 +47,22 @@ const HomeLink = styled(Link)`
 `;
 
 const Header = () => {
-  // const [isLogIn, setIsLogin] = useState(false);
-
   return (
-    <HeaderContatiner>
-      <HeaderWrap>
-        <LogoContainer>
-          <HomeLink to={'/'}>
-            <LogoImg src="/imgs/Logo.svg" alt="logo" />
-          </HomeLink>
-        </LogoContainer>
-        {/* <Nav>
-        {isLogin ? (
-          <MypageBtn />
-          <CaresBtn />
-        ) : (
-          <LoginBtn />
-          <SignupBtn />
-        )}
-        </Nav> */}
-        <Nav>
-          <Button text="로그인" link="/login" />
-          <Button text="회원가입" link="/signup" />
-        </Nav>
-      </HeaderWrap>
-    </HeaderContatiner>
+    <Test>
+      <HeaderContatiner>
+        <HeaderWrap>
+          <LogoContainer>
+            <HomeLink to={'/'}>
+              <LogoImg src="/imgs/Logo.svg" alt="logo" />
+            </HomeLink>
+          </LogoContainer>
+          <Nav>
+            <LinkButton text="로그인" link="/login" />
+            <LinkButton text="회원가입" link="/signup" />
+          </Nav>
+        </HeaderWrap>
+      </HeaderContatiner>
+    </Test>
   );
 };
 
