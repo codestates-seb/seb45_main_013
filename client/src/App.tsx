@@ -1,7 +1,7 @@
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { styled } from 'styled-components';
 
-import Header from './components/Header';
+import Header from './components/headers/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -9,6 +9,7 @@ import Main from './pages/Main';
 import Mypage from './pages/Mypage';
 import Reservation from './pages/Reservation';
 import Cares from './pages/Cares';
+import BackHeader from './components/headers/BackHeader';
 
 const Container = styled.div`
   display: flex;
@@ -31,6 +32,15 @@ const AddHeaderLayout = () => {
   );
 };
 
+const BackHeaderLayout = () => {
+  return (
+    <>
+      <BackHeader />
+      <Outlet />
+    </>
+  );
+};
+
 function App() {
   return (
     <Container>
@@ -39,8 +49,10 @@ function App() {
           <Route path="/" element={<AddHeaderLayout />}>
             <Route path="" element={<Home />}></Route>
           </Route>
-          <Route path="login" element={<Login />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/" element={<BackHeaderLayout />}>
+            <Route path="login" element={<Login />}></Route>
+            <Route path="signup" element={<Signup />}></Route>
+          </Route>
           <Route path="/main" element={<Main />}></Route>
           <Route path="/mypage" element={<Mypage />}></Route>
           <Route path="/cares/:memberId" element={<Reservation />}></Route>

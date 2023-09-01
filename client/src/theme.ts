@@ -50,6 +50,13 @@ export const defaultTheme = {
     normal: 500,
     bold: 600,
   },
+  shadow: {
+    dp01: '0px 10px 34px 0px rgba(39, 44, 86, 0.08)',
+    dp02: '0px 4px 12px 0px rgba(39, 44, 86, 0.12)',
+    dp03: '0px 12px 60px 0px rgba(39, 44, 86, 0.10)',
+    dp04: 'box-shadow: 0px 35px 64px 0px rgba(39, 44, 86, 0.24)',
+    inset: '0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset',
+  },
 };
 
 /*

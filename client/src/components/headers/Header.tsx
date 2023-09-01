@@ -1,8 +1,30 @@
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
-import LinkButton from './buttons/LinkButton';
+import LinkButton from '../buttons/LinkButton';
 
-const Test = styled.header`
+const Header = () => {
+  return (
+    <Container>
+      <HeaderContatiner>
+        <HeaderWrap>
+          <LogoContainer>
+            <HomeLink to={'/'}>
+              <LogoImg src="/imgs/Logo.svg" alt="logo" />
+            </HomeLink>
+          </LogoContainer>
+          <Nav>
+            <LinkButton text="로그인" link="/login" />
+            <LinkButton text="회원가입" link="/signup" />
+          </Nav>
+        </HeaderWrap>
+      </HeaderContatiner>
+    </Container>
+  );
+};
+
+export default Header;
+
+const Container = styled.header`
   display: flex;
   justify-content: center;
   position: fixed;
@@ -45,25 +67,3 @@ const HomeLink = styled(Link)`
   display: flex;
   align-items: center;
 `;
-
-const Header = () => {
-  return (
-    <Test>
-      <HeaderContatiner>
-        <HeaderWrap>
-          <LogoContainer>
-            <HomeLink to={'/'}>
-              <LogoImg src="/imgs/Logo.svg" alt="logo" />
-            </HomeLink>
-          </LogoContainer>
-          <Nav>
-            <LinkButton text="로그인" link="/login" />
-            <LinkButton text="회원가입" link="/signup" />
-          </Nav>
-        </HeaderWrap>
-      </HeaderContatiner>
-    </Test>
-  );
-};
-
-export default Header;

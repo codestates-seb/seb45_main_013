@@ -49,14 +49,15 @@ export const UserContacts = styled.span`
 `;
 
 const Button = styled.button`
-  border: none;
   background: none;
+  border: none;
 `;
 
 const RotatedImage = styled.img`
   width: 14px;
   height: 14px;
   transition: transform 0.3s;
+
   &.rotate {
     transform: rotate(180deg);
   }

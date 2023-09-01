@@ -1,7 +1,5 @@
 import { styled } from 'styled-components';
-
 import { Link } from 'react-router-dom';
-import Input from '../components/Input';
 
 const MainContainer = styled.div`
   display: flex;
@@ -14,9 +12,9 @@ const LoginContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  position: absolute;
+  top: 25%;
   width: 240px;
-  height: 100%;
 `;
 
 const InputContainer = styled.form`
@@ -26,7 +24,7 @@ const InputContainer = styled.form`
   justify-content: center;
   width: 100%;
   margin-top: 32px;
-  gap: 8px;
+  gap: 12px;
 `;
 
 const ButtonContainer = styled.div`
@@ -39,12 +37,11 @@ const ButtonContainer = styled.div`
 
 const LoginButton = styled.button`
   height: 32px;
-
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.mainBlue};
   border: none;
-
   color: white;
+
   ${(props) => props.theme.fontSize.s16h24};
   &:hover {
     background-color: ${(props) => props.theme.colors.subBlue};
@@ -52,6 +49,7 @@ const LoginButton = styled.button`
 
   &:active {
     background-color: ${(props) => props.theme.colors.darkBlue};
+    box-shadow: ${(props) => props.theme.shadow.inset};
   }
 `;
 
@@ -60,11 +58,11 @@ const GoogleOAuthButton = styled.button`
   align-items: center;
   justify-content: space-between;
   height: 32px;
-  border: 1px solid ${(props) => props.theme.textColors.gray40};
-  color: ${(props) => props.theme.textColors.gray60};
-  border-radius: 8px;
-  padding-left: 12px;
   padding-right: 20px;
+  padding-left: 12px;
+  border: 1px solid ${(props) => props.theme.textColors.gray40};
+  border-radius: 8px;
+  color: ${(props) => props.theme.textColors.gray60};
   background-color: white;
 
   &:hover {
@@ -73,6 +71,7 @@ const GoogleOAuthButton = styled.button`
 
   &:active {
     background-color: ${(props) => props.theme.textColors.gray50};
+    box-shadow: ${(props) => props.theme.shadow.inset};
   }
 
   div {
@@ -90,14 +89,23 @@ const LinkContainer = styled.div`
   }
 `;
 
+const LoginInputStyle = styled.input`
+  width: 100%;
+  height: 32px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid ${(props) => props.theme.colors.mainBlue};
+  ${(props) => props.theme.fontSize.s14h21};
+`;
+
 const Login = () => {
   return (
     <MainContainer>
       <LoginContainer>
         <img src="/imgs/Logo.svg" alt="logo" width="150px" height="48px" />
         <InputContainer>
-          <Input type="text" label="아이디" />
-          <Input type="password" label="비밀번호" />
+          <LoginInputStyle placeholder="아이디" />
+          <LoginInputStyle type="password" placeholder="비밀번호" />
         </InputContainer>
         <ButtonContainer>
           <LoginButton>로 그 인</LoginButton>
