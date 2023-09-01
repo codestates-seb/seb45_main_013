@@ -37,6 +37,7 @@ public class JournalService {
 
     public Journal createJournal(Journal journal, List<MultipartFile> files) throws IOException {
 //        journal.setPetSitterId;(petSitterService.findVerifiedPetSitter(review.getPetSitter().getPetSitterId()));
+        journal.setPetsitter(memberService.findVerifiedMember(journal.getPetsitter().getMemberId()));
 
         List<String> photos = new ArrayList<>();
         if(files != null) {
@@ -46,9 +47,9 @@ public class JournalService {
         }
         journal.setPhotos(photos);
 
-        LocalDateTime now = LocalDateTime.now();
-        journal.setCreatedAt(now);
-        journal.setLastModifiedAt(now);
+//        LocalDateTime now = LocalDateTime.now();
+//        journal.setCreatedAt(now);
+//        journal.setLastModifiedAt(now);
 
         journalRepository.save(journal);
 
