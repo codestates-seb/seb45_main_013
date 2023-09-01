@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './App.css';
 import { styled } from 'styled-components';
 
 import Header from './components/Header';
@@ -8,16 +7,16 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Main from './pages/Main';
 import Mypage from './pages/Mypage';
-import MyProfile from './pages/MyProfile';
 import Reservation from './pages/Reservation';
 import Cares from './pages/Cares';
 import SignupMembers from './pages/SignupMembers';
 import SignupPetsitter from './pages/SignupPetsitter';
 
 const Container = styled.div`
-  position: relative;
-
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100vh;
   min-width: 360px;
 
   @media (width >= 600px) {
@@ -30,7 +29,6 @@ function App() {
     <Container>
       <BrowserRouter>
         <Header />
-
         <Routes>
           <Route path="/" element={<Home />}></Route>
           <Route path="/login" element={<Login />}></Route>

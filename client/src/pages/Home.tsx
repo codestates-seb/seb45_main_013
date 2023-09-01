@@ -6,17 +6,18 @@ const HomeContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
   margin-top: 0;
+  background-color: white;
+  height: calc(100vh - 52px);
 `;
 
 const TitleContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 75px;
   width: 360px;
   height: 288px;
+  padding-top: 75px;
   background-image: url(${process.env.PUBLIC_URL}/imgs/TitleImg.svg);
 `;
 
@@ -26,7 +27,7 @@ const AdBox = styled.div`
   flex-shrink: 0;
   width: 360px;
   height: 200px;
-  margin: 48px auto 48px;
+  margin: 48px auto;
   gap: 24px;
 `;
 
@@ -36,64 +37,59 @@ const ButtonContainer = styled.div`
   justify-content: center;
   width: 160px;
   height: 32px;
-  flex-shrink: 0;
-  font-size: ${(props) => props.theme.fontSizes.small};
   margin-top: 32px;
-  padding: ${(props) => props.theme.spacing[4]} ${(props) => props.theme.spacing[8]};
-  border-radius: ${(props) => props.theme.spacing[12]};
-  background-color: ${(props) => props.theme.colors.mainBlue};
+  padding: 4px 8px;
+  border-radius: 12px;
   color: #fff;
+  font-size: ${(props) => props.theme.fontSize.s12h18};
+  background-color: ${(props) => props.theme.colors.mainBlue};
+  flex-shrink: 0;
   filter: drop-shadow(0 4px 4px rgb(0 0 0 / 25%));
+
   &:hover {
     background-color: ${(props) => props.theme.colors.subBlue};
   }
+
   &:active {
     background-color: ${(props) => props.theme.colors.darkBlue};
   }
 `;
 
 const TitleText = styled.h2`
-  font-size: ${(props) => props.theme.fontSizes.xxLarge};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
+  font-size: ${(props) => props.theme.fontSize.s20h30};
 `;
 
 const TitleSubText = styled.div`
-  font-size: ${(props) => props.theme.fontSizes.small};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  text-align: center;
   margin-top: 32px;
+  font-size: ${(props) => props.theme.fontSize.s12h18};
+  text-align: center;
 `;
 const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
-  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const PetsitterAdText = styled.h2`
-  font-size: ${(props) => props.theme.fontSizes.xxLarge};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  padding-left: 24px;
   padding-top: 46px;
+  padding-left: 24px;
+  font-size: ${(props) => props.theme.fontSize.s20h30};
 `;
 
 const PetsitterAdSubText = styled.div`
-  font-size: ${(props) => props.theme.fontSizes.small};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
   padding: 16px 0 0 24px;
+  font-size: ${(props) => props.theme.fontSize.s12h18};
   line-height: 1.3;
 `;
 
 const TrainerAdText = styled.h2`
-  font-size: ${(props) => props.theme.fontSizes.xxLarge};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  padding-right: 24px;
   padding-top: 46px;
+  padding-right: 24px;
+  font-size: ${(props) => props.theme.fontSize.s20h30};
 `;
 
 const TrainerAdSubText = styled.div`
-  font-size: ${(props) => props.theme.fontSizes.small};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
   padding: 16px 24px 0 0;
+  font-size: ${(props) => props.theme.fontSize.s12h18};
   line-height: 1.3;
 `;
 

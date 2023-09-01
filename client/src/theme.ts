@@ -1,4 +1,6 @@
-export const theme = {
+import { css } from 'styled-components';
+
+export const defaultTheme = {
   colors: {
     black: '#000000',
     white: '#ffffff',
@@ -19,28 +21,32 @@ export const theme = {
     coolGray90: '#F5F6F8',
     coolGray80: '#DEE2E9',
   },
-  fonts: ['Noto Sans KR', 'Roboto', 'sans-serif'],
-  fontSizes: {
-    small: '12px',
-    medium: '14px',
-    large: '16px',
-    xLarge: '18px',
-    xxLarge: '20px',
+  fontSize: {
+    s12h18: css`
+      font-size: 12px;
+      line-height: 18px;
+    `,
+    s14h21: css`
+      font-size: 14px;
+      line-height: 21px;
+    `,
+    s16h24: css`
+      font-size: 16px;
+      line-height: 24px;
+    `,
+    s18h27: css`
+      font-size: 18px;
+      line-height: 27px;
+    `,
+    s20h30: css`
+      font-size: 20px;
+      line-height: 30px;
+    `,
   },
   fontWeights: {
     light: 400,
     normal: 500,
     bold: 600,
-  },
-  spacing: {
-    4: '4px',
-    8: '8px',
-    12: '12px',
-    16: '16px',
-    20: '20px',
-    24: '24px',
-    28: '28px',
-    32: '32px',
   },
 };
 

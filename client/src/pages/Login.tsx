@@ -6,10 +6,8 @@ import { Link } from 'react-router-dom';
 const MainContainer = styled.div`
   display: flex;
   justify-content: center;
-
   height: calc(100vh - 52px);
   padding: 60px;
-
   background-color: white;
 `;
 
@@ -18,7 +16,6 @@ const LoginContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   width: 240px;
   height: 100%;
 `;
@@ -28,25 +25,21 @@ const InputContainer = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   width: 100%;
   margin-top: ${(props) => props.theme.spacing[32]};
-
   gap: ${(props) => props.theme.spacing[8]};
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
-
   width: 100%;
   margin-top: ${(props) => props.theme.spacing[8]};
-
-  gap: ${(props) => props.theme.spacing[12]};
+  gap: 12px;
 `;
 
 const LinkContainer = styled.div`
-  margin-top: ${(props) => props.theme.spacing[12]};
+  margin-top: 12px;
 
   a {
     font-size: ${(props) => props.theme.fontSizes.medium};

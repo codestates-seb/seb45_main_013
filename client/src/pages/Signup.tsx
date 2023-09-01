@@ -9,14 +9,14 @@ const SignupContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 50px;
   height: 100%;
+  padding: 50px;
 `;
 
 const TitleContainer = styled.div`
-  background-color: red;
   display: flex;
   flex-direction: column;
+  background-color: red;
 `;
 const InputConatiner = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ const Signup = () => {
           <div>We&apos;re Petmily!</div>
           <div>회원가입</div>
         </TitleContainer>
-        <img src="/icons/photo.png" width="40px"></img>
+        <img src="/icons/photo.png" width="40px" alt="hello" />
         <InputConatiner>
           <Input label="이름" />
           <Input label="연락처" />

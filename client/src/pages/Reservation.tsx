@@ -6,8 +6,8 @@ const MainContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
   margin-top: 0;
+  background-color: white;
 `;
 
 const ReservationContainer = styled.div`
@@ -16,44 +16,43 @@ const ReservationContainer = styled.div`
 
 const StatusContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   width: 360px;
   height: 48px;
-  flex-shrink: 0;
-  justify-content: space-between;
-  padding: 19px 28px 0px 28px;
+  padding: 19px 28px 0;
   background-color: #f5f5f5;
+  flex-shrink: 0;
 `;
 
 const StatusText = styled.h3`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.medium};
   font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSizes.medium};
 `;
 
 const ImgContainer = styled.div``;
 
 const StatusNum = styled.div`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
   color: ${(props) => props.theme.textColors.gray60};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
+  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const WhenText = styled.div`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
-  font-weight: ${(props) => props.theme.fontWeights.bold};
   padding-top: 38px;
   padding-right: 167px;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
+  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const WhenInput = styled.div``;
 
 const WhereText = styled.div`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
-  font-weight: ${(props) => props.theme.fontWeights.bold};
   padding-top: 38px;
   padding-right: 167px;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
+  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const WhereInput = styled.div``;
@@ -63,41 +62,41 @@ const TimeWrap = styled.div`
 `;
 
 const CheckInText = styled.div`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
-  font-weight: ${(props) => props.theme.fontWeights.bold};
   padding-top: 38px;
   padding-right: 167px;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
+  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const CheckOutText = styled.div`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
   font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
+  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const CarePetText = styled.div`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
   font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
+  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const CarePetImg = styled.div``;
 
 const RequestText = styled.div`
-  margin: 36px 287px 0px 36px;
+  margin: 36px 287px 0 36px;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
   white-space: nowrap;
   font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
-  font-weight: ${(props) => props.theme.fontWeights.bold};
 `;
 
 const RequestInput = styled.div``;
 
 const ContactText = styled.div`
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-  font-size: ${(props) => props.theme.fontSizes.small};
   font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s12s18};
+  font-family: ${(props) => props.theme.fonts.join(', ')};
 `;
 
 const RequestContainer = styled.div`
@@ -106,17 +105,17 @@ const RequestContainer = styled.div`
   flex-shrink: 0;
   border-top: 0.5px solid #c9c9c9;
   border-bottom: 0.5px solid #c9c9c9;
-  background: rgba(255, 255, 255, 0.71);
+  background: rgb(255 255 255 / 71%);
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: center;
   width: 330px;
   height: 32px;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
   padding-top: 37px;
+  flex-shrink: 0;
 `;
 
 const Reservation = () => {

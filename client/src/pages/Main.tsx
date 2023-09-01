@@ -25,7 +25,7 @@ const PetsitterText = styled.div`
   padding-right: 64px;
   color: ${(props) => props.theme.colors.white};
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
+
   text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.25);
 `;
 
@@ -61,7 +61,6 @@ const AdText = styled.div`
   color: #424242;
   font-size: ${(props) => props.theme.fontSizes.medium};
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
   padding-top: 53px;
 `;
 
@@ -82,7 +81,6 @@ const TrainerText = styled.div`
   text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.25);
   color: ${(props) => props.theme.colors.white};
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
   padding-top: 88px;
   padding-left: 76px;
 `;

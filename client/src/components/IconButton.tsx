@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 interface IconButtonProps {
   width?: string;
@@ -8,19 +8,19 @@ interface IconButtonProps {
 }
 
 const StyledIconButton = styled.button<IconButtonProps>`
-  background-color: #CACACA;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: ${(props) => props.width || '24px'};
   height: ${(props) => props.height || '24px'};
+  border: none;
   border-radius: 50%;
+  background-color: #cacaca;
   cursor: pointer;
   transition: 0.3s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
+
   &:hover {
-     background-color: ${(props) => props.theme.colors.mainBlue};
+    background-color: ${(props) => props.theme.colors.mainBlue};
   }
 `;
 
@@ -28,7 +28,7 @@ const Icon = styled.img<{ width?: string; height?: string }>`
   width: ${(props) => props.width || '12px'};
   height: ${(props) => props.height || '12px'};
 `;
- 
+
 const IconButton = ({ width, height, onClick, children }: IconButtonProps) => {
   return (
     <StyledIconButton width={width} height={height} onClick={onClick}>

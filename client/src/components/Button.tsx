@@ -5,19 +5,14 @@ const StyledButton = styled.button<{ fontSize: string; usage: string | undefined
   display: flex;
   align-items: center;
   justify-content: center;
-
   width: 100%;
   height: ${(props) => (Number(props.fontSize) > 14 ? '32px' : null)};
-  padding: ${(props) => props.theme.spacing[4]} ${(props) => props.theme.spacing[8]};
+  padding: 4px 8px;
   border: ${(props) => (props.usage === 'google' ? `1px solid ${props.theme.textColors.gray30}` : 'none')};
-  border-radius: ${(props) => (Number(props.fontSize) > 14 ? props.theme.spacing[8] : props.theme.spacing[4])};
-
-  background-color: ${(props) => (props.usage === 'google' ? props.theme.colors.white : props.theme.colors.mainBlue)};
-
+  border-radius: ${(props) => (Number(props.fontSize) > 14 ? '8px' : '4px')};
   color: ${(props) => (props.usage === 'google' ? props.theme.textColors.gray30 : '#fff')};
   font-size: ${(props) => `${props.fontSize}px`};
-
-  font-family: ${(props) => props.theme.fonts.join(', ')};
+  background-color: ${(props) => (props.usage === 'google' ? props.theme.colors.white : props.theme.colors.mainBlue)};
 
   &:hover {
     background-color: ${(props) =>
@@ -48,7 +43,7 @@ const Button = ({ text, usage, link, fontSize = '14' }: ButtonProps) => {
   };
   return (
     <StyledButton fontSize={fontSize} usage={usage} onClick={handleClick}>
-      {usage === 'google' ? <img src="/imgs/GoogleLogo.svg"></img> : null}
+      {usage === 'google' ? <img src="/imgs/GoogleLogo.svg" alt="hi"></img> : null}
       <div style={{ flexShrink: 0 }}>{text}</div>
     </StyledButton>
   );
