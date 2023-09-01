@@ -59,7 +59,7 @@ const Adbox = styled.div`
 
 const AdText = styled.div`
   color: #424242;
-  font-size: ${(props) => props.theme.fontSizes.medium};
+  font-size: ${(props) => props.theme.fontSize.medium};
   font-weight: ${(props) => props.theme.fontWeights.bold};
   padding-top: 53px;
 `;
