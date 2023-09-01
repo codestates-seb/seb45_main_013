@@ -5,22 +5,23 @@ import { IconButton, Icon } from './IconButton';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${(props) => props.theme.spacing[16]};
+  padding: 16px;
+  height: calc(100vh-52px);
   background-color: ${(props) => props.theme.colors.white};
 `;
 
 const Text = styled.div`
   margin-bottom: 12px;
   color: ${(props) => props.theme.textColors.gray30};
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSizes.large};
+  font-weight: 800;
+  font-size: ${(props) => props.theme.fontSize.s16h24};
 `;
 
 // 등록된 petmily 카드
 const PetmilyCard = styled.div`
   display: flex;
   flex-direction: column;
-  width: 328px;
+  width: 100%;
   padding: 12px;
   border-radius: 4px;
   box-shadow: 0 2px 10px 0 #cdcdcd;
@@ -30,7 +31,7 @@ const PetmilyCard = styled.div`
 const CatOrDog = styled.img`
   width: 30px;
   height: 30px;
-  margin-left: ${(props) => props.theme.spacing[8]};
+  margin-left: 8px;
 `;
 
 const PetInfoContainer = styled.div`
@@ -48,7 +49,7 @@ const PetInfo = styled.div`
   margin-top: 4px;
   color: ${(props) => props.theme.textColors.gray00};
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSizes.medium};
+  font-size: ${(props) => props.theme.fontSize.s14h21};
 `;
 
 // 버튼 컨테이너 (수정, 삭제)
@@ -63,7 +64,7 @@ const AddPet = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: ${(props) => props.theme.spacing[16]};
+  margin-top: 16px;
 `;
 
 // 유저의 펫 수 만큼 카드 만들기

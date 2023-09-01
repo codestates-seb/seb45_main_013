@@ -1,5 +1,11 @@
 import { styled } from 'styled-components';
 
+/* 사용방법
+<IconButton onClick={handleAddPets}>
+<Icon src="imgs/PlusIcon.svg" alt="Icon" />
+</IconButton>
+*/
+
 interface IconButtonProps {
   width?: string;
   height?: string;

@@ -42,7 +42,7 @@ const LinkContainer = styled.div`
   margin-top: 12px;
 
   a {
-    font-size: ${(props) => props.theme.fontSizes.medium};
+    font-size: ${(props) => props.theme.fontSize.medium};
     text-decoration-line: none;
   }
 `;
