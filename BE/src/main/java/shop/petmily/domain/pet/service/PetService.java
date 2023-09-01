@@ -37,51 +37,51 @@ public class PetService {
         return repository.save(pet);
     }
 
-    public Pet updatePet(Pet pet, MultipartFile file) throws IOException {
-        Pet verifiedPet = verifiedPet(pet.getPetId());
+//    public Pet updatePet(Pet pet, MultipartFile file) throws IOException {
+//        Pet verifiedPet = verifiedPet(pet.getPetId());
+//
+//        verifiedPetOwner(verifiedPet.getMember().getMemberId(), pet.getMember().getMemberId());
+//
+//        if(pet.getAge() != 0) verifiedPet.setAge(pet.getAge());
+//        if(pet.getWeight() != 0) verifiedPet.setWeight(pet.getWeight());
+//
+//        if(file != null) {
+//            if(verifiedPet.getPhoto() != null) uploadService.deleteFile(verifiedPet.getPhoto());
+//            verifiedPet.setPhoto(uploadService.saveFile(file));
+//        }
+//
+//        verifiedPet.setLastModifiedAt(LocalDateTime.now());
+//
+//        return repository.save(verifiedPet);
+//    }
 
-        verifiedPetOwner(verifiedPet.getMember().getMemberId(), pet.getMember().getMemberId());
+//    public Pet photoDelete(long petId, Long requestMemberId){
+//        Pet verifiedPet = verifiedPet(petId);
+//        verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
+//
+//        uploadService.deleteFile(verifiedPet.getPhoto());
+//        verifiedPet.setPhoto(null);
+//        verifiedPet.setLastModifiedAt(LocalDateTime.now());
+//
+//        return repository.save(verifiedPet);
+//    }
 
-        if(pet.getAge() != 0) verifiedPet.setAge(pet.getAge());
-        if(pet.getWeight() != 0) verifiedPet.setWeight(pet.getWeight());
+//    public Pet findPet(long petId){
+//        Pet verifiedPet = verifiedPet(petId);
+//        return  verifiedPet;
+//    }
+//
+//    public void deletePet(long petId, Long requestMemberId){
+//        Pet verifiedPet = verifiedPet(petId);
+//        verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
+//        repository.delete(verifiedPet);
+//    }
 
-        if(file != null) {
-            if(verifiedPet.getPhoto() != null) uploadService.deleteFile(verifiedPet.getPhoto());
-            verifiedPet.setPhoto(uploadService.saveFile(file));
-        }
-
-        verifiedPet.setLastModifiedAt(LocalDateTime.now());
-
-        return repository.save(verifiedPet);
-    }
-
-    public Pet photoDelete(long petId, Long requestMemberId){
-        Pet verifiedPet = verifiedPet(petId);
-        verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
-
-        uploadService.deleteFile(verifiedPet.getPhoto());
-        verifiedPet.setPhoto(null);
-        verifiedPet.setLastModifiedAt(LocalDateTime.now());
-
-        return repository.save(verifiedPet);
-    }
-
-    public Pet findPet(long petId){
-        Pet verifiedPet = verifiedPet(petId);
-        return  verifiedPet;
-    }
-
-    public void deletePet(long petId, Long requestMemberId){
-        Pet verifiedPet = verifiedPet(petId);
-        verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
-        repository.delete(verifiedPet);
-    }
-
-    private Pet verifiedPet(long petId) {
-        Optional<Pet> optionalPet = repository.findById(petId);
-        Pet pet = optionalPet.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PET_NOT_EXIST));
-        return pet;
-    }
+//    private Pet verifiedPet(long petId) {
+//        Optional<Pet> optionalPet = repository.findById(petId);
+//        Pet pet = optionalPet.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PET_NOT_EXIST));
+//        return pet;
+//    }
 
     private void verifiedPetOwner(long originMemberId, Long requestMemberId) {
         if (originMemberId != requestMemberId) throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);

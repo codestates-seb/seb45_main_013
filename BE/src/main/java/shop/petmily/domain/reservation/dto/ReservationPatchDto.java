@@ -25,7 +25,7 @@ public class ReservationPatchDto {
     // 수정할 요구사항 내용
     private String body;
 
-    private List<Pet> pets;
+    private List<Long> pets;
 
     private String progress;
 }

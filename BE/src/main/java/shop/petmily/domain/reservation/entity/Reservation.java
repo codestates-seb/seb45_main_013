@@ -3,10 +3,11 @@ package shop.petmily.domain.reservation.entity;
 import lombok.*;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.pet.entity.Pet;
-import shop.petmily.domain.petsitter.entity.Petsitter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -25,16 +26,20 @@ public class Reservation {
     private String body;
 
     @Column(nullable = false)
-    private String reservationTimeStart;
+    private Timestamp reservationTimeStart;
 
     @Column(nullable = false)
-    private String reservationTimeEnd;
+    private Timestamp reservationTimeEnd;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime lastModifiedAt;
+
+    @OneToMany(mappedBy = "reservation")
+    private List<ReservationPet> pet = new ArrayList<>();
+
 
     @Enumerated(EnumType.STRING)
     private Progress progress;
@@ -44,8 +49,4 @@ public class Reservation {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // 펫시터 정보
-    @ManyToOne
-    @JoinColumn(name = "petsitter_id")
-    private Petsitter petsitter;
 }

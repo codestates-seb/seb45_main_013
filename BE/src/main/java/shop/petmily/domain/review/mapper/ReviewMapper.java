@@ -18,7 +18,6 @@ public interface ReviewMapper {
     Review reviewPatchToReview(ReviewPatchDto reviewPatchDto);
 
     @Mapping(source = "member.memberId", target = "memberId")
-    @Mapping(source = "petsitter.petsitterId", target = "petsitterId")
     @Mapping(source = "reservation.reservationId", target = "reservationId")
     ReviewResponseDto reviewToResponse(Review createdReview);
 }
