@@ -1,22 +1,39 @@
+import { useState } from 'react';
+import NavBarButton from '../buttons/NavBarButton';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
-import LinkButton from '../buttons/LinkButton';
 
 const Header = () => {
+  const [activeButton, setActiveButton] = useState('홈');
+  const handleNavButtonClick = (buttonText: string) => {
+    setActiveButton(buttonText);
+  };
   return (
     <Container>
       <HeaderContatiner>
-        <HeaderWrap>
-          <LogoContainer>
-            <HomeLink to={'/'}>
-              <LogoImg src="/imgs/Logo.svg" alt="logo" />
-            </HomeLink>
-          </LogoContainer>
-          <Nav>
-            <LinkButton text="로그인" link="/login" />
-            <LinkButton text="회원가입" link="/signup" />
-          </Nav>
-        </HeaderWrap>
+        <TopHeader>
+          <Link to="/">
+            <img src="/imgs/Logo.svg" alt="logo"></img>
+          </Link>
+          <NotiUserContainer>
+            <img src="/icons/Notification.svg" alt="notification_icon" width="24"></img>
+            <img src="/icons/User.svg" alt="user_icon" width="24"></img>
+          </NotiUserContainer>
+        </TopHeader>
+        <NavBar>
+          <NavBarButton isActive={activeButton === '홈'} onClick={() => handleNavButtonClick('홈')}>
+            홈
+          </NavBarButton>
+          <NavBarButton isActive={activeButton === '예약하기'} onClick={() => handleNavButtonClick('예약하기')}>
+            예약하기
+          </NavBarButton>
+          <NavBarButton isActive={activeButton === '예약현황'} onClick={() => handleNavButtonClick('예약현황')}>
+            예약현황
+          </NavBarButton>
+          <NavBarButton isActive={activeButton === '이용후기'} onClick={() => handleNavButtonClick('이용후기')}>
+            이용후기
+          </NavBarButton>
+        </NavBar>
       </HeaderContatiner>
     </Container>
   );
@@ -34,36 +51,28 @@ const Container = styled.header`
 `;
 const HeaderContatiner = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+
   width: 100%;
-  height: 52px;
-  padding: 10px 8px;
+  height: 84px;
+  padding: 12px 12px 0 12px;
   background-color: white;
+  justify-content: space-between;
   max-width: 600px;
-  border-bottom: 2px solid ${(props) => props.theme.colors.mainBlue};
+  box-shadow: ${(props) => props.theme.shadow.onlyBottom};
 `;
 
-const HeaderWrap = styled.div`
+const TopHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  background-color: ${(props) => props.theme.colors.white};
-  gap: 32px;
 `;
 
-const LogoContainer = styled.div`
+const NotiUserContainer = styled.nav`
   display: flex;
+  gap: 12px;
 `;
 
-const LogoImg = styled.img``;
-
-const Nav = styled.nav`
+const NavBar = styled.nav`
   display: flex;
-  align-items: center;
-  gap: 4px;
-`;
-
-const HomeLink = styled(Link)`
-  display: flex;
-  align-items: center;
+  justify-content: space-around;
 `;

@@ -10,7 +10,7 @@ const BackButton = () => {
   const navigate = useNavigate();
   return (
     <StyledBackButton onClick={() => navigate(-1)}>
-      <img src="/icons/BackButton.svg" alt="back" />
+      <img src="/icons/BackButton.svg" alt="back" width="20" />
     </StyledBackButton>
   );
 };

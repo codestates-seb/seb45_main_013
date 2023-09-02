@@ -1,7 +1,8 @@
 import { styled } from 'styled-components';
 import { Link } from 'react-router-dom';
+import GoogleOAuthButton from '../components/buttons/OAuthButton';
 
-const MainContainer = styled.div`
+const MainContainer = styled.main`
   display: flex;
   justify-content: center;
   height: 100%;
@@ -35,7 +36,7 @@ const ButtonContainer = styled.div`
   gap: 12px;
 `;
 
-const LoginButton = styled.button`
+export const SubmitButtonStyle = styled.button`
   height: 32px;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.mainBlue};
@@ -43,6 +44,7 @@ const LoginButton = styled.button`
   color: white;
 
   ${(props) => props.theme.fontSize.s16h24};
+  font-weight: ${(props) => props.theme.fontWeights.bold};
   &:hover {
     background-color: ${(props) => props.theme.colors.subBlue};
   }
@@ -50,33 +52,6 @@ const LoginButton = styled.button`
   &:active {
     background-color: ${(props) => props.theme.colors.darkBlue};
     box-shadow: ${(props) => props.theme.shadow.inset};
-  }
-`;
-
-const GoogleOAuthButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 32px;
-  padding-right: 20px;
-  padding-left: 12px;
-  border: 1px solid ${(props) => props.theme.textColors.gray40};
-  border-radius: 8px;
-  color: ${(props) => props.theme.textColors.gray60};
-  background-color: white;
-
-  &:hover {
-    background-color: ${(props) => props.theme.textColors.primary};
-  }
-
-  &:active {
-    background-color: ${(props) => props.theme.textColors.gray50};
-    box-shadow: ${(props) => props.theme.shadow.inset};
-  }
-
-  div {
-    color: ${(props) => props.theme.textColors.gray40};
-    ${(props) => props.theme.fontSize.s16h24};
   }
 `;
 
@@ -108,11 +83,8 @@ const Login = () => {
           <LoginInputStyle type="password" placeholder="비밀번호" />
         </InputContainer>
         <ButtonContainer>
-          <LoginButton>로 그 인</LoginButton>
-          <GoogleOAuthButton>
-            <img src="/imgs/GoogleLogo.svg" alt="google logo" width="24"></img>
-            <div>Sign in with Google</div>
-          </GoogleOAuthButton>
+          <SubmitButtonStyle>로 그 인</SubmitButtonStyle>
+          <GoogleOAuthButton>Login with Google</GoogleOAuthButton>
         </ButtonContainer>
         <LinkContainer>
           <Link to="/signup">회원가입하기</Link>
