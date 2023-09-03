@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 const StyledLinkButton = styled.button<{ fontSize: string }>`
   display: flex;

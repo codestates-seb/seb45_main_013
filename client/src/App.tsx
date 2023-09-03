@@ -1,5 +1,5 @@
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 import NavHeader from './components/headers/NavHeader';
 import Home from './pages/Home';

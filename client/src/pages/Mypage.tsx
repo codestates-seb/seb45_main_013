@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import { useState } from 'react';
 import MyPetmily from '../components/MyPetmily';
 
@@ -142,7 +142,7 @@ const Mypage = () => {
             <HelloText>안녕하세요!</HelloText>
           </TextField>
         </MyProfile>
-        <EditLink href="/edit/myprofile">회원정보 수정</EditLink>
+        <EditLink href="mypage/edit">회원정보 수정</EditLink>
       </MyProfileContianer>
 
       <MenuContainer>

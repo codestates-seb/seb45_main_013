@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import { SubmitButtonStyle } from './Login';
 import GoogleOAuthButton from '../components/buttons/OAuthButton';
 
