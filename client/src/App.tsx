@@ -1,7 +1,7 @@
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { styled } from 'styled-components';
 
-import Header from './components/headers/Header';
+import NavHeader from './components/headers/NavHeader';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -11,6 +11,7 @@ import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
 import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
+import Header from './components/headers/Header';
 
 const Container = styled.div`
   display: flex;
@@ -24,7 +25,16 @@ const Container = styled.div`
   }
 `;
 
-const AddHeaderLayout = () => {
+const AddNavHeaderLayout = () => {
+  return (
+    <>
+      <NavHeader />
+      <Outlet />
+    </>
+  );
+};
+
+const HeaderLayout = () => {
   return (
     <>
       <Header />
@@ -47,16 +57,19 @@ function App() {
     <Container>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AddHeaderLayout />}>
+          <Route path="/" element={<AddNavHeaderLayout />}>
             <Route path="" element={<Home />}></Route>
+          </Route>
+          <Route path="/" element={<HeaderLayout />}>
+            <Route path="mypage" element={<Mypage />}></Route>
           </Route>
           <Route path="/" element={<BackHeaderLayout />}>
             <Route path="login" element={<Login />}></Route>
             <Route path="signup" element={<Signup />}></Route>
+            <Route path="mypage/edit" element={<EditUserProfile />}></Route>
+            <Route path="mypage/:petId/edit" element={<EditUserProfile />}></Route>
           </Route>
           <Route path="/main" element={<Main />}></Route>
-          <Route path="/mypage" element={<Mypage />}></Route>
-          <Route path="/edit/myprofile" element={<EditUserProfile />}></Route>
           <Route path="/cares/:memberId" element={<Reservation />}></Route>
           <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
           <Route path="/cares/:petsitterId" element={<Cares />}></Route>

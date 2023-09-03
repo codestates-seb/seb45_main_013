@@ -2,29 +2,30 @@ import { styled } from 'styled-components';
 import { useState } from 'react';
 import MyPetmily from '../components/MyPetmily';
 
-const Container = styled.div`
-  height: 100%;
-  margin-top: 52px;
-`;
-
-// Q: 호버시 이미지 색상 변화
+// Q: 호버시 이미지 색상
+// 폰트 사이즈, 웨이트 안먹힘
 // 아이콘 메뉴 간격
 // 회원정보 수정 페이지
 
 // 전체 페이지
-const MypageContainer = styled.div`
+const MypageContainer = styled.main`
   width: 100%;
   height: 100%;
-  padding: 60px;
-  background-color: ${(props) => props.theme.colors.white};
+  padding: 36px;
+  background-color: white;
 `;
 
 // 유저 컨테이너
 const MyProfileContianer = styled.div`
   display: flex;
+  justify-content: space-between;
   width: 100%;
   height: auto;
   margin-bottom: 30px;
+`;
+
+const MyProfile = styled.div`
+  display: flex;
 `;
 
 const MyPhoto = styled.img`
@@ -41,23 +42,22 @@ const TextField = styled.div`
 `;
 
 const NameText = styled.div`
-  /* font-size: 20px;
-  font-weight: 700;
-  font-family: 'Noto Sans'; */
-  font-weight: ${(props) => props.theme.fontWeights.bold};
   ${(props) => props.theme.fontSize.s20h30};
+  font-weight: 600;
 `;
 
 const HelloText = styled.div`
-  ${(props) => props.theme.fontSize.s20h30};
+  ${(props) => props.theme.fontSize.s16h24};
   font-weight: 600;
+  display: flex;
+  justify-content: space-between;
 `;
 
 // 메뉴 컨테이너
 const MenuContainer = styled.div`
   display: flex;
   justify-content: space-around;
-  margin-bottom: 30px;
+  margin-top: 60px;
 `;
 
 const MenuItem = styled.button`
@@ -68,6 +68,7 @@ const MenuItem = styled.button`
   border: none;
   text-align: center;
   cursor: pointer;
+  background-color: white;
 
   &:hover {
     color: ${(props) => props.theme.colors.mainBlue};
@@ -113,6 +114,9 @@ const EditLink = styled.a`
   font-size: 14px;
   text-decoration: underline;
   cursor: pointer;
+  text-decoration-line: none;
+  padding-top: 20px;
+  color: ${(props) => props.theme.colors.mainBlue};
 `;
 
 const Mypage = () => {
@@ -128,14 +132,17 @@ const Mypage = () => {
   return (
     <MypageContainer>
       <MyProfileContianer>
-        <MyPhoto
-          src="https://brandsmkt.com/wp-content/uploads/2020/06/dog-lover-760x506-1-696x463.jpg"
-          alt="user profile image"
-        />
-        <TextField>
-          <NameText>김코딩 님</NameText>
-          <HelloText>안녕하세요!</HelloText>
-        </TextField>
+        <MyProfile>
+          <MyPhoto
+            src="https://brandsmkt.com/wp-content/uploads/2020/06/dog-lover-760x506-1-696x463.jpg"
+            alt="user profile image"
+          />
+          <TextField>
+            <NameText>김코딩 님</NameText>
+            <HelloText>안녕하세요!</HelloText>
+          </TextField>
+        </MyProfile>
+        <EditLink href="/edit/myprofile">회원정보 수정</EditLink>
       </MyProfileContianer>
 
       <MenuContainer>
@@ -149,7 +156,6 @@ const Mypage = () => {
           </MenuItem>
         ))}
       </MenuContainer>
-      <EditLink href="/edit/myprofile">회원정보 수정</EditLink>
       <MyPetmily />
     </MypageContainer>
   );

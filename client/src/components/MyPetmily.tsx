@@ -20,6 +20,7 @@ const petmily = [
 const PetmilyContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 60px;
 `;
 
 const TextContainer = styled.div`
@@ -39,6 +40,7 @@ const PetsButton = styled.button`
   height: 18px;
   border: none;
   cursor: pointer;
+  background-color: white;
 `;
 
 // 등록된 petmily 카드
@@ -117,9 +119,11 @@ const MyPetmily = () => {
       {petmily.length > 0 ? (
         <PetmilyCard>
           {/* <CatOrDog src="imgs/CatIcon.svg" alt="Img" /> */}
-          <PetsButton /*onClick={handleEditPets}*/>
-            <img src="imgs/Edit.svg" alt="AddPets" />
-          </PetsButton>
+          <div style={{ display: 'flex', justifyContent: 'end', padding: '4px' }}>
+            <PetsButton /*onClick={handleEditPets}*/>
+              <img src="imgs/Edit.svg" alt="EditPets" />
+            </PetsButton>
+          </div>
           <PetInfoContainer>
             <PetImg
               src="https://mblogthumb-phinf.pstatic.net/20160809_55/aplusah7582_1470731982453vnYwJ_JPEG/image_1691272651470727942346.jpg?type=w800"
