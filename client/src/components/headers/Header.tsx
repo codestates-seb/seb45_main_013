@@ -52,11 +52,12 @@ const Container = styled.header`
 const HeaderContatiner = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+
   width: 100%;
   height: 84px;
-  padding: 12px 12px 0;
+  padding: 12px 12px 0 12px;
   background-color: white;
+  justify-content: space-between;
   max-width: 600px;
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
 `;

@@ -2,6 +2,11 @@ import { styled } from 'styled-components';
 import { useState } from 'react';
 import MyPetmily from '../components/MyPetmily';
 
+const Container = styled.div`
+  height: 100%;
+  margin-top: 52px;
+`;
+
 // Q: 호버시 이미지 색상 변화
 // 아이콘 메뉴 간격
 // 회원정보 수정 페이지
