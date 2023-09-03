@@ -14,6 +14,8 @@ export const defaultTheme = {
     gray00: '#1A1A1A',
     gray10: '#2E2E2E',
     gray30: '#595959',
+    gray40: '#757575',
+    gray50: '#B5B5B5',
     gray60: '#A6A6A6',
     primary: '#D9D9D9',
   },
@@ -47,6 +49,14 @@ export const defaultTheme = {
     light: 400,
     normal: 500,
     bold: 600,
+  },
+  shadow: {
+    onlyBottom: '0px 4px 4px rgba(39,44, 86, 0.06)',
+    dp01: '0px 10px 34px 0px rgba(39, 44, 86, 0.08)',
+    dp02: '0px 4px 12px 0px rgba(39, 44, 86, 0.12)',
+    dp03: '0px 12px 60px 0px rgba(39, 44, 86, 0.10)',
+    dp04: 'box-shadow: 0px 35px 64px 0px rgba(39, 44, 86, 0.24)',
+    inset: '0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset',
   },
 };
 

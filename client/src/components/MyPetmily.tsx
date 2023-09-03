@@ -1,5 +1,4 @@
 import { styled } from 'styled-components';
-import Button from '../components/Button';
 
 // 펫 없을 때 버튼 (버튼 컴포넌트 props에 스타일 추가)
 
@@ -29,11 +28,10 @@ const TextContainer = styled.div`
 `;
 
 const Text = styled.div`
-  margin-bottom: 12px;
+  margin-bottom: 30px;
   font-weight: 700;
   font-size: 18px;
   font-family: 'Noto Sans';
-  margin-bottom: 30px;
 `;
 
 const PetsButton = styled.button`
@@ -89,8 +87,9 @@ const PetInfo = styled.div`
 const NoPetsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  text-align: center;
   align-items: center;
+  text-align: center;
+
   & > div {
     margin-bottom: 30px;
   }
@@ -135,7 +134,7 @@ const MyPetmily = () => {
         <NoPetsContainer>
           <div>등록된 펫밀리가 없습니다.</div>
           <div>프로필을 등록하면 빠른 예약이 가능해요!</div>
-          <Button text="등록하기" /*link=""*/ style={{ width: '30%', height: '30px' }} />
+          <button>등록하기</button>
         </NoPetsContainer>
       )}
     </PetmilyContainer>

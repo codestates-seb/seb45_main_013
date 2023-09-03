@@ -1,7 +1,7 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { styled } from 'styled-components';
 
-import Header from './components/Header';
+import Header from './components/headers/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -10,8 +10,7 @@ import Mypage from './pages/Mypage';
 import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
 import Cares from './pages/Cares';
-import SignupMembers from './pages/SignupMembers';
-import SignupPetsitter from './pages/SignupPetsitter';
+import BackHeader from './components/headers/BackHeader';
 
 const Container = styled.div`
   display: flex;
@@ -25,17 +24,36 @@ const Container = styled.div`
   }
 `;
 
+const AddHeaderLayout = () => {
+  return (
+    <>
+      <Header />
+      <Outlet />
+    </>
+  );
+};
+
+const BackHeaderLayout = () => {
+  return (
+    <>
+      <BackHeader />
+      <Outlet />
+    </>
+  );
+};
+
 function App() {
   return (
     <Container>
       <BrowserRouter>
-        <Header />
         <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/signup/members" element={<SignupMembers />}></Route>
-          <Route path="/signup/petsitter" element={<SignupPetsitter />}></Route>
+          <Route path="/" element={<AddHeaderLayout />}>
+            <Route path="" element={<Home />}></Route>
+          </Route>
+          <Route path="/" element={<BackHeaderLayout />}>
+            <Route path="login" element={<Login />}></Route>
+            <Route path="signup" element={<Signup />}></Route>
+          </Route>
           <Route path="/main" element={<Main />}></Route>
           <Route path="/mypage" element={<Mypage />}></Route>
           <Route path="/edit/myprofile" element={<EditUserProfile />}></Route>

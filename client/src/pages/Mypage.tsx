@@ -2,17 +2,16 @@ import { styled } from 'styled-components';
 import { useState } from 'react';
 import MyPetmily from '../components/MyPetmily';
 
-// ${(props) => props.theme.colors.white}
 // Q: 호버시 이미지 색상 변화
 // 아이콘 메뉴 간격
 // 회원정보 수정 페이지
 
 // 전체 페이지
 const MypageContainer = styled.div`
-  background-color: ${(props) => props.theme.colors.white};
   width: 100%;
   height: 100%;
   padding: 60px;
+  background-color: ${(props) => props.theme.colors.white};
 `;
 
 // 유저 컨테이너
@@ -26,8 +25,8 @@ const MyProfileContianer = styled.div`
 const MyPhoto = styled.img`
   width: 60px;
   height: 60px;
-  border-radius: 50%;
   margin-right: 20px;
+  border-radius: 50%;
 `;
 
 const TextField = styled.div`
@@ -40,8 +39,8 @@ const NameText = styled.div`
   /* font-size: 20px;
   font-weight: 700;
   font-family: 'Noto Sans'; */
+  font-weight: ${(props) => props.theme.fontWeights.bold};
   ${(props) => props.theme.fontSize.s20h30};
-  ${(props) => props.theme.fontWeights.bold};
 `;
 
 const HelloText = styled.div`
@@ -57,13 +56,14 @@ const MenuContainer = styled.div`
 `;
 
 const MenuItem = styled.button`
-  text-align: center;
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 1;
   border: none;
+  text-align: center;
   cursor: pointer;
+
   &:hover {
     color: ${(props) => props.theme.colors.mainBlue};
   }
@@ -97,17 +97,17 @@ const menuItems = [
 ];
 
 const Title = styled.span`
-  font-size: 14px;
   margin-top: 10px;
+  font-size: 14px;
 `;
 
 const EditLink = styled.a`
-  font-size: 14px;
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 30px;
+  font-size: 14px;
   text-decoration: underline;
   cursor: pointer;
-  margin-bottom: 30px;
 `;
 
 const Mypage = () => {
