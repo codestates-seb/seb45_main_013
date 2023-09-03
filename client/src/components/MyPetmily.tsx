@@ -1,20 +1,46 @@
 import { styled } from 'styled-components';
-import { IconButton, Icon } from './IconButton';
+import Button from '../components/Button';
+
+// 펫 없을 때 버튼 (버튼 컴포넌트 props에 스타일 추가)
+
+// 지우기
+// const petmily = [];
+const petmily = [
+  {
+    pet: 'dog',
+    id: 3,
+    sex: 'boy',
+    name: 'Hotdog',
+    age: 4,
+    weight: '9kg',
+    species: 'poodle',
+  },
+];
 
 // petmily 카드 컨테이너
-const Container = styled.div`
+const PetmilyContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  height: calc(100vh-52px);
-  background-color: ${(props) => props.theme.colors.white};
+`;
+
+const TextContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Text = styled.div`
   margin-bottom: 12px;
-  color: ${(props) => props.theme.textColors.gray30};
-  font-weight: 800;
-  font-size: ${(props) => props.theme.fontSize.s16h24};
+  font-weight: 700;
+  font-size: 18px;
+  font-family: 'Noto Sans';
+  margin-bottom: 30px;
+`;
+
+const PetsButton = styled.button`
+  width: 18px;
+  height: 18px;
+  border: none;
+  cursor: pointer;
 `;
 
 // 등록된 petmily 카드
@@ -28,11 +54,11 @@ const PetmilyCard = styled.div`
 `;
 
 // 강아지 or 고양이
-const CatOrDog = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-left: 8px;
-`;
+// const CatOrDog = styled.img`
+//   width: 30px;
+//   height: 30px;
+//   margin-left: 8px;
+// `;
 
 const PetInfoContainer = styled.div`
   display: flex;
@@ -52,64 +78,67 @@ const PetInfo = styled.div`
   font-size: ${(props) => props.theme.fontSize.s14h21};
 `;
 
-// 버튼 컨테이너 (수정, 삭제)
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-`;
+// 버튼 컨테이너 (수정, 삭제) -> 수정만??
+// const ButtonContainer = styled.div`
+//   display: flex;
+//   justify-content: flex-end;
+//   gap: 10px;
+// `;
 
-// 펫 추가 버튼 가운데
-const AddPet = styled.div`
+// 반려동물이 없을 때
+const NoPetsContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  text-align: center;
   align-items: center;
-  justify-content: center;
-  margin-top: 16px;
+  & > div {
+    margin-bottom: 30px;
+  }
 `;
-
-// 유저의 펫 수 만큼 카드 만들기
-// 버튼 함수 작성하기
 
 const MyPetmily = () => {
-  /* const handleEdit = () => {
+  /* const handleEditPets = () => {
   };
 
-  const handleDelete = () => {
-  };
 
   const handleAddPets = () => {
   };
    */
   return (
-    <Container>
-      <Text>나의 Petmily</Text>
-      <PetmilyCard>
-        <CatOrDog src="imgs/CatIcon.svg" alt="Img" />
-        <PetInfoContainer>
-          <PetImg
-            src="https://m.hollycat.co.kr/web/product/medium/202109/f5443b4361cbebfde529f9d29577b705.jpg"
-            alt="Img"
-          />
-          <PetInfo>🚺 / 냥이</PetInfo>
-          <PetInfo>브리티시 숏헤어</PetInfo>
-          <PetInfo>16살 / 12kg</PetInfo>
-        </PetInfoContainer>
-        <ButtonContainer>
-          <IconButton /*onClick={handleEdit}*/>
-            <Icon src="imgs/EditIcon.svg" alt="Icon" />
-          </IconButton>
-          <IconButton /*onClick={handleDelete}*/>
-            <Icon src="imgs/DeleteIcon.svg" alt="Icon" />
-          </IconButton>
-        </ButtonContainer>
-      </PetmilyCard>
+    <PetmilyContainer>
+      <TextContainer>
+        <Text>나의 Petmily</Text>
+        {petmily.length > 0 && (
+          <PetsButton /*onClick={handleAddPets}*/>
+            <img src="imgs/Plus.svg" alt="AddPets" />
+          </PetsButton>
+        )}
+      </TextContainer>
 
-      <AddPet>
-        <IconButton /*onClick={handleAddPets}*/>
-          <Icon src="imgs/PlusIcon.svg" alt="Icon" />
-        </IconButton>
-      </AddPet>
-    </Container>
+      {petmily.length > 0 ? (
+        <PetmilyCard>
+          {/* <CatOrDog src="imgs/CatIcon.svg" alt="Img" /> */}
+          <PetsButton /*onClick={handleEditPets}*/>
+            <img src="imgs/Edit.svg" alt="AddPets" />
+          </PetsButton>
+          <PetInfoContainer>
+            <PetImg
+              src="https://mblogthumb-phinf.pstatic.net/20160809_55/aplusah7582_1470731982453vnYwJ_JPEG/image_1691272651470727942346.jpg?type=w800"
+              alt="Img"
+            />
+            <PetInfo>냥이 / 여아 </PetInfo>
+            <PetInfo>브리티시 숏헤어</PetInfo>
+            <PetInfo>16살 / 12kg</PetInfo>
+          </PetInfoContainer>
+        </PetmilyCard>
+      ) : (
+        <NoPetsContainer>
+          <div>등록된 펫밀리가 없습니다.</div>
+          <div>프로필을 등록하면 빠른 예약이 가능해요!</div>
+          <Button text="등록하기" /*link=""*/ style={{ width: '30%', height: '30px' }} />
+        </NoPetsContainer>
+      )}
+    </PetmilyContainer>
   );
 };
 

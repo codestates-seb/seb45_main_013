@@ -32,9 +32,10 @@ interface ButtonProps {
   fontSize?: string;
   link?: string;
   size?: string;
+  style?: React.CSSProperties;
 }
 
-const Button = ({ text, usage, link, fontSize = '14' }: ButtonProps) => {
+const Button = ({ text, usage, link, fontSize = '14', style }: ButtonProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     if (link) {
@@ -42,7 +43,7 @@ const Button = ({ text, usage, link, fontSize = '14' }: ButtonProps) => {
     }
   };
   return (
-    <StyledButton fontSize={fontSize} usage={usage} onClick={handleClick}>
+    <StyledButton fontSize={fontSize} usage={usage} onClick={handleClick} style={style}>
       {usage === 'google' ? <img src="/imgs/GoogleLogo.svg" alt="hi"></img> : null}
       <div style={{ flexShrink: 0 }}>{text}</div>
     </StyledButton>
