@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Main from './pages/Main';
 import Mypage from './pages/Mypage';
+import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
 import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
@@ -55,6 +56,7 @@ function App() {
           </Route>
           <Route path="/main" element={<Main />}></Route>
           <Route path="/mypage" element={<Mypage />}></Route>
+          <Route path="/edit/myprofile" element={<EditUserProfile />}></Route>
           <Route path="/cares/:memberId" element={<Reservation />}></Route>
           <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
           <Route path="/cares/:petsitterId" element={<Cares />}></Route>

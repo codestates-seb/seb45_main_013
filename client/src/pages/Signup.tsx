@@ -44,7 +44,6 @@ const SignupContainer = styled.div`
   flex-direction: column;
   position: absolute;
   top: 20%;
-
   width: 260px;
 `;
 
@@ -70,7 +69,6 @@ const ImgContainer = styled.div`
 const InputConatiner = styled.div`
   display: flex;
   flex-direction: column;
-
   gap: 16px;
 `;
 
