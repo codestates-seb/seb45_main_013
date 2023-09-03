@@ -2,7 +2,30 @@ import { styled } from 'styled-components';
 import { Link } from 'react-router-dom';
 import GoogleOAuthButton from '../components/buttons/OAuthButton';
 
-const MainContainer = styled.main`
+const Login = () => {
+  return (
+    <MainContainer>
+      <LoginContainer>
+        <img src="/imgs/Logo.svg" alt="logo" width="150px" height="48px" />
+        <InputContainer>
+          <LoginInputStyle placeholder="아이디" />
+          <LoginInputStyle type="password" placeholder="비밀번호" />
+        </InputContainer>
+        <ButtonContainer>
+          <SubmitButtonStyle>로 그 인</SubmitButtonStyle>
+          <GoogleOAuthButton>Log in with Google</GoogleOAuthButton>
+        </ButtonContainer>
+        <LinkContainer>
+          <Link to="/signup">회원가입하기</Link>
+        </LinkContainer>
+      </LoginContainer>
+    </MainContainer>
+  );
+};
+
+export default Login;
+
+const MainContainer = styled.div`
   display: flex;
   justify-content: center;
   height: 100%;
@@ -72,26 +95,3 @@ const LoginInputStyle = styled.input`
   border: 1px solid ${(props) => props.theme.colors.mainBlue};
   ${(props) => props.theme.fontSize.s14h21};
 `;
-
-const Login = () => {
-  return (
-    <MainContainer>
-      <LoginContainer>
-        <img src="/imgs/Logo.svg" alt="logo" width="150px" height="48px" />
-        <InputContainer>
-          <LoginInputStyle placeholder="아이디" />
-          <LoginInputStyle type="password" placeholder="비밀번호" />
-        </InputContainer>
-        <ButtonContainer>
-          <SubmitButtonStyle>로 그 인</SubmitButtonStyle>
-          <GoogleOAuthButton>Login with Google</GoogleOAuthButton>
-        </ButtonContainer>
-        <LinkContainer>
-          <Link to="/signup">회원가입하기</Link>
-        </LinkContainer>
-      </LoginContainer>
-    </MainContainer>
-  );
-};
-
-export default Login;
