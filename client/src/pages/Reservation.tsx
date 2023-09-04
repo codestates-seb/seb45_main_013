@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import Button from '../components/buttons/LinkButton';
 
 const MainContainer = styled.div`

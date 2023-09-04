@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 // 펫 없을 때 버튼 (버튼 컴포넌트 props에 스타일 추가)
 
