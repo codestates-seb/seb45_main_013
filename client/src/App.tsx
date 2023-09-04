@@ -1,5 +1,5 @@
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 import NavHeader from './components/headers/NavHeader';
 import Home from './pages/Home';
@@ -59,7 +59,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AddNavHeaderLayout />}>
-            <Route path="" element={<Home />}></Route>
+            <Route path="/home" element={<Home />}></Route>
           </Route>
           <Route path="/" element={<HeaderLayout />}>
             <Route path="mypage" element={<Mypage />}></Route>

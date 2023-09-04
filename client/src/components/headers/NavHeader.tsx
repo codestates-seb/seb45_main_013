@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import NavBarButton from '../buttons/NavBarButton';
 import { Link } from 'react-router-dom';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 const NavHeader = () => {
   const [activeButton, setActiveButton] = useState('홈');
