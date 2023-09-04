@@ -4,10 +4,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.MemberRepository;
+import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
+import shop.petmily.domain.reservation.entity.ReservationPet;
+import shop.petmily.domain.reservation.repository.ReservationPetRepository;
 import shop.petmily.domain.reservation.repository.ReservationRepository;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
@@ -25,41 +30,51 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final PetsitterRepository petsitterRepository;
+    private final ReservationPetRepository reservationPetRepository;
 
     public ReservationService(ReservationRepository reservationRepository,
                               MemberRepository memberRepository,
-                              MemberService memberService) {
+                              MemberService memberService,
+                              PetsitterRepository petsitterRepository,
+                              ReservationPetRepository reservationPetRepository) {
         this.reservationRepository = reservationRepository;
         this.memberRepository = memberRepository;
         this.memberService = memberService;
+        this.petsitterRepository = petsitterRepository;
+        this.reservationPetRepository = reservationPetRepository;
     }
 
-//    public List<Petsitter> findReservationPossiblePetsitter(Reservation reservation){
-//
-//        LocalDate localDate = reservation.getReservationTimeStart().toLocalDateTime().toLocalDate();
-//        String day = localDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
-//
-//        List<Petsitter> dayPossiblePetsitters = petsitterRepository.findByPossibleDayContaining(day);
-//
-//        LocalTime reservationStartTime = reservation.getReservationTimeStart().toLocalDateTime().toLocalTime();
-//        LocalTime reservationEndTime = reservation.getReservationTimeEnd().toLocalDateTime().toLocalTime();
-//
-//        if (reservationStartTime.isAfter(reservationEndTime)||(reservationStartTime.equals(reservationEndTime))) {
-//            throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
-//        }
-//
-//        List<Petsitter> AllPossiblePetsitters = new ArrayList<>();
-//        for (Petsitter petsitter : dayPossiblePetsitters) {
-//            LocalTime petsitterPossibleTimeStart = petsitter.getPossibleTimeStart().toLocalTime();
-//            LocalTime petsitterPossibleTimeEnd = petsitter.getPossibleTimeEnd().toLocalTime();
-//
-//            if ((petsitterPossibleTimeStart.equals(reservationStartTime) || petsitterPossibleTimeStart.isBefore(reservationStartTime)) &&
-//                    (petsitterPossibleTimeEnd.equals(reservationEndTime) || petsitterPossibleTimeEnd.isAfter(reservationEndTime))) {
-//                AllPossiblePetsitters.add(petsitter);
-//            }
-//        }
-//        return AllPossiblePetsitters;
-//    }
+    public List<Petsitter> findReservationPossiblePetsitter(Reservation reservation){
+
+        LocalDate localDate = reservation.getReservationTimeStart().toLocalDateTime().minusHours(9).toLocalDate();
+        String day = localDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+
+        List<Petsitter> dayPossiblePetsitters = petsitterRepository.findByPossibleDayContaining(day);
+
+        LocalTime reservationStartTime = reservation.getReservationTimeStart().toLocalDateTime().toLocalTime().minusHours(9);
+        LocalTime reservationEndTime = reservation.getReservationTimeEnd().toLocalDateTime().toLocalTime().minusHours(9);
+
+        if (reservationStartTime.isAfter(reservationEndTime)||(reservationStartTime.equals(reservationEndTime))) {
+            throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
+        }
+
+        List<Petsitter> allPossiblePetsitters = new ArrayList<>();
+        for (Petsitter petsitter : dayPossiblePetsitters) {
+            LocalTime petsitterPossibleTimeStart = petsitter.getPossibleTimeStart().toLocalTime();
+            LocalTime petsitterPossibleTimeEnd = petsitter.getPossibleTimeEnd().toLocalTime();
+
+            if ((petsitterPossibleTimeStart.equals(reservationStartTime) || petsitterPossibleTimeStart.isBefore(reservationStartTime)) &&
+                    (petsitterPossibleTimeEnd.equals(reservationEndTime) || petsitterPossibleTimeEnd.isAfter(reservationEndTime))) {
+                allPossiblePetsitters.add(petsitter);
+            }
+        }
+
+        reservation.setProgress(Progress.BEFORE_PETSITTER_SELECTION);
+        reservationRepository.save(reservation);
+
+        return allPossiblePetsitters;
+    }
 
     // 예약 등록
     public Reservation createReservation(Reservation reservation) {
@@ -78,7 +93,8 @@ public class ReservationService {
     public Reservation findReservation(long reservationId) {
         Reservation reservation = findVerifiedReservation(reservationId);
 
-        reservationRepository.save(reservation);
+        reservation.setReservationPets(
+                reservationPetRepository.findByReservation_ReservationId(reservation.getReservationId()));
 
         return reservation;
     }

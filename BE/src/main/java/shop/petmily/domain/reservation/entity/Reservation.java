@@ -2,7 +2,9 @@ package shop.petmily.domain.reservation.entity;
 
 import lombok.*;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.pet.entity.Pet;
+import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -16,8 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Reservation {
-    // 예약 정보
+public class Reservation extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reservationId;
@@ -25,28 +26,31 @@ public class Reservation {
     @Column(length = 500, nullable = false)
     private String body;
 
+    @Column
+    private String phone;
+
+    @Column
+    private String adress;
+
     @Column(nullable = false)
     private Timestamp reservationTimeStart;
 
     @Column(nullable = false)
     private Timestamp reservationTimeEnd;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.PERSIST)
+    private List<ReservationPet> ReservationPets = new ArrayList<>();
 
-    @Column(nullable = false)
-    private LocalDateTime lastModifiedAt;
-
-    @OneToMany(mappedBy = "reservation")
-    private List<ReservationPet> pet = new ArrayList<>();
-
+    public void addReservationPets(ReservationPet reservationPet) {ReservationPets.add(reservationPet);}
 
     @Enumerated(EnumType.STRING)
     private Progress progress;
 
-    // 회원(예약자) 정보
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "petsitter_id")
+    private Petsitter petsitter;
 }

@@ -1,5 +1,5 @@
-INSERT INTO "MEMBER" (address, create_at, nick_name, email, petsitter_boolean, last_modified_at, name, password, phone, status) VALUES
-('서울시 강남구 강남1로 1 101호', NOW(), '백구아빠', 'test1@email.com', false, NOW(), '홍길동',  'password1234', '01011111111', 'MEMBER_ACTIVE');
+-- INSERT INTO "MEMBER" (address, create_at, nick_name, email, petsitter_boolean, last_modified_at, name, password, phone, status) VALUES
+-- ('서울시 강남구 강남1로 1 101호', NOW(), '백구아빠', 'test1@email.com', false, NOW(), '홍길동',  'password1234', '01011111111', 'MEMBER_ACTIVE');
 -- ('대전광역시 은행동 1로 2', NOW(), '냥이집사', 'test2@email.com', false, NOW(), '김철수',  'password1234', '010-2222-2222', 'MEMBER_ACTIVE'),
 -- ('대구광역시 신천로 3로 4', NOW(), '톰캣', 'test3@email.com', false, NOW(), '박영희',  'password1234', '010-3333-3333', 'MEMBER_ACTIVE'),
 -- ('부산광역시 해운대 101-1', NOW(), '톰과제리', 'test4@email.com', false, NOW(), '황철',  'password1234', '010-4444-4444', 'MEMBER_ACTIVE'),

@@ -11,10 +11,10 @@ import java.util.TimeZone;
 @EnableJpaAuditing
 public class PetmilyApplication {
 
-	@PostConstruct
-	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}
+//	@PostConstruct
+//	void started() {
+//		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+//	}
 	public static void main(String[] args) {
 		SpringApplication.run(PetmilyApplication.class, args);
 	}
