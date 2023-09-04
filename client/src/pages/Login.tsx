@@ -3,19 +3,19 @@ import { Link } from 'react-router-dom';
 import GoogleOAuthButton from '../components/buttons/OAuthButton';
 import { useForm } from 'react-hook-form';
 
-type Inputs = {
+interface IFormLoginInputs {
   id: string;
   password: string;
-};
+}
 
 const Login = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<IFormLoginInputs>();
 
-  const onSubmit = (data: Inputs) => {
+  const onSubmit = (data: IFormLoginInputs) => {
     console.log(data);
   };
   return (
@@ -30,7 +30,7 @@ const Login = () => {
               {...register('id', { required: true })}
               error={errors.id?.message}
             />
-            {errors.id && <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>}
+            {errors.id?.message === '' && <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <LoginInputStyle
@@ -39,7 +39,7 @@ const Login = () => {
               {...register('password', { required: true })}
               error={errors.password?.message}
             />
-            {errors.password && <ErrorMessage>비밀번호를 입력해주세요.</ErrorMessage>}
+            {errors.password?.message === '' && <ErrorMessage>비밀번호를 입력해주세요.</ErrorMessage>}
           </div>
           <SubmitButtonStyle type="submit">로 그 인</SubmitButtonStyle>
           <GoogleOAuthButton>Log in with Google</GoogleOAuthButton>
@@ -119,7 +119,7 @@ const LoginInputStyle = styled.input<{ error: string | undefined }>`
   ${(props) => props.theme.fontSize.s14h21};
 `;
 
-const ErrorMessage = styled.p`
+export const ErrorMessage = styled.p`
   padding-left: 4px;
   font-size: 10px;
   margin-top: 4px;
