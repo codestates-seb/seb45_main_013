@@ -11,9 +11,9 @@ spring:
     url: jdbc:mysql://${MYRDS_SECRET_URL}:3306/mainproject
     username: ${MYRDS_SECRET_ID}
     password: ${MYRDS_SECRET_PASSWORD}
- jpa:
-   show-sql: true
-   hibernate:
+  jpa:
+    show-sql: true
+    hibernate:
       ddl-auto: update
     properties:
       hibernate:
