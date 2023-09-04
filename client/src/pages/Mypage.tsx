@@ -111,12 +111,12 @@ const EditLink = styled.a`
   display: flex;
   justify-content: flex-end;
   margin-bottom: 30px;
+  padding-top: 20px;
+  color: ${(props) => props.theme.colors.mainBlue};
   font-size: 14px;
   text-decoration: underline;
   cursor: pointer;
   text-decoration-line: none;
-  padding-top: 20px;
-  color: ${(props) => props.theme.colors.mainBlue};
 `;
 
 const Mypage = () => {

@@ -3,8 +3,6 @@ import styled from 'styled-components';
 
 const NavBarButtonStyle = styled.button<{ children: React.ReactNode; isactive: string }>`
   flex-shrink: 0;
-  ${(props) => props.theme.fontSize.s14h21};
-  font-weight: ${(props) => props.theme.fontWeights.bold};
   padding: 8px;
   border: none;
   background-color: white;
