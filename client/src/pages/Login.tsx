@@ -81,7 +81,7 @@ const InputForm = styled.form`
 `;
 
 export const SubmitButtonStyle = styled.button`
-  margin-top: 16px;
+  margin-top: 12px;
   height: 32px;
   width: 100%;
   border-radius: 8px;
@@ -89,6 +89,7 @@ export const SubmitButtonStyle = styled.button`
   border: none;
   color: white;
   ${(props) => props.theme.fontSize.s16h24};
+  font-family: 'Noto Sans KR';
   font-weight: ${(props) => props.theme.fontWeights.bold};
 
   &:hover {
@@ -107,6 +108,7 @@ const LinkContainer = styled.div`
   a {
     font-size: ${(props) => props.theme.fontSize.s14h21};
     text-decoration-line: none;
+    color: ${(props) => props.theme.colors.mainBlue};
   }
 `;
 

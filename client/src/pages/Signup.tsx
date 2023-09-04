@@ -3,11 +3,15 @@ import { ErrorMessage, SubmitButtonStyle } from './Login';
 import GoogleOAuthButton from '../components/buttons/OAuthButton';
 import UploadProfileImg from '../components/UploadProfileImg';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { Modal, Sheet } from '@mui/joy';
+import DaumPostcode from 'react-daum-postcode';
 
 interface IFormSignpInputs {
   name: string;
   phoneNumber: number;
   address: string;
+  detailAddress: string;
   email: string;
   displayName: string;
   password: string;
@@ -15,16 +19,42 @@ interface IFormSignpInputs {
 }
 
 const Signup = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [sido, setSido] = useState('');
+  const [sigungu, setSigugu] = useState('');
+  const [remainAddress, setRemainAddress] = useState('');
+  const [zonecode, setZonecode] = useState('');
+  console.log(zonecode, sido, sigungu, remainAddress);
+
   const {
     register,
-
     handleSubmit,
     formState: { errors },
   } = useForm<IFormSignpInputs>();
-  console.log(errors);
+
+  const onToggleModal = () => {
+    setIsModalOpen(true);
+  };
+
   const onSubmit = (data: IFormSignpInputs) => {
     console.log(data);
   };
+
+  const handleComplete = (data: any) => {
+    console.log(data);
+    // 우편번호 저장
+    setZonecode(data.zonecode);
+    // 시.도 저장
+    setSido(data.sido);
+    // 구.군 저장
+    setSigugu(data.sigungu.length > 3 ? data.sigungu.split('').splice(0, 3).join('') : data.sigungu);
+    // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
+    const splitAddress = data.address.split(' ').splice(2).join(' ');
+    setRemainAddress(splitAddress);
+    setIsModalOpen(false);
+  };
+
   return (
     <MainContainer>
       <SignupContainer>
@@ -56,10 +86,20 @@ const Signup = () => {
           <div>
             <SignupInputStyle
               placeholder="주소"
+              value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
               {...register('address', { required: true })}
               error={errors.address?.message}
+              onClick={onToggleModal}
             ></SignupInputStyle>
             {errors.address?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+          </div>
+          <div>
+            <SignupInputStyle
+              placeholder="상세주소"
+              {...register('detailAddress', { required: true })}
+              error={errors.detailAddress?.message}
+            ></SignupInputStyle>
+            {errors.detailAddress?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -102,6 +142,17 @@ const Signup = () => {
           </ButtonContainer>
         </InputForm>
       </SignupContainer>
+      {isModalOpen && (
+        <Modal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Sheet sx={{ width: '360px;' }}>
+            <DaumPostcode onComplete={handleComplete} />
+          </Sheet>
+        </Modal>
+      )}
     </MainContainer>
   );
 };
@@ -160,6 +211,6 @@ const SignupInputStyle = styled.input<{ error: string | undefined }>`
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 24px;
+
   gap: 16px;
 `;
