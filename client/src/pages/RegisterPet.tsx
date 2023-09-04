@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 const RegisterPet = () => {
   const [isCat, setIsCat] = useState(false);
@@ -72,7 +72,7 @@ const RegisterPet = () => {
 };
 export default RegisterPet;
 
-const MainContainer = styled.main`
+export const MainContainer = styled.main`
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -106,7 +106,7 @@ const PetButton = styled.button<{ iscat: string }>`
     props.iscat === 'true' ? props.theme.textColors.gray50 : props.theme.colors.mainBlue};
 `;
 
-const InputContainer = styled.form`
+export const InputContainer = styled.form`
   display: flex;
   flex-direction: column;
   width: 288px;
@@ -114,17 +114,17 @@ const InputContainer = styled.form`
   gap: 24px;
 `;
 
-const RegisterInputWrapper = styled.div`
+export const RegisterInputWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
-const InputLabelStyle = styled.label`
+export const InputLabelStyle = styled.label`
   ${(props) => props.theme.fontSize.s14h21}
 `;
 
-const InputStyle = styled.input`
+export const InputStyle = styled.input`
   padding: 8px;
   height: 32px;
   width: 208px;
