@@ -130,6 +130,7 @@ const TitleContainer = styled.div`
   div:nth-child(1) {
     ${(props) => props.theme.fontSize.s12h18}
   }
+
   div:nth-child(2) {
     ${(props) => props.theme.fontSize.s16h24}
   }
@@ -159,5 +160,6 @@ const SignupInputStyle = styled.input<{ error: string | undefined }>`
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
+  padding-top: 24px;
   gap: 16px;
 `;

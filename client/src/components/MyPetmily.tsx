@@ -1,101 +1,11 @@
 import styled from 'styled-components';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
-// 펫 없을 때 버튼 (버튼 컴포넌트 props에 스타일 추가)
+// 버튼 수정
 
 // 지우기
-// const petmily = [];
-const petmily = [
-  {
-    pet: 'dog',
-    id: 3,
-    sex: 'boy',
-    name: 'Hotdog',
-    age: 4,
-    weight: '9kg',
-    species: 'poodle',
-  },
-];
-
-// petmily 카드 컨테이너
-const PetmilyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 60px;
-`;
-
-const TextContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const Text = styled.div`
-  margin-bottom: 30px;
-  font-weight: 700;
-  font-size: 18px;
-  font-family: 'Noto Sans';
-`;
-
-const PetsButton = styled.button`
-  width: 18px;
-  height: 18px;
-  border: none;
-  cursor: pointer;
-  background-color: white;
-`;
-
-// 등록된 petmily 카드
-const PetmilyCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 12px;
-  border-radius: 4px;
-  box-shadow: 0 2px 10px 0 #cdcdcd;
-`;
-
-// 강아지 or 고양이
-// const CatOrDog = styled.img`
-//   width: 30px;
-//   height: 30px;
-//   margin-left: 8px;
-// `;
-
-const PetInfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const PetImg = styled.img`
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-`;
-const PetInfo = styled.div`
-  margin-top: 4px;
-  color: ${(props) => props.theme.textColors.gray00};
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s14h21};
-`;
-
-// 버튼 컨테이너 (수정, 삭제) -> 수정만??
-// const ButtonContainer = styled.div`
-//   display: flex;
-//   justify-content: flex-end;
-//   gap: 10px;
-// `;
-
-// 반려동물이 없을 때
-const NoPetsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-
-  & > div {
-    margin-bottom: 30px;
-  }
-`;
+const petmily = [];
 
 const MyPetmily = () => {
   /* const handleEditPets = () => {
@@ -138,11 +48,82 @@ const MyPetmily = () => {
         <NoPetsContainer>
           <div>등록된 펫밀리가 없습니다.</div>
           <div>프로필을 등록하면 빠른 예약이 가능해요!</div>
-          <button>등록하기</button>
+          <Link to="/mypage/register">
+            <Button variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
+              등록하러 가기
+            </Button>
+          </Link>
         </NoPetsContainer>
       )}
     </PetmilyContainer>
   );
 };
+
+// petmily 카드 컨테이너
+const PetmilyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px;
+`;
+
+const TextContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const Text = styled.div`
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 18px;
+  font-family: 'Noto Sans';
+`;
+
+const PetsButton = styled.button`
+  width: 18px;
+  height: 18px;
+  border: none;
+  cursor: pointer;
+  background-color: white;
+`;
+
+// 등록된 petmily 카드
+const PetmilyCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px 0 #cdcdcd;
+`;
+
+const PetInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const PetImg = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+`;
+const PetInfo = styled.div`
+  margin-top: 4px;
+  color: ${(props) => props.theme.textColors.gray00};
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  font-size: ${(props) => props.theme.fontSize.s14h21};
+`;
+
+// 반려동물이 없을 때
+const NoPetsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  & > div {
+    margin-bottom: 30px;
+  }
+`;
 
 export default MyPetmily;

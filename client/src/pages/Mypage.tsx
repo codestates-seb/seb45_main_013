@@ -7,6 +7,48 @@ import MyPetmily from '../components/MyPetmily';
 // 아이콘 메뉴 간격
 // 회원정보 수정 페이지
 
+const Mypage = () => {
+  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+
+  const handleMouseOver = (itemId: number) => {
+    setHoveredItem(itemId);
+  };
+
+  const handleMouseOut = () => {
+    setHoveredItem(null);
+  };
+  return (
+    <MypageContainer>
+      <MyProfileContianer>
+        <MyProfile>
+          <MyPhoto
+            src="https://brandsmkt.com/wp-content/uploads/2020/06/dog-lover-760x506-1-696x463.jpg"
+            alt="user profile image"
+          />
+          <TextField>
+            <NameText>김코딩 님</NameText>
+            <HelloText>안녕하세요!</HelloText>
+          </TextField>
+        </MyProfile>
+        <EditLink href="mypage/edit">회원정보 수정</EditLink>
+      </MyProfileContianer>
+
+      <MenuContainer>
+        {menuItems.map((item) => (
+          <MenuItem key={item.id} onMouseOver={() => handleMouseOver(item.id)} onMouseOut={handleMouseOut}>
+            <MenuImage
+              src={hoveredItem === item.id ? item.hoveredImage : item.originalImage}
+              alt={`Button ${item.id}`}
+            />
+            <Title>{item.title}</Title>
+          </MenuItem>
+        ))}
+      </MenuContainer>
+      <MyPetmily />
+    </MypageContainer>
+  );
+};
+
 // 전체 페이지
 const MypageContainer = styled.main`
   width: 100%;
@@ -111,54 +153,12 @@ const EditLink = styled.a`
   display: flex;
   justify-content: flex-end;
   margin-bottom: 30px;
+  padding-top: 20px;
+  color: ${(props) => props.theme.colors.mainBlue};
   font-size: 14px;
   text-decoration: underline;
   cursor: pointer;
   text-decoration-line: none;
-  padding-top: 20px;
-  color: ${(props) => props.theme.colors.mainBlue};
 `;
-
-const Mypage = () => {
-  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
-
-  const handleMouseOver = (itemId: number) => {
-    setHoveredItem(itemId);
-  };
-
-  const handleMouseOut = () => {
-    setHoveredItem(null);
-  };
-  return (
-    <MypageContainer>
-      <MyProfileContianer>
-        <MyProfile>
-          <MyPhoto
-            src="https://brandsmkt.com/wp-content/uploads/2020/06/dog-lover-760x506-1-696x463.jpg"
-            alt="user profile image"
-          />
-          <TextField>
-            <NameText>김코딩 님</NameText>
-            <HelloText>안녕하세요!</HelloText>
-          </TextField>
-        </MyProfile>
-        <EditLink href="mypage/edit">회원정보 수정</EditLink>
-      </MyProfileContianer>
-
-      <MenuContainer>
-        {menuItems.map((item) => (
-          <MenuItem key={item.id} onMouseOver={() => handleMouseOver(item.id)} onMouseOut={handleMouseOut}>
-            <MenuImage
-              src={hoveredItem === item.id ? item.hoveredImage : item.originalImage}
-              alt={`Button ${item.id}`}
-            />
-            <Title>{item.title}</Title>
-          </MenuItem>
-        ))}
-      </MenuContainer>
-      <MyPetmily />
-    </MypageContainer>
-  );
-};
 
 export default Mypage;

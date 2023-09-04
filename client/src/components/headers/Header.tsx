@@ -24,12 +24,10 @@ export default Header;
 const Container = styled.header`
   display: flex;
   justify-content: space-between;
-
-  padding: 12px;
-  box-shadow: ${(props) => props.theme.shadow.onlyBottom};
-
   height: 64px;
+  padding: 12px;
   background-color: white;
+  box-shadow: ${(props) => props.theme.shadow.onlyBottom};
 `;
 
 const ButtonContainer = styled.div`

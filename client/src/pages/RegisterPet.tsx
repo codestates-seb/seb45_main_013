@@ -72,41 +72,39 @@ const RegisterPet = () => {
 };
 export default RegisterPet;
 
-const MainContainer = styled.main`
+export const MainContainer = styled.main`
   background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 36px;
   height: 100%;
+  padding: 36px;
+  background-color: white;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-
-  height: 32px;
-  border-radius: 8px;
   overflow: hidden;
-  margin-top: 32px;
-
   width: 272px;
+  height: 32px;
+  margin-top: 32px;
+  border-radius: 8px;
 `;
 
 const PetButton = styled.button<{ iscat: string }>`
   display: flex;
-  justify-content: center;
   align-items: center;
-  cursor: pointer;
-
+  justify-content: center;
   width: 100%;
   border: none;
   background-color: ${(props) =>
     props.iscat === 'true' ? props.theme.textColors.gray50 : props.theme.colors.mainBlue};
+  cursor: pointer;
 `;
 
-const InputContainer = styled.form`
+export const InputContainer = styled.form`
   display: flex;
   flex-direction: column;
   width: 288px;
@@ -114,22 +112,25 @@ const InputContainer = styled.form`
   gap: 24px;
 `;
 
-const RegisterInputWrapper = styled.div`
+export const RegisterInputWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 `;
 
-const InputLabelStyle = styled.label`
+export const InputLabelStyle = styled.label`
   ${(props) => props.theme.fontSize.s14h21}
 `;
 
-const InputStyle = styled.input`
+
+export const InputStyle = styled.input`
   padding: 8px;
   height: 32px;
   width: 208px;
-  border-radius: 8px;
+  height: 32px;
+  padding: 8px;
   border: 1px solid ${(props) => props.theme.textColors.gray60};
+  border-radius: 8px;
 `;
 
 const GenderText = styled.div`

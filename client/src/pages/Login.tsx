@@ -88,9 +88,9 @@ export const SubmitButtonStyle = styled.button`
   background-color: ${(props) => props.theme.colors.mainBlue};
   border: none;
   color: white;
-
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.bold};
+
   &:hover {
     background-color: ${(props) => props.theme.colors.subBlue};
   }
