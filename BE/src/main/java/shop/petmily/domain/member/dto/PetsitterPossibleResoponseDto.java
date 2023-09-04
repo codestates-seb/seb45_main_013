@@ -16,5 +16,5 @@ public class PetsitterPossibleResoponseDto {
     private String possibleDay;
     private Time possibleTimeStart;
     private Time possibleTimeEnd;
-    private int star;
+    private double star;
 }

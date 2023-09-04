@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,19 +52,11 @@ public class Member {
     @Column(length = 30)
     private String address;
 
-    @Column(length = 500)
+    @Column
     private String photo;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
-
-    @CreationTimestamp
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
-
-    @CreationTimestamp
-    @Column(name = "last_modified_at")
-    private LocalDateTime lastModifiedAt;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<RefreshToken> refreshTokens = new ArrayList<>();

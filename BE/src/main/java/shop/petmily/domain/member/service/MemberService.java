@@ -1,5 +1,6 @@
 package shop.petmily.domain.member.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.dto.MemberGetResponseDto;
 //import shop.petmily.domain.member.entity.Customer;
 import shop.petmily.domain.member.entity.Member;
@@ -7,6 +8,7 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.domain.member.repository.PetsitterRepository;
+import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +32,7 @@ public class MemberService {
     private final PetsitterRepository petsitterRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
+    private final S3UploadService uploadService;
 
     public Member createMember(Member member) {
         verifyExistsEmail(member.getEmail());
@@ -46,7 +50,7 @@ public class MemberService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
-    public Member updateMember(Member member) {
+    public Member updateMember(Member member, MultipartFile file) throws IOException {
         Member findMember = findVerifiedMember(member.getMemberId());
 
         Optional.ofNullable(member.getNickName())
@@ -59,15 +63,12 @@ public class MemberService {
                 .ifPresent(address -> findMember.setAddress(address));
         Optional.ofNullable(member.isPetsitterBoolean())
                 .ifPresent(petsitterBoolean -> findMember.setPetsitterBoolean(petsitterBoolean));
-//        Optional.ofNullable(member.getRoles())
-//                .ifPresent(roles -> findMember.setRoles(roles));
-        Optional.ofNullable(member.getPhoto())
-                .ifPresent(photo -> findMember.setPhoto(photo));
-//        if (member.isPetsitterBoolean()) {
-//            Petsitter petsitter = petsitterService.findPetsitter(member);
-//            petsitterService.updatePetsitter(petsitter);
-//            petsitterRepository.save(petsitter);
-//        }
+
+        if(file != null) {
+            if(findMember.getPhoto() != null) uploadService.deleteFile(findMember.getPhoto());
+            findMember.setPhoto(uploadService.saveFile(file));
+        }
+
         return memberRepository.save(findMember);
     }
 
@@ -135,5 +136,14 @@ public class MemberService {
         if(loginMemberId != memberId){
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
         }
+    }
+
+    @Transactional
+    public Member photoDelete(long memberId) {
+        Member findMember = findVerifiedMember(memberId);
+        uploadService.deleteFile(findMember.getPhoto());
+        findMember.setPhoto(null);
+
+        return memberRepository.save(findMember);
     }
 }
