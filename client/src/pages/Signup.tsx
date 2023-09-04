@@ -19,26 +19,22 @@ interface IFormSignpInputs {
 }
 
 const Signup = () => {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<IFormSignpInputs>();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [sido, setSido] = useState('');
   const [sigungu, setSigugu] = useState('');
   const [remainAddress, setRemainAddress] = useState('');
   const [zonecode, setZonecode] = useState('');
-  console.log(zonecode, sido, sigungu, remainAddress);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormSignpInputs>();
 
   const onToggleModal = () => {
     setIsModalOpen(true);
-  };
-
-  const onSubmit = (data: IFormSignpInputs) => {
-    console.log(data);
   };
 
   const handleComplete = (data: any) => {
@@ -53,6 +49,15 @@ const Signup = () => {
     const splitAddress = data.address.split(' ').splice(2).join(' ');
     setRemainAddress(splitAddress);
     setIsModalOpen(false);
+  };
+  console.log(errors.displayName);
+  const onSubmit = (data: IFormSignpInputs) => {
+    console.log(data);
+    if (data.password !== data.passwordConfirm) {
+      setError('password', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
+      setError('passwordConfirm', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
+      return;
+    }
   };
 
   return (
@@ -71,70 +76,72 @@ const Signup = () => {
               placeholder="이름"
               type="text"
               {...register('name', { required: true })}
-              error={errors.name?.message}
+              error={errors.name?.type}
             ></SignupInputStyle>
-            {errors.name?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.name?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
               placeholder="연락처"
               {...register('phoneNumber', { required: true })}
-              error={errors.phoneNumber?.message}
+              error={errors.phoneNumber?.type}
             ></SignupInputStyle>
-            {errors.phoneNumber?.message === '' && <ErrorMessage>연락처를 입력해주세요.</ErrorMessage>}
+            {errors.phoneNumber?.type === 'required' && <ErrorMessage>연락처를 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
               placeholder="주소"
               value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
               {...register('address', { required: true })}
-              error={errors.address?.message}
+              error={errors.address?.type}
               onClick={onToggleModal}
             ></SignupInputStyle>
-            {errors.address?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.address?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
               placeholder="상세주소"
               {...register('detailAddress', { required: true })}
-              error={errors.detailAddress?.message}
+              error={errors.detailAddress?.type}
             ></SignupInputStyle>
-            {errors.detailAddress?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.detailAddress?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
               placeholder="이메일"
               type="email"
               {...register('email', { required: true })}
-              error={errors.email?.message}
+              error={errors.email?.type}
             ></SignupInputStyle>
-            {errors.email?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.email?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
               placeholder="닉네임"
               {...register('displayName', { required: true })}
-              error={errors.displayName?.message}
+              error={errors.displayName?.type}
             ></SignupInputStyle>
-            {errors.displayName?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.displayName?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
               placeholder="비밀번호"
               type="password"
               {...register('password', { required: true })}
-              error={errors.password?.message}
+              error={errors.password?.type}
             ></SignupInputStyle>
-            {errors.password?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.password?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.password?.type === 'dismatch' && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
               placeholder="비밀번호 확인"
               type="password"
               {...register('passwordConfirm', { required: true })}
-              error={errors.passwordConfirm?.message}
+              error={errors.passwordConfirm?.type}
             ></SignupInputStyle>
-            {errors.passwordConfirm?.message === '' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.passwordConfirm?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.password?.type === 'dismatch' && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
           </div>
           <ButtonContainer>
             <SubmitButtonStyle type="submit">펫밀리 등록</SubmitButtonStyle>
@@ -203,7 +210,11 @@ const SignupInputStyle = styled.input<{ error: string | undefined }>`
   width: 100%;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid ${(props) => (props.error === '' ? props.theme.colors.mainBlue : props.theme.lineColors.coolGray80)};
+  border: 1px solid
+    ${(props) =>
+      props.error === 'required' || props.error === 'dismatch'
+        ? props.theme.colors.mainBlue
+        : props.theme.lineColors.coolGray80};
   padding: 8px;
   ${(props) => props.theme.fontSize.s14h21}
 `;
