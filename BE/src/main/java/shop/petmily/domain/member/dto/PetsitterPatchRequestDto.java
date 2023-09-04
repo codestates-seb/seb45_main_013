@@ -25,10 +25,6 @@ public class PetsitterPatchRequestDto {
 
     private Time possibleTimeEnd;
 
-    private int star;
-
-    private String body;
-
     public void setPetsitterId(long petsitterId) {
         this.petsitterId = petsitterId;
     }
