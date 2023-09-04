@@ -59,7 +59,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AddNavHeaderLayout />}>
-            <Route path="/home" element={<Home />}></Route>
+            <Route path="" element={<Home />}></Route>
           </Route>
           <Route path="/" element={<HeaderLayout />}>
             <Route path="mypage" element={<Mypage />}></Route>

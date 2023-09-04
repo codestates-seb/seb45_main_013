@@ -91,12 +91,11 @@ const Container = styled.header`
 const HeaderContatiner = styled.div`
   display: flex;
   flex-direction: column;
-
+  justify-content: space-between;
   width: 100%;
   height: 84px;
-  padding: 12px 12px 0 12px;
+  padding: 12px 12px 0;
   background-color: white;
-  justify-content: space-between;
   max-width: 600px;
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
 `;
@@ -119,16 +118,15 @@ const UserButton = styled.button``;
 const LoginNavModal = styled.nav`
   display: flex;
   flex-direction: column;
-  background-color: white;
   position: absolute;
-  z-index: 999;
-  box-shadow: ${(props) => props.theme.shadow.dp01};
-  border-radius: 8px;
   top: 12px;
   right: 12px;
-
+  z-index: 999;
   width: 100px;
   height: 80px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: ${(props) => props.theme.shadow.dp01};
 `;
 
 const NavBar = styled.nav`
