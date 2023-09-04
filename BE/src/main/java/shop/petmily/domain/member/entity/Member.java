@@ -55,6 +55,9 @@ public class Member extends Auditable {
     @Column
     private String photo;
 
+    @Column(length = 300)
+    private String body;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 

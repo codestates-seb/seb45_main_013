@@ -13,4 +13,5 @@ public class MemberGetResponseDto {
     private String phone;
     private String address;
     private String photo;
+    private String body;
 }

@@ -63,6 +63,8 @@ public class MemberService {
                 .ifPresent(address -> findMember.setAddress(address));
         Optional.ofNullable(member.isPetsitterBoolean())
                 .ifPresent(petsitterBoolean -> findMember.setPetsitterBoolean(petsitterBoolean));
+        Optional.ofNullable(member.getBody())
+                .ifPresent(body -> findMember.setBody(body));
 
         if(file != null) {
             if(findMember.getPhoto() != null) uploadService.deleteFile(findMember.getPhoto());
@@ -128,6 +130,7 @@ public class MemberService {
                 .phone(member.getPhone())
                 .address(member.getAddress())
                 .photo(member.getPhoto())
+                .body(member.getBody())
                 .build();
     }
 

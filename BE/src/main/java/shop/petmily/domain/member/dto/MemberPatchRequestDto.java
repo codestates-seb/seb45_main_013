@@ -28,6 +28,8 @@ public class MemberPatchRequestDto {
 
     private String photo;
 
+    private String body;
+
     public void setMemberId(long memberId) {
         this.memberId = memberId;
     }
