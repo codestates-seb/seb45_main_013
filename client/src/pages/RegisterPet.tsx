@@ -72,7 +72,8 @@ const RegisterPet = () => {
 };
 export default RegisterPet;
 
-const MainContainer = styled.main`
+export const MainContainer = styled.main`
+  background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,7 +104,7 @@ const PetButton = styled.button<{ iscat: string }>`
   cursor: pointer;
 `;
 
-const InputContainer = styled.form`
+export const InputContainer = styled.form`
   display: flex;
   flex-direction: column;
   width: 288px;
@@ -111,17 +112,20 @@ const InputContainer = styled.form`
   gap: 24px;
 `;
 
-const RegisterInputWrapper = styled.div`
+export const RegisterInputWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-const InputLabelStyle = styled.label`
+export const InputLabelStyle = styled.label`
   ${(props) => props.theme.fontSize.s14h21}
 `;
 
-const InputStyle = styled.input`
+
+export const InputStyle = styled.input`
+  padding: 8px;
+  height: 32px;
   width: 208px;
   height: 32px;
   padding: 8px;
