@@ -36,12 +36,12 @@ const NavHeader = () => {
             <img src="/imgs/Logo.svg" alt="logo"></img>
           </Link>
           <NotiUserContainer>
-            <button>
+            <NotiButton>
               <img src="/icons/Notification.svg" alt="notification_icon" width="24"></img>
-            </button>
-            <button onClick={() => setIsModalOpen(true)}>
+            </NotiButton>
+            <UserButton onClick={() => setIsModalOpen(true)}>
               <img src="/icons/User.svg" alt="user_icon" width="24"></img>
-            </button>
+            </UserButton>
           </NotiUserContainer>
           {isModalOpen ? (
             <LoginNavModal ref={modalRef}>
@@ -111,6 +111,10 @@ const NotiUserContainer = styled.nav`
   display: flex;
   gap: 12px;
 `;
+
+const NotiButton = styled.button``;
+
+const UserButton = styled.button``;
 
 const LoginNavModal = styled.nav`
   display: flex;

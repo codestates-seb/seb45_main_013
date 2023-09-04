@@ -12,6 +12,7 @@ import Reservation from './pages/Reservation';
 import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
 import Header from './components/headers/Header';
+import RegisterPet from './pages/RegisterPet';
 
 const Container = styled.div`
   display: flex;
@@ -67,6 +68,7 @@ function App() {
             <Route path="login" element={<Login />}></Route>
             <Route path="signup" element={<Signup />}></Route>
             <Route path="mypage/edit" element={<EditUserProfile />}></Route>
+            <Route path="mypage/register" element={<RegisterPet />}></Route>
             <Route path="mypage/:petId/edit" element={<EditUserProfile />}></Route>
           </Route>
           <Route path="/main" element={<Main />}></Route>
