@@ -24,6 +24,9 @@ const Container = styled.div`
   @media (width >= 600px) {
     width: 600px;
   }
+  @media (height <= 780px) {
+    height: 780px;
+  }
 `;
 
 const AddNavHeaderLayout = () => {

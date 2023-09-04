@@ -1,20 +1,49 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import GoogleOAuthButton from '../components/buttons/OAuthButton';
+import { useForm } from 'react-hook-form';
+
+interface IFormLoginInputs {
+  id: string;
+  password: string;
+}
 
 const Login = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormLoginInputs>();
+
+  const onSubmit = (data: IFormLoginInputs) => {
+    console.log(data);
+  };
   return (
     <MainContainer>
-      <LoginContainer>
+      <LoginContainer onSubmit={handleSubmit(onSubmit)}>
         <img src="/imgs/Logo.svg" alt="logo" width="150px" height="48px" />
-        <InputContainer>
-          <LoginInputStyle placeholder="아이디" />
-          <LoginInputStyle type="password" placeholder="비밀번호" />
-        </InputContainer>
-        <ButtonContainer>
-          <SubmitButtonStyle>로 그 인</SubmitButtonStyle>
+        <InputForm>
+          <div>
+            <LoginInputStyle
+              type="text"
+              placeholder="아이디"
+              {...register('id', { required: true })}
+              error={errors.id?.message}
+            />
+            {errors.id?.message === '' && <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>}
+          </div>
+          <div>
+            <LoginInputStyle
+              type="password"
+              placeholder="비밀번호"
+              {...register('password', { required: true })}
+              error={errors.password?.message}
+            />
+            {errors.password?.message === '' && <ErrorMessage>비밀번호를 입력해주세요.</ErrorMessage>}
+          </div>
+          <SubmitButtonStyle type="submit">로 그 인</SubmitButtonStyle>
           <GoogleOAuthButton>Log in with Google</GoogleOAuthButton>
-        </ButtonContainer>
+        </InputForm>
         <LinkContainer>
           <Link to="/signup">회원가입하기</Link>
         </LinkContainer>
@@ -41,26 +70,20 @@ const LoginContainer = styled.div`
   width: 240px;
 `;
 
-const InputContainer = styled.form`
+const InputForm = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
+
   justify-content: center;
   width: 100%;
   margin-top: 32px;
   gap: 12px;
 `;
 
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 16px;
-  gap: 12px;
-`;
-
 export const SubmitButtonStyle = styled.button`
+  margin-top: 16px;
   height: 32px;
+  width: 100%;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.mainBlue};
   border: none;
@@ -87,11 +110,18 @@ const LinkContainer = styled.div`
   }
 `;
 
-const LoginInputStyle = styled.input`
+const LoginInputStyle = styled.input<{ error: string | undefined }>`
   width: 100%;
   height: 32px;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid ${(props) => props.theme.colors.mainBlue};
+  border: 1px solid ${(props) => (props.error === '' ? props.theme.colors.mainBlue : props.theme.lineColors.coolGray80)};
   ${(props) => props.theme.fontSize.s14h21};
+`;
+
+export const ErrorMessage = styled.p`
+  padding-left: 4px;
+  font-size: 10px;
+  margin-top: 4px;
+  color: ${(props) => props.theme.colors.paleBlue};
 `;
