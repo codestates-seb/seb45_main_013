@@ -45,8 +45,8 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         member.setNickName(nickName);
         member.setEmail(email);
         member.setPassword("google_OAuth2");
-        member.setCreateAt(LocalDateTime.now());
-        member.setLastModifiedAt(LocalDateTime.now());
+//        member.setCreateAt(LocalDateTime.now());
+//        member.setLastModifiedAt(LocalDateTime.now());
         Member saveMember = saveMember(member);
 
         List<String> authorities = customAuthorityUtils.createRoles(member);

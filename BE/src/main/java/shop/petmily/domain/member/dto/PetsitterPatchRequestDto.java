@@ -27,6 +27,8 @@ public class PetsitterPatchRequestDto {
 
     private int star;
 
+    private String body;
+
     public void setPetsitterId(long petsitterId) {
         this.petsitterId = petsitterId;
     }

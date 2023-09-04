@@ -25,7 +25,7 @@ public class Petsitter {
     private Member member;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(length = 3)
+    @Column(length = 10)
     private PossiblePetType possiblePetType;
 
     @Column(length = 7)
@@ -41,7 +41,10 @@ public class Petsitter {
     private Time possibleTimeEnd;
 
     @Column
-    private int star;
+    private double star;
+
+    @Column(length = 300)
+    private String body;
 
     public enum PossiblePetType {
 

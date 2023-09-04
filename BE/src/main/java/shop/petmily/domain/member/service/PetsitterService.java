@@ -45,6 +45,8 @@ public class PetsitterService {
                 .ifPresent(possibleTimeEnd -> findPetsitter.setPossibleTimeEnd(possibleTimeEnd));
         Optional.ofNullable(petsitter.getStar())
                 .ifPresent(star -> findPetsitter.setStar(star));
+        Optional.ofNullable(petsitter.getBody())
+                .ifPresent(body -> findPetsitter.setBody(body));
 
         return petsitterRepository.save(findPetsitter);
     }
