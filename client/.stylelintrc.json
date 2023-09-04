@@ -3,8 +3,10 @@
     "stylelint-order",
     "stylelint-prettier",
     "stylelint-config-standard",
-    "stylelint-config-styled-components"
+    "stylelint-config-styled-components",
+    "stylelint-processor-styled-components"
   ],
+  "processors": ["stylelint-processor-styled-components"],
   "plugins": ["stylelint-order"],
   "overrides": [
     {

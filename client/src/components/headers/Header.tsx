@@ -1,11 +1,12 @@
+import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 const Header = () => {
   return (
     <Container>
-      <div>
+      <Link to="/">
         <img src="/imgs/Logo.svg" alt="logo"></img>
-      </div>
+      </Link>
       <ButtonContainer>
         <button>
           <img src="/icons/Notification.svg" alt="notification_icon" width="24"></img>
@@ -23,7 +24,7 @@ export default Header;
 const Container = styled.header`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+
   padding: 12px;
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
 
