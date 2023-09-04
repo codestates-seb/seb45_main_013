@@ -11,6 +11,7 @@ const GoogleOAuthButtonStyle = styled.button`
   border-radius: 8px;
   color: ${(props) => props.theme.textColors.gray60};
   background-color: white;
+  width: 100%;
 
   &:hover {
     background-color: ${(props) => props.theme.textColors.primary};

@@ -13,7 +13,7 @@ const NavHeader = () => {
   };
 
   useEffect(() => {
-    const handleOutsideClose = (e: { target: any }) => {
+    const handleOutsideClose = (e: any) => {
       console.log(isModalOpen);
       console.log(e.target);
       console.log(modalRef.current);
@@ -112,9 +112,15 @@ const NotiUserContainer = styled.nav`
   gap: 12px;
 `;
 
-const NotiButton = styled.button``;
+const NotiButton = styled.button`
+  border: none;
+  background-color: white;
+`;
 
-const UserButton = styled.button``;
+const UserButton = styled.button`
+  border: none;
+  background-color: white;
+`;
 
 const LoginNavModal = styled.nav`
   display: flex;
