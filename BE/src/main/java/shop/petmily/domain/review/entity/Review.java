@@ -4,9 +4,11 @@ import lombok.*;
 import org.hibernate.validator.constraints.Range;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.reservation.entity.Reservation;
+import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,12 +16,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Review {
+public class Review extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reviewId;
-
-    private long petSitterId;
 
     @Column(length = 10000, nullable = false)
     private String body;
@@ -27,11 +27,12 @@ public class Review {
     @Range(min = 1, max = 5)
     private int star;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @ElementCollection
+    private List<String> photos = new ArrayList<>();
 
-    @Column(nullable = false)
-    private LocalDateTime lastModifiedAt;
+    public void addPhotos(String photo){
+        photos.add(photo);
+    }
 
     @OneToOne
     @JoinColumn(name = "reservation_id")
@@ -40,4 +41,8 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "petsitter_id")
+    private Member petsitter;
 }

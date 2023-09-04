@@ -27,10 +27,6 @@ public class PetService {
     }
 
     public Pet createPet(Pet pet, MultipartFile file) throws IOException {
-        LocalDateTime now = LocalDateTime.now();
-
-        pet.setCreatedAt(now);
-        pet.setLastModifiedAt(now);
 
         if(file != null) pet.setPhoto(uploadService.saveFile(file));
 
@@ -50,8 +46,6 @@ public class PetService {
             verifiedPet.setPhoto(uploadService.saveFile(file));
         }
 
-        verifiedPet.setLastModifiedAt(LocalDateTime.now());
-
         return repository.save(verifiedPet);
     }
 
@@ -61,7 +55,6 @@ public class PetService {
 
         uploadService.deleteFile(verifiedPet.getPhoto());
         verifiedPet.setPhoto(null);
-        verifiedPet.setLastModifiedAt(LocalDateTime.now());
 
         return repository.save(verifiedPet);
     }

@@ -13,11 +13,11 @@ public class LoginMemberResponseDto {
 
     private String email;
 
-    private String displayName;
+    private String nickName;
 
     public LoginMemberResponseDto(Member member) {
         this.memberId = member.getMemberId();
         this.email = member.getEmail();
-        this.displayName = member.getDisplayName();
+        this.nickName = member.getNickName();
     }
 }

@@ -3,16 +3,14 @@ package shop.petmily.domain.pet.entity;
 import lombok.Getter;
 import lombok.Setter;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
-public class Pet {
+public class Pet extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +33,6 @@ public class Pet {
 
     @Column
     private String photo;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime lastModifiedAt;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

@@ -6,15 +6,15 @@ spring:
       settings:
         web-allow-others: true
   datasource:
-#    # RDS 관련설정
+    # RDS 관련설정
 #    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://${MAINPROJECT_RDS_URL}:3306/petmily
-#    username: ${MAINPROJECT_RDS_SECRET_ID}
-#    password: ${MAINPROJECT_RDS_SECRET_PASSWORD}
-#    jpa:
+#    url: jdbc:mysql://${MYRDS_SECRET_URL}:3306/mainproject
+#    username: ${MYRDS_SECRET_ID}
+#    password: ${MYRDS_SECRET_PASSWORD}
+#  jpa:
 #    show-sql: true
 #    hibernate:
-#      ddl-auto: create
+#      ddl-auto: update
 #    properties:
 #      hibernate:
 #        format_sql: true
@@ -26,6 +26,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+#    defer-datasource-initialization: true
   sql:
     init:
       data-locations: classpath*:db/h2/data.sql

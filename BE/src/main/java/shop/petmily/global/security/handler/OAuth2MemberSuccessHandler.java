@@ -39,17 +39,17 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = (String) oAuth2User.getAttributes().get("email");
-        String displayName = (String) oAuth2User.getAttributes().get("name");
+        String nickName = (String) oAuth2User.getAttributes().get("name");
 
         Member member = new Member();
-        member.setDisplayName(displayName);
+        member.setNickName(nickName);
         member.setEmail(email);
         member.setPassword("google_OAuth2");
-        member.setCreateAt(LocalDateTime.now());
-        member.setLastModifiedAt(LocalDateTime.now());
+//        member.setCreateAt(LocalDateTime.now());
+//        member.setLastModifiedAt(LocalDateTime.now());
         Member saveMember = saveMember(member);
 
-        List<String> authorities = customAuthorityUtils.createRoles(email);
+        List<String> authorities = customAuthorityUtils.createRoles(member);
 
         redirect(request, response, saveMember, authorities);
     }
@@ -71,29 +71,10 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         RefreshToken refreshTokenEntity = new RefreshToken();
         refreshTokenEntity.setValue(refreshToken);
+        refreshTokenEntity.setMember(member);
         refreshTokenService.addRefreshToken(refreshTokenEntity);
 
         getRedirectStrategy().sendRedirect(request,response,uri);
-
-//        MemberDto.LoginResponse loginResponse = MemberDto.LoginResponse.builder()
-//                .accessToken(accessToken)
-//                .refreshToken(refreshToken)
-//                .memberId(member.getMemberId())
-//                .displayName(member.getDisplayName())
-//                .build();
-//
-//        String body = new Gson().toJson(loginResponse);
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        response.getWriter().write(body);
-
-//        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-//                .httpOnly(true)
-//                .secure(true)
-//                .maxAge(TimeUnit.MINUTES.toSeconds(30))
-//                .build();
-//
-//        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     private String delegateAccessToken(Member member, List<String> authorities){
@@ -101,7 +82,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Map<String,Object> claims = new HashMap<>();
         claims.put("username", member.getEmail());
         claims.put("roles", member.getRoles());
-        claims.put("displayName", member.getDisplayName());
+        claims.put("nickName", member.getNickName());
         claims.put("id", member.getMemberId());
 
         String subject = member.getEmail();
@@ -127,10 +108,11 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         return UriComponentsBuilder
                 .newInstance()
                 .scheme("http")
-                .host("petmily.shop")
-                //.host("localhost")
-                .port(80)
-                .path("/")
+//                .host("petmily.shop")
+                .host("localhost")
+//                .port(80)
+//                .path("/")
+                .path("/receive-token.html")
                 .queryParams(queryParams)
                 .build()
                 .toUri();

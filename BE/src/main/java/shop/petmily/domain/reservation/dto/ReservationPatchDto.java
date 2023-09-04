@@ -3,7 +3,6 @@ package shop.petmily.domain.reservation.dto;
 import lombok.*;
 import shop.petmily.domain.pet.entity.Pet;
 
-import javax.persistence.Column;
 import java.util.List;
 
 @Getter
@@ -15,6 +14,7 @@ public class ReservationPatchDto {
     public long reservationId;
 
     public long memberId;
+
     public void setReservationId(long reservationId) {
         this.reservationId = reservationId;
     }
@@ -23,9 +23,9 @@ public class ReservationPatchDto {
     private String reservationTimeEnd;
 
     // 수정할 요구사항 내용
-    @Column(length = 500, nullable = false)
     private String body;
 
-    @Column(length = 255, nullable = false)
-    private List<Pet> pets;
+    private List<Long> pets;
+
+    private String progress;
 }

@@ -14,7 +14,6 @@ import shop.petmily.global.argu.LoginMemberId;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
-import java.util.List;
 
 @RequestMapping("/pets")
 @RestController

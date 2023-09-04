@@ -2,8 +2,10 @@ package shop.petmily.domain.reservation.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import shop.petmily.domain.pet.entity.Pet;
+import org.joda.time.DateTime;
 
+import java.sql.Date;
+import  java.sql.Timestamp;
 import java.util.List;
 
 @Getter
@@ -11,13 +13,18 @@ import java.util.List;
 public class ReservationPostDto {
     private long memberId;
 
-    private long petSitterId;
-
     private String body;
 
-    private String reservationTimeStart;
+    private Timestamp reservationTimeStart;
 
-    private String reservationTimeEnd;
+    private Timestamp reservationTimeEnd;
 
-    private List<Pet> pets;
+    private String adress;
+
+    private String phone;
+
+    private List<Long> petId;
+
+    //null 이었다가 나중에 정보 저장
+    private long petSitterId;
 }

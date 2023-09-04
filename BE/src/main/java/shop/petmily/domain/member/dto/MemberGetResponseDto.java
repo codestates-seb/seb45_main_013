@@ -9,8 +9,9 @@ import lombok.Setter;
 @Builder
 public class MemberGetResponseDto {
     private String email;
-    private String name;
-    private String displayName;
+    private String nickName;
     private String phone;
     private String address;
+    private String photo;
+    private String body;
 }
