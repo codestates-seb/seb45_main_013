@@ -6,27 +6,27 @@ spring:
       settings:
         web-allow-others: true
   datasource:
-#    # RDS 관련설정
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://${MYRDS_SECRET_URL}:3306/mainproject
-#    username: ${MYRDS_SECRET_ID}
-#    password: ${MYRDS_SECRET_PASSWORD}
-#  jpa:
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: create
-#    properties:
-#      hibernate:
-#        format_sql: true
-    url: jdbc:h2:mem:test
+    # RDS 관련설정
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYRDS_SECRET_URL}:3306/mainproject
+    username: ${MYRDS_SECRET_ID}
+    password: ${MYRDS_SECRET_PASSWORD}
   jpa:
-    hibernate:
-      ddl-auto: create
     show-sql: true
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
+#    url: jdbc:h2:mem:test
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#    defer-datasource-initialization: true
 
   security:
     oauth2:

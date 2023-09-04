@@ -7,11 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.reservation.dto.*;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.mapper.ReservationMapper;
 import shop.petmily.domain.reservation.repository.ReservationRepository;
 import shop.petmily.domain.reservation.service.ReservationService;
+import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.security.utils.JwtUtils;
 
 import javax.validation.constraints.Positive;
@@ -20,6 +23,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -52,15 +56,22 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-//    @PostMapping("/petsitters")
-//    public ResponseEntity findPetsitter(@RequestBody ReservationPostDto reservationPostDto) {
-//
-//        Reservation reservation = mapper.reservationPostDtoToReservation(reservationPostDto);
-//
-//        List<Petsitter> response = service.findReservationPossiblePetsitter(reservation);
-//
-//        return new ResponseEntity<>(response, HttpStatus.CREATED);
-//    }
+    @PostMapping("/petsitters")
+    public ResponseEntity findPetsitter(@RequestBody ReservationPostDto reservationPostDto,
+                                        @LoginMemberId Long memberId) {
+
+        reservationPostDto.setMemberId(memberId);
+        Reservation reservation = mapper.reservationPostDtoToReservation(reservationPostDto);
+
+        List<Petsitter> petsitters = service.findReservationPossiblePetsitter(reservation);
+
+        List<ReservationPossiblePetsitterReseponseDto> response = new ArrayList<>();
+        for (Petsitter p : petsitters) {
+            response.add(mapper.petsitterToReservationPossiblePetsitterReseponseDto(p));
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
     // 예약 1개 조회 (jwt 아직 x)
     @GetMapping("/{reservation-id}")

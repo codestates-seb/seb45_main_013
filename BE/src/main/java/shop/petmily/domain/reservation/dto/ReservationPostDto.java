@@ -23,7 +23,7 @@ public class ReservationPostDto {
 
     private String phone;
 
-    private List<ReservationPetPostDto> pet;
+    private List<Long> petId;
 
     //null 이었다가 나중에 정보 저장
     private long petSitterId;
