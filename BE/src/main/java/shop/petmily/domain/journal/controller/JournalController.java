@@ -13,9 +13,9 @@ import shop.petmily.domain.journal.dto.JournalResponseDto;
 import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.journal.mapper.JournalMapper;
 import shop.petmily.domain.journal.service.JournalService;
+import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.global.security.utils.JwtUtils;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.util.List;
@@ -26,38 +26,40 @@ import java.util.List;
 @RequestMapping("/journals")
 public class JournalController {
     private final JournalService service;
+    private final MemberService memberService;
     private final JournalMapper mapper;
     private final JwtUtils jwtUtils;
-    public JournalController(JournalService service, JournalMapper mapper, JwtUtils jwtUtils) {
+    public JournalController(JournalService service, MemberService memberService, JournalMapper mapper, JwtUtils jwtUtils) {
         this.service = service;
+        this.memberService = memberService;
         this.mapper = mapper;
         this.jwtUtils = jwtUtils;
     }
 
-    // 일지 등록
+    // 케어일지 등록
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity postJournal(@RequestPart JournalPostDto journalPostDto,
                                       @RequestPart(required = false) List<MultipartFile> files) throws IOException {
-        journalPostDto.setPetsitterId(jwtUtils.getMemberId());
+        journalPostDto.setPetsitterId(memberService.findVerifiedMember(jwtUtils.getMemberId()).getPetsitter().getPetsitterId());
         Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), files);
         JournalResponseDto response = mapper.JournalToResponse(createdJournal);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // 일지 수정
+    // 케어일지 수정
     @PatchMapping(value = "/{journal-id}",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity patchJournal(@PathVariable("journal-id") @Positive long journalId,
                                        @RequestPart JournalPatchDto journalPatchDto,
                                        @RequestPart(required = false) List<MultipartFile> files) throws IOException {
-        journalPatchDto.setPetsitterId(jwtUtils.getMemberId());
+        journalPatchDto.setPetsitterId(memberService.findVerifiedMember(jwtUtils.getMemberId()).getPetsitter().getPetsitterId());
         journalPatchDto.setJournalId(journalId);
-        Journal journal = this.mapper.JournalPatchDtoToJournal(journalPatchDto);
-        JournalResponseDto response = this.mapper.JournalToResponse(service.updateJournal(journal, files));
+        Journal journal = mapper.JournalPatchDtoToJournal(journalPatchDto);
+        JournalResponseDto response = mapper.JournalToResponse(service.updateJournal(journal, files));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 일지 1개 조회
+    // 케어일지 1개 조회
     @GetMapping("/{journal-id}")
     public ResponseEntity getJournal(@PathVariable("journal-id") @Positive long journalId) {
         Journal journal = service.findJournal(journalId);
@@ -66,10 +68,10 @@ public class JournalController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 케어일지 1개 삭제
     @DeleteMapping("/{journal-id}")
     public HttpStatus deleteJournal(@PathVariable("journal-id") @Positive long journalId) {
-        service.deleteJournal(journalId, jwtUtils.getMemberId());
+        service.deleteJournal(journalId, memberService.findVerifiedMember(jwtUtils.getMemberId()).getPetsitter().getPetsitterId());
         return HttpStatus.NO_CONTENT;
     }
-
 }

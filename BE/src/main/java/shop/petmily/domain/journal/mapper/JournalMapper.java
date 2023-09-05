@@ -10,16 +10,16 @@ import shop.petmily.domain.journal.entity.Journal;
 @Mapper(componentModel = "Spring")
 public interface JournalMapper {
 
-    @Mapping(source = "petsitterId", target = "petsitter.memberId")
-//    @Mapping(source = "reservationId", target = "reservation.reservationId")
+    @Mapping(source = "petsitterId", target = "petsitter.petsitterId")
+    @Mapping(source = "reservationId", target = "reservation.reservationId")
     Journal JournalPostDtoToJournal(JournalPostDto journalPostDto);
 
-    @Mapping(source = "petsitterId", target = "petsitter.memberId")
+    @Mapping(source = "petsitterId", target = "petsitter.petsitterId")
 //    @Mapping(source = "reservationId", target = "reservation.reservationId")
     Journal JournalPatchDtoToJournal(JournalPatchDto journalPatchDto);
 
     @Mapping(source = "member.memberId", target = "memberId")
-    @Mapping(source = "petsitter.memberId", target = "petsitterId")
-//    @Mapping(source = "reservation.reservationId", target = "reservationId")
+    @Mapping(source = "petsitter.petsitterId", target = "petsitterId")
+    @Mapping(source = "reservation.reservationId", target = "reservationId")
     JournalResponseDto JournalToResponse(Journal journal);
 }
