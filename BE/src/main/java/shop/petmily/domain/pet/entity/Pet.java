@@ -17,7 +17,8 @@ public class Pet extends Auditable {
     private long petId;
 
     @Column
-    private String type;
+    @Enumerated(value = EnumType.STRING)
+    private PetType type;
 
     @Column
     private String name;
@@ -34,7 +35,26 @@ public class Pet extends Auditable {
     @Column
     private String photo;
 
+    @Column
+    private String body;
+
+    @Column
+    private Boolean male;
+
+    @Column
+    private Boolean neutering;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public enum PetType{
+        DOG("강아지"),
+        CAT("고양이");
+
+        @Getter
+        private String petType;
+
+        PetType(String petType){this.petType = petType;}
+    }
 }

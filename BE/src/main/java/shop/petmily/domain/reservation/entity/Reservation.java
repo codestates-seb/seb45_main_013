@@ -7,6 +7,8 @@ import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
 public class Reservation extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reservationId;
+    private Long reservationId;
 
     @Column(length = 500, nullable = false)
     private String body;
@@ -33,10 +35,13 @@ public class Reservation extends Auditable {
     private String adress;
 
     @Column(nullable = false)
-    private Timestamp reservationTimeStart;
+    private Date reservationDay;
 
     @Column(nullable = false)
-    private Timestamp reservationTimeEnd;
+    private Time reservationTimeStart;
+
+    @Column(nullable = false)
+    private Time reservationTimeEnd;
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.PERSIST)
     private List<ReservationPet> ReservationPets = new ArrayList<>();

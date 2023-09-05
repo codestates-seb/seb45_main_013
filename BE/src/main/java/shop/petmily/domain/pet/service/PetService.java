@@ -40,6 +40,10 @@ public class PetService {
 
         if(pet.getAge() != 0) verifiedPet.setAge(pet.getAge());
         if(pet.getWeight() != 0) verifiedPet.setWeight(pet.getWeight());
+        if(pet.getBody() != null) verifiedPet.setBody(pet.getBody());
+        if(pet.getName() != null) verifiedPet.setName(pet.getName());
+
+        if(verifiedPet.getNeutering() == false && pet.getNeutering() == true) verifiedPet.setNeutering(true);
 
         if(file != null) {
             if(verifiedPet.getPhoto() != null) uploadService.deleteFile(verifiedPet.getPhoto());

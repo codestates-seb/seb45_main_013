@@ -2,6 +2,7 @@ package shop.petmily.domain.pet.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import shop.petmily.domain.pet.entity.Pet;
 
 @Getter
 public class PetPostDto {
@@ -10,7 +11,7 @@ public class PetPostDto {
 
     public void setMemberId(long memberId) {this.memberId = memberId;}
 
-    private String type;
+    private Pet.PetType type;
 
     private String name;
 
@@ -19,4 +20,11 @@ public class PetPostDto {
     private String species;
 
     private int weight;
+
+    private String body;
+
+    private Boolean male;
+
+    private Boolean neutering;
+
 }

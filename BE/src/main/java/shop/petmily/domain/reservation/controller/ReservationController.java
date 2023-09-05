@@ -45,17 +45,7 @@ public class ReservationController {
         this.reservationRepository = reservationRepository;
     }
 
-    // 예약 등록
-    @PostMapping
-    public ResponseEntity postReservation(@RequestBody ReservationPostDto reservationPostDto) {
-        reservationPostDto.setMemberId(jwtUtils.getMemberId());
-        Reservation reservation = mapper.reservationPostDtoToReservation(reservationPostDto);
-        service.createReservation(reservation);
-        ReservationResponseDto response = mapper.reservationToReservationResponseDto(reservation);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
+    //임시예약으로 등록하고 예약가능 펫시터 list보여주기
     @PostMapping("/petsitters")
     public ResponseEntity findPetsitter(@RequestBody ReservationPostDto reservationPostDto,
                                         @LoginMemberId Long memberId) {
@@ -64,11 +54,27 @@ public class ReservationController {
         Reservation reservation = mapper.reservationPostDtoToReservation(reservationPostDto);
 
         List<Petsitter> petsitters = service.findReservationPossiblePetsitter(reservation);
+        Reservation savedReservation = service.createTemporaryReservation(reservation);
 
-        List<ReservationPossiblePetsitterReseponseDto> response = new ArrayList<>();
-        for (Petsitter p : petsitters) {
-            response.add(mapper.petsitterToReservationPossiblePetsitterReseponseDto(p));
+        List<ReservationPossiblePetsitterReseponseDto> petsitterReseponse = new ArrayList<>();
+        for (Petsitter petsitter : petsitters) {
+            petsitterReseponse.add(mapper.petsitterToReservationPossiblePetsitterReseponseDto(petsitter));
         }
+
+        return new ResponseEntity<>(new ReservationPetsitterMultiResponseDto(savedReservation.getReservationId(),
+                petsitterReseponse), HttpStatus.CREATED);
+    }
+
+    //임시예약에서 펫시터등록하고 예약신청상태로 만들기
+    @PatchMapping("/{reservation-id}")
+    public ResponseEntity createResrvation(@RequestBody ReservationCreateDto reservationCreateDto,
+                                           @PathVariable("reservation-id") @Positive long reservationId,
+                                           @LoginMemberId Long memberId) {
+        reservationCreateDto.setReservationId(reservationId);
+        reservationCreateDto.setMemberId(memberId);
+        Reservation reservation = mapper.reservationCreateDtoToRservation(reservationCreateDto);
+        Reservation createdReservation = service.createReservation(reservation);
+        ReservationResponseDto response = mapper.reservationToReservationResponseDto(createdReservation);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -82,39 +88,66 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    // 예약 전체 조회 (멤버) (jwt 아직 x) memberid jwt로 받아오는걸로 변경필요
-//    @GetMapping("/member")
-//    public ResponseEntity getReservationsForMember(@RequestParam("page") @Positive int page,
-//                                                   @RequestParam("size") @Positive int size,
-//                                                   @RequestParam("id") @Positive long memberId) {
-//        Page<Reservation> reservationPage = service.findMemberReservations(page, size, memberId);
-//        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
-//
-//        List<Reservation> reservations = reservationPage.getContent();
-//        List<ReservationResponseDto> response =
-//                reservations.stream()
-//                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
-//                        .collect(Collectors.toList());
-//
-//        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
-//    }
-//
-//    // 예약 전체 조회 (펫시터) (jwt 아직 x) petsiterid jwt로 받아오는걸로 변경필요
-//    @GetMapping("/petSitter")
-//    public ResponseEntity getReservationsForPetSitter(@RequestParam("page") @Positive int page,
-//                                                      @RequestParam("size") @Positive int size,
-//                                                      @RequestParam("petSitterId") @Positive long petSitterId) {
-//        Page<Reservation> reservationPage = service.findPetsitterReservations(page, size, petSitterId);
-//        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
-//
-//        List<Reservation> reservations = reservationPage.getContent();
-//        List<ReservationResponseDto> response =
-//                reservations.stream()
-//                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
-//                        .collect(Collectors.toList());
-//
-//        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
-//    }
+    // 예약 전체 조회 (멤버)
+    @GetMapping("/member")
+    public ResponseEntity getReservationsForMember(@RequestParam("page") @Positive int page,
+                                                   @RequestParam("size") @Positive int size,
+                                                   @LoginMemberId Long memberId) {
+        Page<Reservation> reservationPage = service.findMemberReservations(page, size, memberId);
+        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
+
+        List<Reservation> reservations = reservationPage.getContent();
+        List<ReservationResponseDto> response =
+                reservations.stream()
+                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
+                        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
+    }
+
+    // 예약 전체 조회 (펫시터) (jwt 아직 x) petsiterid jwt로 받아오는걸로 변경필요
+    @GetMapping("/petSitter")
+    public ResponseEntity getReservationsForPetSitter(@RequestParam("page") @Positive int page,
+                                                      @RequestParam("size") @Positive int size,
+                                                      @LoginMemberId Long memberId) {
+        Page<Reservation> reservationPage = service.findPetsitterReservations(page, size, memberId);
+        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
+
+        List<Reservation> reservations = reservationPage.getContent();
+        List<ReservationResponseDto> response =
+                reservations.stream()
+                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
+                        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
+    }
+
+    // 예약 확정 (펫시터)petsiterid jwt로 받아오는걸로 변경필요
+    @PatchMapping("/{reservation-id}/confirm")
+    public HttpStatus confirmReservation(@PathVariable("reservation-id") @Positive long reservationId,
+                                         @LoginMemberId Long memberId) {
+        service.confirmReservationStatus(reservationId, memberId);
+
+        return HttpStatus.OK;
+    }
+
+    // 예약 취소 (펫시터)
+    @PatchMapping("/{reservation-id}/petsittercancel")
+    public HttpStatus cancelReservationPetsitter(@PathVariable("reservation-id") @Positive long reservationId,
+                                              @LoginMemberId Long memberId) {
+        service.cancelReservationPetsitter(reservationId, memberId);
+
+        return HttpStatus.OK;
+    }
+    //예약 취소(멤버)
+    @PatchMapping("/{reservation-id}/membercancel")
+    public HttpStatus cancelReservationMember(@PathVariable("reservation-id") @Positive long reservationId,
+                                                 @LoginMemberId Long memberId) {
+        service.cancelReservationMember(reservationId, memberId);
+
+        return HttpStatus.OK;
+    }
+}
 
 //    // 메서드 추출 (예약 전체 조회)
 //    public ResponseEntity makeReservationPage(@RequestParam("page") @Positive int page,
@@ -147,22 +180,6 @@ public class ReservationController {
 //
 //        return new ResponseEntity<>(response, HttpStatus.OK);
 //    }
-
-//    // 예약 확정 (펫시터)petsiterid jwt로 받아오는걸로 변경필요
-//    @PatchMapping("/{reservation-id}/confirm")
-//    public HttpStatus confirmReservation(@PathVariable("reservation-id") @Positive long reservationId) {
-//        service.confirmReservationStatus(reservationId, jwtUtils.getMemberId());
-//
-//        return HttpStatus.OK;
-//    }
-//
-//    // 예약 취소 (펫시터)petsiterid jwt로 받아오는걸로 변경필요
-//    @PatchMapping("/{reservation-id}/cancel")
-//    public HttpStatus cancelReservationStatus(@PathVariable("reservation-id") @Positive long reservationId) {
-//        service.cancelReservationStatus(reservationId, jwtUtils.getMemberId());
-//
-//        return HttpStatus.OK;
-    }
 
 //    // 예약 삭제
 //    @DeleteMapping("/{reservation-id}")
