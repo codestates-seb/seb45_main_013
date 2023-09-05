@@ -13,6 +13,7 @@ import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
 import Header from './components/headers/Header';
 import RegisterPet from './pages/RegisterPet';
+import EditPet from 'pages/EditPet';
 import Search from './pages/Search';
 
 const Container = styled.div`
@@ -74,7 +75,8 @@ function App() {
             <Route path="signup" element={<Signup />}></Route>
             <Route path="mypage/edit" element={<EditUserProfile />}></Route>
             <Route path="mypage/register" element={<RegisterPet />}></Route>
-            <Route path="mypage/:petId/edit" element={<EditUserProfile />}></Route>
+            {/* <Route path="mypage/:petId/edit" element={<EditPet />}></Route> */}
+            <Route path="mypage/pets/edit" element={<EditPet />}></Route>
             <Route path="search" element={<Search />}></Route>
           </Route>
           <Route path="/main" element={<Main />}></Route>

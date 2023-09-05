@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 // 버튼 수정
 
 // 지우기
-const petmily = [];
+// const petmily = [];
+const petmily = [1];
 
 const MyPetmily = () => {
   /* const handleEditPets = () => {
@@ -20,9 +21,11 @@ const MyPetmily = () => {
       <TextContainer>
         <Text>나의 Petmily</Text>
         {petmily.length > 0 && (
-          <PetsButton /*onClick={handleAddPets}*/>
-            <img src="imgs/Plus.svg" alt="AddPets" />
-          </PetsButton>
+          <Link to="/mypage/register">
+            <PetsButton /*onClick={handleAddPets}*/>
+              <img src="imgs/Plus.svg" alt="AddPets" />
+            </PetsButton>
+          </Link>
         )}
       </TextContainer>
 
@@ -30,9 +33,11 @@ const MyPetmily = () => {
         <PetmilyCard>
           {/* <CatOrDog src="imgs/CatIcon.svg" alt="Img" /> */}
           <div style={{ display: 'flex', justifyContent: 'end', padding: '4px' }}>
-            <PetsButton /*onClick={handleEditPets}*/>
-              <img src="imgs/Edit.svg" alt="EditPets" />
-            </PetsButton>
+            <Link to="/mypage/pets/edit">
+              <PetsButton /*onClick={handleEditPets}*/>
+                <img src="imgs/Edit.svg" alt="EditPets" />
+              </PetsButton>
+            </Link>
           </div>
           <PetInfoContainer>
             <PetImg
@@ -83,7 +88,7 @@ const PetsButton = styled.button`
   height: 18px;
   border: none;
   cursor: pointer;
-  background-color: white;
+  background-color: none;
 `;
 
 // 등록된 petmily 카드
