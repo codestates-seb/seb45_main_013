@@ -16,6 +16,7 @@ import RegisterPet from './pages/RegisterPet';
 import EditPet from 'pages/EditPet';
 import Search from './pages/Search';
 
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,7 +69,6 @@ function App() {
           </Route>
           <Route path="/" element={<HeaderLayout />}>
             <Route path="mypage" element={<Mypage />}></Route>
-            <Route path="reservation" element={<Reservation />}></Route>
           </Route>
           <Route path="/" element={<BackHeaderLayout />}>
             <Route path="login" element={<Login />}></Route>
