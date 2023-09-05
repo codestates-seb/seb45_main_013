@@ -8,16 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.pet.dto.PetPatchDto;
-import shop.petmily.domain.reservation.dto.ReservationMultiResponseDto;
-import shop.petmily.domain.reservation.dto.ReservationResponseDto;
+import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.review.Dto.*;
 import shop.petmily.domain.review.entity.Review;
 import shop.petmily.domain.review.mapper.ReviewMapper;
 import shop.petmily.domain.review.service.ReviewService;
 import shop.petmily.global.security.utils.JwtUtils;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.util.List;
@@ -29,11 +26,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/reviews")
 public class ReviewController {
     private final ReviewMapper mapper;
+    private final MemberService memberService;
     private final ReviewService service;
     private final JwtUtils jwtUtils;
 
-    public ReviewController(ReviewMapper mapper, ReviewService service, JwtUtils jwtUtils) {
+    public ReviewController(ReviewMapper mapper, MemberService memberService, ReviewService service, JwtUtils jwtUtils) {
         this.mapper = mapper;
+        this.memberService = memberService;
         this.service = service;
         this.jwtUtils = jwtUtils;
     }
@@ -49,32 +48,6 @@ public class ReviewController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // 후기 1개 조회
-    @GetMapping("/{review-id}")
-    public ResponseEntity getReview(@PathVariable("review-id") @Positive long reviewId) {
-        Review review = service.findReview(reviewId);
-        ReviewResponseDto response = mapper.reviewToResponse(review);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    // 후기 전체 조회
-    @GetMapping
-    public ResponseEntity getReviews(@RequestParam("page") @Positive int page,
-                                     @RequestParam("size") @Positive int size){
-        Page<Review> reviewPage = service.findReviews(page, size);
-        ReviewPageInfo pageInfo = new ReviewPageInfo(page, size, (int) reviewPage.getTotalElements(), reviewPage.getTotalPages());
-
-        List<Review> reviews = reviewPage.getContent();
-        List<ReviewResponseDto> response =
-                reviews.stream()
-                        .map(review -> mapper.reviewToResponse(review))
-                        .collect(Collectors.toList());
-
-        return new ResponseEntity<>(new ReviewMultiResponseDto(response, pageInfo),HttpStatus.OK);
-
-    }
-
     // 후기 수정
     @PatchMapping(value = "/{review-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity patchReview(@PathVariable("review-id") @Positive long reviewId,
@@ -88,6 +61,35 @@ public class ReviewController {
         ReviewResponseDto response = mapper.reviewToResponse(updatedReview);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 후기 1개 조회
+    @GetMapping("/{review-id}")
+    public ResponseEntity getReview(@PathVariable("review-id") @Positive long reviewId) {
+        Review review = service.findReview(reviewId);
+        ReviewResponseDto response = mapper.reviewToResponse(review);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 후기 전체 조회 (펫시터별) 홈화면에서도 보여야 하기 때문에 jwtX
+    @GetMapping
+    public ResponseEntity getReviews(@RequestParam("page") @Positive int page,
+                                     @RequestParam("size") @Positive int size,
+                                     @RequestParam(value = "petsitterId", required = false) Long petsitterId) {
+        Page<Review> reviewPage;
+
+        reviewPage = service.findAllReviews(page, size, petsitterId);
+
+        ReviewPageInfo pageInfo = new ReviewPageInfo(page, size, (int) reviewPage.getTotalElements(), reviewPage.getTotalPages());
+
+        List<Review> reviews = reviewPage.getContent();
+        List<ReviewResponseDto> response =
+                reviews.stream()
+                        .map(review -> mapper.reviewsToResponseDto(review))
+                        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new ReviewMultiResponseDto(response, pageInfo), HttpStatus.OK);
     }
 
     // 후기 삭제

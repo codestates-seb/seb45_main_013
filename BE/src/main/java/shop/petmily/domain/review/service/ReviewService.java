@@ -2,6 +2,7 @@ package shop.petmily.domain.review.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,6 @@ import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -88,9 +88,15 @@ public class ReviewService {
         return review;
     }
 
-    // 후기 전체 조회
-    public Page<Review> findReviews(int page, int size) {
-        return reviewRepository.findAll(PageRequest.of(page, size, Sort.by("reviewId").descending()));
+    // 후기 전체 조회 ( petsitterId : 선택적 )
+    public Page<Review> findAllReviews(int page, int size, Long petsitterId) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+
+        if (petsitterId != null) {
+            return reviewRepository.findByPetsitter_PetsitterId(petsitterId, pageRequest);
+        } else {
+            return reviewRepository.findAll(pageRequest);
+        }
     }
 
     // 후기 삭제
