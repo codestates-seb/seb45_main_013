@@ -22,11 +22,12 @@ public class ReservationResponseDto {
     private Time reservationTimeEnd;
     private String location;
     private String phone;
-    private String body;
+    private String memberBody;
     private List<PetResponseDto> pets;
     private long petsitterId;
     private String petsitterName;
     private String petsitterPhone;
+    private String petsitterBody;
     private String progress;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
