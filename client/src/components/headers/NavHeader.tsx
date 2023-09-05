@@ -5,18 +5,36 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
-import { setUser } from 'modules/userSlice';
+import { IUser, login, setUser } from 'modules/userSlice';
 
 const NavHeader = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
-  const { isLogin, memberId, name, nickName } = useSelector((state: any) => state.login);
+  const { isLogin } = useSelector((state: IUser) => state.login);
 
-  console.log(isLogin, memberId, name, nickName);
+  console.log(isLogin);
 
   const [activeButton, setActiveButton] = useState('홈');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOutsideClick = (e: MouseEvent) => {
+    if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      setIsModalOpen(false);
+    }
+  };
+
+  console.log(isModalOpen);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      window.addEventListener('click', handleOutsideClick);
+    }
+
+    return () => {
+      window.removeEventListener('click', handleOutsideClick);
+    };
+  }, [isModalOpen]);
 
   const handleNavButtonClick = (buttonText: string) => {
     setActiveButton(buttonText);
@@ -25,10 +43,15 @@ const NavHeader = () => {
   useEffect(() => {
     const accessToken = getCookieValue('access_token');
 
-    axios.get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((data) => {
-      console.log(data.data);
-      dispatch(setUser(data.data));
-    });
+    if (accessToken) {
+      axios
+        .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
+        .then((data) => {
+          dispatch(login());
+          dispatch(setUser(data.data));
+        })
+        .catch((error) => console.log(error));
+    }
   }, [isLogin]);
 
   return (
@@ -46,12 +69,12 @@ const NavHeader = () => {
               <img src="/icons/User.svg" alt="user_icon" width="24"></img>
             </UserButton>
           </NotiUserContainer>
-          {isModalOpen ? (
+          {isModalOpen && isLogin && (
             <LoginNavModal ref={modalRef}>
               <Link to="/mypage">마이페이지</Link>
               <button>로그아웃</button>
             </LoginNavModal>
-          ) : null}
+          )}
         </TopHeader>
         <NavBar>
           <NavBarButton isactive={activeButton === '홈' ? 'true' : 'false'} onClick={() => handleNavButtonClick('홈')}>
