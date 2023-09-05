@@ -75,7 +75,7 @@ public class JournalController {
     }
 
     // 케어일지 전체조회 (멤버)
-    @GetMapping("/member")
+    @GetMapping
     public ResponseEntity getJournals(@RequestParam("page") @Positive int page,
                                       @RequestParam("size") @Positive int size) {
         Long memberId = jwtUtils.getMemberId();

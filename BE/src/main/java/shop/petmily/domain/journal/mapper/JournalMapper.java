@@ -34,7 +34,6 @@ public interface JournalMapper {
         dto.setCreatedAt(journal.getCreatedAt());
         dto.setLastModifiedAt(journal.getLastModifiedAt());
         dto.setBody(journal.getBody());
-
         dto.setPhotos(new ArrayList<>(journal.getPhotos()));
 
         return dto;
