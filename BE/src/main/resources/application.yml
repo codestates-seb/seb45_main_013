@@ -29,7 +29,6 @@ spring:
 #  sql:
 #    init:
 #      data-locations: classpath*:db/h2/data.sql
-
   security:
     oauth2:
       client:
