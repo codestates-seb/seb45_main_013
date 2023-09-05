@@ -12,6 +12,7 @@ const GoogleOAuthButtonStyle = styled.button`
   color: ${(props) => props.theme.textColors.gray60};
   background-color: white;
   width: 100%;
+  font-family: 'Noto Sans KR';
 
   &:hover {
     background-color: ${(props) => props.theme.textColors.primary};

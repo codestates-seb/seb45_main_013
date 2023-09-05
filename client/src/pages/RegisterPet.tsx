@@ -122,7 +122,6 @@ export const InputLabelStyle = styled.label`
   ${(props) => props.theme.fontSize.s14h21}
 `;
 
-
 export const InputStyle = styled.input`
   padding: 8px;
   height: 32px;
