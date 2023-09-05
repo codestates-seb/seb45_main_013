@@ -46,7 +46,8 @@ public class Petsitter {
     public enum PossiblePetType {
 
         PET_DOG("강아지"),
-        PET_CAT("고양이");
+        PET_CAT("고양이"),
+        PET_ALL("강아지고양이");
 
         @Getter
         private String petType;
