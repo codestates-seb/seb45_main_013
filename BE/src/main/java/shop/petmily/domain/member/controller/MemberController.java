@@ -95,7 +95,6 @@ public class MemberController {
     @GetMapping("/my-page")
     public ResponseEntity<MemberGetResponseDto> getMember(@LoginMemberId Long loginMemberId) {
         MemberGetResponseDto memberGetResponseDto = memberService.findProfileMember(loginMemberId);
-
         return new ResponseEntity<>(memberGetResponseDto, HttpStatus.OK);
     }
 

@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 public class ReviewPostDto {
     private long reservationId;
 
-    private long petSitterId;
+    private long petsitterId;
 
     private long memberId;
 

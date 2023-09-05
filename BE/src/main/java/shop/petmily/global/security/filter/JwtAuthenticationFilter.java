@@ -92,7 +92,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .memberId(member.getMemberId())
                 .nickName(member.getNickName())
                 .build();
 

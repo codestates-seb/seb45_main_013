@@ -5,19 +5,22 @@ import lombok.Setter;
 import org.joda.time.DateTime;
 
 import java.sql.Date;
+import java.sql.Time;
 import  java.sql.Timestamp;
 import java.util.List;
 
 @Getter
 @Setter
 public class ReservationPostDto {
-    private long memberId;
+    private Long memberId;
 
     private String body;
 
-    private Timestamp reservationTimeStart;
+    private Date reservationDay;
 
-    private Timestamp reservationTimeEnd;
+    private Time reservationTimeStart;
+
+    private Time reservationTimeEnd;
 
     private String adress;
 
