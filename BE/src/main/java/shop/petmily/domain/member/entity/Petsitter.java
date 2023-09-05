@@ -28,7 +28,7 @@ public class Petsitter {
     @Column(length = 10)
     private PossiblePetType possiblePetType;
 
-    @Column(length = 7)
+    @Column(length = 500)
     private String possibleLocation;
 
     @Column(length = 7)
