@@ -3,6 +3,7 @@ package shop.petmily.domain.review.entity;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.global.audit.Auditable;
 
@@ -44,5 +45,5 @@ public class Review extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "petsitter_id")
-    private Member petsitter;
+    private Petsitter petsitter;
 }

@@ -21,7 +21,8 @@ public enum ExceptionCode {
     PET_NOT_EXIST(404,"존재하지 않는 펫 입니다."),
     TIME_REQUEST_NOT_ALLOWED(400,"올바르지 않은 시간요청입니다."),
     NOT_STATUS_CONFIRM(400, "예약확정 가능한 상태가 아닙니다."),
-    NOT_STATUS_CANCEL(400,"예약취소 가능한 상태가 아닙니다.")
+    NOT_STATUS_CANCEL(400,"예약취소 가능한 상태가 아닙니다."),
+    WARNING(400, "잘못된 접근입니다")
     ;
 
     @Getter

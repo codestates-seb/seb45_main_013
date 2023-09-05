@@ -80,7 +80,7 @@ public class ReviewController {
     public ResponseEntity patchReview(@PathVariable("review-id") @Positive long reviewId,
                                       @RequestPart(required = false) ReviewPatchDto reviewPatchDto,
                                       @RequestPart(required = false) List<MultipartFile> files) throws IOException {
-        reviewPatchDto = (reviewPatchDto == null) ? new ReviewPatchDto() : reviewPatchDto;
+//        reviewPatchDto = (reviewPatchDto == null) ? new ReviewPatchDto() : reviewPatchDto;
         reviewPatchDto.setMemberId(jwtUtils.getMemberId());
         reviewPatchDto.setReviewId(reviewId);
         Review review = mapper.reviewPatchToReview(reviewPatchDto);
