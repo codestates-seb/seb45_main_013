@@ -11,7 +11,9 @@ import java.sql.Time;
 @Setter
 @Builder
 public class PetsitterGetResponseDto {
+    private long petsitterId;
     private String email;
+    private String name;
     private String nickName;
     private String phone;
     private String address;
@@ -20,5 +22,6 @@ public class PetsitterGetResponseDto {
     private String possibleDay;
     private Time possibleTimeStart;
     private Time possibleTimeEnd;
-    private int star;
+    private String body;
+    private double star;
 }
