@@ -127,12 +127,15 @@ public class MemberService {
         Member member = findMember(loginMemberId);
 
         return MemberGetResponseDto.builder()
+                .memberId(member.getMemberId())
                 .email(member.getEmail())
+                .name(member.getName())
                 .nickName(member.getNickName())
                 .phone(member.getPhone())
                 .address(member.getAddress())
                 .photo(member.getPhoto())
                 .body(member.getBody())
+                .petsitterBoolean(member.isPetsitterBoolean())
                 .build();
     }
 
