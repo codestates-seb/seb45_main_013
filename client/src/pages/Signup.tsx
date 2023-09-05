@@ -6,7 +6,8 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { Modal, Sheet } from '@mui/joy';
 import DaumPostcode from 'react-daum-postcode';
-// import axios from 'axios';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface IFormSignpInputs {
   name: string;
@@ -21,7 +22,9 @@ interface IFormSignpInputs {
 }
 
 const Signup = () => {
-  // const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+  const naviagate = useNavigate();
   const [isSignupLoading, setIsSignupLoading] = useState(false);
 
   const {
@@ -62,29 +65,51 @@ const Signup = () => {
   const onSubmit = async (data: IFormSignpInputs) => {
     setIsSignupLoading(true);
     console.log(data);
-    // const { name, phone, address, detailAddress, email, nickName, password, petsitterBoolean } = data;
+    const { name, phone, address, detailAddress, email, nickName, password, petsitterBoolean } = data;
     if (data.password !== data.passwordConfirm) {
       setError('password', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
       setError('passwordConfirm', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
       return;
     }
-    // try {
-    //   const data = await axios.post(`${apiUrl}/members`, {
-    //     name,
-    //     phone,
-    //     address: `${address} ${detailAddress}`,
-    //     email,
-    //     nickName,
-    //     password,
-    //     petsitterBoolean,
-    //   });
-    //   console.log(data);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const data = await axios.post(`${apiUrl}/members`, {
+        name,
+        phone,
+        address: `${address} ${detailAddress}`,
+        email,
+        nickName,
+        password,
+        petsitterBoolean,
+      });
+      if (data.status === 200) {
+        naviagate('/login');
+      }
+    } catch (error: any) {
+      const { fieldErrors } = error.response.data;
+      console.log(fieldErrors);
+
+      if (error?.response.status === 400) {
+        for (let i = 0; i < fieldErrors.length; i++) {
+          if (fieldErrors[i].field === 'name') {
+            setError('name', { type: 'serverError', message: fieldErrors[i].reason });
+          } else if (fieldErrors[i].field === 'password') {
+            setError('password', { type: 'serverError', message: fieldErrors[i].reason });
+          } else if (fieldErrors[i].field === 'phone') {
+            setError('phone', { type: 'serverError', message: fieldErrors[i].reason });
+          } else if (fieldErrors[i].field === 'nickName') {
+            setError('nickName', { type: 'serverError', message: fieldErrors[i].reason });
+          } else if (fieldErrors[i].field === 'email') {
+            setError('email', { type: 'serverError', message: fieldErrors[i].reason });
+          } else if (fieldErrors[i].field === 'address') {
+            setError('address', { type: 'serverError', message: fieldErrors[i].reason });
+          }
+        }
+      }
+    }
     setIsSignupLoading(false);
   };
 
+  console.log(errors);
   return (
     <MainContainer>
       <SignupContainer>
@@ -103,7 +128,7 @@ const Signup = () => {
               {...register('name', { required: true })}
               error={errors.name?.type}
             ></SignupInputStyle>
-            {errors.name?.type === 'required' && <ErrorMessage>이름을 입력해주세요.</ErrorMessage>}
+            {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -111,7 +136,7 @@ const Signup = () => {
               {...register('phone', { required: true })}
               error={errors.phone?.type}
             ></SignupInputStyle>
-            {errors.phone?.type === 'required' && <ErrorMessage>연락처를 입력해주세요.</ErrorMessage>}
+            {errors.phone && <ErrorMessage>{errors.phone.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -122,7 +147,7 @@ const Signup = () => {
               onClick={onToggleModal}
               onKeyDown={onToggleModal}
             ></SignupInputStyle>
-            {errors.address?.type === 'required' && <ErrorMessage>주소를 입력해주세요.</ErrorMessage>}
+            {errors.address && <ErrorMessage>{errors.address.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -130,7 +155,7 @@ const Signup = () => {
               {...register('detailAddress', { required: true })}
               error={errors.detailAddress?.type}
             ></SignupInputStyle>
-            {errors.detailAddress?.type === 'required' && <ErrorMessage>상세주소를 입력해주세요.</ErrorMessage>}
+            {errors.detailAddress && <ErrorMessage>{errors.detailAddress.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -139,7 +164,7 @@ const Signup = () => {
               {...register('email', { required: true })}
               error={errors.email?.type}
             ></SignupInputStyle>
-            {errors.email?.type === 'required' && <ErrorMessage>이메일을 입력해주세요.</ErrorMessage>}
+            {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -147,7 +172,7 @@ const Signup = () => {
               {...register('nickName', { required: true })}
               error={errors.nickName?.type}
             ></SignupInputStyle>
-            {errors.nickName?.type === 'required' && <ErrorMessage>닉네임을 입력해주세요.</ErrorMessage>}
+            {errors.nickName && <ErrorMessage>{errors.nickName.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -156,8 +181,7 @@ const Signup = () => {
               {...register('password', { required: true })}
               error={errors.password?.type}
             ></SignupInputStyle>
-            {errors.password?.type === 'required' && <ErrorMessage>비밀번호을 입력해주세요.</ErrorMessage>}
-            {errors.password?.type === 'dismatch' && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
+            {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
           </div>
           <div>
             <SignupInputStyle
@@ -166,7 +190,7 @@ const Signup = () => {
               {...register('passwordConfirm', { required: true })}
               error={errors.passwordConfirm?.type}
             ></SignupInputStyle>
-            {errors.passwordConfirm?.type === 'required' && <ErrorMessage>비밀번호 확인을 입력해주세요.</ErrorMessage>}
+            {errors.passwordConfirm && <ErrorMessage>{errors.passwordConfirm.message}</ErrorMessage>}
             {errors.password?.type === 'dismatch' && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
           </div>
           <CheckBoxWrapper>
@@ -214,7 +238,7 @@ const SignupContainer = styled.div`
   flex-direction: column;
   position: absolute;
   top: 10%;
-  width: 260px;
+  width: 280px;
 `;
 
 const TitleContainer = styled.div`
@@ -249,7 +273,7 @@ const SignupInputStyle = styled.input<{ error: string | undefined }>`
   border-radius: 8px;
   border: 1px solid
     ${(props) =>
-      props.error === 'required' || props.error === 'dismatch'
+      props.error === 'required' || props.error === 'dismatch' || props.error === 'serverError'
         ? props.theme.colors.mainBlue
         : props.theme.lineColors.coolGray80};
   padding: 8px;
