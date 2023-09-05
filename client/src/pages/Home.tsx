@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-// import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Rating from '@mui/material/Rating';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
@@ -8,7 +9,7 @@ const OftenPetsitterItem = [
   {
     id: 1,
     name: '도희',
-    describe: '안녕하세요! 도희입니다.',
+    describe: '안녕하세요! 도희입니다. 펫시터를 시작한지 3년이 되었어요.',
     rating: `5.0`,
     review: `1,630`,
     profileImg: '/imgs/PetsitterPhoto.svg',
@@ -17,42 +18,63 @@ const OftenPetsitterItem = [
   },
 ];
 
+// 추후 UseEffect로 데이터 받아올 데이터 (실시간 리뷰)
 const RealtimeReviewItem = [
   {
     id: 1,
     location: '서울시 강남구',
     rating: `5.0`,
+    shortContent: `강아지가 너무 귀여워요!`,
     profileImg: '/imgs/PetsitterPhoto.svg',
     ratingImg: '/imgs/Star.svg',
+    describe: `진짜 매일같이 정성스럽게돌봐주시는 덕분에 사람을더 좋아하게 되는거 같아요ㅜㅜ`,
   },
   {
     id: 2,
     location: '경기 수원시',
     rating: `4.0`,
+    shortContent: `제가 너무 귀여워요!`,
     profileImg: '/imgs/PetsitterPhoto.svg',
     ratingImg: '/imgs/Star.svg',
+    describe: `조금 케어가 부족한거 같아요`,
   },
   {
     id: 3,
     location: '전라도 광주시',
     rating: `2.0`,
+    shortContent: `펫시터님이 너무 귀여워요!`,
     profileImg: '/imgs/PetsitterPhoto.svg',
     ratingImg: '/imgs/Star.svg',
+    describe: `펫시터님이 잘 케어해주세요!`,
   },
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleSearchClick = () => {
+    navigate('/search');
+  };
+
+  const handlePetsitterClick = () => {
+    navigate('/petsitters');
+  };
+
+  const handlePetsitterQnaClick = () => {
+    navigate('/qna');
+  };
+
   return (
     <HomeContainer>
       <AdContainer>
         <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
       </AdContainer>
-      <SearchInputContainer>
+      <SearchInputContainer onClick={handleSearchClick}>
         <SearchInput placeholder="펫시터 검색" />
       </SearchInputContainer>
       <LinkContainer>
-        <PetsitterLink>펫시터 보기</PetsitterLink>
-        <PetsitterQnaLink>펫시터 Q&A</PetsitterQnaLink>
+        <PetsitterLink onClick={handlePetsitterClick}>펫시터 보기</PetsitterLink>
+        <PetsitterQnaLink onClick={handlePetsitterQnaClick}>펫시터 Q&A</PetsitterQnaLink>
       </LinkContainer>
       <AdSubContainer>
         <AdSubText>{'첫 만남\n 50% 할인 쿠폰'}</AdSubText>
@@ -66,10 +88,12 @@ const Home = () => {
           </Imgbox>
           <OftenPetsitterbox>
             <OnelineContainer>
-              <Namebox>{item.name}</Namebox>
+              <Nameox>{item.name}</Nameox>
               <ReservationButton>예약하기</ReservationButton>
             </OnelineContainer>
-            <DiscriptionText>{item.describe}</DiscriptionText>
+            <DiscriptionText>
+              {item.describe.length > 20 ? item.describe.substring(0, 20) + '...' : item.describe}
+            </DiscriptionText>
             <RatingReviewContainer>
               <RatingImg src={item.ratingImg} alt="ratingImg" />
               {item.rating}
@@ -81,14 +105,32 @@ const Home = () => {
       ))}
       <RealtimeReviewText>실시간 리뷰</RealtimeReviewText>
       <RealtimeReviewContainer>
-        <Carousel showThumbs={false}>
+        <Carousel
+          showThumbs={false}
+          showStatus={false}
+          autoPlay={false}
+          emulateTouch={true}
+          stopOnHover={true}
+          infiniteLoop={true}
+          useKeyboardArrows={false}
+        >
           {RealtimeReviewItem.map((item) => (
-            <div key={item.id}>
-              <img src={item.profileImg} alt="Profile" />
-              <p>{item.location}</p>
-              <RatingImg src={item.ratingImg} alt="ratingImg" />
-              {item.rating}
-            </div>
+            <RealtimeReviewWrap key={item.id}>
+              <RealtimeImgWrap>
+                <RealtimeImg src={item.profileImg} alt="Profile" />
+              </RealtimeImgWrap>
+              <RealtimeBox>
+                <OnelineWrap>
+                  <RealtimeLocation>{item.location}</RealtimeLocation>
+                  <Rating name="read-only" value={Number(item.rating)} size="small" readOnly />
+                </OnelineWrap>
+                <RealtimeDescription>
+                  {item.describe.length > 20
+                    ? item.describe.substring(0, 19) + '\n' + item.describe.substring(19)
+                    : item.describe}
+                </RealtimeDescription>
+              </RealtimeBox>
+            </RealtimeReviewWrap>
           ))}
         </Carousel>
       </RealtimeReviewContainer>
@@ -101,7 +143,6 @@ const HomeContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
-  border: 1px solid black;
   background-color: #fefdff;
 `;
 
@@ -119,10 +160,10 @@ const SearchInputContainer = styled.div`
 
 const SearchInput = styled.input`
   padding: 10px 0 10px 14px;
-  ${(props) => props.theme.fontSize.s14h21};
+  ${(props) => props.theme.fontSize.s12h18};
   color: #a3a3a3;
   font-family: 'Noto Sans KR';
-  font-weight: bold;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
   border-radius: 8px;
   width: 100%;
   background-color: ${(props) => props.theme.lineColors.coolGray90};
@@ -146,9 +187,10 @@ const PetsitterLink = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 67px;
   font-family: 'Noto Sans KR';
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  ${(props) => props.theme.fontSize.s18h27};
+  ${(props) => props.theme.fontSize.s16h24};
   box-shadow: ${(props) => props.theme.shadow.dp01};
 `;
 
@@ -158,9 +200,10 @@ const PetsitterQnaLink = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 67px;
   font-family: 'Noto Sans KR';
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  ${(props) => props.theme.fontSize.s18h27};
+  ${(props) => props.theme.fontSize.s16h24};
   box-shadow: ${(props) => props.theme.shadow.dp01};
 `;
 
@@ -195,9 +238,9 @@ const OftenPetsitterText = styled.div`
 const OftenPetsitterContainer = styled.div`
   display: flex;
   justify-content: space-around;
-  height: 93px;
+  min-height: 93px;
   margin: 16px 12px 0;
-  padding: 8px 12px 0;
+  padding: 8px 12px 12px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
   border-radius: 8px;
 `;
@@ -217,10 +260,10 @@ const OnelineContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 200px;
+  gap: 140px;
 `;
 
-const Namebox = styled.div`
+const Nameox = styled.div`
   ${(props) => props.theme.fontSize.s16h24};
   font-family: 'Noto Sans KR';
   font-weight: ${(props) => props.theme.fontWeights.bold};
@@ -270,7 +313,44 @@ const RealtimeReviewText = styled.div`
 `;
 
 const RealtimeReviewContainer = styled.div`
-  border: 1px solid black;
+  display: flex;
+  justify-content: space-around;
+  min-height: 160px;
+  margin: 16px 12px 48px;
+  padding: 18px 22px 14px 22px;
+  box-shadow: ${(props) => props.theme.shadow.dp01};
+  border-radius: 8px;
+`;
+
+const RealtimeReviewWrap = styled.div`
+  display: flex;
+  min-height: 140px;
+  justify-content: space-around;
+`;
+
+const RealtimeImgWrap = styled.div``;
+
+const RealtimeBox = styled.div``;
+
+const OnelineWrap = styled.div`
+  display: flex;
+`;
+
+const RealtimeImg = styled.img`
+  width: 80px;
+  height: 80px;
+`;
+
+const RealtimeDescription = styled.div`
+  ${(props) => props.theme.fontSize.s14h21};
+  margin-top: 8px;
+  white-space: pre-line;
+  text-align: left;
+`;
+
+const RealtimeLocation = styled.div`
+  font-family: 'Noto Sans KR';
+  font-weight: ${(props) => props.theme.fontWeights.bold};
 `;
 
 export default Home;
