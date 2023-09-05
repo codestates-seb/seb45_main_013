@@ -5,8 +5,11 @@ export const loginSlice = createSlice({
   initialState: {
     isLogin: false,
     memberId: null,
+    name: null,
+    phone: null,
+    address: null,
     email: null,
-    displayName: null,
+    nickName: null,
   },
   reducers: {
     login: (state) => {
@@ -14,14 +17,17 @@ export const loginSlice = createSlice({
     },
     setUser: (state, action) => {
       state.memberId = action.payload.memeberId;
+      state.name = action.payload.name;
+      state.phone = action.payload.phone;
+      state.address = action.payload.address;
       state.email = action.payload.email;
-      state.displayName = action.payload.displayName;
+      state.nickName = action.payload.displayName;
     },
     deleteUser: (state) => {
       state.isLogin = false;
       state.memberId = null;
       state.email = null;
-      state.displayName = null;
+      state.nickName = null;
     },
   },
 });

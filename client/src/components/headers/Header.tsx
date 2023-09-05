@@ -24,6 +24,7 @@ export default Header;
 const Container = styled.header`
   display: flex;
   justify-content: space-between;
+
   height: 64px;
   padding: 12px;
   background-color: white;
@@ -32,10 +33,13 @@ const Container = styled.header`
 
 const ButtonContainer = styled.div`
   display: flex;
+
   gap: 12px;
 
   > button {
     border: none;
     background-color: white;
+    width: 24px;
+    height: 24px;
   }
 `;

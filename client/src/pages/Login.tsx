@@ -1,22 +1,44 @@
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import styled, { keyframes } from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
 import GoogleOAuthButton from '../components/buttons/OAuthButton';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from 'modules/userSlice';
 
 interface IFormLoginInputs {
-  id: string;
+  email: string;
   password: string;
 }
 
 const Login = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormLoginInputs>();
 
-  const onSubmit = (data: IFormLoginInputs) => {
-    console.log(data);
+  const onSubmit = async (data: IFormLoginInputs) => {
+    setIsLoginLoading(true);
+    const { email, password } = data;
+    try {
+      const { data } = await axios.post(`${apiUrl}/auth/login`, { email, password });
+      document.cookie = `access_token=${data.accessToken}; path=/;`;
+      document.cookie = `refresh_token=${data.refreshToken}; path=/;`;
+
+      dispatch(login());
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoginLoading(false);
   };
   return (
     <MainContainer>
@@ -27,10 +49,10 @@ const Login = () => {
             <LoginInputStyle
               type="text"
               placeholder="아이디"
-              {...register('id', { required: true })}
-              error={errors.id?.message}
+              {...register('email', { required: true })}
+              error={errors.email?.type}
             />
-            {errors.id?.message === '' && <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>}
+            {errors.email?.type === '' && <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>}
           </div>
           <div>
             <LoginInputStyle
@@ -41,7 +63,14 @@ const Login = () => {
             />
             {errors.password?.message === '' && <ErrorMessage>비밀번호를 입력해주세요.</ErrorMessage>}
           </div>
-          <SubmitButtonStyle type="submit">로 그 인</SubmitButtonStyle>
+          <div style={{ position: 'relative' }}>
+            <SubmitButtonStyle type="submit">로 그 인</SubmitButtonStyle>
+            {isLoginLoading && (
+              <LoadingContainer>
+                <Spinner />
+              </LoadingContainer>
+            )}
+          </div>
           <GoogleOAuthButton>Log in with Google</GoogleOAuthButton>
         </InputForm>
         <LinkContainer>
@@ -89,7 +118,7 @@ export const SubmitButtonStyle = styled.button`
   border: none;
   color: white;
   ${(props) => props.theme.fontSize.s16h24};
-  font-family: 'Noto Sans KR';
+  font-family: 'inherit';
   font-weight: ${(props) => props.theme.fontWeights.bold};
 
   &:hover {
@@ -117,7 +146,8 @@ const LoginInputStyle = styled.input<{ error: string | undefined }>`
   height: 32px;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid ${(props) => (props.error === '' ? props.theme.colors.mainBlue : props.theme.lineColors.coolGray80)};
+  border: 1px solid
+    ${(props) => (props.error === 'required' ? props.theme.colors.mainBlue : props.theme.lineColors.coolGray80)};
   ${(props) => props.theme.fontSize.s14h21};
 `;
 
@@ -126,4 +156,30 @@ export const ErrorMessage = styled.p`
   font-size: 10px;
   margin-top: 4px;
   color: ${(props) => props.theme.colors.paleBlue};
+`;
+
+const LoadingContainer = styled.div`
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 19px;
+  left: 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const Spinner = styled.div`
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  border-top: 2px solid #ffffff;
+  width: 100%;
+  height: 100%;
+  animation: ${spin} 1.2s linear infinite;
 `;
