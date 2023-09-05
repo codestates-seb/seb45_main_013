@@ -8,10 +8,13 @@ import lombok.Setter;
 @Setter
 @Builder
 public class MemberGetResponseDto {
+    private long memberId;
     private String email;
+    private String name;
     private String nickName;
     private String phone;
     private String address;
     private String photo;
     private String body;
+    private boolean petsitterBoolean;
 }

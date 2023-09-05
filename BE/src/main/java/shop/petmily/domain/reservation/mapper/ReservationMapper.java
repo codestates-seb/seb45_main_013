@@ -61,17 +61,19 @@ public interface ReservationMapper {
         reservationResponseDto.setReservationDay(reservation.getReservationDay());
         reservationResponseDto.setReservationTimeStart(reservation.getReservationTimeStart());
         reservationResponseDto.setReservationTimeEnd(reservation.getReservationTimeEnd());
-        reservationResponseDto.setLocation(reservation.getMember().getAddress());
-        reservationResponseDto.setPhone(reservation.getMember().getPhone());
-        reservationResponseDto.setBody(reservation.getBody());
+        reservationResponseDto.setLocation(reservation.getAdress());
+        reservationResponseDto.setPhone(reservation.getPhone());
+        reservationResponseDto.setMemberBody(reservation.getBody());
         if (reservation.getPetsitter() == null){
             reservationResponseDto.setPetsitterId(0);
             reservationResponseDto.setPetsitterName(null);
             reservationResponseDto.setPetsitterPhone(null);
+            reservationResponseDto.setPetsitterBody(null);
         }else {
             reservationResponseDto.setPetsitterId(reservation.getPetsitter().getPetsitterId());
             reservationResponseDto.setPetsitterName(reservation.getPetsitter().getMember().getName());
             reservationResponseDto.setPetsitterPhone(reservation.getPetsitter().getMember().getPhone());
+            reservationResponseDto.setPetsitterBody(reservation.getPetsitter().getMember().getBody());
         }
         reservationResponseDto.setCreatedAt(reservation.getCreatedAt());
         reservationResponseDto.setLastModifiedAt(reservation.getLastModifiedAt());
@@ -107,6 +109,7 @@ public interface ReservationMapper {
         reseponseDto.setEmail(petsitter.getMember().getEmail());
         reseponseDto.setAddress(petsitter.getMember().getAddress());
         reseponseDto.setPhoto(petsitter.getMember().getPhoto());
+        reseponseDto.setBody(petsitter.getMember().getBody());
         reseponseDto.setPossiblePetType(String.valueOf(petsitter.getPossiblePetType()));
         reseponseDto.setPossibleLocation(petsitter.getPossibleLocation());
         reseponseDto.setPossibleDay(petsitter.getPossibleDay());

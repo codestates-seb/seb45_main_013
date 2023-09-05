@@ -25,7 +25,7 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
 
     @Query(value = "SELECT * FROM petsitter WHERE INSTR(possible_day, ?1) > 0 " +
             "AND possible_pet_type = ?2 " +
-            "AND possible_location = ?3 " +
+            "AND possible_location LIKE %?3%  " +
             "AND possible_time_start <= ?4 " +
             "AND possible_time_end >= ?5 " +
             "AND NOT EXISTS (" +

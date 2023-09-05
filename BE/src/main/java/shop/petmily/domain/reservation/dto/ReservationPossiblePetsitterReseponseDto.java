@@ -24,6 +24,8 @@ public class ReservationPossiblePetsitterReseponseDto {
 
     private String photo;
 
+    private String body;
+
     private String possiblePetType;
 
     private String possibleLocation;
