@@ -61,6 +61,7 @@ public class PetsitterService {
     public PetsitterPossibleResoponseDto findPossible(Petsitter petsitter) {
 
         return PetsitterPossibleResoponseDto.builder()
+                .petsitterId(petsitter.getPetsitterId())
                 .possiblePetType(petsitter.getPossiblePetType())
                 .possibleDay(petsitter.getPossibleDay())
                 .possibleLocation(petsitter.getPossibleLocation())

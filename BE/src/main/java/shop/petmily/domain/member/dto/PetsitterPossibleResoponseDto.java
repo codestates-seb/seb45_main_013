@@ -11,6 +11,7 @@ import java.sql.Time;
 @Setter
 @Builder
 public class PetsitterPossibleResoponseDto {
+    private long petsitterId;
     private Petsitter.PossiblePetType possiblePetType;
     private String possibleLocation;
     private String possibleDay;
