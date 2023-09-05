@@ -8,12 +8,7 @@ public enum Progress {
     RESERVATION_REQUEST("예약 신청"),
     RESERVATION_CONFIRMED("예약 확정"),
     RESERVATION_CANCELLED("예약 취소"),
-    WRITE_JOURNAL("케어일지 작성하기"),
-    VIEW_JOURNAL("케어일지 보기"),
-    EDIT_JOURNAL("케어일지 수정하기"),
-    DELETE_JOURNAL("케어일지 삭제하기"),
-    WRITE_REVIEW("후기 작성하기"),
-    EDIT_REVIEW("후기 수정하기")
+    FINISH_CARING("일정 종료")
     ;
     @Getter
     private String progress;
