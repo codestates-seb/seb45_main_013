@@ -3,6 +3,7 @@ package shop.petmily.domain.reservation.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import shop.petmily.domain.member.entity.Member;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ReservationService {
@@ -68,7 +71,7 @@ public class ReservationService {
         }
 
         String reservationPetType = verifiedReservationPetType(reservation);
-        String reservationLocation = reservation.getAdress();
+        String reservationLocation = extractionAddress(reservation.getAdress());
         Date reservationDate = reservation.getReservationDay();
 
         List<Petsitter> petsitters = petsitterRepository.findPossiblePetsitter(reservationDay, reservationPetType, reservationLocation,
@@ -186,6 +189,22 @@ public class ReservationService {
         }
     }
 
+    @Scheduled(cron = "0 1,31 * * * *") // 1분, 31분마다 예약체크 > 시간지낫으면 예약완료
+    public void reservationCompleteCheck() {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Reservation> reservations = reservationRepository.findEqualReservationDay(now.toLocalDate());
+
+        for (Reservation reservation : reservations) {
+            LocalTime reservationEndTime = reservation.getReservationTimeEnd().toLocalTime();
+
+            if (reservationEndTime.isBefore(now.toLocalTime())) {
+                reservation.setProgress(Progress.FINISH_CARING);
+                reservationRepository.save(reservation);
+            }
+        }
+    }
+
 
     public String verifiedReservationPetType(Reservation reservation){
         boolean hasCat = false;
@@ -211,6 +230,17 @@ public class ReservationService {
 
         return reservationPetType;
 
+    }
+
+    public String extractionAddress(String originAdress){
+        Pattern pattern = Pattern.compile("(서울|대전|대구|울산|부산|광주|세종특별자치시)\\s([가-힣]+[구])?|([가-힣]+[시군])\\s([가-힣]+[구])?");
+        Matcher matcher = pattern.matcher(originAdress);
+
+        if (matcher.find()) {
+            return matcher.group();
+        }
+
+        throw new RuntimeException();
     }
 
     // 예약 내용 수정
