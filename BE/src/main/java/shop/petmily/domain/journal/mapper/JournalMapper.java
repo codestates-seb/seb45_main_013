@@ -35,7 +35,6 @@ public interface JournalMapper {
         dto.setLastModifiedAt(journal.getLastModifiedAt());
         dto.setBody(journal.getBody());
 
-        // 사진을 추가할 코드를 작성하세요. journal에서 사진 정보를 가져와서 dto에 설정합니다.
         dto.setPhotos(new ArrayList<>(journal.getPhotos()));
 
         return dto;

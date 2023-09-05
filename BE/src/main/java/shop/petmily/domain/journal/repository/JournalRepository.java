@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import shop.petmily.domain.journal.entity.Journal;
 
 public interface JournalRepository extends JpaRepository<Journal, Long> {
-    Page<Journal> findByMember(Long memberId, Pageable pageable);
+    Page<Journal> findByReservation_Member_MemberId(Long memberId, Pageable pageable);
 }

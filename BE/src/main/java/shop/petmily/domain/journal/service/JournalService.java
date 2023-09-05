@@ -18,7 +18,6 @@ import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -91,8 +90,8 @@ public class JournalService {
 
     // 케어일지 전체 조회
     public Page<Journal> findMemberJournal(int page, int size, Long memberId) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "reservationId");
-        return journalRepository.findByMember(memberId, pageable);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "reservation.reservationId");
+        return journalRepository.findByReservation_Member_MemberId(memberId, pageable);
     }
 
     // 케어일지 삭제
