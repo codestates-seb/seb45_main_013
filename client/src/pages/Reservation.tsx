@@ -1,163 +1,150 @@
 import styled from 'styled-components';
-import Button from '../components/buttons/LinkButton';
+import { useNavigate } from 'react-router-dom';
+// import { useState } from 'react';
+
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers';
+
+function BasicDatePicker() {
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthShort: `M` }}>
+      <DemoContainer components={['DatePicker']}>
+        <DatePicker label="날짜를 입력해주세요" format="YYYY-MM-DD" />
+      </DemoContainer>
+    </LocalizationProvider>
+  );
+}
+
+function CheckInTimePicker() {
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['TimePicker']}>
+        <TimePicker label="Check In" />
+      </DemoContainer>
+    </LocalizationProvider>
+  );
+}
+
+function CheckOutTimePicker() {
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['TimePicker']}>
+        <TimePicker label="Check Out" />
+      </DemoContainer>
+    </LocalizationProvider>
+  );
+}
+
+const Reservation = () => {
+  const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate('/');
+  };
+
+  return (
+    <MainContainer>
+      <StatusHeader>
+        <BackImg src="/imgs/BackArrow.svg" onClick={handleBackClick} />
+        <StatusTitleText>예약</StatusTitleText>
+        <PageNumberText>1/3</PageNumberText>
+      </StatusHeader>
+      <ReservationContainer>
+        <ScheduleContainer>
+          <ScheduleText>{`언제 펫시터가\n 필요하신가요?`}</ScheduleText>
+        </ScheduleContainer>
+        <BasicDatePickerContainer>
+          <BasicDatePicker />
+        </BasicDatePickerContainer>
+        <ScheduleContainer>
+          <ScheduleText>{'방문시간'}</ScheduleText>
+        </ScheduleContainer>
+        <BasicTimePickerContainer>
+          <CheckInContainer>
+            <CheckInTimePicker />
+          </CheckInContainer>
+          <CheckOutContainer>
+            <CheckOutTimePicker />
+          </CheckOutContainer>
+        </BasicTimePickerContainer>
+      </ReservationContainer>
+    </MainContainer>
+  );
+};
 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  background-color: ${(props) => props.theme.colors.white};
+`;
+
+const StatusHeader = styled.div`
+  display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: center;
-  margin-top: 0;
-  background-color: white;
+  background-color: ${(props) => props.theme.textColors.secondary};
+  min-height: 48px;
+  gap: 120px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px; //컨테이너 하단에 위치하도록 설정
+    width: 120px; // 밑줄의 길이 설정
+    height: 2px; // 밑줄의 두께 설정
+    background-color: ${(props) => props.theme.colors.mainBlue};
+  }
 `;
 
-const ReservationContainer = styled.div`
-  height: 359px;
+const BackImg = styled.img``;
+
+const StatusTitleText = styled.div`
+  font-family: 'Noto Sans KR';
+  ${(props) => props.theme.fontSize.s12h18};
+  font-weight: ${(props) => props.theme.fontWeights.extrabold};
 `;
 
-const StatusContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 360px;
-  height: 48px;
-  padding: 19px 28px 0;
-  background-color: #f5f5f5;
-  flex-shrink: 0;
+const PageNumberText = styled.div`
+  font-family: 'Noto Sans KR';
+  ${(props) => props.theme.fontSize.s12h18};
+  font-weight: ${(props) => props.theme.fontWeights.light};
 `;
 
-const StatusText = styled.h3`
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.medium};
+const ReservationContainer = styled.div``;
+
+const ScheduleContainer = styled.div`
+  margin: 36px 227px 0 36px;
 `;
 
-const ImgContainer = styled.div``;
-
-const StatusNum = styled.div`
-  color: ${(props) => props.theme.textColors.gray60};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
+const ScheduleText = styled.h2`
+  font-family: 'Noto Sans KR';
+  ${(props) => props.theme.fontSize.s16h24};
+  font-weight: ${(props) => props.theme.fontWeights.extrabold};
+  white-space: pre-line;
 `;
 
-const WhenText = styled.div`
-  padding-top: 38px;
-  padding-right: 167px;
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
+const BasicDatePickerContainer = styled.div`
+  margin: 16px 140px 0 36px;
 `;
 
-const WhenInput = styled.div``;
-
-const WhereText = styled.div`
-  padding-top: 38px;
-  padding-right: 167px;
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-`;
-
-const WhereInput = styled.div``;
-
-const TimeWrap = styled.div`
+const BasicTimePickerContainer = styled.div`
+  margin: 16px 36px 0 36px;
   display: flex;
 `;
 
-const CheckInText = styled.div`
-  padding-top: 38px;
-  padding-right: 167px;
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
+const CheckInContainer = styled.div`
+  padding: 0 24px 0 0;
 `;
 
-const CheckOutText = styled.div`
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
+const CheckOutContainer = styled.div`
+  padding: 0 240px 0 0;
 `;
-
-const CarePetText = styled.div`
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-`;
-
-const CarePetImg = styled.div``;
-
-const RequestText = styled.div`
-  margin: 36px 287px 0 36px;
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  white-space: nowrap;
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-`;
-
-const RequestInput = styled.div``;
-
-const ContactText = styled.div`
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s12s18};
-  font-family: ${(props) => props.theme.fonts.join(', ')};
-`;
-
-const RequestContainer = styled.div`
-  width: 360px;
-  height: 229px;
-  flex-shrink: 0;
-  border-top: 0.5px solid #c9c9c9;
-  border-bottom: 0.5px solid #c9c9c9;
-  background: rgb(255 255 255 / 71%);
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 330px;
-  height: 32px;
-  padding-top: 37px;
-  flex-shrink: 0;
-`;
-
-const Reservation = () => {
-  return (
-    <MainContainer>
-      <StatusContainer>
-        <ImgContainer>
-          <img src="/imgs/Arrow.svg" alt="back" />
-        </ImgContainer>
-        <StatusText>예약</StatusText>
-        <StatusNum>1/2</StatusNum>
-      </StatusContainer>
-      <ReservationContainer>
-        <WhenText>언제 펫시터가 필요하신가요?</WhenText>
-        <img src="/imgs/inputone.svg" alt="inputone" />
-        <WhenInput></WhenInput>
-        <WhereText>어디로 방문할까요?</WhereText>
-        <img src="/imgs/inputTwo.svg" alt="inputTwo" />
-        <WhereInput></WhereInput>
-        <TimeWrap>
-          <CheckInText>체크인 시간</CheckInText>
-          {/* <img src="/imgs/inputThree.svg" alt="inputThree" /> */}
-          <CheckOutText>체크아웃 시간</CheckOutText>
-          {/* <img src="/imgs/inputFour.svg" alt="inputFour" /> */}
-        </TimeWrap>
-        <CarePetText>맡기시는 반려동물</CarePetText>
-        <img src="/imgs/inputPet.svg" alt="inputPet" />
-        <img src="/imgs/inputPetTwo.svg" alt="inputPetTwo" />
-        <img src="/imgs/Ellipse 116.svg" alt="Ellipse 116" />
-        <CarePetImg></CarePetImg>
-      </ReservationContainer>
-      <RequestContainer>
-        <RequestText>요청사항</RequestText>
-        <img src="/imgs/inputRequest.svg" alt="Request" />
-        <RequestInput></RequestInput>
-        <ContactText>연락처</ContactText>
-      </RequestContainer>
-      <ButtonContainer>
-        <Button text="다음단계" link="/Reservation"></Button>
-      </ButtonContainer>
-    </MainContainer>
-  );
-};
 
 export default Reservation;

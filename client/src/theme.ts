@@ -18,6 +18,7 @@ export const defaultTheme = {
     gray50: '#B5B5B5',
     gray60: '#A6A6A6',
     primary: '#D9D9D9',
+    secondary: '#f5f5f5',
   },
   lineColors: {
     coolGray90: '#F5F6F8',
@@ -49,6 +50,7 @@ export const defaultTheme = {
     light: 400,
     normal: 500,
     bold: 600,
+    extrabold: 700,
   },
   shadow: {
     onlyBottom: '0px 4px 4px rgba(39,44, 86, 0.06)',
