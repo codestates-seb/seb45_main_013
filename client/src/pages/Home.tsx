@@ -108,7 +108,7 @@ const Home = () => {
         <Carousel
           showThumbs={false}
           showStatus={false}
-          autoPlay={false}
+          autoPlay={true}
           emulateTouch={true}
           stopOnHover={true}
           infiniteLoop={true}
@@ -140,9 +140,9 @@ const Home = () => {
 
 const HomeContainer = styled.div`
   display: flex;
+  margin-top: 84px;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100%;
   background-color: #fefdff;
 `;
 

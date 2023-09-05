@@ -67,7 +67,6 @@ function App() {
           </Route>
           <Route path="/" element={<HeaderLayout />}>
             <Route path="mypage" element={<Mypage />}></Route>
-            <Route path="reservation" element={<Reservation />}></Route>
           </Route>
           <Route path="/" element={<BackHeaderLayout />}>
             <Route path="login" element={<Login />}></Route>
@@ -77,6 +76,7 @@ function App() {
             <Route path="mypage/:petId/edit" element={<EditUserProfile />}></Route>
             <Route path="search" element={<Search />}></Route>
           </Route>
+          <Route path="reservation" element={<Reservation />}></Route>
           <Route path="/main" element={<Main />}></Route>
           <Route path="/cares/:memberId" element={<Reservation />}></Route>
           <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
