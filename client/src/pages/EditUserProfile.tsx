@@ -1,39 +1,44 @@
 import styled from 'styled-components';
-import { RegisterInputWrapper, InputContainer, InputLabelStyle, InputStyle } from './RegisterPet';
+import {
+  MainContainer,
+  PageTitle,
+  RegisterInputWrapper,
+  InputContainer,
+  InputLabelStyle,
+  InputStyle,
+} from './RegisterPet';
 import UploadProfileImg from '../components/UploadProfileImg';
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import Textarea from '@mui/joy/Textarea';
 
 // 지우기
 const petsitter = true;
 //  버튼 수정
+//  케어가능동물 select 높이
 
 const EditUserProfile = () => {
   return (
-    <EditPage>
-      <EditTitle>회원 정보 수정</EditTitle>
-      <EditContianer>
+    <>
+      <PageTitle>회원 정보 수정</PageTitle>
+
+      <MainContainer>
         <UploadProfileImg />
+
         <InputContainer>
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="username">이름</InputLabelStyle>
-            <InputStyle type="text" id="username" placeholder="김코딩" />
+            <Info>김코딩</Info>
+          </RegisterInputWrapper>
+          <RegisterInputWrapper>
+            <InputLabelStyle htmlFor="username">이메일</InputLabelStyle>
+            <Info>test@gmail.com</Info>
           </RegisterInputWrapper>
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="username">닉네임</InputLabelStyle>
             <InputStyle type="text" id="username" placeholder="코딩맨" />
-          </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">이메일</InputLabelStyle>
-            <InputStyle type="text" id="username" placeholder="test@gmail.com" />
-          </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">비밀번호 변경</InputLabelStyle>
-            <InputStyle type="password" id="username" placeholder="******" />
-          </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">비밀번호 확인</InputLabelStyle>
-            <InputStyle type="password" id="username" placeholder="******" />
           </RegisterInputWrapper>
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="username">연락처</InputLabelStyle>
@@ -43,60 +48,72 @@ const EditUserProfile = () => {
             <InputLabelStyle htmlFor="username">주소</InputLabelStyle>
             <InputStyle type="text" id="username" placeholder="서울 강남구 테헤란로 415 8층" />
           </RegisterInputWrapper>
+          <RegisterInputWrapper>
+            <InputLabelStyle htmlFor="username">나의 소개</InputLabelStyle>
+            <Textarea
+              placeholder="안녕하세요,홍길동 펫시터입니다!"
+              minRows={3}
+              sx={{
+                width: '60%',
+                borderColor: '#A6A6A6',
+                borderRadius: '8px',
+                fontSize: 14,
+              }}
+            />
+          </RegisterInputWrapper>
           {/* 펫시터라면 소개 입력란 추가 */}
           {petsitter && (
             <>
               <RegisterInputWrapper>
                 <InputLabelStyle htmlFor="username">케어 가능한 펫</InputLabelStyle>
-                <StyledTextarea placeholder="펫시터님에 대해 소개해주세요! (최대 200자)" />
+                <Select
+                  sx={{
+                    width: '60%',
+                    height: 32,
+                    borderRadius: 8,
+                    border: '1px solid #A6A6A6',
+                    fontSize: 14,
+                  }}
+                >
+                  <Option sx={{ fontSize: 14 }} value="dog">
+                    강아지
+                  </Option>
+                  <Option sx={{ fontSize: 14 }} value="cat">
+                    고양이
+                  </Option>
+                  <Option sx={{ fontSize: 14 }} value="both">
+                    모두
+                  </Option>
+                </Select>
               </RegisterInputWrapper>
               <RegisterInputWrapper>
-                <InputLabelStyle htmlFor="username">나의 소개</InputLabelStyle>
-                <StyledTextarea placeholder="펫시터님에 대해 소개해주세요! (최대 200자)" />
+                <InputLabelStyle htmlFor="username">케어 가능 시간</InputLabelStyle>
+                {/* 날짜, 시간 추가 */}
               </RegisterInputWrapper>
             </>
           )}
+          <Button variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
+            수정하기
+          </Button>
+          <LinkContainer>
+            <Link to="/">로그아웃</Link>
+            <Link to="/">회원 탈퇴</Link>
+          </LinkContainer>
         </InputContainer>
-        <Button variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
-          수정하기
-        </Button>
-        <div>
-          <Link to="/signup">로그아웃</Link>
-          <Link to="/signup">회원 탈퇴</Link>
-        </div>
-      </EditContianer>
-    </EditPage>
+      </MainContainer>
+    </>
   );
 };
 
-export const EditPage = styled.div`
-  padding: 36px;
+const Info = styled.div`
+  ${(props) => props.theme.fontSize.s14h21};
+  width: 60%;
 `;
 
-export const EditTitle = styled.div`
-  ${(props) => props.theme.fontSize.s20h30}
-`;
-
-export const EditContianer = styled.div`
-  width: 100%;
+const LinkContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 60px;
-  div {
-  }
+  justify-content: space-between;
+  width: 100;
 `;
 
-export const EditItem = styled.div`
-  ${(props) => props.theme.fontSize.s18h27};
-`;
-
-const StyledTextarea = styled.textarea`
-  padding: 8px;
-  border: 1px solid ${(props) => props.theme.textColors.gray60};
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-`;
 export default EditUserProfile;
