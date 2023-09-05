@@ -1,5 +1,9 @@
 package shop.petmily.domain.journal.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,7 +81,7 @@ public class JournalService {
         return findJournal;
     }
 
-    // 케어일지 조회
+    // 케어일지 1개 조회
     public Journal findJournal(long journalId) {
         Journal journal = findVerifiedJournal(journalId);
 
@@ -85,6 +89,11 @@ public class JournalService {
         return journal;
     }
 
+    // 케어일지 전체 조회
+    public Page<Journal> findMemberJournal(int page, int size, Long memberId) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "reservationId");
+        return journalRepository.findByMember(memberId, pageable);
+    }
 
     // 케어일지 삭제
     public void deleteJournal(long journalId, long petsitterId) {

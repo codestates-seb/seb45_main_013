@@ -1,24 +1,30 @@
 package shop.petmily.domain.journal.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.journal.dto.JournalPatchDto;
-import shop.petmily.domain.journal.dto.JournalPostDto;
-import shop.petmily.domain.journal.dto.JournalResponseDto;
+import shop.petmily.domain.journal.dto.*;
 import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.journal.mapper.JournalMapper;
 import shop.petmily.domain.journal.service.JournalService;
 import shop.petmily.domain.member.service.MemberService;
+import shop.petmily.domain.reservation.dto.ReservationPageInfo;
+import shop.petmily.domain.reservation.dto.ReservationResponseDto;
+import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.global.security.utils.JwtUtils;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -66,6 +72,23 @@ public class JournalController {
         JournalResponseDto response = mapper.JournalToResponse(journal);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 케어일지 전체조회 (멤버)
+    @GetMapping("/member")
+    public ResponseEntity getJournals(@RequestParam("page") @Positive int page,
+                                      @RequestParam("size") @Positive int size) {
+        Long memberId = jwtUtils.getMemberId();
+        Page<Journal> journalPage = service.findMemberJournal(page, size, memberId);
+        JournalPageInfo pageInfo = new JournalPageInfo(page, size, (int) journalPage.getTotalElements(), journalPage.getTotalPages());
+
+        List<Journal> journals = journalPage.getContent();
+        List<JournalResponseDto> response =
+                journals.stream()
+                        .map(journal -> mapper.journalsToResponseDto(journal))
+                        .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new JournalMultiResponseDto(response, pageInfo), HttpStatus.OK);
     }
 
     // 케어일지 1개 삭제

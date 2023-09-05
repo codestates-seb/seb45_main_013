@@ -7,6 +7,8 @@ import shop.petmily.domain.journal.dto.JournalPostDto;
 import shop.petmily.domain.journal.dto.JournalResponseDto;
 import shop.petmily.domain.journal.entity.Journal;
 
+import java.util.ArrayList;
+
 @Mapper(componentModel = "Spring")
 public interface JournalMapper {
 
@@ -22,4 +24,20 @@ public interface JournalMapper {
     @Mapping(source = "petsitter.petsitterId", target = "petsitterId")
     @Mapping(source = "reservation.reservationId", target = "reservationId")
     JournalResponseDto JournalToResponse(Journal journal);
+
+    default JournalResponseDto journalsToResponseDto(Journal journal) {
+        JournalResponseDto dto = new JournalResponseDto();
+        dto.setJournalId(journal.getJournalId());
+        dto.setReservationId(journal.getReservation().getReservationId());
+        dto.setPetsitterId(journal.getReservation().getPetsitter().getPetsitterId());
+        dto.setMemberId(journal.getReservation().getMember().getMemberId());
+        dto.setCreatedAt(journal.getCreatedAt());
+        dto.setLastModifiedAt(journal.getLastModifiedAt());
+        dto.setBody(journal.getBody());
+
+        // 사진을 추가할 코드를 작성하세요. journal에서 사진 정보를 가져와서 dto에 설정합니다.
+        dto.setPhotos(new ArrayList<>(journal.getPhotos()));
+
+        return dto;
+    }
 }
