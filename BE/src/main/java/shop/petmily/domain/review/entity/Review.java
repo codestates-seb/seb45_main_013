@@ -46,4 +46,8 @@ public class Review extends Auditable {
     @ManyToOne
     @JoinColumn(name = "petsitter_id")
     private Petsitter petsitter;
+
+    public int getStar() {
+        return star;
+    }
 }

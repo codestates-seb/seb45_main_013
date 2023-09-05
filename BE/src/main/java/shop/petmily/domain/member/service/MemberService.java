@@ -8,6 +8,8 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.domain.member.repository.PetsitterRepository;
+import shop.petmily.domain.review.entity.Review;
+import shop.petmily.domain.review.repository.ReviewRepository;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
@@ -29,10 +31,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PetsitterService petsitterService;
-    private final PetsitterRepository petsitterRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
     private final S3UploadService uploadService;
+    private final ReviewRepository reviewRepository;
 
     public Member createMember(Member member) {
         verifyExistsEmail(member.getEmail());
@@ -151,5 +153,22 @@ public class MemberService {
         findMember.setPhoto(null);
 
         return memberRepository.save(findMember);
+    }
+
+    public double averageStar(Member member) {
+        Petsitter findPetsitter = petsitterService.findPetsitter(member);
+        List<Review> findReview = reviewRepository.findAllByPetsitter(findPetsitter);
+        int totalStars = 0;
+        int reviewCount = findReview.size();
+
+        for (Review review : findReview) {
+            totalStars += review.getStar();
+        }
+
+        double averageStar = (reviewCount > 0) ? ((double) totalStars / reviewCount) : 0.0;
+
+        String formattedAverage = String.format("%.1f", averageStar);
+
+        return Double.parseDouble(formattedAverage);
     }
 }

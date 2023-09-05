@@ -26,9 +26,6 @@ public class Member extends Auditable {
     private Long memberId;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private Customer customer;
-
-    @OneToOne(mappedBy = "member", cascade = CascadeType.PERSIST)
     private Petsitter petsitter;
 
     @Column(length = 30, unique = true, nullable = false)

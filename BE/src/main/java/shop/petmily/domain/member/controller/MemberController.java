@@ -1,5 +1,10 @@
 package shop.petmily.domain.member.controller;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.dto.*;
@@ -7,12 +12,11 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.mapper.MemberMapper;
 import shop.petmily.domain.member.mapper.PetsitterMapper;
-import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
-import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.dto.LoginMemberResponseDto;
+import shop.petmily.global.dto.PageResponseDto;
 import shop.petmily.global.dto.SingleResponseDto;
 import shop.petmily.global.utils.UriCreator;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/members")
@@ -83,12 +89,24 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
     }
 
-    @GetMapping("/petsitters")
+    @GetMapping("/petsitters/profile")
     public ResponseEntity<PetsitterPossibleResoponseDto> getPetsitterPossible(@LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(loginMemberId);
         Petsitter findPetsitter = petsitterService.findPetsitter(findMember);
+        findPetsitter.setStar(memberService.averageStar(findMember));
+        petsitterService.addPetsitterProfile(findPetsitter);
         PetsitterPossibleResoponseDto petsitterPossibleResoponseDto = petsitterService.findPossible(findPetsitter);
         return new ResponseEntity<>(petsitterPossibleResoponseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/petsitters")
+    @JsonManagedReference
+    public ResponseEntity getPetsitters(@RequestParam Map<String, String> params, @PageableDefault(page = 0, size = 20, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        // 펫시터 서비스에서 펫시터 목록을 조회
+        Page<PetsitterGetResponseDto> petsitters = petsitterService.findPetsittersWithFilters(params, pageable);
+
+        return new ResponseEntity<>(PageResponseDto.of(petsitters.getContent(), petsitters), HttpStatus.OK);
     }
 
     @ResponseStatus(value = HttpStatus.OK)

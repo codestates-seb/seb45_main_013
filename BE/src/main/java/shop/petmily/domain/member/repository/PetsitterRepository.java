@@ -43,4 +43,7 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
                                           LocalTime reservationTimeStart,
                                           LocalTime reservationTimeEnd,
                                           Date resrtvationDay);
+
+    @Query("SELECT m FROM Member m WHERE m.petsitterBoolean = true")
+    List<Member> findAllMembersWithPetsitterBooleanTrue();
 }
