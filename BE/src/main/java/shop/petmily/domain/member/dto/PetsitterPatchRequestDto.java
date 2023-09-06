@@ -7,6 +7,7 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 
 import java.sql.Time;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ public class PetsitterPatchRequestDto {
 
     private Petsitter.PossiblePetType possiblePetType;
 
-    private String possibleLocation;
+    private List<String> possibleLocation;
 
     private String possibleDay;
 

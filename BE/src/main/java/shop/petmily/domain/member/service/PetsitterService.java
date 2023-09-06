@@ -64,7 +64,7 @@ public class PetsitterService {
                 .petsitterId(petsitter.getPetsitterId())
                 .possiblePetType(petsitter.getPossiblePetType())
                 .possibleDay(petsitter.getPossibleDay())
-                .possibleLocation(petsitter.getPossibleLocation())
+                .possibleLocation(petsitter.getPossibleLocation().toString())
                 .possibleTimeStart(petsitter.getPossibleTimeStart())
                 .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                 .star(petsitter.getStar())
@@ -125,6 +125,10 @@ public class PetsitterService {
                 .address(member.getAddress())
                 .photo(member.getPhoto())
                 .body(member.getBody())
+                .possiblePetType(petsitter.getPossiblePetType())
+                .possibleDay(petsitter.getPossibleDay())
+                .possibleTimeStart(petsitter.getPossibleTimeStart())
+                .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                 .star(petsitter.getStar())
                 .build();
     }
