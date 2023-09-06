@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.journal.repository.JournalRepository;
-import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.service.ReservationService;
@@ -27,16 +26,13 @@ import java.util.Optional;
 public class JournalService {
     private final JournalRepository journalRepository;
     private final ReservationService reservationService;
-    private final MemberService memberService;
     private final S3UploadService uploadService;
 
     public JournalService(JournalRepository journalRepository,
                           ReservationService reservationService,
-                          MemberService memberService,
                           S3UploadService uploadService) {
         this.journalRepository = journalRepository;
         this.reservationService = reservationService;
-        this.memberService = memberService;
         this.uploadService = uploadService;
     }
 
@@ -45,12 +41,11 @@ public class JournalService {
         Reservation reservation = reservationService.findVerifiedReservation(journal.getReservation().getReservationId());
         journal.setMember(reservation.getMember());
 
-        // 이미 예약에 대한 일지가 하나라도 있는 경우 예외를 던집니다.
         if (journalRepository.existsByReservation(reservation)) {
             throw new BusinessLogicException(ExceptionCode.JOURNAL_ALREADY_EXISTS);
         }
         if (!reservation.getProgress().equals(Progress.FINISH_CARING))
-            throw new BusinessLogicException(ExceptionCode.WARNING);
+            throw new BusinessLogicException(ExceptionCode.BEFORE_FINISH_CARING);
 
         List<String> photos = new ArrayList<>();
         if(files != null) {
@@ -97,7 +92,6 @@ public class JournalService {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "reservation.reservationId");
         return journalRepository.findByMember_MemberId(memberId, pageable);
     }
-
 
     // 유효한 케어일지인지 확인
     private Journal findVerifiedJournal(long journalId) {

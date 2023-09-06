@@ -6,9 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
@@ -29,19 +27,15 @@ import java.util.Optional;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationService reservationService;
-    private final MemberService memberService;
-
     private final PetsitterService petsitterService;
     private final S3UploadService uploadService;
 
     public ReviewService(ReviewRepository reviewRepository,
                          ReservationService reservationService,
-                         MemberService memberService,
                          S3UploadService uploadService,
                          PetsitterService petsitterService) {
         this.reviewRepository = reviewRepository;
         this.reservationService = reservationService;
-        this.memberService = memberService;
         this.uploadService = uploadService;
         this.petsitterService = petsitterService;
     }
@@ -56,7 +50,7 @@ public class ReviewService {
             throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
         }
         if (!reservation.getProgress().equals(Progress.FINISH_CARING))
-            throw new BusinessLogicException(ExceptionCode.WARNING);
+            throw new BusinessLogicException(ExceptionCode.BEFORE_FINISH_CARING);
 
         List<String> photos = new ArrayList<>();
         if(files != null) {
