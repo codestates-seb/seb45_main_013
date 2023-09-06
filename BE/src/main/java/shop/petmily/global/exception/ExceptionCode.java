@@ -30,6 +30,7 @@ public enum ExceptionCode {
     NOT_ALLOW_ADDRESS(400,"올바른 주소가 아닙니다."),
     JOURNAL_ALREADY_EXISTS(400, "이미 해당 예약에 케어일지가 존재합니다" ),
     REVIEW_ALREADY_EXISTS(400, "이미 해당 예약에 후기가 존재합니다" ),
+    NOT_MY_PET(400, "올바른 보호자와 반려동물이 아닙니다." ),
     BEFORE_FINISH_CARING(400,"일정이 아직 끝나지 않았습니다" );
 
 

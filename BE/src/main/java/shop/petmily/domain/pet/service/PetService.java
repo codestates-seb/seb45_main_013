@@ -88,6 +88,6 @@ public class PetService {
     }
 
     public void verifiedPetOwner(long originMemberId, Long requestMemberId) {
-        if (originMemberId != requestMemberId) throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
+        if (originMemberId != requestMemberId) throw new BusinessLogicException(ExceptionCode.NOT_MY_PET);
     }
 }

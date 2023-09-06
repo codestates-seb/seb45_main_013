@@ -45,7 +45,6 @@ public class ReviewService {
         Reservation reservation = reservationService.findVerifiedReservation(review.getReservation().getReservationId());
         review.setPetsitter(reservation.getPetsitter());
 
-        // 이미 예약에 대한 후기가 하나라도 있는 경우 예외를 던집니다.
         if (reviewRepository.existsByReservation(reservation)) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
         }
