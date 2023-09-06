@@ -79,6 +79,7 @@ function App() {
             <Route path="mypage/pets/edit" element={<EditPet />}></Route>
             <Route path="search" element={<Search />}></Route>
           </Route>
+          <Route path="reservation" element={<Reservation />}></Route>
           <Route path="/main" element={<Main />}></Route>
           <Route path="/cares/:memberId" element={<Reservation />}></Route>
           <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
