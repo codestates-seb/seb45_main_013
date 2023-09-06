@@ -89,7 +89,7 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
     }
 
-    @GetMapping("/petsitters/profile")
+    @GetMapping("/petsitters")
     public ResponseEntity<PetsitterPossibleResoponseDto> getPetsitterPossible(@LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(loginMemberId);
         Petsitter findPetsitter = petsitterService.findPetsitter(findMember);
@@ -99,7 +99,7 @@ public class MemberController {
         return new ResponseEntity<>(petsitterPossibleResoponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/petsitters")
+    @GetMapping("/search")
     @JsonManagedReference
     public ResponseEntity getPetsitters(@RequestParam Map<String, String> params, @PageableDefault(page = 0, size = 20, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
 

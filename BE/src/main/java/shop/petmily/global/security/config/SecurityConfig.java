@@ -56,11 +56,38 @@ public class SecurityConfig {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-//                        .antMatchers(HttpMethod.POST, "/members/**").permitAll()
-//                        .antMatchers(HttpMethod.GET, "/members").permitAll()
-//                        .antMatchers(HttpMethod.GET, "/members/**").hasRole("USER")
-//                        .antMatchers(HttpMethod.PATCH, "/members/**").hasRole("USER")
-//                        .antMatchers(HttpMethod.DELETE, "/members/**").hasRole("USER")
+
+                        .antMatchers(HttpMethod.POST, "/members/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/members/search").permitAll()
+                        .antMatchers(HttpMethod.GET, "/members/**").hasAnyRole("MEMBER", "PETSITTER")
+                        .antMatchers(HttpMethod.PATCH, "/members/petsitters/**").hasRole("PETSITTER")
+                        .antMatchers(HttpMethod.PATCH, "/members/**").hasAnyRole("MEMBER", "PETSITTER")
+                        .antMatchers(HttpMethod.DELETE, "/members/**").hasAnyRole("MEMBER", "PETSITTER")
+
+                        .antMatchers(HttpMethod.POST, "/pets").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.GET, "/pets").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.GET, "/pets/**").hasAnyRole("MEMBER", "PETSITTER")
+                        .antMatchers(HttpMethod.PATCH, "/pets/**").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.DELETE, "/pets/**").hasRole("MEMBER")
+
+                        .antMatchers(HttpMethod.POST, "/reservations/petsitters").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.PATCH, "/reservations/petsitters").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.GET, "/reservations/petsitters").hasAnyRole("MEMBER", "PETSITTER")
+                        .antMatchers(HttpMethod.GET, "/reservations/member/**").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.GET, "/reservations/petsitter/**").hasRole("PETSITTER")
+                        .antMatchers(HttpMethod.PATCH, "/reservations/*/petsittercancel").hasRole("PETSITTER")
+                        .antMatchers(HttpMethod.PATCH, "/reservations/*/membercancel").hasRole("MEMBER")
+
+                        .antMatchers(HttpMethod.POST, "/journals").hasRole("PETSITTER")
+                        .antMatchers(HttpMethod.PATCH, "/journals/**").hasRole("PETSITTER")
+                        .antMatchers(HttpMethod.GET, "/journals/**").hasAnyRole("MEMBER", "PETSITTER")
+                        .antMatchers(HttpMethod.GET, "/journals").hasRole("MEMBER")
+
+                        .antMatchers(HttpMethod.POST, "/reviews").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.PATCH, "/reviews/**").hasRole("MEMBER")
+                        .antMatchers(HttpMethod.GET, "/reviews").permitAll()
+                        .antMatchers(HttpMethod.GET, "/reviews/**").permitAll()
+
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
