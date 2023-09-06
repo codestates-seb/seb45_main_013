@@ -94,8 +94,8 @@ public class MemberController {
     public ResponseEntity<PetsitterPossibleResoponseDto> getPetsitterPossible(@LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(loginMemberId);
         Petsitter findPetsitter = petsitterService.findPetsitter(findMember);
-        findPetsitter.setStar(memberService.averageStar(findMember));
-        petsitterService.addPetsitterProfile(findPetsitter);
+//        findPetsitter.setStar(memberService.averageStar(findMember));
+//        petsitterService.addPetsitterProfile(findPetsitter);
         PetsitterPossibleResoponseDto petsitterPossibleResoponseDto = petsitterService.findPossible(findPetsitter);
         return new ResponseEntity<>(petsitterPossibleResoponseDto, HttpStatus.OK);
     }

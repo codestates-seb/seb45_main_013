@@ -18,4 +18,5 @@ public class PetsitterPossibleResoponseDto {
     private Time possibleTimeStart;
     private Time possibleTimeEnd;
     private double star;
+    private Long monthTotalReservation;
 }
