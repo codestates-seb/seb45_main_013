@@ -30,7 +30,7 @@ public class Petsitter {
     @Column(length = 10)
     private PossiblePetType possiblePetType;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> possibleLocation = new ArrayList<>();
 
     @Column(length = 7)

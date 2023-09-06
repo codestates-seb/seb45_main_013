@@ -67,12 +67,12 @@ public class ReservationService {
             throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
         }
 
-        String reservationPetType = verifiedReservationPetType(reservation);
+        Petsitter.PossiblePetType reservationPetType = verifiedReservationPetType(reservation);
         String reservationLocation = extractionAddress(reservation.getAdress());
         Date reservationDate = reservation.getReservationDay();
 
         List<Petsitter> petsitters = petsitterRepository.findPossiblePetsitter(reservationDay, reservationPetType, reservationLocation,
-                reservationStartTime, reservationEndTime, reservationDate);
+                reservation.getReservationTimeStart(), reservation.getReservationTimeEnd(), reservationDate);
 
         return petsitters;
     }
@@ -222,7 +222,7 @@ public class ReservationService {
         for (Reservation reservation : reservations) {
             LocalTime reservationEndTime = reservation.getReservationTimeEnd().toLocalTime();
 
-            if (reservationEndTime.isBefore(now.toLocalTime())) {
+            if (reservationEndTime.isBefore(now.toLocalTime()) && reservation.getProgress() != Progress.RESERVATION_CANCELLED) {
                 reservation.setProgress(Progress.FINISH_CARING);
                 reservationRepository.save(reservation);
             }
@@ -230,10 +230,10 @@ public class ReservationService {
     }
 
 
-    public String verifiedReservationPetType(Reservation reservation){
+    public Petsitter.PossiblePetType verifiedReservationPetType(Reservation reservation){
         boolean hasCat = false;
         boolean hasDog = false;
-        String reservationPetType = "";
+        Petsitter.PossiblePetType reservationPetType = null;
 
         for (ReservationPet reservationPet :reservation.getReservationPets()) {
             Long petId = (Long) reservationPet.getPet().getPetId();
@@ -245,11 +245,11 @@ public class ReservationService {
         }
 
         if (hasCat && hasDog) {
-            reservationPetType = String.valueOf(Petsitter.PossiblePetType.PET_ALL);
+            reservationPetType = Petsitter.PossiblePetType.PET_ALL;
         } else if (hasCat) {
-            reservationPetType = String.valueOf(Petsitter.PossiblePetType.PET_CAT);
+            reservationPetType = Petsitter.PossiblePetType.PET_CAT;
         } else if (hasDog) {
-            reservationPetType = String.valueOf(Petsitter.PossiblePetType.PET_DOG);
+            reservationPetType = Petsitter.PossiblePetType.PET_DOG;
         }
 
         return reservationPetType;
@@ -261,7 +261,7 @@ public class ReservationService {
         Matcher matcher = pattern.matcher(originAdress);
 
         if (matcher.find()) {
-            return matcher.group();
+            return matcher.group().trim();
         }
 
         throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_ADDRESS);

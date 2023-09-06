@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.util.List;
 
 @Setter
 @Getter
@@ -28,7 +29,7 @@ public class ReservationPossiblePetsitterReseponseDto {
 
     private String possiblePetType;
 
-    private String possibleLocation;
+    private List<String> possibleLocation;
 
     private String possibleDay;
 

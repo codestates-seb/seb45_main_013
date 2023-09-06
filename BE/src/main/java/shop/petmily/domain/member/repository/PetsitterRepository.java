@@ -23,25 +23,28 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
     @Query(value = "SELECT * FROM petsitter WHERE INSTR(possible_day, ?1) > 0 AND possible_location = ?2", nativeQuery = true)
     List<Petsitter> findByPossibleDayAndLocationContaining(String possibleDay, String possibleLocation);
 
-    @Query(value = "SELECT * FROM petsitter WHERE INSTR(possible_day, ?1) > 0 " +
-            "AND possible_pet_type = ?2 " +
-            "AND possible_location LIKE %?3%  " +
-            "AND possible_time_start <= ?4 " +
-            "AND possible_time_end >= ?5 " +
+    @Query(value = "SELECT DISTINCT p " +
+            "FROM Petsitter p " +
+            "JOIN p.possibleLocation pl " +
+            "WHERE INSTR(p.possibleDay, ?1) > 0 " +
+            "AND p.possiblePetType = ?2 " +
+            "AND ?3 MEMBER OF pl " +
+            "AND p.possibleTimeStart <= ?4 " +
+            "AND p.possibleTimeEnd >= ?5 " +
             "AND NOT EXISTS (" +
             "   SELECT 1 " +
-            "   FROM reservation " +
-            "   WHERE reservation.petsitter_id = petsitter.petsitter_id " +
-            "   AND reservation.reservation_day = ?6 " +
-            "   AND reservation.reservation_time_start <= ?5 " +
-            "   AND reservation.reservation_time_end >= ?4 " +
-            "   AND reservation.progress != 'BEFORE_PETSITTER_SELECTION' " +
-            "   AND reservation.progress != 'RESERVATION_CANCELLED' )", nativeQuery = true)
+            "   FROM Reservation r " +
+            "   WHERE r.petsitter = p " +
+            "   AND r.reservationDay = ?6 " +
+            "   AND r.reservationTimeStart <= ?5 " +
+            "   AND r.reservationTimeEnd >= ?4 " +
+            "   AND r.progress != 'BEFORE_PETSITTER_SELECTION' " +
+            "   AND r.progress != 'RESERVATION_CANCELLED' )")
     List<Petsitter> findPossiblePetsitter(String possibleDay,
-                                          String possiblePetType,
+                                          Petsitter.PossiblePetType possiblePetType,
                                           String possibleLocation,
-                                          LocalTime reservationTimeStart,
-                                          LocalTime reservationTimeEnd,
+                                          Time reservationTimeStart,
+                                          Time reservationTimeEnd,
                                           Date resrtvationDay);
 
     @Query("SELECT m FROM Member m WHERE m.petsitterBoolean = true")
