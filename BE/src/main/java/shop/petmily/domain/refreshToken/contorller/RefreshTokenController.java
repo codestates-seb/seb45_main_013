@@ -37,7 +37,7 @@ public class RefreshTokenController {
     @ResponseStatus(value = HttpStatus.OK)
     @PostMapping // refreshToken으로 accessToken 재발급
     public ResponseEntity requestRefresh(@RequestHeader("Refresh") String requestHeader) {
-        refreshTokenService.findRefreshToken(requestHeader).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TOKEN_NOT_FOUND));
+        refreshTokenService.findRefreshToken(requestHeader).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
 
         Claims refreshClaims = jwtTokenizer.parseRefreshToken(requestHeader);
         Member member = memberService.findMember(refreshClaims.get("sub").toString());

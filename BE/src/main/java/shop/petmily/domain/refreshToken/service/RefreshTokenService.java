@@ -34,6 +34,6 @@ public class RefreshTokenService {
 
     @Transactional(readOnly = true)
     public RefreshToken findRefreshToken(Member member) {
-        return refreshTokenRepository.findByMember(member).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TOKEN_NOT_FOUND));
+        return refreshTokenRepository.findByMember(member).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
     }
 }
