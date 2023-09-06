@@ -16,7 +16,6 @@ import RegisterPet from './pages/RegisterPet';
 import EditPet from 'pages/EditPet';
 import Search from './pages/Search';
 
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -69,6 +68,8 @@ function App() {
           </Route>
           <Route path="/" element={<HeaderLayout />}>
             <Route path="mypage" element={<Mypage />}></Route>
+            <Route path="reservation" element={<Reservation />}></Route>
+            <Route path="/cares/:memberId" element={<Cares />}></Route>
           </Route>
           <Route path="/" element={<BackHeaderLayout />}>
             <Route path="login" element={<Login />}></Route>
@@ -80,7 +81,6 @@ function App() {
             <Route path="search" element={<Search />}></Route>
           </Route>
           <Route path="/main" element={<Main />}></Route>
-          <Route path="/cares/:memberId" element={<Reservation />}></Route>
           <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
           <Route path="/cares/:petsitterId" element={<Cares />}></Route>
           <Route path="/cares/:petsitterId/:reservationId/journal" element={<Cares />}></Route>

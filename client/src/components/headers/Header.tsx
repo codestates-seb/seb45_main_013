@@ -47,6 +47,7 @@ const Container = styled.header`
   padding: 12px;
   background-color: white;
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
+  z-index: 1;
 `;
 
 const ButtonContainer = styled.div`

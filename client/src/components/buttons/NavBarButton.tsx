@@ -7,19 +7,21 @@ const NavBarButtonStyle = styled.button<{ children: React.ReactNode; isactive: s
   border: none;
   background-color: white;
   font-weight: ${(props) =>
-    props.isactive === 'true' ? props.theme.fontWeights.bold : props.theme.fontWeights.normal};
+    props.isactive === 'true' ? props.theme.fontWeights.extrabold : props.theme.fontWeights.bold};
   color: ${(props) => (props.isactive === 'true' ? 'black' : props.theme.textColors.gray30)};
   border-bottom: ${(props) => (props.isactive === 'true' ? `3px solid ${props.theme.colors.mainBlue}` : null)};
-  padding-bottom: 2px;
+  padding-bottom: 8px;
+  ${(props) => props.theme.fontSize.s14h21}
 `;
 
 interface NavBarButtonProps {
   children: React.ReactNode;
   isactive: string;
+  memberId?: number;
   onClick: () => void;
 }
 
-const NavBarButton = ({ children, isactive, onClick }: NavBarButtonProps) => {
+const NavBarButton = ({ children, isactive, memberId, onClick }: NavBarButtonProps) => {
   return (
     <Link
       to={
@@ -28,7 +30,7 @@ const NavBarButton = ({ children, isactive, onClick }: NavBarButtonProps) => {
           : children === '예약하기'
           ? '/reservation'
           : children === '예약현황'
-          ? '/cares'
+          ? `/cares/${memberId}`
           : '/reviews'
       }
     >

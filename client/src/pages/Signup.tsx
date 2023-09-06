@@ -64,13 +64,16 @@ const Signup = () => {
 
   const onSubmit = async (data: IFormSignpInputs) => {
     setIsSignupLoading(true);
-    console.log(data);
+
     const { name, phone, address, detailAddress, email, nickName, password, petsitterBoolean } = data;
+
     if (data.password !== data.passwordConfirm) {
       setError('password', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
       setError('passwordConfirm', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
+      setIsSignupLoading(false);
       return;
     }
+
     try {
       const data = await axios.post(`${apiUrl}/members`, {
         name,
@@ -86,7 +89,6 @@ const Signup = () => {
       }
     } catch (error: any) {
       const { fieldErrors } = error.response.data;
-      console.log(fieldErrors);
 
       if (error?.response.status === 400) {
         for (let i = 0; i < fieldErrors.length; i++) {
@@ -109,7 +111,6 @@ const Signup = () => {
     setIsSignupLoading(false);
   };
 
-  console.log(errors);
   return (
     <MainContainer>
       <SignupContainer>
@@ -128,7 +129,11 @@ const Signup = () => {
               {...register('name', { required: true })}
               error={errors.name?.type}
             ></SignupInputStyle>
-            {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
+            {errors.name?.type === 'required' ? (
+              <ErrorMessage>이름을 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.name?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <SignupInputStyle
@@ -136,7 +141,11 @@ const Signup = () => {
               {...register('phone', { required: true })}
               error={errors.phone?.type}
             ></SignupInputStyle>
-            {errors.phone && <ErrorMessage>{errors.phone.message}</ErrorMessage>}
+            {errors.phone?.type === 'required' ? (
+              <ErrorMessage>연락처를 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.phone?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <SignupInputStyle
@@ -147,7 +156,11 @@ const Signup = () => {
               onClick={onToggleModal}
               onKeyDown={onToggleModal}
             ></SignupInputStyle>
-            {errors.address && <ErrorMessage>{errors.address.message}</ErrorMessage>}
+            {errors.address?.type === 'required' ? (
+              <ErrorMessage>주소를 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.address?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <SignupInputStyle
@@ -155,7 +168,11 @@ const Signup = () => {
               {...register('detailAddress', { required: true })}
               error={errors.detailAddress?.type}
             ></SignupInputStyle>
-            {errors.detailAddress && <ErrorMessage>{errors.detailAddress.message}</ErrorMessage>}
+            {errors.detailAddress?.type === 'required' ? (
+              <ErrorMessage>상세주소를 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.detailAddress?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <SignupInputStyle
@@ -164,7 +181,11 @@ const Signup = () => {
               {...register('email', { required: true })}
               error={errors.email?.type}
             ></SignupInputStyle>
-            {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+            {errors.email?.type === 'required' ? (
+              <ErrorMessage>이메일을 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.email?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <SignupInputStyle
@@ -172,7 +193,11 @@ const Signup = () => {
               {...register('nickName', { required: true })}
               error={errors.nickName?.type}
             ></SignupInputStyle>
-            {errors.nickName && <ErrorMessage>{errors.nickName.message}</ErrorMessage>}
+            {errors.nickName?.type === 'required' ? (
+              <ErrorMessage>닉네임을 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.nickName?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <SignupInputStyle
@@ -181,7 +206,11 @@ const Signup = () => {
               {...register('password', { required: true })}
               error={errors.password?.type}
             ></SignupInputStyle>
-            {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+            {errors.password?.type === 'required' ? (
+              <ErrorMessage>비밀번호를 입력해주세요</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.password?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <SignupInputStyle
@@ -190,8 +219,11 @@ const Signup = () => {
               {...register('passwordConfirm', { required: true })}
               error={errors.passwordConfirm?.type}
             ></SignupInputStyle>
-            {errors.passwordConfirm && <ErrorMessage>{errors.passwordConfirm.message}</ErrorMessage>}
-            {errors.password?.type === 'dismatch' && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
+            {errors.passwordConfirm?.type === 'required' ? (
+              <ErrorMessage>비밀번호 확인을 입력해주세요</ErrorMessage>
+            ) : errors.passwordConfirm?.type === 'dismatch' || errors.passwordConfirm?.type === 'serverError' ? (
+              <ErrorMessage>{errors.passwordConfirm?.message}</ErrorMessage>
+            ) : null}
           </div>
           <CheckBoxWrapper>
             <CheckBoxLabel htmlFor="isPetsitter">펫시터로 가입하기</CheckBoxLabel>
