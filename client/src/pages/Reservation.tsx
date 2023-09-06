@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-// import { useState } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -8,6 +9,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers';
 import { TextField, Box } from '@mui/material';
+import { Modal, Sheet } from '@mui/joy';
+import DaumPostcode from 'react-daum-postcode';
 
 import LinkButton from 'components/buttons/LinkButton';
 
@@ -20,85 +23,162 @@ const ContactItem = [
   },
 ];
 
-function BasicDatePicker() {
-  // 날짜 입력
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthShort: `M` }}>
-      <DemoContainer components={['DatePicker']}>
-        <DatePicker label="날짜를 입력해주세요" format="YYYY-MM-DD" />
-      </DemoContainer>
-    </LocalizationProvider>
-  );
-}
-
-function CheckInTimePicker() {
-  // 체크인 시간
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['TimePicker']}>
-        <StyledTimePicker>
-          <TimePicker label="Check In" />
-        </StyledTimePicker>
-      </DemoContainer>
-    </LocalizationProvider>
-  );
-}
-
-function CheckOutTimePicker() {
-  // 체크아웃 시간
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['TimePicker']}>
-        <StyledTimePicker>
-          <TimePicker label="Check Out" />
-        </StyledTimePicker>
-      </DemoContainer>
-    </LocalizationProvider>
-  );
-}
-
-function BasicTextFields() {
-  // 주소 입력
-  return (
-    <Box
-      component="form"
-      sx={{
-        '& > :not(style)': { m: 1, width: '288px' },
-      }}
-      noValidate
-      autoComplete="off"
-    >
-      <TextField id="outlined-basic" label="주소를 입력해주세요" variant="outlined" />
-    </Box>
-  );
-}
-
-function RequestTextFields() {
-  // 요청사항 입력
-  return (
-    <Box
-      component="form"
-      sx={{
-        '& > :not(style)': { m: 1, width: '288px' },
-      }}
-      noValidate
-      autoComplete="off"
-    >
-      <StyledTextField
-        id="outlined-basic"
-        label="예) 산책중에 아무거나 잘 삼켜서 주의해주셔야 해요."
-        variant="outlined"
-      />
-    </Box>
-  );
+interface IFormInputs {
+  error: boolean;
+  address: string;
 }
 
 const Reservation = () => {
   const navigate = useNavigate();
+  // const [date, setDate] = useState('');
+  // const [checkInTime, setCheckInTime] = useState('');
+  // const [checkOutTime, setCheckOutTime] = useState('');
+  // const [request, setRequest] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [sido, setSido] = useState('');
+  const [sigungu, setSigugu] = useState('');
+  const [remainAddress, setRemainAddress] = useState('');
+  const [zonecode, setZonecode] = useState('');
+
+  const onToggleModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const {
+    register,
+    clearErrors,
+    formState: { errors },
+  } = useForm<IFormInputs>();
+
+  const handleComplete = (data: any) => {
+    // 우편번호 저장
+    setZonecode(data.zonecode);
+    // 시.도 저장
+    setSido(data.sido);
+    // 구.군 저장
+    setSigugu(data.sigungu.length > 3 ? data.sigungu.split('').splice(0, 3).join('') : data.sigungu);
+    // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
+    const splitAddress = data.address.split(' ').splice(2).join(' ');
+    if (data) {
+      clearErrors('address');
+    }
+    setRemainAddress(splitAddress);
+    setIsModalOpen(false);
+  };
+
+  function BasicDatePicker() {
+    // 날짜 입력
+    return (
+      <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthShort: `M` }}>
+        <DemoContainer components={['DatePicker']}>
+          <DatePicker label="날짜를 입력해주세요" format="YYYY-MM-DD" />
+        </DemoContainer>
+      </LocalizationProvider>
+    );
+  }
+
+  function CheckInTimePicker() {
+    // 체크인 시간
+    return (
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DemoContainer components={['TimePicker']}>
+          <StyledTimePicker>
+            <TimePicker label="Check In" />
+          </StyledTimePicker>
+        </DemoContainer>
+      </LocalizationProvider>
+    );
+  }
+
+  function CheckOutTimePicker() {
+    // 체크아웃 시간
+    return (
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DemoContainer components={['TimePicker']}>
+          <StyledTimePicker>
+            <TimePicker label="Check Out" />
+          </StyledTimePicker>
+        </DemoContainer>
+      </LocalizationProvider>
+    );
+  }
+
+  function BasicTextFields() {
+    // 주소 입력
+    return (
+      <Box
+        component="form"
+        sx={{
+          '& > :not(style)': { m: 1, width: '288px' },
+        }}
+        noValidate
+        autoComplete="off"
+      >
+        <TextField
+          id="outlined-basic"
+          label="주소를 입력해주세요"
+          variant="outlined"
+          value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
+          {...register('address', { required: true })}
+          error={errors.address?.type}
+          onClick={onToggleModal}
+          onKeyDown={onToggleModal}
+        />
+      </Box>
+    );
+  }
+
+  function RequestTextFields() {
+    // 요청사항 입력
+    return (
+      <Box
+        component="form"
+        sx={{
+          '& > :not(style)': { m: 1, width: '288px' },
+        }}
+        noValidate
+        autoComplete="off"
+      >
+        <StyledTextField
+          id="outlined-basic"
+          label="예) 산책중에 아무거나 잘 삼켜서 주의해주셔야 해요."
+          variant="outlined"
+        />
+      </Box>
+    );
+  }
 
   const handleBackClick = () => {
     navigate('/');
   };
+  // const handleDateChange(date: any) {
+  //   setDate(date);
+  // }
+
+  // const handleCheckInTimeChange(time: any) {
+  //   setCheckInTime(time);
+  // }
+
+  // const handleCheckOutTimeChange(time: any) {
+  //   setCheckOutTime(time);
+  // }
+
+  // const handleRequestTextChange(event) {
+  //   setRequestText(event.target.value);
+  // }
+
+  //   const handleClickNext() {
+  //     navigate('/reservation:step2', {
+  //       state: {
+  //         date: date,
+  //         checkInTime: checkInTime,
+  //         checkOutTime: checkOutTime,
+  //         address: `${zonecode} ${sido} ${sigungu} ${remainAddress}`,
+  //         requestText: requestText,
+  //     }
+  //   });
+  // }
 
   return (
     <MainContainer>
@@ -154,8 +234,19 @@ const Reservation = () => {
         ))}
       </RequestContainer>
       <LinkButtonContainer>
-        <StyledLinkButton text="다음단계" link="/reservation:step2" />
+        <StyledLinkButton text="다음단계" link="/reservation:step2" /*OnClick={handleClickNext}*/ />
       </LinkButtonContainer>
+      {isModalOpen && (
+        <Modal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Sheet sx={{ width: '360px;' }}>
+            <DaumPostcode onComplete={handleComplete} />
+          </Sheet>
+        </Modal>
+      )}
     </MainContainer>
   );
 };
