@@ -111,7 +111,7 @@ public interface ReservationMapper {
         reseponseDto.setPhoto(petsitter.getMember().getPhoto());
         reseponseDto.setBody(petsitter.getMember().getBody());
         reseponseDto.setPossiblePetType(String.valueOf(petsitter.getPossiblePetType()));
-        reseponseDto.setPossibleLocation(petsitter.getPossibleLocation().toString());
+        reseponseDto.setPossibleLocation(petsitter.getPossibleLocation());
         reseponseDto.setPossibleDay(petsitter.getPossibleDay());
         reseponseDto.setPossibleTimeStart(petsitter.getPossibleTimeStart());
         reseponseDto.setPossibleTimeEnd(petsitter.getPossibleTimeEnd());
