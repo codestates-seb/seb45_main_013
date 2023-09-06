@@ -1,7 +1,6 @@
 package shop.petmily.domain.pet.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 import shop.petmily.domain.pet.entity.Pet;
 
 @Getter

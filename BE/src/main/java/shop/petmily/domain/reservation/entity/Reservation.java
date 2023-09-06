@@ -3,14 +3,11 @@ package shop.petmily.domain.reservation.entity;
 import lombok.*;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
