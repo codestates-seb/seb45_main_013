@@ -2,7 +2,6 @@ package shop.petmily.domain.review.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import shop.petmily.domain.journal.dto.JournalResponseDto;
 import shop.petmily.domain.review.Dto.ReviewPatchDto;
 import shop.petmily.domain.review.Dto.ReviewPostDto;
 import shop.petmily.domain.review.Dto.ReviewResponseDto;

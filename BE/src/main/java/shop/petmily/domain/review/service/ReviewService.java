@@ -2,7 +2,6 @@ package shop.petmily.domain.review.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +44,10 @@ public class ReviewService {
         Reservation reservation = reservationService.findVerifiedReservation(review.getReservation().getReservationId());
         review.setPetsitter(reservation.getPetsitter());
 
+        // 이미 예약에 대한 후기가 하나라도 있는 경우 예외를 던집니다.
+        if (reviewRepository.existsByReservation(reservation)) {
+            throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
+        }
         if (!reservation.getProgress().equals(Progress.FINISH_CARING))
             throw new BusinessLogicException(ExceptionCode.WARNING);
 
@@ -90,7 +93,7 @@ public class ReviewService {
 
     // 후기 전체 조회 ( petsitterId : 선택적 )
     public Page<Review> findAllReviews(int page, int size, Long petsitterId) {
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        PageRequest pageRequest = PageRequest.of(page - 1, size,  Sort.Direction.DESC, "reviewId");
 
         if (petsitterId != null) {
             return reviewRepository.findByPetsitter_PetsitterId(petsitterId, pageRequest);
@@ -99,13 +102,6 @@ public class ReviewService {
         }
     }
 
-    // 후기 삭제
-    public void deleteReview(long reviewId, long memberId) {
-        Review findReview = findVerifiedReview(reviewId);
-        verifiedReviewOwner(memberId, findReview);
-
-        reviewRepository.delete(findReview);
-    }
 
     // 유효한 후기인지 확인
     private Review findVerifiedReview(long reviewId) {
@@ -122,4 +118,11 @@ public class ReviewService {
             throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
     }
+    // 후기 삭제
+//    public void deleteReview(long reviewId, long memberId) {
+//        Review findReview = findVerifiedReview(reviewId);
+//        verifiedReviewOwner(memberId, findReview);
+//
+//        reviewRepository.delete(findReview);
+//    }
 }

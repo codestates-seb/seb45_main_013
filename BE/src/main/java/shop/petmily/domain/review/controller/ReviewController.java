@@ -13,6 +13,7 @@ import shop.petmily.domain.review.Dto.*;
 import shop.petmily.domain.review.entity.Review;
 import shop.petmily.domain.review.mapper.ReviewMapper;
 import shop.petmily.domain.review.service.ReviewService;
+import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.security.utils.JwtUtils;
 
 import javax.validation.constraints.Positive;
@@ -40,8 +41,9 @@ public class ReviewController {
     // 후기 등록
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity postReview(@RequestPart ReviewPostDto reviewPostDto,
-                                     @RequestPart(required = false) List<MultipartFile> files) throws IOException {
-        reviewPostDto.setMemberId(jwtUtils.getMemberId());
+                                     @RequestPart(required = false) List<MultipartFile> files,
+                                     @LoginMemberId Long memberId) throws IOException {
+        reviewPostDto.setMemberId(memberId);
         Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), files);
         ReviewResponseDto response = mapper.reviewToResponse(createdReview);
 
@@ -52,9 +54,9 @@ public class ReviewController {
     @PatchMapping(value = "/{review-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity patchReview(@PathVariable("review-id") @Positive long reviewId,
                                       @RequestPart(required = false) ReviewPatchDto reviewPatchDto,
-                                      @RequestPart(required = false) List<MultipartFile> files) throws IOException {
-//        reviewPatchDto = (reviewPatchDto == null) ? new ReviewPatchDto() : reviewPatchDto;
-        reviewPatchDto.setMemberId(jwtUtils.getMemberId());
+                                      @RequestPart(required = false) List<MultipartFile> files,
+                                      @LoginMemberId Long memberId) throws IOException {
+        reviewPatchDto.setMemberId(memberId);
         reviewPatchDto.setReviewId(reviewId);
         Review review = mapper.reviewPatchToReview(reviewPatchDto);
         Review updatedReview = service.updateReview(review, files);
@@ -93,10 +95,10 @@ public class ReviewController {
     }
 
     // 후기 삭제
-    @DeleteMapping("/{review-id}")
-    public HttpStatus deleteReview(@PathVariable("review-id") @Positive long reviewId) {
-        service.deleteReview(reviewId, jwtUtils.getMemberId());
-        return HttpStatus.NO_CONTENT;
-    }
-
+//    @DeleteMapping("/{review-id}")
+//    public HttpStatus deleteReview(@PathVariable("review-id") @Positive long reviewId) {
+//        service.deleteReview(reviewId, jwtUtils.getMemberId());
+//        return HttpStatus.NO_CONTENT;
+//    }
+//
 }
