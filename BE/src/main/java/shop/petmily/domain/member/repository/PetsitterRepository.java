@@ -20,7 +20,7 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
             "FROM Petsitter p " +
             "JOIN p.possibleLocation pl " +
             "WHERE INSTR(p.possibleDay, ?1) > 0 " +
-            "AND p.possiblePetType = ?2 " +
+            "AND p.possiblePetType = ?2 OR p.possiblePetType = 'PET_ALL'" +
             "AND ?3 MEMBER OF pl " +
             "AND p.possibleTimeStart <= ?4 " +
             "AND p.possibleTimeEnd >= ?5 " +
