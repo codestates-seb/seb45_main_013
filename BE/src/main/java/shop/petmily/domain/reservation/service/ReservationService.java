@@ -4,11 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
@@ -23,17 +21,20 @@ import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
 import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.TextStyle;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class ReservationService {
     private final ReservationRepository reservationRepository;
-    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final PetsitterRepository petsitterRepository;
     private final ReservationPetRepository reservationPetRepository;
@@ -41,14 +42,12 @@ public class ReservationService {
     private final PetsitterService petsitterService;
 
     public ReservationService(ReservationRepository reservationRepository,
-                              MemberRepository memberRepository,
                               MemberService memberService,
                               PetsitterRepository petsitterRepository,
                               ReservationPetRepository reservationPetRepository,
                               PetService petService,
                               PetsitterService petsitterService) {
         this.reservationRepository = reservationRepository;
-        this.memberRepository = memberRepository;
         this.memberService = memberService;
         this.petsitterRepository = petsitterRepository;
         this.reservationPetRepository = reservationPetRepository;
@@ -99,7 +98,7 @@ public class ReservationService {
         Reservation reservation = findVerifiedReservation(reservationId);
 
         reservation.setReservationPets(
-                reservationPetRepository.findByReservation_ReservationId(reservation.getReservationId()));
+                reservationPetRepository.findByReservation(reservation));
 
         return reservation;
     }
