@@ -6,7 +6,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.service.MemberService;
+import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.service.ReservationService;
@@ -27,16 +30,20 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationService reservationService;
     private final MemberService memberService;
+
+    private final PetsitterService petsitterService;
     private final S3UploadService uploadService;
 
     public ReviewService(ReviewRepository reviewRepository,
                          ReservationService reservationService,
                          MemberService memberService,
-                         S3UploadService uploadService) {
+                         S3UploadService uploadService,
+                         PetsitterService petsitterService) {
         this.reviewRepository = reviewRepository;
         this.reservationService = reservationService;
         this.memberService = memberService;
         this.uploadService = uploadService;
+        this.petsitterService = petsitterService;
     }
 
     // 후기 등록
@@ -125,4 +132,23 @@ public class ReviewService {
 //
 //        reviewRepository.delete(findReview);
 //    }
+
+
+    // 별점 평균 계산
+    public double averageStar(Petsitter petsitter) {
+        Petsitter findPetsitter = petsitterService.findVerifiedPetsitter(petsitter.getPetsitterId());
+        List<Review> findReview = reviewRepository.findAllByPetsitter(findPetsitter);
+        int totalStars = 0;
+        int reviewCount = findReview.size();
+
+        for (Review review : findReview) {
+            totalStars += review.getStar();
+        }
+
+        double averageStar = (reviewCount > 0) ? ((double) totalStars / reviewCount) : 0.0;
+
+        String formattedAverage = String.format("%.1f", averageStar);
+
+        return Double.parseDouble(formattedAverage);
+    }
 }

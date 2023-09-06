@@ -60,6 +60,8 @@ public class PetsitterService {
 
     public PetsitterPossibleResoponseDto findPossible(Petsitter petsitter) {
 
+        long monthTotalReservation = 0;
+
         return PetsitterPossibleResoponseDto.builder()
                 .petsitterId(petsitter.getPetsitterId())
                 .possiblePetType(petsitter.getPossiblePetType())
@@ -68,6 +70,7 @@ public class PetsitterService {
                 .possibleTimeStart(petsitter.getPossibleTimeStart())
                 .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                 .star(petsitter.getStar())
+//                .monthTotalReservation(monthTotalReservation)
                 .build();
     }
 
