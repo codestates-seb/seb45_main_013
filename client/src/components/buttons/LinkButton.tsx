@@ -39,13 +39,18 @@ interface ButtonProps {
   link: string;
   width?: string;
   height?: string;
+  onClick?: () => void; // onClick prop 추가
 }
 
-const LinkButton = ({ text, fontSize = '14', link, width, height }: ButtonProps) => {
+const LinkButton = ({ text, fontSize = '14', link, width, height, onClick }: ButtonProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     if (link) {
       navigate(link);
+    }
+    if (onClick) {
+      // 외부에서 전달받은 OnClick이 있으면 실행
+      onClick();
     }
   };
   return (
