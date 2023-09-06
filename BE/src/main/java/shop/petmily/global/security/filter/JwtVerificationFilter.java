@@ -1,5 +1,7 @@
 package shop.petmily.global.security.filter;
 
+import com.google.gson.Gson;
+import shop.petmily.domain.member.dto.MemberLoginDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
@@ -66,6 +68,16 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
                 String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
 
                 response.setHeader("Authorization", "Bearer" + accessToken);
+
+                MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
+                        .accessToken(accessToken)
+                        .build();
+
+                String body = new Gson().toJson(loginResponse);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(body);
+
             }
             request.setAttribute("exception", ExceptionCode.EXPIRED_TOKEN.getMessage());
         } catch (Exception e) {
