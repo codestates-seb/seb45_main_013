@@ -26,10 +26,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,18 +104,45 @@ public class ReservationService {
         return reservation;
     }
 
-    public Page<Reservation> findMemberReservations(int page, int size, Long id) {
+    public Page<Reservation> findMemberReservations(int page, int size, Long id, String condition) {
+        Member member = memberService.findMember(id);
+
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.Direction.DESC,("reservationId"));
-        Page<Reservation> reservations = reservationRepository.findByMember_MemberId(id, pageRequest);
-        return reservations;
+        List<Progress> progressList = Arrays.asList(Progress.RESERVATION_CANCELLED, Progress.FINISH_CARING);
+        if(condition == null){
+            Page<Reservation> reservations = reservationRepository.findByMember(member, pageRequest);
+            return reservations;
+        } else if (condition.equals("expected")) {
+            Page<Reservation> expectedReservations = reservationRepository.findByMemberAndProgressNotIn(member, progressList, pageRequest);
+            return expectedReservations;
+        } else if (condition.equals("finish")) {
+            Page<Reservation> finishReservations = reservationRepository.findByMemberAndProgressIn(member, progressList, pageRequest);
+            return finishReservations;
+        } else {
+            Page<Reservation> reservations = reservationRepository.findByMember(member, pageRequest);
+            return reservations;
+        }
     }
 
-    public Page<Reservation> findPetsitterReservations(int page, int size, Long id) {
-        Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
+    public Page<Reservation> findPetsitterReservations(int page, int size, Long id, String condition) {
+        Petsitter petsitter= memberService.findMember(id).getPetsitter();
 
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.Direction.DESC,("reservationId"));
-        Page<Reservation> reservations = reservationRepository.findByPetsitter_PetsitterId(petsitterId, pageRequest);
-        return reservations;
+        List<Progress> progressList = Arrays.asList(Progress.RESERVATION_CANCELLED, Progress.FINISH_CARING);
+
+        if(condition == null) {
+            Page<Reservation> reservations = reservationRepository.findByPetsitter(petsitter, pageRequest);
+            return reservations;
+        } else if (condition.equals("expected")) {
+            Page<Reservation> expectedReservations = reservationRepository.findByPetsitterAndProgressNotIn(petsitter, progressList, pageRequest);
+            return expectedReservations;
+        } else if (condition.equals("finish")) {
+            Page<Reservation> finishReservations = reservationRepository.findByPetsitterAndProgressIn(petsitter, progressList, pageRequest);
+            return finishReservations;
+        } else {
+            Page<Reservation> reservations = reservationRepository.findByPetsitter(petsitter, pageRequest);
+            return reservations;
+        }
     }
 
 //     예약 확정 (펫시터)
@@ -240,7 +264,7 @@ public class ReservationService {
             return matcher.group();
         }
 
-        throw new RuntimeException();
+        throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_ADDRESS);
     }
 
     // 예약 내용 수정
