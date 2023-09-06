@@ -45,6 +45,10 @@ public class JournalService {
         Reservation reservation = reservationService.findVerifiedReservation(journal.getReservation().getReservationId());
         journal.setMember(reservation.getMember());
 
+        // 이미 예약에 대한 일지가 하나라도 있는 경우 예외를 던집니다.
+        if (journalRepository.existsByReservation(reservation)) {
+            throw new BusinessLogicException(ExceptionCode.JOURNAL_ALREADY_EXISTS);
+        }
         if (!reservation.getProgress().equals(Progress.FINISH_CARING))
             throw new BusinessLogicException(ExceptionCode.WARNING);
 
@@ -81,9 +85,9 @@ public class JournalService {
     }
 
     // 케어일지 1개 조회
-    public Journal findJournal(long journalId) {
+    public Journal findJournal(long journalId, Long memberId) {
         Journal journal = findVerifiedJournal(journalId);
-
+        verifiedJournalOwner(memberId, journal);
         journalRepository.save(journal);
         return journal;
     }
@@ -91,16 +95,9 @@ public class JournalService {
     // 케어일지 전체 조회
     public Page<Journal> findMemberJournal(int page, int size, Long memberId) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "reservation.reservationId");
-        return journalRepository.findByReservation_Member_MemberId(memberId, pageable);
+        return journalRepository.findByMember_MemberId(memberId, pageable);
     }
 
-    // 케어일지 삭제
-    public void deleteJournal(long journalId, long petsitterId) {
-        Journal findJournal = findVerifiedJournal(journalId);
-        verifiedJournalOwner(petsitterId, findJournal);
-
-        journalRepository.delete(findJournal);
-    }
 
     // 유효한 케어일지인지 확인
     private Journal findVerifiedJournal(long journalId) {
@@ -111,10 +108,18 @@ public class JournalService {
         return journal;
     }
 
-    // 접근자가 케어일지 작성자인지 확인
-    public void verifiedJournalOwner(long petsitterId, Journal verifiedJournal){
-        if (petsitterId != verifiedJournal.getPetsitter().getPetsitterId()){
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_MODIFY);
+    // 접근자가 케어일지에 권한이 있는지 확인
+    public void verifiedJournalOwner(long id, Journal verifiedJournal){
+        if (id != verifiedJournal.getReservation().getPetsitter().getPetsitterId()
+            && id!= verifiedJournal.getMember().getMemberId()){
+            throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
     }
+//     케어일지 삭제(펫시터만)
+//    public void deleteJournal(long journalId, long petsitterId) {
+//        Journal findJournal = findVerifiedJournal(journalId);
+//        verifiedJournalOwner(petsitterId, findJournal);
+//
+//        journalRepository.delete(findJournal);
+//    }
 }

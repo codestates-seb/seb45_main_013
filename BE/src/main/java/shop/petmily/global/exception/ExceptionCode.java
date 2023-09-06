@@ -14,7 +14,7 @@ public enum ExceptionCode {
     NOT_IMPLEMENTATION(501, "구현되지 않은 기능입니다."),
     INVALID_MEMBER_STATUS(400, "잘못된 회원 상태입니다."),
     NOT_ALLOW_MEMBER(401, "올바른 회원이 아닙니다."),
-    TOKEN_NOT_FOUND(404, "존재하지 토큰이 아닙니다."),
+    TOKEN_NOT_FOUND(404, "토큰이 존재하지 않습니다."),
     RESERVATION_NOT_EXIST(404, "존재하지 않는 예약정보입니다."),
     JOURNAL_NOT_EXIST(404, "존재하지 않는 펫시터 일지입니다."),
     REVIEW_NOT_EXIST(404, "존재하지 않는 리뷰 입니다."),
@@ -23,8 +23,9 @@ public enum ExceptionCode {
     NOT_STATUS_CONFIRM(400, "예약확정 가능한 상태가 아닙니다."),
     NOT_STATUS_CANCEL(400,"예약취소 가능한 상태가 아닙니다."),
     WARNING(400, "잘못된 접근입니다."),
-    NOT_ALLOW_ADDRESS(400,"올바른 주소가 아닙니다.")
-    ;
+    NOT_ALLOW_ADDRESS(400,"올바른 주소가 아닙니다."),
+    JOURNAL_ALREADY_EXISTS(400, "이미 해당 예약에 케어일지가 존재합니다" ),
+    REVIEW_ALREADY_EXISTS(400, "이미 해당 예약에 후기가 존재합니다" );
 
     @Getter
     private int status;
