@@ -10,7 +10,7 @@ import { IUser, login, setUser } from 'modules/userSlice';
 const NavHeader = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
-  const { isLogin } = useSelector((state: IUser) => state.login);
+  const { isLogin, memberId } = useSelector((state: IUser) => state.login);
 
   console.log(isLogin);
 
@@ -89,6 +89,7 @@ const NavHeader = () => {
           <NavBarButton
             isactive={activeButton === '예약현황' ? 'true' : 'false'}
             onClick={() => handleNavButtonClick('예약현황')}
+            memberId={memberId}
           >
             예약현황
           </NavBarButton>
