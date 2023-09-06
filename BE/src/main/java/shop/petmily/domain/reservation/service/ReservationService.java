@@ -56,6 +56,13 @@ public class ReservationService {
     }
 
     public List<Petsitter> findReservationPossiblePetsitter(Reservation reservation){
+
+        for (ReservationPet reservationPet : reservation.getReservationPets()) {
+            Long reservationPetId = reservationPet.getPet().getPetId();
+            Pet findedreservationPet = petService.findPet(reservationPetId);
+            petService.verifiedPetOwner(findedreservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
+        }
+
         LocalDate localDate = reservation.getReservationDay().toLocalDate();
         String reservationDay = localDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
@@ -212,16 +219,16 @@ public class ReservationService {
         }
     }
 
-    @Scheduled(cron = "0 1,31 * * * *") // 1분, 31분마다 예약체크 > 시간지낫으면 예약완료
+    @Scheduled(cron = "0 1,31 * * * *") // 1분, 31분마다 예약체크 > 취소가아나면서 시간지낫으면 예약완료
     public void reservationCompleteCheck() {
-        LocalDateTime now = LocalDateTime.now();
+        Date today = Date.valueOf(LocalDateTime.now().toLocalDate());
 
-        List<Reservation> reservations = reservationRepository.findEqualReservationDay(now.toLocalDate());
+        List<Reservation> reservations = reservationRepository.findByReservationDay(today);
 
         for (Reservation reservation : reservations) {
             LocalTime reservationEndTime = reservation.getReservationTimeEnd().toLocalTime();
 
-            if (reservationEndTime.isBefore(now.toLocalTime()) && reservation.getProgress() != Progress.RESERVATION_CANCELLED) {
+            if (reservationEndTime.isBefore(LocalTime.now()) && reservation.getProgress() != Progress.RESERVATION_CANCELLED) {
                 reservation.setProgress(Progress.FINISH_CARING);
                 reservationRepository.save(reservation);
             }

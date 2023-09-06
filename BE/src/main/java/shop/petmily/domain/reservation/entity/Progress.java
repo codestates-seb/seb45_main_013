@@ -4,7 +4,6 @@ import lombok.Getter;
 
 public enum Progress {
     BEFORE_PETSITTER_SELECTION("펫시터 선택전"),
-    CONTINUE_RESERVATION("예약 이어하기"),
     RESERVATION_REQUEST("예약 신청"),
     RESERVATION_CONFIRMED("예약 확정"),
     RESERVATION_CANCELLED("예약 취소"),
