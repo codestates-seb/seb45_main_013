@@ -1,6 +1,7 @@
 package shop.petmily.domain.member.controller;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

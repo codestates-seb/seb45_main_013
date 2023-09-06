@@ -1,8 +1,12 @@
 package shop.petmily.global.security.filter;
 
+import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
 import shop.petmily.global.dto.TokenPrincipalDto;
+import shop.petmily.global.exception.BusinessLogicException;
+import shop.petmily.global.exception.ExceptionCode;
+import shop.petmily.global.exception.JwtExceptionCode;
 import shop.petmily.global.security.jwt.JwtTokenizer;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -20,9 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -47,27 +49,27 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             Map<String, Object> claims = verifiJws(request);
             setAuthenticationToContext(claims);
         } catch (SignatureException se) {
-            request.setAttribute("exception", se);
+            request.setAttribute("exception", ExceptionCode.INVALID_TOKEN.getMessage());
         } catch (ExpiredJwtException ee) {
             // accessToken 만료시 백엔드에서 accessToken 재발급 처리
-//            Member member = memberService.findMember(ee.getClaims().get("sub").toString());
-//            String refreshToken = refreshTokenService.findRefreshToken(member).toString();
-//            if (refreshToken != null) {
-//
-//                Map<String, Object> claims = new HashMap<>();
-//                claims.put("username", member.getEmail());
-//                claims.put("roles", member.getRoles());
-//                claims.put("id", member.getMemberId());
-//
-//                String subject = member.getEmail();
-//                Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
-//                String base64EncodedSecretKey = jwtTokenizer.base64EncodedSecretKey(jwtTokenizer.getSecretKey());
-//
-//                String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
-//
-//                response.setHeader("Authorization", "Bearer" + accessToken);
-//            }
-            request.setAttribute("exception", ee);
+            Member member = memberService.findMember(ee.getClaims().get("sub").toString());
+            String refreshToken = refreshTokenService.findRefreshToken(member).toString();
+            if (refreshToken != null) {
+
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("username", member.getEmail());
+                claims.put("roles", member.getRoles());
+                claims.put("id", member.getMemberId());
+
+                String subject = member.getEmail();
+                Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
+                String base64EncodedSecretKey = jwtTokenizer.base64EncodedSecretKey(jwtTokenizer.getSecretKey());
+
+                String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
+
+                response.setHeader("Authorization", "Bearer" + accessToken);
+            }
+            request.setAttribute("exception", ExceptionCode.EXPIRED_TOKEN.getMessage());
         } catch (Exception e) {
             request.setAttribute("exception", e);
         }
