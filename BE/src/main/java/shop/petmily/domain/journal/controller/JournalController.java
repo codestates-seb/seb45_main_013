@@ -14,7 +14,6 @@ import shop.petmily.domain.journal.mapper.JournalMapper;
 import shop.petmily.domain.journal.service.JournalService;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.global.argu.LoginMemberId;
-import shop.petmily.global.security.utils.JwtUtils;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
@@ -29,19 +28,18 @@ public class JournalController {
     private final JournalService service;
     private final MemberService memberService;
     private final JournalMapper mapper;
-    private final JwtUtils jwtUtils;
-    public JournalController(JournalService service, MemberService memberService, JournalMapper mapper, JwtUtils jwtUtils) {
+    public JournalController(JournalService service, MemberService memberService, JournalMapper mapper) {
         this.service = service;
         this.memberService = memberService;
         this.mapper = mapper;
-        this.jwtUtils = jwtUtils;
     }
 
     // 케어일지 등록
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity postJournal(@RequestPart JournalPostDto journalPostDto,
-                                      @RequestPart(required = false) List<MultipartFile> files) throws IOException {
-        journalPostDto.setPetsitterId(memberService.findVerifiedMember(jwtUtils.getMemberId()).getPetsitter().getPetsitterId());
+                                      @RequestPart(required = false) List<MultipartFile> files,
+                                      @LoginMemberId Long memberId) throws IOException {
+        journalPostDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), files);
         JournalResponseDto response = mapper.JournalToResponse(createdJournal);
 
