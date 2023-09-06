@@ -51,7 +51,7 @@ const Reservation = () => {
     formState: { errors },
   } = useForm<IFormInputs>();
 
-  const handleComplete = (data: any) => {
+  const handleComplete = (data: { zonecode: string; sido: string; sigungu: string; address: string }) => {
     // 우편번호 저장
     setZonecode(data.zonecode);
     // 시.도 저장
@@ -152,33 +152,40 @@ const Reservation = () => {
   const handleBackClick = () => {
     navigate('/');
   };
-  // const handleDateChange(date: any) {
+
+  // const handleDateChange = (date: any) => {
   //   setDate(date);
-  // }
+  // };
 
-  // const handleCheckInTimeChange(time: any) {
+  // const handleCheckInTimeChange = (time: any) => {
   //   setCheckInTime(time);
-  // }
+  // };
 
-  // const handleCheckOutTimeChange(time: any) {
+  // const handleCheckOutTimeChange = (time: any) => {
   //   setCheckOutTime(time);
-  // }
+  // };
 
-  // const handleRequestTextChange(event) {
-  //   setRequestText(event.target.value);
-  // }
+  // const handleRequestTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setRequest(event.target.value);
+  // };
 
-  //   const handleClickNext() {
-  //     navigate('/reservation:step2', {
-  //       state: {
-  //         date: date,
-  //         checkInTime: checkInTime,
-  //         checkOutTime: checkOutTime,
-  //         address: `${zonecode} ${sido} ${sigungu} ${remainAddress}`,
-  //         request: request,
-  //     }
+  // const handleClickNext = () => {
+  //   console.log(`Date: ${date}`);
+  //   console.log(`Check-in Time: ${checkInTime}`);
+  //   console.log(`Check-out Time: ${checkOutTime}`);
+  //   console.log(`Address: ${zonecode} ${sido} ${sigungu} ${remainAddress}`);
+  //   console.log(`Request: ${request}`);
+
+  //   navigate('/reservation:step2', {
+  //     state: {
+  //       date: date,
+  //       checkInTime: checkInTime,
+  //       checkOutTime: checkOutTime,
+  //       address: `${zonecode} ${sido} ${sigungu} ${remainAddress}`,
+  //       request: request,
+  //     },
   //   });
-  // }
+  // };
 
   return (
     <MainContainer>
@@ -193,17 +200,17 @@ const Reservation = () => {
           <ScheduleText>{`언제 펫시터가\n 필요하신가요?`}</ScheduleText>
         </ScheduleContainer>
         <BasicDatePickerContainer>
-          <BasicDatePicker />
+          <BasicDatePicker /*onChange={handleDateChange}*/ />
         </BasicDatePickerContainer>
         <ScheduleContainer>
           <ScheduleText>{'방문시간'}</ScheduleText>
         </ScheduleContainer>
         <BasicTimePickerContainer>
           <CheckInContainer>
-            <CheckInTimePicker />
+            <CheckInTimePicker /*onChange={handleCheckInTimeChange}*/ />
           </CheckInContainer>
           <CheckOutContainer>
-            <CheckOutTimePicker />
+            <CheckOutTimePicker /*onChange={handleCheckOutTimeChange}*/ />
           </CheckOutContainer>
         </BasicTimePickerContainer>
         <ScheduleContainer>
@@ -219,7 +226,7 @@ const Reservation = () => {
           <RequestText>{'요청사항'}</RequestText>
         </RequestTextContainer>
         <BasicRequestTextContainer>
-          <RequestTextFields />
+          <RequestTextFields /*onChange={handleRequestTextChange}*/ />
         </BasicRequestTextContainer>
         {ContactItem.map((item) => (
           <ContactContainer key={item.id}>
@@ -236,8 +243,8 @@ const Reservation = () => {
       <LinkButtonContainer>
         <StyledLinkButton
           text="다음단계"
-          link="/reservation:step2"
-          /*OnClick={handleClickNext}*/
+          link="/reservation/step2"
+          /*onClick={handleClickNext}*/
           width="100%"
           height="48px"
         />
