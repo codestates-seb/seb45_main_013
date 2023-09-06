@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.pet.dto.PetPatchDto;
 import shop.petmily.domain.pet.dto.PetPostDto;
+import shop.petmily.domain.pet.dto.PetResponseDto;
 import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.pet.mapper.PetMapper;
 import shop.petmily.domain.pet.service.PetService;
@@ -14,6 +15,8 @@ import shop.petmily.global.argu.LoginMemberId;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/pets")
 @RestController
@@ -60,6 +63,16 @@ public class PetController {
     public ResponseEntity findPet(@PathVariable ("pet_id") @Positive long petId){
         Pet pet = service.findPet(petId);
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity findPetsByMember(@LoginMemberId Long memberId){
+        List<Pet> pets = service.findPets(memberId);
+        List<PetResponseDto> response = pets.stream()
+                .map(pet -> mapper.PetToPetResponseDto(pet))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
 

@@ -92,8 +92,9 @@ public class ReservationController {
     @GetMapping("/member")
     public ResponseEntity getReservationsForMember(@RequestParam("page") @Positive int page,
                                                    @RequestParam("size") @Positive int size,
+                                                   @RequestParam(value = "condition", required = false) String condition,
                                                    @LoginMemberId Long memberId) {
-        Page<Reservation> reservationPage = service.findMemberReservations(page, size, memberId);
+        Page<Reservation> reservationPage = service.findMemberReservations(page, size, memberId, condition);
         ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
@@ -109,8 +110,9 @@ public class ReservationController {
     @GetMapping("/petSitter")
     public ResponseEntity getReservationsForPetSitter(@RequestParam("page") @Positive int page,
                                                       @RequestParam("size") @Positive int size,
+                                                      @RequestParam(value = "condition", required = false) String condition,
                                                       @LoginMemberId Long memberId) {
-        Page<Reservation> reservationPage = service.findPetsitterReservations(page, size, memberId);
+        Page<Reservation> reservationPage = service.findPetsitterReservations(page, size, memberId, condition);
         ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
