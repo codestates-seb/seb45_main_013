@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,8 +30,8 @@ public class Petsitter {
     @Column(length = 10)
     private PossiblePetType possiblePetType;
 
-    @Column(length = 500)
-    private String possibleLocation;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> possibleLocation = new ArrayList<>();
 
     @Column(length = 7)
     private String possibleDay;
