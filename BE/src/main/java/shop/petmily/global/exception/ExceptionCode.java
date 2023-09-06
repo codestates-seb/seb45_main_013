@@ -29,7 +29,9 @@ public enum ExceptionCode {
     WARNING(400, "잘못된 접근입니다."),
     NOT_ALLOW_ADDRESS(400,"올바른 주소가 아닙니다."),
     JOURNAL_ALREADY_EXISTS(400, "이미 해당 예약에 케어일지가 존재합니다" ),
-    REVIEW_ALREADY_EXISTS(400, "이미 해당 예약에 후기가 존재합니다" );
+    REVIEW_ALREADY_EXISTS(400, "이미 해당 예약에 후기가 존재합니다" ),
+    BEFORE_FINISH_CARING(400,"일정이 아직 끝나지 않았습니다" );
+
 
     @Getter
     private int status;
