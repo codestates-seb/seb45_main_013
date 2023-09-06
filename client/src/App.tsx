@@ -16,7 +16,6 @@ import RegisterPet from './pages/RegisterPet';
 import EditPet from 'pages/EditPet';
 import Search from './pages/Search';
 
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;

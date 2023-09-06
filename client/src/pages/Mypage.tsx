@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import MyPetmily from '../components/MyPetmily';
+// import { useSelector } from 'react-redux';
 
-// Q: 호버시 이미지 색상
 // 폰트 사이즈, 웨이트 안먹힘
 // 아이콘 메뉴 간격
-// 회원정보 수정 페이지
 
 const Mypage = () => {
+  //아이콘 메뉴 호버링
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
 
   const handleMouseOver = (itemId: number) => {
@@ -17,6 +17,10 @@ const Mypage = () => {
   const handleMouseOut = () => {
     setHoveredItem(null);
   };
+
+  // const isLogin: boolean = useSelector((state) => state.login.isLogin);
+  // const username: string = useSelector((state) => state.login.username);
+
   return (
     <MypageContainer>
       <MyProfileContianer>
@@ -25,10 +29,16 @@ const Mypage = () => {
             src="https://brandsmkt.com/wp-content/uploads/2020/06/dog-lover-760x506-1-696x463.jpg"
             alt="user profile image"
           />
-          <TextField>
-            <NameText>김코딩 님</NameText>
-            <HelloText>안녕하세요!</HelloText>
-          </TextField>
+          {/* <TextField>
+            {isLogin ? (
+              <>
+                <NameText>{`${username} 님`}</NameText>
+                <HelloText>안녕하세요!</HelloText>
+              </>
+            ) : (
+              <NameText>로그인 후 이용해주세요.</NameText>
+            )}
+          </TextField> */}
         </MyProfile>
         <EditLink href="mypage/edit">회원정보 수정</EditLink>
       </MyProfileContianer>
@@ -77,23 +87,23 @@ const MyPhoto = styled.img`
   border-radius: 50%;
 `;
 
-const TextField = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-`;
+// const TextField = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-around;
+// `;
 
-const NameText = styled.div`
-  ${(props) => props.theme.fontSize.s20h30};
-  font-weight: 600;
-`;
+// const NameText = styled.div`
+//   ${(props) => props.theme.fontSize.s20h30};
+//   font-weight: 600;
+// `;
 
-const HelloText = styled.div`
-  ${(props) => props.theme.fontSize.s16h24};
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-`;
+// const HelloText = styled.div`
+//   ${(props) => props.theme.fontSize.s16h24};
+//   font-weight: 600;
+//   display: flex;
+//   justify-content: space-between;
+// `;
 
 // 메뉴 컨테이너
 const MenuContainer = styled.div`
@@ -123,6 +133,7 @@ const MenuImage = styled.img`
 `;
 
 // 호버 시 이미지 변화
+// 아이콘 바꾸기
 const menuItems = [
   {
     id: 1,
@@ -140,7 +151,7 @@ const menuItems = [
     id: 3,
     originalImage: 'imgs/Heart.svg',
     hoveredImage: 'imgs/HeartBlue.svg',
-    title: '자주 찾는 펫시터',
+    title: '회원정보 수정',
   },
 ];
 
