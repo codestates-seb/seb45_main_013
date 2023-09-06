@@ -8,13 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.review.Dto.*;
 import shop.petmily.domain.review.entity.Review;
 import shop.petmily.domain.review.mapper.ReviewMapper;
 import shop.petmily.domain.review.service.ReviewService;
 import shop.petmily.global.argu.LoginMemberId;
-import shop.petmily.global.security.utils.JwtUtils;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
@@ -27,15 +25,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/reviews")
 public class ReviewController {
     private final ReviewMapper mapper;
-    private final MemberService memberService;
     private final ReviewService service;
-    private final JwtUtils jwtUtils;
 
-    public ReviewController(ReviewMapper mapper, MemberService memberService, ReviewService service, JwtUtils jwtUtils) {
+    public ReviewController(ReviewMapper mapper, ReviewService service) {
         this.mapper = mapper;
-        this.memberService = memberService;
         this.service = service;
-        this.jwtUtils = jwtUtils;
     }
 
     // 후기 등록
