@@ -121,7 +121,7 @@ const Reservation = () => {
           variant="outlined"
           value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
           {...register('address', { required: true })}
-          error={errors.address?.type}
+          error={!!errors.address?.type}
           onClick={onToggleModal}
           onKeyDown={onToggleModal}
         />
@@ -175,7 +175,7 @@ const Reservation = () => {
   //         checkInTime: checkInTime,
   //         checkOutTime: checkOutTime,
   //         address: `${zonecode} ${sido} ${sigungu} ${remainAddress}`,
-  //         requestText: requestText,
+  //         request: request,
   //     }
   //   });
   // }
@@ -234,7 +234,13 @@ const Reservation = () => {
         ))}
       </RequestContainer>
       <LinkButtonContainer>
-        <StyledLinkButton text="다음단계" link="/reservation:step2" /*OnClick={handleClickNext}*/ />
+        <StyledLinkButton
+          text="다음단계"
+          link="/reservation:step2"
+          /*OnClick={handleClickNext}*/
+          width="100%"
+          height="48px"
+        />
       </LinkButtonContainer>
       {isModalOpen && (
         <Modal
@@ -421,10 +427,8 @@ const LinkButtonContainer = styled.div`
 `;
 
 const StyledLinkButton = styled(LinkButton)`
-  padding: 4px 8px;
   border-radius: 12px;
-  width: 280px;
-  height: 200px;
+  height: 36px;
 `;
 
 export default Reservation;
