@@ -2,8 +2,6 @@ package shop.petmily.domain.pet.dto;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-
 @Getter
 public class PetPatchDto {
     private long petId;

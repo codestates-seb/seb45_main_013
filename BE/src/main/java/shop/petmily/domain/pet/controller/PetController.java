@@ -75,7 +75,6 @@ public class PetController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-
     @DeleteMapping("/{pet_id}")
     public HttpStatus deletePet(@PathVariable ("pet_id") @Positive long petId,
                                 @LoginMemberId Long memberId){

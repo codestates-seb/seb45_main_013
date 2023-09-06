@@ -16,13 +16,6 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
 
     Optional<Petsitter> findByMember(Member member);
 
-    @Query(value = "SELECT * FROM petsitter WHERE INSTR(possible_day, ?1) > 0", nativeQuery = true)
-    List<Petsitter> findByPossibleDayContaining(String keyword);
-
-
-    @Query(value = "SELECT * FROM petsitter WHERE INSTR(possible_day, ?1) > 0 AND possible_location = ?2", nativeQuery = true)
-    List<Petsitter> findByPossibleDayAndLocationContaining(String possibleDay, String possibleLocation);
-
     @Query(value = "SELECT DISTINCT p " +
             "FROM Petsitter p " +
             "JOIN p.possibleLocation pl " +

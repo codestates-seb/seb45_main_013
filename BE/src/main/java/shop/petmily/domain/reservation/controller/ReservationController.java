@@ -2,30 +2,20 @@ package shop.petmily.domain.reservation.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.reservation.dto.*;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.mapper.ReservationMapper;
-import shop.petmily.domain.reservation.repository.ReservationRepository;
 import shop.petmily.domain.reservation.service.ReservationService;
 import shop.petmily.global.argu.LoginMemberId;
-import shop.petmily.global.security.utils.JwtUtils;
 
 import javax.validation.constraints.Positive;
-import java.sql.Timestamp;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Validated
@@ -35,14 +25,10 @@ import java.util.stream.Collectors;
 public class ReservationController {
     private final ReservationMapper mapper;
     private final ReservationService service;
-    private final JwtUtils jwtUtils;
-    private final ReservationRepository reservationRepository;
 
-    public ReservationController(ReservationMapper mapper, ReservationService service, JwtUtils jwtUtils,ReservationRepository reservationRepository) {
+    public ReservationController(ReservationMapper mapper, ReservationService service) {
         this.mapper = mapper;
         this.service = service;
-        this.jwtUtils = jwtUtils;
-        this.reservationRepository = reservationRepository;
     }
 
     //임시예약으로 등록하고 예약가능 펫시터 list보여주기

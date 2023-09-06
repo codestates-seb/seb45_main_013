@@ -10,7 +10,6 @@ import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
