@@ -107,7 +107,7 @@ public class ReservationController {
     }
 
     // 예약 전체 조회 (펫시터) (jwt 아직 x) petsiterid jwt로 받아오는걸로 변경필요
-    @GetMapping("/petSitter")
+    @GetMapping("/petsitter")
     public ResponseEntity getReservationsForPetSitter(@RequestParam("page") @Positive int page,
                                                       @RequestParam("size") @Positive int size,
                                                       @RequestParam(value = "condition", required = false) String condition,

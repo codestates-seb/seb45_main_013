@@ -257,7 +257,7 @@ public class ReservationService {
     }
 
     public String extractionAddress(String originAdress){
-        Pattern pattern = Pattern.compile("(서울|대전|대구|울산|부산|광주|세종특별자치시)\\s([가-힣]+[구])?|([가-힣]+[시군])\\s([가-힣]+[구])?");
+        Pattern pattern = Pattern.compile("(서울|대전|대구|울산|부산|광주|세종특별자치시)\\s([가-힣]+[구군])?|([가-힣]+[시군])\\s([가-힣]+[구])?");
         Matcher matcher = pattern.matcher(originAdress);
 
         if (matcher.find()) {
