@@ -84,7 +84,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken);
 
-
         response.setHeader("Authorization", "Bearer" + accessToken);
         response.setHeader("Refresh", refreshToken);
 
