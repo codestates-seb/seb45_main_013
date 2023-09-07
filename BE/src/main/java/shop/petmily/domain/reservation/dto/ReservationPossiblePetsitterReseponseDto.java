@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 
 @Setter
@@ -33,9 +34,9 @@ public class ReservationPossiblePetsitterReseponseDto {
 
     private String possibleDay;
 
-    private Time possibleTimeStart;
+    private LocalTime possibleTimeStart;
 
-    private Time possibleTimeEnd;
+    private LocalTime possibleTimeEnd;
 
     private double star;
 }

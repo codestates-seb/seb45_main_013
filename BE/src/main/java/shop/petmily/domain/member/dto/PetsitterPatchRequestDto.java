@@ -7,6 +7,7 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -22,9 +23,9 @@ public class PetsitterPatchRequestDto {
 
     private String possibleDay;
 
-    private Time possibleTimeStart;
+    private LocalTime possibleTimeStart;
 
-    private Time possibleTimeEnd;
+    private LocalTime possibleTimeEnd;
 
     public void setPetsitterId(long petsitterId) {
         this.petsitterId = petsitterId;

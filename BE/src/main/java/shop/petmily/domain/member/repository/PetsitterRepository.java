@@ -8,6 +8,7 @@ import shop.petmily.domain.member.entity.Petsitter;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
             "FROM Petsitter p " +
             "JOIN p.possibleLocation pl " +
             "WHERE INSTR(p.possibleDay, ?1) > 0 " +
-            "AND p.possiblePetType = ?2 OR p.possiblePetType = 'PET_ALL'" +
+            "AND (p.possiblePetType = ?2 OR p.possiblePetType = 'PET_ALL') " +
             "AND ?3 MEMBER OF pl " +
             "AND p.possibleTimeStart <= ?4 " +
             "AND p.possibleTimeEnd >= ?5 " +
@@ -31,14 +32,13 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
             "   AND r.reservationDay = ?6 " +
             "   AND r.reservationTimeStart <= ?5 " +
             "   AND r.reservationTimeEnd >= ?4 " +
-            "   AND r.progress != 'BEFORE_PETSITTER_SELECTION' " +
             "   AND r.progress != 'RESERVATION_CANCELLED' )")
     List<Petsitter> findPossiblePetsitter(String possibleDay,
                                           Petsitter.PossiblePetType possiblePetType,
                                           String possibleLocation,
-                                          Time reservationTimeStart,
-                                          Time reservationTimeEnd,
-                                          Date resrtvationDay);
+                                          LocalTime reservationTimeStart,
+                                          LocalTime reservationTimeEnd,
+                                          LocalDate resrtvationDay);
 
     @Query("SELECT m FROM Member m WHERE m.petsitterBoolean = true")
     List<Member> findAllMembersWithPetsitterBooleanTrue();

@@ -3,8 +3,8 @@ package shop.petmily.domain.reservation.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -14,11 +14,11 @@ public class ReservationPostDto {
 
     private String body;
 
-    private Date reservationDay;
+    private LocalDate reservationDay;
 
-    private Time reservationTimeStart;
+    private LocalTime reservationTimeStart;
 
-    private Time reservationTimeEnd;
+    private LocalTime reservationTimeEnd;
 
     private String adress;
 
@@ -26,6 +26,6 @@ public class ReservationPostDto {
 
     private List<Long> petId;
 
-    //null 이었다가 나중에 정보 저장
-    private long petSitterId;
+    //null이면 펫시터 찾기, 아니면 예약등록
+    private Long petsitterId;
 }
