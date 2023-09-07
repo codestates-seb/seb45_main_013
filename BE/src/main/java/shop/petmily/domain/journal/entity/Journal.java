@@ -27,10 +27,6 @@ public class Journal extends Auditable {
     @ElementCollection
     private List<String> photos = new ArrayList<>();
 
-    public void addPhotos(String photo){
-        photos.add(photo);
-    }
-
     @OneToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
@@ -42,6 +38,5 @@ public class Journal extends Auditable {
     @ManyToOne
     @JoinColumn(name = "petsitter_id")
     private Petsitter petsitter;
-
 
 }

@@ -13,7 +13,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findAllByPetsitter(Petsitter petsitter);
 
-    Page<Review> findByPetsitter_PetsitterId(Long petsitterId, Pageable pageable);
+    Page<Review> findByPetsitter(Petsitter petsitter, Pageable pageable);
 
     boolean existsByReservation(Reservation reservation);
 

@@ -8,9 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.review.Dto.*;
 import shop.petmily.domain.review.entity.Review;
@@ -30,15 +28,11 @@ import java.util.stream.Collectors;
 public class ReviewController {
     private final ReviewMapper mapper;
     private final ReviewService service;
-
-    private final MemberService memberService;
-
     private final PetsitterService petsitterService;
 
-    public ReviewController(ReviewMapper mapper, ReviewService service, MemberService memberService, PetsitterService petsitterService) {
+    public ReviewController(ReviewMapper mapper, ReviewService service, PetsitterService petsitterService) {
         this.mapper = mapper;
         this.service = service;
-        this.memberService = memberService;
         this.petsitterService = petsitterService;
     }
 
@@ -86,7 +80,7 @@ public class ReviewController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 후기 전체 조회 (펫시터별) 홈화면에서도 보여야 하기 때문에 jwtX
+    // 후기 전체 조회 (+펫시터별)
     @GetMapping
     public ResponseEntity getReviews(@RequestParam("page") @Positive int page,
                                      @RequestParam("size") @Positive int size,
