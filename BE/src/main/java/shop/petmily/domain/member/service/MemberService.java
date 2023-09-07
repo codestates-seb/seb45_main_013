@@ -46,6 +46,7 @@ public class MemberService {
         Member saveMember = memberRepository.save(member);
         if (member.isPetsitterBoolean()) {
             Petsitter petsitter = new Petsitter(saveMember);
+            petsitter.setReviewCount(0);
             petsitterService.addPetsitterProfile(petsitter);
         }
         return saveMember;

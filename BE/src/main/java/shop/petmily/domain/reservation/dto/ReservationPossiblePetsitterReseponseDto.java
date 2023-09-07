@@ -38,4 +38,6 @@ public class ReservationPossiblePetsitterReseponseDto {
     private Time possibleTimeEnd;
 
     private double star;
+
+    private int reviewCount;
 }

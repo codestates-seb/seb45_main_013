@@ -116,6 +116,7 @@ public interface ReservationMapper {
         reseponseDto.setPossibleTimeStart(petsitter.getPossibleTimeStart());
         reseponseDto.setPossibleTimeEnd(petsitter.getPossibleTimeEnd());
         reseponseDto.setStar(petsitter.getStar());
+        reseponseDto.setReviewCount(petsitter.getReviewCount());
         return reseponseDto;
     }
 }

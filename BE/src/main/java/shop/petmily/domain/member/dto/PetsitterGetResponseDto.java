@@ -24,4 +24,5 @@ public class PetsitterGetResponseDto {
     private Time possibleTimeEnd;
     private String body;
     private double star;
+    private int reviewCount;
 }
