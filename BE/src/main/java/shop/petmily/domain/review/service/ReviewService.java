@@ -96,12 +96,12 @@ public class ReviewService {
         PageRequest pageRequest = PageRequest.of(page - 1, size,  Sort.Direction.DESC, "reviewId");
 
         if (petsitterId != null) {
-            return reviewRepository.findByPetsitter_PetsitterId(petsitterId, pageRequest);
+            Petsitter findPetsitter = petsitterService.findVerifiedPetsitter(petsitterId);
+            return reviewRepository.findByPetsitter(findPetsitter, pageRequest);
         } else {
             return reviewRepository.findAll(pageRequest);
         }
     }
-
 
     // 유효한 후기인지 확인
     private Review findVerifiedReview(long reviewId) {
@@ -118,14 +118,6 @@ public class ReviewService {
             throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
     }
-    // 후기 삭제
-//    public void deleteReview(long reviewId, long memberId) {
-//        Review findReview = findVerifiedReview(reviewId);
-//        verifiedReviewOwner(memberId, findReview);
-//
-//        reviewRepository.delete(findReview);
-//    }
-
 
     // 별점 평균 계산
     public double averageStar(Petsitter petsitter) {
@@ -144,4 +136,13 @@ public class ReviewService {
 
         return Double.parseDouble(formattedAverage);
     }
+
+    // 후기 삭제
+//    public void deleteReview(long reviewId, long memberId) {
+//        Review findReview = findVerifiedReview(reviewId);
+//        verifiedReviewOwner(memberId, findReview);
+//
+//        reviewRepository.delete(findReview);
+//    }
+
 }
