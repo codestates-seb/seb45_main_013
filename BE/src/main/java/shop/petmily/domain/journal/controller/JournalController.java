@@ -14,6 +14,7 @@ import shop.petmily.domain.journal.mapper.JournalMapper;
 import shop.petmily.domain.journal.service.JournalService;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.global.argu.LoginMemberId;
+import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class JournalController {
                                       @RequestParam("size") @Positive int size,
                                       @LoginMemberId Long memberId) {
         Page<Journal> journalPage = service.findMemberJournal(page, size, memberId);
-        JournalPageInfo pageInfo = new JournalPageInfo(page, size, (int) journalPage.getTotalElements(), journalPage.getTotalPages());
+        PageInfo pageInfo = new PageInfo(page, size, (int) journalPage.getTotalElements(), journalPage.getTotalPages());
 
         List<Journal> journals = journalPage.getContent();
         List<JournalResponseDto> response =

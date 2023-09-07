@@ -1,11 +1,11 @@
-package shop.petmily.domain.journal.dto;
+package shop.petmily.global.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class JournalPageInfo {
+public class PageInfo {
     private int page;
     private int size;
     // 총 케어일지 수
