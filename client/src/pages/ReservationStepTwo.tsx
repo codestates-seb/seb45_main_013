@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import TextField from '@mui/material/TextField';
 
 import LinkButton from 'components/buttons/LinkButton';
 
@@ -44,9 +48,10 @@ const ReservationStepTwo = () => {
     photo: '',
     body: '',
     neutering: '',
+    gender: '',
   });
-  // const [isCat, setIsCat] = useState(false);
-  // const [gender, setGender] = useState(null);
+  const [isCat, setIsCat] = useState(false);
+  const [gender, setGender] = useState(null);
 
   const handleBackClick = () => {
     navigate('/reservation');
@@ -64,10 +69,10 @@ const ReservationStepTwo = () => {
     setIsModalOpen(false);
   };
 
-  // const handleGenderCheck = (e: any) => {
-  //   setGender(e.target.value);
-  //   setNewPetData({ ...newPetData, gender: e.target.value });
-  // };
+  const handleGenderCheck = (e: any) => {
+    setGender(e.target.value);
+    setNewPetData({ ...newPetData, gender: e.target.value });
+  };
 
   const handleNewPetChange = (e: { target: { name: any; value: any } }) => {
     setNewPetData({ ...newPetData, [e.target.name]: e.target.value });
@@ -116,17 +121,82 @@ const ReservationStepTwo = () => {
                 <Button color="primary" onClick={handleAddClick}>
                   <img src="/imgs/PetAdd.svg" alt="Add Pet" />
                 </Button>
+                <Dialog open={isModalOpen} onClose={handleModalClose}>
+                  <DialogTitle>반려동물 등록</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>반려동물 소개는 마이페이지에서 펫 수정을 통해 등록해주세요!</DialogContentText>
+                    <PetButtonContainer>
+                      <PetButton onClick={() => setIsCat(false)} iscat={isCat ? 'true' : 'false'}>
+                        <img src="/icons/DogIcon.svg" alt="dogIcon" />
+                      </PetButton>
+                      <PetButton onClick={() => setIsCat(true)} iscat={isCat ? 'false' : 'true'}>
+                        <img src="/icons/CatIcon.svg" alt="catIcon" />
+                      </PetButton>
+                    </PetButtonContainer>
+                    <TextField
+                      margin="dense"
+                      id="name"
+                      label="반려동물 이름"
+                      type="text"
+                      fullWidth
+                      onChange={handleNewPetChange}
+                    />
+                    <TextField
+                      margin="dense"
+                      id="species"
+                      label="품종"
+                      type="text"
+                      fullWidth
+                      onChange={handleNewPetChange}
+                    />
+                    <TextField
+                      margin="dense"
+                      id="weight"
+                      label="몸무게"
+                      type="text"
+                      fullWidth
+                      onChange={handleNewPetChange}
+                    />
+                    <TextField
+                      margin="dense"
+                      id="age"
+                      label="나이"
+                      type="text"
+                      fullWidth
+                      onChange={handleNewPetChange}
+                    />
+                    <CheckBoxContainer>
+                      <CheckBoxGenderWrapper>
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="male"
+                          onChange={handleGenderCheck}
+                          checked={gender === 'male'}
+                        ></input>
+                        <img src="/icons/MaleIcon.svg" alt="maleIcon"></img>
+                        <CheckBoxGenderWrapper>
+                          <input
+                            type="radio"
+                            name="gender"
+                            value="female"
+                            onChange={handleGenderCheck}
+                            checked={gender === 'female'}
+                          ></input>
+                          <img src="/icons/FemaleIcon.svg" alt="femaleIcon"></img>
+                        </CheckBoxGenderWrapper>
+                      </CheckBoxGenderWrapper>
+                    </CheckBoxContainer>
+
+                    <form onSubmit={handleSubmit}>
+                      <Button variant="contained" color="primary" type="submit" fullWidth>
+                        등록하기
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </ButtonContainer>
             </SelectPetImgContainer>
-
-            <Dialog open={isModalOpen} onClose={handleModalClose}>
-              <form onSubmit={handleSubmit}>
-                <input type="text" name="name" placeholder="반려동물 이름" onChange={handleNewPetChange} />
-                <Button variant="contained" color="primary" type="submit">
-                  등록하기
-                </Button>
-              </form>
-            </Dialog>
           </SelectPetContainer>
         ))}
 
@@ -255,6 +325,39 @@ const ButtonContainer = styled.div`
   align-items: center;
   margin-bottom: 8px;
   margin-left: 20px;
+`;
+
+const PetButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  margin: 16px 0 4px 0;
+`;
+
+const PetButton = styled.button<{ iscat: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background-color: ${(props) =>
+    props.iscat === 'true' ? props.theme.textColors.gray50 : props.theme.colors.mainBlue};
+`;
+
+const CheckBoxContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 14px 0 14px 0;
+`;
+
+const CheckBoxGenderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
 `;
 
 const SelectPetImgContainer = styled.div`
