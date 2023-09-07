@@ -9,6 +9,7 @@ export const defaultTheme = {
     darkBlue: '#096DBE',
     skyBlue: '#36313D',
     paleBlue: '#9AC5F4',
+    red: '#FF6161',
   },
   textColors: {
     gray00: '#1A1A1A',
