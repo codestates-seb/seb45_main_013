@@ -40,14 +40,20 @@ public interface ReservationMapper {
             reservationPets.add(reservationPet);
         }
 
+        if(reservationPostDto.getPetId() != null) {
+            Petsitter petsitter = new Petsitter();
+            petsitter.setPetsitterId(reservationPostDto.getPetsitterId());
+            reservation.setPetsitter(petsitter);
+        }
+
         reservation.setReservationPets(reservationPets);
 
         return reservation;
     }
 
-    @Mapping(source = "memberId", target = "member.memberId")
-    @Mapping(source = "petsitterId", target = "petsitter.petsitterId")
-    Reservation reservationCreateDtoToRservation(ReservationCreateDto reservationCreateDto);
+//    @Mapping(source = "memberId", target = "member.memberId")
+//    @Mapping(source = "petsitterId", target = "petsitter.petsitterId")
+//    Reservation reservationCreateDtoToRservation(ReservationCreateDto reservationCreateDto);
 
 //    @Mapping(source = "memberId", target = "member.memberId")
 //    Reservation reservationPatchDtoToReservation(ReservationPatchDto reservationPatchDto);

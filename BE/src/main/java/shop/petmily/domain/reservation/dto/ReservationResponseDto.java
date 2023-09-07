@@ -5,7 +5,9 @@ import lombok.Setter;
 import shop.petmily.domain.pet.dto.PetResponseDto;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -18,11 +20,11 @@ public class ReservationResponseDto {
 
     private String name;
 
-    private Date reservationDay;
+    private LocalDate reservationDay;
 
-    private Time reservationTimeStart;
+    private LocalTime reservationTimeStart;
 
-    private Time reservationTimeEnd;
+    private LocalTime reservationTimeEnd;
 
     private String location;
 
