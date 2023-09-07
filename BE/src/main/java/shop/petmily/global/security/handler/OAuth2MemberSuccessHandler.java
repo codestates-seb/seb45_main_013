@@ -1,5 +1,6 @@
 package shop.petmily.global.security.handler;
 
+import io.jsonwebtoken.Claims;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
@@ -45,8 +46,6 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         member.setNickName(nickName);
         member.setEmail(email);
         member.setPassword("google_OAuth2");
-//        member.setCreateAt(LocalDateTime.now());
-//        member.setLastModifiedAt(LocalDateTime.now());
         Member saveMember = saveMember(member);
 
         List<String> authorities = customAuthorityUtils.createRoles(member);
@@ -63,6 +62,8 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String accessToken = delegateAccessToken(member, authorities);
         String refreshToken = delegateRefreshToken(member);
 
+        Claims claims = jwtTokenizer.parseRefreshToken(refreshToken);
+
         String uri = createURI(request, accessToken, refreshToken).toString();
 
         String headerValue = "Bearer "+ accessToken;
@@ -72,6 +73,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         RefreshToken refreshTokenEntity = new RefreshToken();
         refreshTokenEntity.setValue(refreshToken);
         refreshTokenEntity.setMember(member);
+        refreshTokenEntity.setExpirationDate(claims.getExpiration());
         refreshTokenService.addRefreshToken(refreshTokenEntity);
 
         getRedirectStrategy().sendRedirect(request,response,uri);

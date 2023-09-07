@@ -2,6 +2,7 @@ package shop.petmily.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import io.jsonwebtoken.Claims;
 import shop.petmily.domain.member.dto.MemberLoginDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
@@ -81,12 +82,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = delegateAccessToken(member);
         String refreshToken = delegateRefreshToken(member);
 
+        Claims claims = jwtTokenizer.parseRefreshToken(refreshToken);
+
         response.setHeader("Authorization", "Bearer" + accessToken);
         response.setHeader("Refresh", refreshToken);
 
         RefreshToken refreshTokenEntity = new RefreshToken();
         refreshTokenEntity.setValue(refreshToken);
         refreshTokenEntity.setMember(member);
+        refreshTokenEntity.setExpirationDate(claims.getExpiration());
         refreshTokenService.addRefreshToken(refreshTokenEntity);
 
         MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
