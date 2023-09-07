@@ -4,6 +4,7 @@ const GoogleOAuthButtonStyle = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
   height: 32px;
   padding-right: 28px;
   padding-left: 12px;
@@ -11,7 +12,6 @@ const GoogleOAuthButtonStyle = styled.button`
   border-radius: 8px;
   color: ${(props) => props.theme.textColors.gray60};
   background-color: white;
-  width: 100%;
   font-family: 'Noto Sans KR';
 
   &:hover {

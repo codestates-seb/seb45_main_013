@@ -304,8 +304,8 @@ const SignupInputStyle = styled.input<{ error: string | undefined }>`
   border: 1px solid
     ${(props) =>
       props.error === 'required' || props.error === 'dismatch' || props.error === 'serverError'
-        ? props.theme.colors.mainBlue
-        : props.theme.lineColors.coolGray80};
+        ? props.theme.colors.mainblue
+        : props.theme.linecolors.coolgray80};
   padding: 8px;
   ${(props) => props.theme.fontSize.s14h21}
   font-family: inherit;
@@ -314,12 +314,11 @@ const SignupInputStyle = styled.input<{ error: string | undefined }>`
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
-
   gap: 16px;
 `;
 const CheckBoxWrapper = styled.div`
-  padding-left: 4px;
   display: flex;
+  padding-left: 4px;
   gap: 8px;
 `;
 
@@ -329,15 +328,14 @@ const CheckBoxLabel = styled.label`
 `;
 
 const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  width: 18px;
-  height: 18px;
   top: 19px;
   left: 12px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 18px;
+  height: 18px;
 `;
 
 const spin = keyframes`
@@ -346,10 +344,10 @@ const spin = keyframes`
 `;
 
 const Spinner = styled.div`
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  border-top: 2px solid #ffffff;
   width: 100%;
   height: 100%;
+  border: 2px solid rgb(255 255 255 / 60%);
+  border-radius: 50%;
   animation: ${spin} 1.2s linear infinite;
+  border-top: 2px solid #fff;
 `;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
-import { setUser } from 'modules/userSlice';
+import { login, setUser } from 'modules/userSlice';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -15,10 +15,15 @@ const Header = () => {
   useEffect(() => {
     const accessToken = getCookieValue('access_token');
 
-    axios.get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((data) => {
-      console.log(data.data);
-      dispatch(setUser(data.data));
-    });
+    if (accessToken) {
+      axios
+        .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
+        .then((res) => {
+          dispatch(login());
+          dispatch(setUser(res.data));
+        })
+        .catch((error) => console.log(error));
+    }
   }, [isLogin]);
   return (
     <Container>
@@ -42,23 +47,21 @@ export default Header;
 const Container = styled.header`
   display: flex;
   justify-content: space-between;
-
+  z-index: 1;
   height: 64px;
   padding: 12px;
   background-color: white;
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
-  z-index: 1;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
-
   gap: 12px;
 
   > button {
-    border: none;
-    background-color: white;
     width: 24px;
     height: 24px;
+    border: none;
+    background-color: white;
   }
 `;

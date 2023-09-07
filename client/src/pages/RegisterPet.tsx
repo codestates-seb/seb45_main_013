@@ -95,12 +95,12 @@ const RegisterPet = () => {
 export default RegisterPet;
 
 export const MainContainer = styled.main`
-  background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px;
   height: 100%;
+  padding: 60px;
+  background-color: white;
 `;
 
 export const PageTitle = styled.div`
@@ -112,22 +112,22 @@ export const PageTitle = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  height: 32px;
-  border-radius: 8px;
   overflow: hidden;
-  margin-top: 60px;
   width: 100%;
+  height: 32px;
+  margin-top: 60px;
+  border-radius: 8px;
 `;
 
 const PetButton = styled.button<{ iscat: string }>`
   display: flex;
-  justify-content: center;
   align-items: center;
-  cursor: pointer;
+  justify-content: center;
   width: 100%;
   border: none;
   background-color: ${(props) =>
     props.iscat === 'true' ? props.theme.textColors.gray50 : props.theme.colors.mainBlue};
+  cursor: pointer;
 `;
 
 export const InputContainer = styled.form`
@@ -140,9 +140,9 @@ export const InputContainer = styled.form`
 
 export const RegisterInputWrapper = styled.div`
   display: flex;
-  width: 100%;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   margin-top: 20px;
 `;
 
@@ -151,11 +151,11 @@ export const InputLabelStyle = styled.label`
 `;
 
 export const InputStyle = styled.input`
-  padding: 8px;
-  height: 32px;
   width: 60%;
-  border-radius: 8px;
+  height: 32px;
+  padding: 8px;
   border: 1px solid ${(props) => props.theme.textColors.gray60};
+  border-radius: 8px;
 `;
 
 const GenderText = styled.div`

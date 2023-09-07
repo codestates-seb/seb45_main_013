@@ -10,9 +10,7 @@ import { IUser, login, setUser } from 'modules/userSlice';
 const NavHeader = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
-  const { isLogin, memberId } = useSelector((state: IUser) => state.login);
-
-  console.log(isLogin);
+  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.login);
 
   const [activeButton, setActiveButton] = useState('홈');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +22,7 @@ const NavHeader = () => {
     }
   };
 
-  console.log(isModalOpen);
+  console.log(isModalOpen, isLogin, petsitterBoolean);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -46,9 +44,9 @@ const NavHeader = () => {
     if (accessToken) {
       axios
         .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then((data) => {
+        .then((res) => {
           dispatch(login());
-          dispatch(setUser(data.data));
+          dispatch(setUser(res.data));
         })
         .catch((error) => console.log(error));
     }
@@ -90,6 +88,7 @@ const NavHeader = () => {
             isactive={activeButton === '예약현황' ? 'true' : 'false'}
             onClick={() => handleNavButtonClick('예약현황')}
             memberId={memberId}
+            isPetsitter={petsitterBoolean}
           >
             예약현황
           </NavBarButton>
@@ -130,7 +129,6 @@ const HeaderContatiner = styled.div`
 const TopHeader = styled.div`
   display: flex;
   justify-content: space-between;
-
   position: relative;
 `;
 
@@ -140,10 +138,10 @@ const NotiUserContainer = styled.nav`
 `;
 
 const NotiButton = styled.button`
-  border: none;
-  background-color: white;
   width: 24px;
   height: 24px;
+  border: none;
+  background-color: white;
 `;
 
 const UserButton = styled.button`
