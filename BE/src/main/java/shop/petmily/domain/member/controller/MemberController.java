@@ -1,12 +1,17 @@
 package shop.petmily.domain.member.controller;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.dto.*;
 import shop.petmily.domain.member.entity.Member;
@@ -20,19 +25,12 @@ import shop.petmily.global.dto.LoginMemberResponseDto;
 import shop.petmily.global.dto.PageResponseDto;
 import shop.petmily.global.dto.SingleResponseDto;
 import shop.petmily.global.utils.UriCreator;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/members")
@@ -95,8 +93,6 @@ public class MemberController {
     public ResponseEntity<PetsitterPossibleResoponseDto> getPetsitterPossible(@LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(loginMemberId);
         Petsitter findPetsitter = petsitterService.findPetsitter(findMember);
-//        findPetsitter.setStar(memberService.averageStar(findMember));
-//        petsitterService.addPetsitterProfile(findPetsitter);
         PetsitterPossibleResoponseDto petsitterPossibleResoponseDto = petsitterService.findPossible(findPetsitter);
         return new ResponseEntity<>(petsitterPossibleResoponseDto, HttpStatus.OK);
     }
