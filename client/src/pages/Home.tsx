@@ -140,9 +140,9 @@ const Home = () => {
 
 const HomeContainer = styled.div`
   display: flex;
-  margin-top: 84px;
   flex-direction: column;
   justify-content: flex-start;
+  margin-top: 84px;
   background-color: #fefdff;
 `;
 
@@ -294,15 +294,15 @@ const RatingReviewContainer = styled.div`
 `;
 
 const RatingImg = styled.img`
-  margin-right: 4px;
   width: 14px;
+  margin-right: 4px;
 `;
 
 const ReviewImg = styled.img`
-  margin-left: 12px;
-  margin-right: 4px;
-  padding-top: 2px;
   width: 14px;
+  margin-right: 4px;
+  margin-left: 12px;
+  padding-top: 2px;
 `;
 
 const RealtimeReviewText = styled.div`
@@ -317,7 +317,7 @@ const RealtimeReviewContainer = styled.div`
   justify-content: space-around;
   min-height: 160px;
   margin: 16px 12px 48px;
-  padding: 18px 22px 14px 22px;
+  padding: 18px 22px 14px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
   border-radius: 8px;
 `;

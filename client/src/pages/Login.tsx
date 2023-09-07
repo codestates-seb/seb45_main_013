@@ -35,8 +35,11 @@ const Login = () => {
 
       dispatch(login());
       navigate('/');
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error.response.data.status === 400) {
+        for (let i = 0; i < error.response.data.length; i++) {}
+      }
     }
     setIsLoginLoading(false);
   };
@@ -103,7 +106,6 @@ const LoginContainer = styled.div`
 const InputForm = styled.form`
   display: flex;
   flex-direction: column;
-
   justify-content: center;
   width: 100%;
   margin-top: 32px;
@@ -119,7 +121,7 @@ export const SubmitButtonStyle = styled.button`
   border: none;
   color: white;
   ${(props) => props.theme.fontSize.s16h24};
-  font-family: 'inherit';
+  font-family: inherit;
   font-weight: ${(props) => props.theme.fontWeights.bold};
 
   &:hover {
@@ -136,9 +138,9 @@ const LinkContainer = styled.div`
   margin-top: 12px;
 
   a {
+    color: ${(props) => props.theme.colors.mainBlue};
     font-size: ${(props) => props.theme.fontSize.s14h21};
     text-decoration-line: none;
-    color: ${(props) => props.theme.colors.mainBlue};
   }
 `;
 
@@ -153,22 +155,21 @@ const LoginInputStyle = styled.input<{ error: string | undefined }>`
 `;
 
 export const ErrorMessage = styled.p`
-  padding-left: 4px;
-  font-size: 10px;
   margin-top: 4px;
+  padding-left: 4px;
   color: ${(props) => props.theme.colors.paleBlue};
+  font-size: 10px;
 `;
 
 const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  width: 18px;
-  height: 18px;
   top: 19px;
   left: 12px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 18px;
+  height: 18px;
 `;
 
 const spin = keyframes`
@@ -177,10 +178,10 @@ const spin = keyframes`
 `;
 
 const Spinner = styled.div`
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  border-top: 2px solid #ffffff;
   width: 100%;
   height: 100%;
+  border: 2px solid rgb(255 255 255 / 60%);
+  border-radius: 50%;
   animation: ${spin} 1.2s linear infinite;
+  border-top: 2px solid #fff;
 `;

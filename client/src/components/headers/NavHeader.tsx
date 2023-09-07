@@ -12,8 +12,6 @@ const NavHeader = () => {
   const dispatch = useDispatch();
   const { isLogin, memberId } = useSelector((state: IUser) => state.login);
 
-  console.log(isLogin);
-
   const [activeButton, setActiveButton] = useState('홈');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -24,7 +22,7 @@ const NavHeader = () => {
     }
   };
 
-  console.log(isModalOpen);
+  // console.log(isModalOpen);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -46,9 +44,9 @@ const NavHeader = () => {
     if (accessToken) {
       axios
         .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then((data) => {
+        .then((res) => {
           dispatch(login());
-          dispatch(setUser(data.data));
+          dispatch(setUser(res.data));
         })
         .catch((error) => console.log(error));
     }
@@ -130,7 +128,6 @@ const HeaderContatiner = styled.div`
 const TopHeader = styled.div`
   display: flex;
   justify-content: space-between;
-
   position: relative;
 `;
 
@@ -140,10 +137,10 @@ const NotiUserContainer = styled.nav`
 `;
 
 const NotiButton = styled.button`
-  border: none;
-  background-color: white;
   width: 24px;
   height: 24px;
+  border: none;
+  background-color: white;
 `;
 
 const UserButton = styled.button`

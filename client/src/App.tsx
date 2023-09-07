@@ -15,6 +15,7 @@ import Header from './components/headers/Header';
 import RegisterPet from './pages/RegisterPet';
 import EditPet from 'pages/EditPet';
 import Search from './pages/Search';
+import Review from 'pages/Review';
 
 const Container = styled.div`
   display: flex;
@@ -26,6 +27,7 @@ const Container = styled.div`
   @media (width >= 600px) {
     width: 600px;
   }
+
   @media (height <= 780px) {
     height: 780px;
   }
@@ -70,6 +72,7 @@ function App() {
             <Route path="mypage" element={<Mypage />}></Route>
             <Route path="reservation" element={<Reservation />}></Route>
             <Route path="/cares/:memberId" element={<Cares />}></Route>
+            <Route path="/review" element={<Review />}></Route>
           </Route>
           <Route path="/" element={<BackHeaderLayout />}>
             <Route path="login" element={<Login />}></Route>
@@ -82,7 +85,7 @@ function App() {
           </Route>
           <Route path="reservation" element={<Reservation />}></Route>
           <Route path="/main" element={<Main />}></Route>
-          <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
+
           <Route path="/cares/:petsitterId" element={<Cares />}></Route>
           <Route path="/cares/:petsitterId/:reservationId/journal" element={<Cares />}></Route>
         </Routes>
