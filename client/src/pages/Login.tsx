@@ -22,6 +22,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<IFormLoginInputs>();
 
@@ -37,8 +38,15 @@ const Login = () => {
       navigate('/');
     } catch (error: any) {
       console.log(error);
+
       if (error.response.data.status === 400) {
-        for (let i = 0; i < error.response.data.length; i++) {}
+        for (let i = 0; i < error.response.data.length; i++) {
+          if (error.response.data.field === 'email') {
+            setError('email', { type: 'serverError', message: '이메일 형식에 맞지 않습니다.' });
+          } else if (error.response.data.field === 'password') {
+            setError('password', { type: 'serverError', message: '영어롸' });
+          }
+        }
       }
     }
     setIsLoginLoading(false);
@@ -51,12 +59,16 @@ const Login = () => {
         <InputForm>
           <div>
             <LoginInputStyle
-              type="text"
+              type="email"
               placeholder="아이디"
               {...register('email', { required: true })}
               error={errors.email?.type}
             />
-            {errors.email?.type === '' && <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>}
+            {errors.email?.type === 'required' ? (
+              <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.email?.message}</ErrorMessage>
+            )}
           </div>
           <div>
             <LoginInputStyle
@@ -65,7 +77,11 @@ const Login = () => {
               {...register('password', { required: true })}
               error={errors.password?.message}
             />
-            {errors.password?.message === '' && <ErrorMessage>비밀번호를 입력해주세요.</ErrorMessage>}
+            {errors.password?.type === 'required' ? (
+              <ErrorMessage>비밀번호를 입력해주세요.</ErrorMessage>
+            ) : (
+              <ErrorMessage>{errors.password?.message}</ErrorMessage>
+            )}
           </div>
           <div style={{ position: 'relative' }}>
             <SubmitButtonStyle type="submit">로 그 인</SubmitButtonStyle>

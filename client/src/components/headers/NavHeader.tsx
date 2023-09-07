@@ -22,7 +22,7 @@ const NavHeader = () => {
     }
   };
 
-  // console.log(isModalOpen);
+  console.log(isModalOpen, isLogin);
 
   useEffect(() => {
     if (isModalOpen) {
