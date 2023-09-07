@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import UploadProfileImg from 'components/UploadProfileImg';
+// import UploadProfileImg from 'components/UploadProfileImg';
 import Button from '@mui/material/Button';
 import Textarea from '@mui/joy/Textarea';
 
 // 버튼 수정
 // 성별 폰트
+
 const RegisterPet = () => {
   const [isCat, setIsCat] = useState(false);
   const [gender, setGender] = useState(null);
@@ -21,7 +22,7 @@ const RegisterPet = () => {
       <PageTitle>나의 Petmily 등록</PageTitle>
 
       <MainContainer>
-        <UploadProfileImg />
+        {/* <UploadProfileImg /> */}
         <ButtonContainer>
           <PetButton onClick={() => setIsCat(false)} iscat={isCat ? 'true' : 'false'}>
             <img src="/icons/DogIcon.svg" alt="dogIcon" />

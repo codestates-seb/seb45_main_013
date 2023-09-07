@@ -5,11 +5,11 @@ import NavHeader from './components/headers/NavHeader';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Main from './pages/Main';
 import Mypage from './pages/Mypage';
 import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
 import CaresClient from './pages/cares/CaresClient';
+import ReservationStepTwo from 'pages/ReservationStepTwo';
 import BackHeader from './components/headers/BackHeader';
 import Header from './components/headers/Header';
 import RegisterPet from './pages/RegisterPet';
@@ -48,6 +48,7 @@ function App() {
             <Route path="cares/client/:memberId" element={<CaresClient />}></Route>
             <Route path="review" element={<Review />}></Route>
             <Route path="cares/petsitter/:petsttierId" element={<CaresPetsitter />}></Route>
+            <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>          
           </Route>
           <Route path="/" element={<BackHeaderLayout />}>
             <Route path="login" element={<Login />}></Route>
@@ -58,10 +59,6 @@ function App() {
             <Route path="mypage/pets/edit" element={<EditPet />}></Route>
             <Route path="search" element={<Search />}></Route>
           </Route>
-          <Route path="reservation" element={<Reservation />}></Route>
-          <Route path="/main" element={<Main />}></Route>
-
-          <Route path="/cares/:petsitterId/:reservationId/journal" element={<CaresPetsitter />}></Route>
         </Routes>
       </BrowserRouter>
     </Container>
