@@ -103,6 +103,19 @@ public class PetsitterService {
                         double memberStar = member.getPetsitter().getStar();
                         return memberStar >= starValue && memberStar < (starValue + 1.0);
                     })
+                    .sorted((member1, member2) -> {
+                        double star1 = member1.getPetsitter().getStar();
+                        double star2 = member2.getPetsitter().getStar();
+                        return Double.compare(star2, star1); // 내림차순 정렬
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            petsitters = petsitters.stream()
+                    .sorted((member1, member2) -> {
+                        double star1 = member1.getPetsitter().getStar();
+                        double star2 = member2.getPetsitter().getStar();
+                        return Double.compare(star2, star1); // 내림차순 정렬
+                    })
                     .collect(Collectors.toList());
         }
 
