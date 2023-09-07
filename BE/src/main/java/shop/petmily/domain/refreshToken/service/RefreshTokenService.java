@@ -1,5 +1,6 @@
 package shop.petmily.domain.refreshToken.service;
 
+import lombok.Data;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.domain.refreshToken.repository.RefreshTokenRepository;
@@ -9,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -35,5 +39,11 @@ public class RefreshTokenService {
     @Transactional(readOnly = true)
     public RefreshToken findRefreshToken(Member member) {
         return refreshTokenRepository.findByMember(member).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
+    }
+
+    public void deleteExpiredTokens() {
+        Date now = new Date();
+        List<RefreshToken> expiredTokens = refreshTokenRepository.findByExpirationDateBefore(now);
+        refreshTokenRepository.deleteAll(expiredTokens);
     }
 }
