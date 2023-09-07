@@ -10,11 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.service.PetsitterService;
-import shop.petmily.domain.review.Dto.*;
+import shop.petmily.domain.review.Dto.ReviewMultiResponseDto;
+import shop.petmily.domain.review.Dto.ReviewPatchDto;
+import shop.petmily.domain.review.Dto.ReviewPostDto;
+import shop.petmily.domain.review.Dto.ReviewResponseDto;
 import shop.petmily.domain.review.entity.Review;
 import shop.petmily.domain.review.mapper.ReviewMapper;
 import shop.petmily.domain.review.service.ReviewService;
 import shop.petmily.global.argu.LoginMemberId;
+import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
@@ -89,7 +93,7 @@ public class ReviewController {
 
         reviewPage = service.findAllReviews(page, size, petsitterId);
 
-        ReviewPageInfo pageInfo = new ReviewPageInfo(page, size, (int) reviewPage.getTotalElements(), reviewPage.getTotalPages());
+        PageInfo pageInfo = new PageInfo(page, size, (int) reviewPage.getTotalElements(), reviewPage.getTotalPages());
 
         List<Review> reviews = reviewPage.getContent();
         List<ReviewResponseDto> response =

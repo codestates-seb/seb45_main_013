@@ -1,6 +1,7 @@
 package shop.petmily.domain.journal.dto;
 
 import lombok.Getter;
+import shop.petmily.global.dto.PageInfo;
 
 import java.util.List;
 
@@ -8,9 +9,9 @@ import java.util.List;
 public class JournalMultiResponseDto {
     private List<JournalResponseDto> journals;
 
-    private JournalPageInfo pageInfo;
+    private PageInfo pageInfo;
 
-    public JournalMultiResponseDto(List<JournalResponseDto> journals, JournalPageInfo pageInfo) {
+    public JournalMultiResponseDto(List<JournalResponseDto> journals, PageInfo pageInfo) {
         this.journals = journals;
         this.pageInfo = pageInfo;
     }

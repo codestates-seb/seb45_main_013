@@ -7,11 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.reservation.dto.*;
+import shop.petmily.domain.reservation.dto.ReservationMultiResponseDto;
+import shop.petmily.domain.reservation.dto.ReservationPossiblePetsitterReseponseDto;
+import shop.petmily.domain.reservation.dto.ReservationPostDto;
+import shop.petmily.domain.reservation.dto.ReservationResponseDto;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.mapper.ReservationMapper;
 import shop.petmily.domain.reservation.service.ReservationService;
 import shop.petmily.global.argu.LoginMemberId;
+import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
@@ -78,7 +82,7 @@ public class ReservationController {
                                                    @RequestParam(value = "condition", required = false) String condition,
                                                    @LoginMemberId Long memberId) {
         Page<Reservation> reservationPage = service.findMemberReservations(page, size, memberId, condition);
-        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
+        PageInfo pageInfo = new PageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
         List<ReservationResponseDto> response =
@@ -96,7 +100,7 @@ public class ReservationController {
                                                       @RequestParam(value = "condition", required = false) String condition,
                                                       @LoginMemberId Long memberId) {
         Page<Reservation> reservationPage = service.findPetsitterReservations(page, size, memberId, condition);
-        ReservationPageInfo pageInfo = new ReservationPageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
+        PageInfo pageInfo = new PageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
         List<ReservationResponseDto> response =
