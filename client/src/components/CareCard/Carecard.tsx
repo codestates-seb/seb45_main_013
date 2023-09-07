@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 const CareCard = ({ reservation }: any) => {
-  console.log(reservation);
   const { petsitterBoolean } = useSelector((state: IUser) => state.login);
 
   const [year, month, day] = reservation.reservationDay.split('-');
@@ -34,30 +33,37 @@ const CareCard = ({ reservation }: any) => {
         <ImgDiv />
       </FirstLine>
       <SecondLine>
-        {petsitterBoolean ? (
-          // 펫시터 부분
-          <ButtonContainer>
-            <InActiveButton>예약신청</InActiveButton>
-            <ActiveButton>취소하기</ActiveButton>
-          </ButtonContainer>
-        ) : (
-          // 고객 부분
-          <ButtonContainer>
-            {reservation.progress === 'BEFORE_PETSITTER_SELECTION' ? (
-              <>
-                <InActiveButton>예약신청</InActiveButton>
-                <ActiveButton>취소하기</ActiveButton>
-              </>
-            ) : reservation.progress === 'RESERVATION_REQUEST' ? (
+        <ButtonContainer>
+          {petsitterBoolean && reservation.progress === 'RESERVATION_REQUEST' ? (
+            <>
+              <ActiveButton>예약확정</ActiveButton>
+            </>
+          ) : petsitterBoolean && reservation.progress === 'RESERVATION_CONFIRMED' ? (
+            <>
               <InActiveButton>예약확정</InActiveButton>
-            ) : (
-              <>
-                <ActiveButton>케어일지</ActiveButton>
-                <ActiveButton>후기</ActiveButton>
-              </>
-            )}
-          </ButtonContainer>
-        )}
+              <ActiveButton>취소하기</ActiveButton>
+            </>
+          ) : petsitterBoolean && reservation.progess === 'RESERVATION_FINISHING' ? (
+            <>
+              <ActiveButton>케어일지</ActiveButton>
+            </>
+          ) : null}
+          {!petsitterBoolean && reservation.progress == 'RESERVATION_REQUEST' ? (
+            <>
+              <InActiveButton>예약신청</InActiveButton>
+              <ActiveButton>취소하기</ActiveButton>
+            </>
+          ) : !petsitterBoolean && reservation.progess === 'RESERVATION_CONFIRM' ? (
+            <>
+              <InActiveButton>예약확정</InActiveButton>
+            </>
+          ) : !petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
+            <>
+              <ActiveButton>케어일지</ActiveButton>
+              <ActiveButton>후기</ActiveButton>
+            </>
+          ) : null}
+        </ButtonContainer>
       </SecondLine>
     </CareCardContainer>
   );

@@ -41,7 +41,6 @@ const CareCards = ({ filter }: any) => {
       ) : (
         reservations.map((reservation) => <CareCard key={reservation.reservationId} reservation={reservation} />)
       )}
-      <CareCard />
     </>
   );
 };

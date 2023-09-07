@@ -18,10 +18,12 @@ interface NavBarButtonProps {
   children: React.ReactNode;
   isactive: string;
   memberId?: number;
+  isPetsitter?: boolean;
+  petsitterId?: number;
   onClick: () => void;
 }
 
-const NavBarButton = ({ children, isactive, memberId, onClick }: NavBarButtonProps) => {
+const NavBarButton = ({ children, isactive, memberId, isPetsitter, petsitterId, onClick }: NavBarButtonProps) => {
   return (
     <Link
       to={
@@ -29,8 +31,10 @@ const NavBarButton = ({ children, isactive, memberId, onClick }: NavBarButtonPro
           ? '/'
           : children === '예약하기'
           ? '/reservation'
-          : children === '예약현황'
-          ? `/cares/${memberId}`
+          : children === '예약현황' && isPetsitter
+          ? `/cares/petsitter/${petsitterId}`
+          : children === '예약현황' && !isPetsitter
+          ? `/cares/client/${memberId}`
           : '/reviews'
       }
     >

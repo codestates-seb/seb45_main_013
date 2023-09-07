@@ -1,33 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import CareCards from '../../components/CareCard/CareCards';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { IUser } from 'modules/userSlice';
-import { useParams, useNavigate } from 'react-router-dom';
-import CareCards from '../components/CareCard/CareCards';
-import { getCookieValue } from 'hooks/getCookie';
 
-const Cares = () => {
+const CaresPetsitter = () => {
   const [filter, setFilter] = useState('전체');
-
-  const navigate = useNavigate();
-  const { isLogin, memberId } = useSelector((state: IUser) => state.login);
-
   const handleFilter = (e: any) => {
     setFilter(e.target.innerText);
   };
-
-  console.log(`cares: ${isLogin}`);
-
-  const { memberId: id } = useParams();
-
-  useEffect(() => {
-    const accessToken = getCookieValue('access_token');
-    if (typeof id === 'undefined' || !accessToken || memberId !== +id) {
-      alert('권한이 없습니다.');
-      navigate('/');
-    }
-  }, [id]);
-
   return (
     <MainContainer>
       <CareContainer>
@@ -49,8 +28,7 @@ const Cares = () => {
     </MainContainer>
   );
 };
-
-export default Cares;
+export default CaresPetsitter;
 
 const MainContainer = styled.main`
   height: 100%;
