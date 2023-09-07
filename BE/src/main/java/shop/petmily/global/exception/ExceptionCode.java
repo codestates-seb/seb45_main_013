@@ -8,8 +8,8 @@ public enum ExceptionCode {
     MEMBER_NOT_MODIFY(403, "수정권한이 없습니다."),
     PETSITTER_NOT_FOUND(404, "존재하지 않는 펫시터입니다."),
     PETSITTER_EXISTS(409, "존재하는 펫시터입니다."),
-    INVALID_EMAIL_FORMAT(400, "이메일 형식에 맞지 않습니다."),
-    INVALID_PASSWORD_FORMAT(400, "영어와 숫자를 최소 1개 포함하여 8자 이상이어야합니다."),
+    INVALID_EMAIL_FORMAT("email" ,400, "이메일 형식에 맞지 않습니다."),
+    INVALID_PASSWORD_FORMAT("password", 400, "영어와 숫자를 최소 1개 포함하여 8자 이상이어야합니다."),
     LOGIN_FAIL(400, "이메일 또는 비밀번호가 일치하지 않습니다."),
     NOT_IMPLEMENTATION(501, "구현되지 않은 기능입니다."),
     INVALID_MEMBER_STATUS(400, "잘못된 회원 상태입니다."),
@@ -40,7 +40,16 @@ public enum ExceptionCode {
     @Getter
     private String message;
 
+    @Getter
+    private String field;
+
     ExceptionCode(int code, String message) {
+        this.status = code;
+        this.message = message;
+    }
+
+    ExceptionCode(String field, int code, String message) {
+        this.field = field;
         this.status = code;
         this.message = message;
     }
