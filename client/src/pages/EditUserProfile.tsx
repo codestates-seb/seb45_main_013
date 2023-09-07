@@ -7,51 +7,88 @@ import {
   InputLabelStyle,
   InputStyle,
 } from './RegisterPet';
-import UploadProfileImg from '../components/UploadProfileImg';
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import Select from '@mui/joy/Select';
-import Option from '@mui/joy/Option';
-import Textarea from '@mui/joy/Textarea';
+// import Select from '@mui/joy/Select';
+// import Option from '@mui/joy/Option';
+// import Textarea from '@mui/joy/Textarea';
+import { useSelector } from 'react-redux';
+import { IUser } from '../modules/userSlice';
+import { getCookieValue } from 'hooks/getCookie';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
-// 지우기
-const petsitter = true;
-//  버튼 수정
-//  케어가능동물 select 높이
+// 로그인 하고 확인해보기
+// 펫시터 입력란 추가
+// 버튼 수정
+//  <UploadProfileImg apiUrl='REACT_APP_UPLOAD_URL' />
+//  유효성 검사 (닉네임)
+
+interface FormData {
+  nickName: string;
+  phone: number;
+  address: string;
+  // body: string;
+}
 
 const EditUserProfile = () => {
+  // const petsitter = true;
+  const { name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo } = useSelector(
+    (state: IUser) => state.login,
+  );
+  console.log(name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo);
+
+  const token = getCookieValue('access_token');
+  console.log(token);
+  const apiUrl = process.env.REACT_APP_API_URL;
+  console.log(`${apiUrl}/members/${memberId}`);
+  const { register, watch, handleSubmit } = useForm<FormData>();
+
+  console.log(watch());
+  const onSubmit = async (data: FormData) => {
+    console.log(data);
+    try {
+      const response = await axios.patch(`${apiUrl}/members/${memberId}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <PageTitle>회원 정보 수정</PageTitle>
 
       <MainContainer>
-        <UploadProfileImg />
-
-        <InputContainer>
+        <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="username">이름</InputLabelStyle>
-            <Info>김코딩</Info>
+            <Info>{name}</Info>
           </RegisterInputWrapper>
           <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">이메일</InputLabelStyle>
-            <Info>test@gmail.com</Info>
+            <InputLabelStyle htmlFor="email">이메일</InputLabelStyle>
+            <Info>{email}</Info>
           </RegisterInputWrapper>
           <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">닉네임</InputLabelStyle>
-            <InputStyle type="text" id="username" placeholder="코딩맨" />
+            <InputLabelStyle htmlFor="nickName">닉네임</InputLabelStyle>
+            <InputStyle type="text" defaultValue={nickName} {...register('nickName')} />
           </RegisterInputWrapper>
           <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">연락처</InputLabelStyle>
-            <InputStyle type="text" id="username" placeholder="010-1111-2222" />
+            <InputLabelStyle htmlFor="phone">연락처</InputLabelStyle>
+            <InputStyle type="text" defaultValue={phone} {...register('phone')} />
           </RegisterInputWrapper>
           <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">주소</InputLabelStyle>
-            <InputStyle type="text" id="username" placeholder="서울 강남구 테헤란로 415 8층" />
+            <InputLabelStyle htmlFor="address">주소</InputLabelStyle>
+            <InputStyle type="text" defaultValue={address} {...register('address')} />
           </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="username">나의 소개</InputLabelStyle>
+          {/* <RegisterInputWrapper>
+            <InputLabelStyle htmlFor="body">나의 소개</InputLabelStyle>
             <Textarea
-              placeholder="안녕하세요,홍길동 펫시터입니다!"
               minRows={3}
               sx={{
                 width: '60%',
@@ -59,47 +96,45 @@ const EditUserProfile = () => {
                 borderRadius: '8px',
                 fontSize: 14,
               }}
+              defaultValue={body}
+              {...register('body')}
             />
-          </RegisterInputWrapper>
-          {/* 펫시터라면 소개 입력란 추가 */}
-          {petsitter && (
-            <>
-              <RegisterInputWrapper>
-                <InputLabelStyle htmlFor="username">케어 가능한 펫</InputLabelStyle>
-                <Select
-                  sx={{
-                    width: '60%',
-                    height: 32,
-                    borderRadius: 8,
-                    border: '1px solid #A6A6A6',
-                    fontSize: 14,
-                  }}
-                >
-                  <Option sx={{ fontSize: 14 }} value="dog">
-                    강아지
-                  </Option>
-                  <Option sx={{ fontSize: 14 }} value="cat">
-                    고양이
-                  </Option>
-                  <Option sx={{ fontSize: 14 }} value="both">
-                    모두
-                  </Option>
-                </Select>
-              </RegisterInputWrapper>
-              <RegisterInputWrapper>
-                <InputLabelStyle htmlFor="username">케어 가능 시간</InputLabelStyle>
-                {/* 날짜, 시간 추가 */}
-              </RegisterInputWrapper>
-            </>
-          )}
-          <Button variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
+          </RegisterInputWrapper> */}
+          {/* {petsitter && (
+              <>
+                <RegisterInputWrapper>
+                  <InputLabelStyle htmlFor="petType">케어 가능한 펫</InputLabelStyle>
+                  <Select
+                    sx={{
+                      width: '60%',
+                      height: 32,
+                      borderRadius: 8,
+                      border: '1px solid #A6A6A6',
+                      fontSize: 14,
+                    }}
+                    {...register('petType')}
+                  >
+                    <Option sx={{ fontSize: 14 }} value="dog">
+                      강아지
+                    </Option>
+                    <Option sx={{ fontSize: 14 }} value="cat">
+                      고양이
+                    </Option>
+                    <Option sx={{ fontSize: 14 }} value="both">
+                      모두
+                    </Option>
+                  </Select>
+                </RegisterInputWrapper>
+              </>
+            )} */}
+          <Button type="submit" variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
             수정하기
           </Button>
-          <LinkContainer>
-            <Link to="/">로그아웃</Link>
-            <Link to="/">회원 탈퇴</Link>
-          </LinkContainer>
         </InputContainer>
+        <LinkContainer>
+          <Link to="/">로그아웃</Link>
+          <Link to="/">회원 탈퇴</Link>
+        </LinkContainer>
       </MainContainer>
     </>
   );
@@ -113,7 +148,7 @@ const Info = styled.div`
 const LinkContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100;
+  width: 100%;
 `;
 
 export default EditUserProfile;
