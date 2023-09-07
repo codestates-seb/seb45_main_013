@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import axios from 'axios';
+
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 
 import LinkButton from 'components/buttons/LinkButton';
 
@@ -27,13 +31,58 @@ const ReservationStepTwo = () => {
   const navigate = useNavigate();
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   // const [petItems, setPetItems] = useState<MyPetItem[]>(MyPetItem);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newPetData, setNewPetData] = useState({
+    //새로운 반려동물 데이터 등록
+    petId: '',
+    memberId: '',
+    type: '',
+    name: '',
+    age: '',
+    species: '',
+    weight: '',
+    photo: '',
+    body: '',
+    neutering: '',
+  });
+  // const [isCat, setIsCat] = useState(false);
+  // const [gender, setGender] = useState(null);
+
+  const handleBackClick = () => {
+    navigate('/reservation');
+  };
 
   const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckedItems({ ...checkedItems, [e.target.name]: e.target.checked });
   };
 
-  const handleBackClick = () => {
-    navigate('/reservation');
+  const handleAddClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  // const handleGenderCheck = (e: any) => {
+  //   setGender(e.target.value);
+  //   setNewPetData({ ...newPetData, gender: e.target.value });
+  // };
+
+  const handleNewPetChange = (e: { target: { name: any; value: any } }) => {
+    setNewPetData({ ...newPetData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    // try {
+    //   const response = await axios.post('http://localhost:8080/pets/', newPetData);
+    //   if(response.status === 200) {
+    //   alert('등록 성공');
+    //   handleModalClose();
+    // } catch (err) {
+    //   alert('등록 실패');
+    //   console.log(err);
+    // }
   };
 
   return (
@@ -63,7 +112,21 @@ const ReservationStepTwo = () => {
                 </Label>
                 <SelectPetName>{item.name}</SelectPetName>
               </ImgWrap>
+              <ButtonContainer>
+                <Button color="primary" onClick={handleAddClick}>
+                  <img src="/imgs/PetAdd.svg" alt="Add Pet" />
+                </Button>
+              </ButtonContainer>
             </SelectPetImgContainer>
+
+            <Dialog open={isModalOpen} onClose={handleModalClose}>
+              <form onSubmit={handleSubmit}>
+                <input type="text" name="name" placeholder="반려동물 이름" onChange={handleNewPetChange} />
+                <Button variant="contained" color="primary" type="submit">
+                  등록하기
+                </Button>
+              </form>
+            </Dialog>
           </SelectPetContainer>
         ))}
 
@@ -186,8 +249,17 @@ const ImgCheckboxInput = styled.input.attrs({ type: 'checkbox' })`
   display: none;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+  margin-left: 20px;
+`;
+
 const SelectPetImgContainer = styled.div`
   padding: 0;
+  display: flex;
 `;
 
 const ImgWrap = styled.div`
