@@ -87,8 +87,7 @@ public class ReviewService {
 
     // 후기 1개 조회
     public Review findReview(long reviewId) {
-        Review review = findVerifiedReview(reviewId);
-        return review;
+        return findVerifiedReview(reviewId);
     }
 
     // 후기 전체 조회 ( petsitterId : 선택적 )
@@ -106,10 +105,9 @@ public class ReviewService {
     // 유효한 후기인지 확인
     private Review findVerifiedReview(long reviewId) {
         Optional<Review> optionalReview = reviewRepository.findById(reviewId);
-        Review review = optionalReview.orElseThrow(
+        return optionalReview.orElseThrow(
                 () -> new BusinessLogicException(ExceptionCode.REVIEW_NOT_EXIST)
         );
-        return review;
     }
 
     // 접근자가 후기 작성자인지 확인

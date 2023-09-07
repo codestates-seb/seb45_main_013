@@ -39,7 +39,4 @@ public class Journal extends Auditable {
     @JoinColumn(name = "petsitter_id")
     private Petsitter petsitter;
 
-    public void addPhotos(String photo){
-        photos.add(photo);
-    }
 }
