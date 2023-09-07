@@ -1,25 +1,20 @@
 package shop.petmily.domain.member.service;
 
-import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.member.dto.MemberGetResponseDto;
-//import shop.petmily.domain.member.entity.Customer;
-import shop.petmily.domain.member.entity.Member;
-//import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.repository.MemberRepository;
-import shop.petmily.domain.member.repository.PetsitterRepository;
-import shop.petmily.domain.review.entity.Review;
-import shop.petmily.domain.review.repository.ReviewRepository;
-import shop.petmily.global.AWS.service.S3UploadService;
-import shop.petmily.global.exception.BusinessLogicException;
-import shop.petmily.global.exception.ExceptionCode;
-import shop.petmily.global.security.utils.CustomAuthorityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import shop.petmily.domain.member.dto.MemberGetResponseDto;
+import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.member.repository.MemberRepository;
+import shop.petmily.global.AWS.service.S3UploadService;
+import shop.petmily.global.exception.BusinessLogicException;
+import shop.petmily.global.exception.ExceptionCode;
+import shop.petmily.global.security.utils.CustomAuthorityUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +29,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
     private final S3UploadService uploadService;
-    private final ReviewRepository reviewRepository;
 
     public Member createMember(Member member) {
         verifyExistsEmail(member.getEmail());
@@ -46,6 +40,7 @@ public class MemberService {
         Member saveMember = memberRepository.save(member);
         if (member.isPetsitterBoolean()) {
             Petsitter petsitter = new Petsitter(saveMember);
+            petsitter.setReviewCount(0);
             petsitterService.addPetsitterProfile(petsitter);
         }
         return saveMember;

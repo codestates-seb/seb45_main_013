@@ -1,15 +1,15 @@
 package shop.petmily.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.petmily.domain.member.dto.MemberGetResponseDto;
 import shop.petmily.domain.member.dto.PetsitterGetResponseDto;
 import shop.petmily.domain.member.dto.PetsitterPossibleResoponseDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.mapper.MemberMapper;
 import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
@@ -70,6 +70,7 @@ public class PetsitterService {
                 .possibleTimeStart(petsitter.getPossibleTimeStart())
                 .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                 .star(petsitter.getStar())
+                .reviewCount(petsitter.getReviewCount())
 //                .monthTotalReservation(monthTotalReservation)
                 .build();
     }
@@ -77,14 +78,15 @@ public class PetsitterService {
     public Page<PetsitterGetResponseDto> findPetsittersWithFilters(Map<String, String> params, Pageable pageable) {
         String nameFilter = params.get("name");
         String starFilter = params.get("star");
+        String reviewCountFilter = params.get("reviewCount");
 
-        List<Member> petsitters = getPetsittersWithFilters(nameFilter, starFilter);
+        List<Member> petsitters = getPetsittersWithFilters(nameFilter, starFilter, reviewCountFilter);
         List<PetsitterGetResponseDto> petsitterGetResponseDtos = mapMembersToDto(petsitters, pageable);
 
         return new PageImpl<>(petsitterGetResponseDtos, pageable, petsitters.size());
     }
 
-    private List<Member> getPetsittersWithFilters(String nameFilter, String starFilter) {
+    private List<Member> getPetsittersWithFilters(String nameFilter, String starFilter, String reviewCountFilter) {
         List<Member> petsitters = petsitterRepository.findAllMembersWithPetsitterBooleanTrue();
 
         if (nameFilter != null && !nameFilter.isEmpty()) {
@@ -100,6 +102,16 @@ public class PetsitterService {
                     .filter(member -> {
                         double memberStar = member.getPetsitter().getStar();
                         return memberStar >= starValue && memberStar < (starValue + 1.0);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        if (reviewCountFilter != null && !reviewCountFilter.isEmpty()) {
+            int reviewCountValue = Integer.parseInt(reviewCountFilter);
+            petsitters = petsitters.stream()
+                    .filter(member -> {
+                        int reviewCount = member.getPetsitter().getReviewCount();
+                        return reviewCount >= reviewCountValue;
                     })
                     .collect(Collectors.toList());
         }
@@ -133,6 +145,7 @@ public class PetsitterService {
                 .possibleTimeStart(petsitter.getPossibleTimeStart())
                 .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                 .star(petsitter.getStar())
+                .reviewCount(petsitter.getReviewCount())
                 .build();
     }
 }

@@ -43,7 +43,6 @@ public class ReviewService {
     // 후기 등록
     public Review createReview(Review review, List<MultipartFile> files) throws IOException {
         Reservation reservation = reservationService.findVerifiedReservation(review.getReservation().getReservationId());
-        review.setPetsitter(reservation.getPetsitter());
 
         if (reviewRepository.existsByReservation(reservation)) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
@@ -58,6 +57,10 @@ public class ReviewService {
             }
         }
         review.setPhotos(photos);
+
+        Petsitter petsitter = reservation.getPetsitter();
+        review.setPetsitter(petsitter);
+        petsitter.setReviewCount(petsitter.getReviewCount()+1);
 
         reviewRepository.save(review);
 

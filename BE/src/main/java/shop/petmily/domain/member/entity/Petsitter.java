@@ -46,6 +46,9 @@ public class Petsitter {
     @Column
     private double star;
 
+    @Column
+    private int reviewCount;
+
     public enum PossiblePetType {
 
         PET_DOG("강아지"),
