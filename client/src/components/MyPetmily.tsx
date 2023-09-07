@@ -1,28 +1,50 @@
 import styled from 'styled-components';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-
-// 버튼 수정
-
-// 지우기
-// const petmily = [];
-const petmily = [1];
+import { getCookieValue } from 'hooks/getCookie';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { IUser } from '../modules/userSlice';
 
 const MyPetmily = () => {
-  /* const handleEditPets = () => {
-  };
+  // 지우기
+  const { name, memberId } = useSelector((state: IUser) => state.login);
+  console.log(name, memberId);
 
+  const token = getCookieValue('access_token');
+  console.log(token);
 
-  const handleAddPets = () => {
-  };
-   */
+  const [petmily, setPetmily] = useState<any[]>([]);
+
+  useEffect(() => {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const fetchData = async () => {
+      try {
+        const getPets = await axios.get(`${process.env.REACT_APP_API_URL}/pets`, { headers });
+        console.log(getPets);
+        const petmily = getPets.data;
+        setPetmily(petmily);
+      } catch (error) {
+        console.error('error', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  console.log(petmily);
+  console.log(petmily.length);
+
   return (
     <PetmilyContainer>
       <TextContainer>
         <Text>나의 Petmily</Text>
         {petmily.length > 0 && (
           <Link to="/mypage/register">
-            <PetsButton /*onClick={handleAddPets}*/>
+            <PetsButton>
               <img src="imgs/Plus.svg" alt="AddPets" />
             </PetsButton>
           </Link>
@@ -30,25 +52,27 @@ const MyPetmily = () => {
       </TextContainer>
 
       {petmily.length > 0 ? (
-        <PetmilyCard>
-          {/* <CatOrDog src="imgs/CatIcon.svg" alt="Img" /> */}
-          <div style={{ display: 'flex', justifyContent: 'end', padding: '4px' }}>
-            <Link to="/mypage/pets/edit">
-              <PetsButton /*onClick={handleEditPets}*/>
-                <img src="imgs/Edit.svg" alt="EditPets" />
-              </PetsButton>
-            </Link>
-          </div>
-          <PetInfoContainer>
-            <PetImg
-              src="https://mblogthumb-phinf.pstatic.net/20160809_55/aplusah7582_1470731982453vnYwJ_JPEG/image_1691272651470727942346.jpg?type=w800"
-              alt="Img"
-            />
-            <PetInfo>냥이 / 여아 </PetInfo>
-            <PetInfo>브리티시 숏헤어</PetInfo>
-            <PetInfo>16살 / 12kg</PetInfo>
-          </PetInfoContainer>
-        </PetmilyCard>
+        petmily.map((pet, petId) => (
+          <PetmilyCard key={petId}>
+            <div style={{ display: 'flex', justifyContent: 'end', padding: '4px' }}>
+              <Link to="/mypage/pets/edit">
+                <PetsButton>
+                  <img src="imgs/Edit.svg" alt="EditPets" />
+                </PetsButton>
+              </Link>
+            </div>
+            <PetInfoContainer>
+              {pet.photo ? <PetImg src={pet.photo} alt="pet" /> : <PetImg src="imgs/Pet.svg" alt="Default" />}
+              <PetInfo>
+                {pet.name} / {pet.gender}
+              </PetInfo>
+              <PetInfo>{pet.breed}</PetInfo>
+              <PetInfo>
+                {pet.age}살 / {pet.weight}kg
+              </PetInfo>
+            </PetInfoContainer>
+          </PetmilyCard>
+        ))
       ) : (
         <NoPetsContainer>
           <div>등록된 펫밀리가 없습니다.</div>

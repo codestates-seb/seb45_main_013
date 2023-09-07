@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 import { ErrorMessage, SubmitButtonStyle } from './Login';
 import GoogleOAuthButton from '../components/buttons/OAuthButton';
-import UploadProfileImg from '../components/UploadProfileImg';
+// import UploadProfileImg from '../components/UploadProfileImg';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { Modal, Sheet } from '@mui/joy';
@@ -118,9 +118,7 @@ const Signup = () => {
           <div>We&apos;re Petmily!</div>
           <div>회원가입</div>
         </TitleContainer>
-        <ImgContainer>
-          <UploadProfileImg />
-        </ImgContainer>
+        <ImgContainer>{/* <UploadProfileImg /> */}</ImgContainer>
         <InputForm onSubmit={handleSubmit(onSubmit)}>
           <div>
             <SignupInputStyle
