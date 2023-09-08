@@ -31,6 +31,8 @@ public enum ExceptionCode {
     PET_NOT_EXIST(404,"존재하지 않는 펫 입니다."),
     NOT_MY_PET(400, "올바른 보호자와 반려동물이 아닙니다." ),
     BEFORE_CONFIRMED(400, "유효하지 않은 예약입니다"),
+    NOT_CAT_DOG(400, "올바른 반려동물 타입이 아닙니다."),
+    ALREADY_NEUTERING(400, "중성화는 false > true 한번만 변경 가능합니다."),
 
     // 케어일지, 리뷰
     JOURNAL_NOT_EXIST(404, "존재하지 않는 펫시터 일지입니다."),
@@ -45,9 +47,10 @@ public enum ExceptionCode {
     NOT_IMPLEMENTATION(501, "구현되지 않은 기능입니다."),
     UNKNOWN_ERROR(500, "예기치 않은 에러입니다."),
     WARNING(400, "잘못된 접근입니다."),
-    NOT_ALLOW_ADDRESS(400,"올바른 주소가 아닙니다.")
+    NOT_ALLOW_ADDRESS(400,"올바른 주소가 아닙니다."),
+    FILE_UPLOAD_FAILED(500, "업로드에 실패했습니다."),
+    NO_PHOTO(404, "기존 사진이 없습니다.")
     ;
-
 
     @Getter
     private int status;

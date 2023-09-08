@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -57,21 +58,23 @@ public class ReservationService {
 
     public List<Petsitter> findReservationPossiblePetsitter(Reservation reservation){
 
-        for (ReservationPet reservationPet : reservation.getReservationPets()) {
-            Long reservationPetId = reservationPet.getPet().getPetId();
-            Pet findedreservationPet = petService.findPet(reservationPetId);
-            petService.verifiedPetOwner(findedreservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
-        }
+        List<Pet> reservationRequestPets = reservation.getReservationPets().stream()
+                .map(reservationPet -> {
+                    Long reservationPetId = reservationPet.getPet().getPetId();
+                    Pet findedreservationPet = petService.findPet(reservationPetId);
+                    petService.verifiedPetOwner(findedreservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
+                    return findedreservationPet;
+                }).collect(Collectors.toList());
+
+        Petsitter.PossiblePetType reservationPetType = verifiedReservationPetType(reservationRequestPets);
 
         String reservationDay = reservation.getReservationDay().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
-
 
         if (reservation.getReservationTimeStart().isAfter(reservation.getReservationTimeEnd())
                 ||(reservation.getReservationTimeStart().equals(reservation.getReservationTimeEnd()))) {
             throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
         }
 
-        Petsitter.PossiblePetType reservationPetType = verifiedReservationPetType(reservation);
         String reservationLocation = extractionAddress(reservation.getAdress());
 
         List<Petsitter> petsitters = petsitterRepository.findPossiblePetsitter(reservationDay, reservationPetType, reservationLocation,
@@ -80,20 +83,20 @@ public class ReservationService {
         return petsitters;
     }
 
-//    public Reservation createTemporaryReservation(Reservation reservation){
-//        reservation.setProgress(Progress.BEFORE_PETSITTER_SELECTION);
-//
-//        return reservationRepository.save(reservation);
-//    }
-
     public Reservation createReservation(Reservation reservation) {
 
-        for (ReservationPet reservationPet : reservation.getReservationPets()) {
-            Long reservationPetId = reservationPet.getPet().getPetId();
-            Pet findedreservationPet = petService.findPet(reservationPetId);
-            petService.verifiedPetOwner(findedreservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
-            reservationPet.setPet(findedreservationPet);
-        }
+        Member findedMember = memberService.findMember(reservation.getMember().getMemberId());
+        reservation.setMember(findedMember);
+
+        List<ReservationPet> verifiedReservationPet = reservation.getReservationPets().stream()
+                .map(reservationPet -> {
+                    Long reservationPetId = reservationPet.getPet().getPetId();
+                    Pet findedreservationPet = petService.findPet(reservationPetId);
+                    petService.verifiedPetOwner(findedreservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
+                    reservationPet.setPet(findedreservationPet);
+                    return reservationPet;
+                }).collect(Collectors.toList());
+        reservation.setReservationPets(verifiedReservationPet);
 
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(reservation.getPetsitter().getPetsitterId());
         reservation.setPetsitter(petsitter);
@@ -104,9 +107,6 @@ public class ReservationService {
 
     public Reservation findReservation(Long reservationId) {
         Reservation reservation = findVerifiedReservation(reservationId);
-
-        reservation.setReservationPets(
-                reservationPetRepository.findByReservation(reservation));
 
         return reservation;
     }
@@ -126,8 +126,7 @@ public class ReservationService {
             Page<Reservation> finishReservations = reservationRepository.findByMemberAndProgressIn(member, progressList, pageRequest);
             return finishReservations;
         } else {
-            Page<Reservation> reservations = reservationRepository.findByMember(member, pageRequest);
-            return reservations;
+            throw new BusinessLogicException(ExceptionCode.WARNING);
         }
     }
 
@@ -147,8 +146,7 @@ public class ReservationService {
             Page<Reservation> finishReservations = reservationRepository.findByPetsitterAndProgressIn(petsitter, progressList, pageRequest);
             return finishReservations;
         } else {
-            Page<Reservation> reservations = reservationRepository.findByPetsitter(petsitter, pageRequest);
-            return reservations;
+            throw new BusinessLogicException(ExceptionCode.WARNING);
         }
     }
 
@@ -226,40 +224,28 @@ public class ReservationService {
 
         List<Reservation> reservations = reservationRepository.findByReservationDay(today);
 
-        for (Reservation reservation : reservations) {
-            if (reservation.getReservationTimeEnd().isBefore(LocalTime.now())
-                    && reservation.getProgress() != Progress.RESERVATION_CANCELLED) {
-                reservation.setProgress(Progress.FINISH_CARING);
-                reservationRepository.save(reservation);
-            }
-        }
+        reservations.stream()
+                .filter(reservation -> reservation.getReservationTimeEnd().isBefore(LocalTime.now())
+                        && reservation.getProgress() != Progress.RESERVATION_CANCELLED)
+                .forEach(reservation -> {
+                    reservation.setProgress(Progress.FINISH_CARING);
+                    reservationRepository.save(reservation);
+                });
     }
 
-
-    public Petsitter.PossiblePetType verifiedReservationPetType(Reservation reservation){
-        boolean hasCat = false;
-        boolean hasDog = false;
-        Petsitter.PossiblePetType reservationPetType = null;
-
-        for (ReservationPet reservationPet :reservation.getReservationPets()) {
-            Long petId = reservationPet.getPet().getPetId();
-            Pet pet =  petService.findPet(petId);
-
-            if (pet.getType().equals(Pet.PetType.CAT)) hasCat = true;
-            if (pet.getType().equals(Pet.PetType.DOG)) hasDog = true;
-            if (hasCat && hasDog) break;
-        }
+    public Petsitter.PossiblePetType verifiedReservationPetType(List<Pet> reservationRequestPets) {
+        boolean hasCat = reservationRequestPets.stream().anyMatch(pet -> pet.getType() == Pet.PetType.CAT);
+        boolean hasDog = reservationRequestPets.stream().anyMatch(pet -> pet.getType() == Pet.PetType.DOG);
 
         if (hasCat && hasDog) {
-            reservationPetType = Petsitter.PossiblePetType.PET_ALL;
+            return Petsitter.PossiblePetType.PET_ALL;
         } else if (hasCat) {
-            reservationPetType = Petsitter.PossiblePetType.PET_CAT;
+            return Petsitter.PossiblePetType.PET_CAT;
         } else if (hasDog) {
-            reservationPetType = Petsitter.PossiblePetType.PET_DOG;
+            return Petsitter.PossiblePetType.PET_DOG;
+        } else {
+            throw new BusinessLogicException(ExceptionCode.NOT_CAT_DOG);
         }
-
-        return reservationPetType;
-
     }
 
     public String extractionAddress(String originAdress){
@@ -272,6 +258,12 @@ public class ReservationService {
 
         throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_ADDRESS);
     }
+
+    //    public Reservation createTemporaryReservation(Reservation reservation){
+//        reservation.setProgress(Progress.BEFORE_PETSITTER_SELECTION);
+//
+//        return reservationRepository.save(reservation);
+//    }
 
     // 예약 내용 수정
 //    public Reservation updateReservation(Reservation reservation) {

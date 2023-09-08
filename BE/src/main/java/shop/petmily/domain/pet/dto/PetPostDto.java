@@ -6,7 +6,7 @@ import shop.petmily.domain.pet.entity.Pet;
 @Getter
 public class PetPostDto {
 
-    private long memberId;
+    private Long memberId;
 
     public void setMemberId(long memberId) {this.memberId = memberId;}
 
@@ -14,11 +14,11 @@ public class PetPostDto {
 
     private String name;
 
-    private int age;
+    private Integer age;
 
     private String species;
 
-    private int weight;
+    private Integer weight;
 
     private String body;
 
