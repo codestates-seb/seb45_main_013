@@ -43,8 +43,7 @@ public class PetController {
     public ResponseEntity patchPet(@PathVariable ("pet_id") @Positive long petId,
                                    @RequestPart(required = false) PetPatchDto petPatchDto,
                                    @RequestPart(required = false) MultipartFile file,
-                                   @LoginMemberId Long memberId) throws IOException {
-        petPatchDto = (petPatchDto == null) ? new PetPatchDto() : petPatchDto;
+                                   @LoginMemberId Long memberId){
         petPatchDto.setMemberId(memberId);
         petPatchDto.setPetId(petId);
 
@@ -54,7 +53,7 @@ public class PetController {
 
     @PatchMapping("/{pet_id}/photo")
     public ResponseEntity photoDeletePet(@PathVariable ("pet_id") @Positive long petId,
-                                         @LoginMemberId Long memberId) throws IOException {
+                                         @LoginMemberId Long memberId) {
         Pet pet = service.photoDelete(petId, memberId);
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
     }

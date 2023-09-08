@@ -10,11 +10,13 @@ import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class PetService {
     private final PetRepository repository;
     private final S3UploadService uploadService;
@@ -28,44 +30,66 @@ public class PetService {
         this.memberService = memberService;
     }
 
-    public Pet createPet(Pet pet, MultipartFile file) throws IOException {
-
+    public Pet createPet(Pet pet, MultipartFile file){
         if(file != null) pet.setPhoto(uploadService.saveFile(file));
+        repository.save(pet);
 
         return repository.save(pet);
     }
 
-    public Pet updatePet(Pet pet, MultipartFile file) throws IOException {
+    public Pet updatePet(Pet pet, MultipartFile file){
         Pet verifiedPet = verifiedPet(pet.getPetId());
+        String beforeFileName = null;
 
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), pet.getMember().getMemberId());
 
-        if(pet.getAge() != 0) verifiedPet.setAge(pet.getAge());
-        if(pet.getWeight() != 0) verifiedPet.setWeight(pet.getWeight());
-        if(pet.getBody() != null) verifiedPet.setBody(pet.getBody());
-        if(pet.getName() != null) verifiedPet.setName(pet.getName());
+        Optional.ofNullable(pet.getAge())
+                .ifPresent(age -> verifiedPet.setAge(age));
+        Optional.ofNullable(pet.getWeight())
+                .ifPresent(weight -> verifiedPet.setWeight(weight));
+        Optional.ofNullable(pet.getName())
+                .ifPresent(name -> verifiedPet.setName(name));
+        Optional.ofNullable(pet.getBody())
+                .ifPresent(body -> verifiedPet.setBody(body));
+        Optional.ofNullable(pet.getNeutering())
+                .ifPresent(neutering -> {
+                    if (verifiedPet.getNeutering() == false && neutering) {
+                        verifiedPet.setNeutering(neutering);
+                    } else {
+                        throw new BusinessLogicException(ExceptionCode.ALREADY_NEUTERING);
+                    }
+                });
 
-        if(verifiedPet.getNeutering() == false && pet.getNeutering() == true) verifiedPet.setNeutering(true);
+        if(verifiedPet.getPhoto() != null) beforeFileName = verifiedPet.getPhoto();
+        if(file != null) verifiedPet.setPhoto(uploadService.saveFile(file));
 
-        if(file != null) {
-            if(verifiedPet.getPhoto() != null) uploadService.deleteFile(verifiedPet.getPhoto());
-            verifiedPet.setPhoto(uploadService.saveFile(file));
-        }
+        Pet savedPet = repository.save(verifiedPet);
 
-        return repository.save(verifiedPet);
+        if(beforeFileName != null) uploadService.deleteFile(beforeFileName);
+
+        return savedPet;
     }
 
-    public Pet photoDelete(long petId, Long requestMemberId){
+    public Pet photoDelete(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
+        String beforeFileName = null;
 
-        uploadService.deleteFile(verifiedPet.getPhoto());
+        if(verifiedPet.getPhoto() != null) {
+            beforeFileName = verifiedPet.getPhoto();
+        } else {
+            throw new BusinessLogicException(ExceptionCode.NO_PHOTO);
+        }
+
         verifiedPet.setPhoto(null);
+        Pet savedPet = repository.save(verifiedPet);
 
-        return repository.save(verifiedPet);
+        uploadService.deleteFile(beforeFileName);
+
+        return savedPet;
     }
 
-    public Pet findPet(long petId){
+    public Pet findPet(Long petId){
         Pet verifiedPet = verifiedPet(petId);
         return  verifiedPet;
     }
@@ -75,13 +99,13 @@ public class PetService {
         return  repository.findByMember(member);
     }
 
-    public void deletePet(long petId, Long requestMemberId){
+    public void deletePet(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
         repository.delete(verifiedPet);
     }
 
-    private Pet verifiedPet(long petId) {
+    private Pet verifiedPet(Long petId) {
         Optional<Pet> optionalPet = repository.findById(petId);
         Pet pet = optionalPet.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PET_NOT_EXIST));
         return pet;

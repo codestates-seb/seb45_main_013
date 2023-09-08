@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Getter
 public class ReservationPossiblePetsitterReseponseDto {
-    private long memberId;
+    private Long memberId;
 
     private Long petsitterId;
 
@@ -40,5 +40,5 @@ public class ReservationPossiblePetsitterReseponseDto {
 
     private double star;
 
-    private int reviewCount;
+    private Integer reviewCount;
 }

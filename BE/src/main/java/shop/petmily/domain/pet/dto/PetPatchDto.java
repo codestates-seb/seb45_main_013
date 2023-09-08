@@ -4,17 +4,17 @@ import lombok.Getter;
 
 @Getter
 public class PetPatchDto {
-    private long petId;
+    private Long petId;
 
     public void setPetId(long petId) {this.petId = petId;}
 
-    private long memberId;
+    private Long memberId;
 
     public void setMemberId(long memberId) {this.memberId = memberId;}
 
-    private int age;
+    private Integer age;
 
-    private int weight;
+    private Integer weight;
 
     private String body;
 

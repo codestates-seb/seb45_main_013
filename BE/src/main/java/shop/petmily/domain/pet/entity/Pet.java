@@ -14,7 +14,7 @@ public class Pet extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long petId;
+    private Long petId;
 
     @Column
     @Enumerated(value = EnumType.STRING)
@@ -24,13 +24,13 @@ public class Pet extends Auditable {
     private String name;
 
     @Column
-    private int age;
+    private Integer age;
 
     @Column
     private String species;
 
     @Column
-    private int weight;
+    private Integer weight;
 
     @Column
     private String photo;

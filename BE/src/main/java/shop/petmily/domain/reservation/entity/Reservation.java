@@ -43,8 +43,6 @@ public class Reservation extends Auditable {
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.PERSIST)
     private List<ReservationPet> ReservationPets = new ArrayList<>();
 
-    public void addReservationPets(ReservationPet reservationPet) {ReservationPets.add(reservationPet);}
-
     @Enumerated(EnumType.STRING)
     private Progress progress;
 
