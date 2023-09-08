@@ -1,20 +1,39 @@
-import { useEffect, useRef, useState } from 'react';
-import NavBarButton from '../buttons/NavBarButton';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { getCookieValue } from 'hooks/getCookie';
+import NavBarButton from '../buttons/NavBarButton';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { IUser, login, setUser } from 'modules/userSlice';
+// * 디자인 수정, CSS 변경, Arr로 관리, 함수 분리
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const NavHeader = () => {
-  const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
+  const accessToken = getCookieValue('access_token');
   const { isLogin, memberId } = useSelector((state: IUser) => state.login);
 
-  console.log(isLogin);
+  const NavItem = [
+    {
+      text: '홈',
+      link: '/',
+    },
+    {
+      text: '예약하기',
+      link: '/reservation',
+    },
+    {
+      text: '예약현황',
+      link: `/cares/${memberId}`,
+    },
+    {
+      text: '이용후기',
+      link: '/reviews',
+    },
+  ];
 
-  const [activeButton, setActiveButton] = useState('홈');
+  // 모달
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -24,35 +43,37 @@ const NavHeader = () => {
     }
   };
 
-  console.log(isModalOpen);
+  // 로그인 확인
+  const handleGetToken = async () => {
+    try {
+      if (accessToken) {
+        const result = axios.get(`${apiUrl}/members/my-page`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (result) {
+          dispatch(login());
+          dispatch(setUser(result));
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      handleGetToken();
+    }
+  }, []);
 
   useEffect(() => {
     if (isModalOpen) {
       window.addEventListener('click', handleOutsideClick);
     }
-
     return () => {
       window.removeEventListener('click', handleOutsideClick);
     };
   }, [isModalOpen]);
-
-  const handleNavButtonClick = (buttonText: string) => {
-    setActiveButton(buttonText);
-  };
-
-  useEffect(() => {
-    const accessToken = getCookieValue('access_token');
-
-    if (accessToken) {
-      axios
-        .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then((data) => {
-          dispatch(login());
-          dispatch(setUser(data.data));
-        })
-        .catch((error) => console.log(error));
-    }
-  }, [isLogin]);
 
   return (
     <Container>
@@ -77,28 +98,11 @@ const NavHeader = () => {
           )}
         </TopHeader>
         <NavBar>
-          <NavBarButton isactive={activeButton === '홈' ? 'true' : 'false'} onClick={() => handleNavButtonClick('홈')}>
-            홈
-          </NavBarButton>
-          <NavBarButton
-            isactive={activeButton === '예약하기' ? 'true' : 'false'}
-            onClick={() => handleNavButtonClick('예약하기')}
-          >
-            예약하기
-          </NavBarButton>
-          <NavBarButton
-            isactive={activeButton === '예약현황' ? 'true' : 'false'}
-            onClick={() => handleNavButtonClick('예약현황')}
-            memberId={memberId}
-          >
-            예약현황
-          </NavBarButton>
-          <NavBarButton
-            isactive={activeButton === '이용후기' ? 'true' : 'false'}
-            onClick={() => handleNavButtonClick('이용후기')}
-          >
-            이용후기
-          </NavBarButton>
+          {NavItem.map((nav) => (
+            <NavBarButton key={nav.text} link={nav.link}>
+              {nav.text}
+            </NavBarButton>
+          ))}
         </NavBar>
       </HeaderContatiner>
     </Container>
@@ -110,18 +114,19 @@ export default NavHeader;
 const Container = styled.header`
   display: flex;
   justify-content: center;
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
+  z-index: 100;
 `;
+
 const HeaderContatiner = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
   height: 84px;
-  padding: 12px 12px 0;
   background-color: white;
   max-width: 600px;
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
@@ -129,9 +134,9 @@ const HeaderContatiner = styled.div`
 
 const TopHeader = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
-
-  position: relative;
+  padding: 12px;
 `;
 
 const NotiUserContainer = styled.nav`
@@ -142,12 +147,12 @@ const NotiUserContainer = styled.nav`
 const NotiButton = styled.button`
   border: none;
   background-color: white;
-  width: 24px;
-  height: 24px;
+  cursor: pointer;
 `;
 
 const UserButton = styled.button`
   border: none;
+  cursor: pointer;
   background-color: white;
 `;
 
@@ -167,5 +172,7 @@ const LoginNavModal = styled.nav`
 
 const NavBar = styled.nav`
   display: flex;
-  justify-content: space-around;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 `;

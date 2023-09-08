@@ -12,6 +12,7 @@ import Mypage from './pages/Mypage';
 import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
 import ReservationStepTwo from 'pages/ReservationStepTwo';
+import ReservationStepThree from 'pages/ReservationStepThree';
 import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
 import Header from './components/headers/Header';
@@ -75,6 +76,7 @@ const App = () => {
               <Route path="mypage" element={<Mypage />}></Route>
               <Route path="reservation" element={<Reservation />}></Route>
               <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>
+              <Route path="reservation/step3" element={<ReservationStepThree />}></Route>
               <Route path="/cares/:memberId" element={<Cares />}></Route>
             </Route>
             <Route path="/" element={<BackHeaderLayout />}>

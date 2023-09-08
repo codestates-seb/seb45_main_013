@@ -1,8 +1,9 @@
+// * Slide Custom, 기타 css 변경, 불필요한 css 제거, Link로 변경
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import Rating from '@mui/material/Rating';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Link } from 'react-router-dom';
 
 // 추후 UseEffect로 데이터 받아올 데이터 (내가 자주 이용하는 펫시터)
 const OftenPetsitterItem = [
@@ -50,31 +51,17 @@ const RealtimeReviewItem = [
 ];
 
 const Home = () => {
-  const navigate = useNavigate();
-
-  const handleSearchClick = () => {
-    navigate('/search');
-  };
-
-  const handlePetsitterClick = () => {
-    navigate('/petsitters');
-  };
-
-  const handlePetsitterQnaClick = () => {
-    navigate('/qna');
-  };
-
   return (
     <HomeContainer>
-      <AdContainer>
-        <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
-      </AdContainer>
-      <SearchInputContainer onClick={handleSearchClick}>
-        <SearchInput placeholder="펫시터 검색" />
-      </SearchInputContainer>
+      <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
+      <CustomLink to={'/search'}>펫시터 검색</CustomLink>
       <LinkContainer>
-        <PetsitterLink onClick={handlePetsitterClick}>펫시터 보기</PetsitterLink>
-        <PetsitterQnaLink onClick={handlePetsitterQnaClick}>펫시터 Q&A</PetsitterQnaLink>
+        <PetsitterLink>
+          <Link to={'/petsitters'}>펫시터 보기</Link>
+        </PetsitterLink>
+        <PetsitterLink>
+          <Link to={'/qna'}>펫시터QnA</Link>
+        </PetsitterLink>
       </LinkContainer>
       <AdSubContainer>
         <AdSubText>{'첫 만남\n 50% 할인 쿠폰'}</AdSubText>
@@ -83,17 +70,10 @@ const Home = () => {
       <OftenPetsitterText>내가 자주 이용하는 펫시터</OftenPetsitterText>
       {OftenPetsitterItem.map((item) => (
         <OftenPetsitterContainer key={item.id}>
-          <Imgbox>
-            <img src={item.profileImg} alt="OftenPetsitterImg" />
-          </Imgbox>
+          <ProfileImg src={item.profileImg} alt="OftenPetsitterImg" />
           <OftenPetsitterbox>
-            <OnelineContainer>
-              <Nameox>{item.name}</Nameox>
-              <ReservationButton>예약하기</ReservationButton>
-            </OnelineContainer>
-            <DiscriptionText>
-              {item.describe.length > 20 ? item.describe.substring(0, 20) + '...' : item.describe}
-            </DiscriptionText>
+            <Nameox>{item.name}</Nameox>
+            <DiscriptionText>{item.describe}</DiscriptionText>
             <RatingReviewContainer>
               <RatingImg src={item.ratingImg} alt="ratingImg" />
               {item.rating}
@@ -101,24 +81,24 @@ const Home = () => {
               {item.review}
             </RatingReviewContainer>
           </OftenPetsitterbox>
+          <ReservationButton>예약하기</ReservationButton>
         </OftenPetsitterContainer>
       ))}
-      <RealtimeReviewText>실시간 리뷰</RealtimeReviewText>
+      <OftenPetsitterText>실시간 리뷰</OftenPetsitterText>
       <RealtimeReviewContainer>
-        <Carousel
+        <CustomCarousel
           showThumbs={false}
           showStatus={false}
-          autoPlay={true}
+          autoPlay={false}
           emulateTouch={true}
           stopOnHover={true}
           infiniteLoop={true}
+          showArrows={false}
           useKeyboardArrows={false}
         >
           {RealtimeReviewItem.map((item) => (
             <RealtimeReviewWrap key={item.id}>
-              <RealtimeImgWrap>
-                <RealtimeImg src={item.profileImg} alt="Profile" />
-              </RealtimeImgWrap>
+              <RealtimeImg src={item.profileImg} alt="Profile" />
               <RealtimeBox>
                 <OnelineWrap>
                   <RealtimeLocation>{item.location}</RealtimeLocation>
@@ -132,7 +112,7 @@ const Home = () => {
               </RealtimeBox>
             </RealtimeReviewWrap>
           ))}
-        </Carousel>
+        </CustomCarousel>
       </RealtimeReviewContainer>
     </HomeContainer>
   );
@@ -140,68 +120,36 @@ const Home = () => {
 
 const HomeContainer = styled.div`
   display: flex;
-  margin-top: 84px;
   flex-direction: column;
-  justify-content: flex-start;
-  background-color: #fefdff;
-`;
-
-const AdContainer = styled.a`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 92px 12px 0;
-`;
-
-const SearchInputContainer = styled.div`
-  height: 28px;
-  margin: 16px 12px 0;
-`;
-
-const SearchInput = styled.input`
-  padding: 10px 0 10px 14px;
-  ${(props) => props.theme.fontSize.s12h18};
-  color: #a3a3a3;
-  font-family: 'Noto Sans KR';
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  border-radius: 8px;
   width: 100%;
+  margin-top: 16px;
+`;
+
+const CustomLink = styled(Link)`
+  margin-top: 16px;
+  text-decoration: none;
+  color: #a3a3a3;
   background-color: ${(props) => props.theme.lineColors.coolGray90};
-  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  ${(props) => props.theme.fontSize.s12h18};
 `;
 
 const LinkContainer = styled.div`
   display: flex;
-  flex-direction: space-between;
-  height: 67px;
-  margin: 28px 12px 0;
-  background-color: ${(props) => props.theme.colors.white};
-
-  /* margin-top: 20px; */
+  margin-top: 12px;
   gap: 12px;
 `;
 
 const PetsitterLink = styled.a`
-  width: calc(100% - 162px);
-  border-radius: 8px;
   display: flex;
+  flex: 1;
+  border-radius: 8px;
   justify-content: center;
   align-items: center;
-  min-height: 67px;
-  font-family: 'Noto Sans KR';
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  ${(props) => props.theme.fontSize.s16h24};
-  box-shadow: ${(props) => props.theme.shadow.dp01};
-`;
-
-const PetsitterQnaLink = styled.a`
-  width: calc(100% - 162px);
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 67px;
-  font-family: 'Noto Sans KR';
+  padding: 20px 24px;
+  cursor: pointer;
   font-weight: ${(props) => props.theme.fontWeights.bold};
   ${(props) => props.theme.fontSize.s16h24};
   box-shadow: ${(props) => props.theme.shadow.dp01};
@@ -209,10 +157,10 @@ const PetsitterQnaLink = styled.a`
 
 const AdSubContainer = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  height: 64px;
-  margin: 16px 12px 0;
-  padding-right: 24px;
+  margin-top: 12px;
+  padding: 16px 24px;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.white};
   box-shadow: ${(props) => props.theme.shadow.dp01};
@@ -220,27 +168,21 @@ const AdSubContainer = styled.div`
 
 const AdSubText = styled.div`
   ${(props) => props.theme.fontSize.s14h21};
-  font-family: 'Noto Sans KR';
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  padding-left: 24px;
-  display: flex;
-  align-items: center;
+  font-weight: 600;
   white-space: pre-line;
 `;
 
-const OftenPetsitterText = styled.div`
-  margin: 36px 12px 0;
+const OftenPetsitterText = styled.h2`
+  margin-top: 36px;
   ${(props) => props.theme.fontSize.s18h27};
-  font-family: 'Noto Sans KR';
   font-weight: ${(props) => props.theme.fontWeights.bold};
 `;
 
 const OftenPetsitterContainer = styled.div`
   display: flex;
-  justify-content: space-around;
-  min-height: 93px;
-  margin: 16px 12px 0;
-  padding: 8px 12px 12px;
+  margin-top: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
   border-radius: 8px;
 `;
@@ -248,19 +190,14 @@ const OftenPetsitterContainer = styled.div`
 const OftenPetsitterbox = styled.div`
   display: flex;
   flex-direction: column;
+  margin-right: 8px;
+  margin-left: 24px;
 `;
 
-const Imgbox = styled.div`
+const ProfileImg = styled.img`
   width: 79px;
   height: 77px;
   border-radius: 79px;
-`;
-
-const OnelineContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 140px;
 `;
 
 const Nameox = styled.div`
@@ -271,86 +208,106 @@ const Nameox = styled.div`
 
 const ReservationButton = styled.button`
   ${(props) => props.theme.fontSize.s14h21};
-  font-family: 'Noto Sans KR';
   font-weight: ${(props) => props.theme.fontWeights.light};
   background-color: ${(props) => props.theme.colors.mainBlue};
   border-radius: 4px;
   border: none;
   color: ${(props) => props.theme.colors.white};
   padding: 2px 8px;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-bottom: auto;
+  cursor: pointer;
 `;
 
 const DiscriptionText = styled.div`
-  ${(props) => props.theme.fontSize.s14h21};
-  font-family: 'Noto Sans KR';
-  font-weight: ${(props) => props.theme.fontWeights.light};
-  color: ${(props) => props.theme.textColors.gray40};
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  flex-wrap: wrap;
   margin-top: 4px;
+  color: ${(props) => props.theme.textColors.gray40};
+  ${(props) => props.theme.fontSize.s14h21};
+  font-weight: ${(props) => props.theme.fontWeights.light};
 `;
 
 const RatingReviewContainer = styled.div`
   display: flex;
+  align-items: center;
   margin-top: 8px;
 `;
 
 const RatingImg = styled.img`
-  margin-right: 4px;
   width: 14px;
+  margin-right: 4px;
 `;
 
 const ReviewImg = styled.img`
-  margin-left: 12px;
-  margin-right: 4px;
-  padding-top: 2px;
   width: 14px;
-`;
-
-const RealtimeReviewText = styled.div`
-  margin: 36px 12px 0;
-  ${(props) => props.theme.fontSize.s18h27};
-  font-family: 'Noto Sans KR';
-  font-weight: ${(props) => props.theme.fontWeights.bold};
+  margin-right: 4px;
+  margin-left: 12px;
+  padding-top: 2px;
 `;
 
 const RealtimeReviewContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  min-height: 160px;
-  margin: 16px 12px 48px;
-  padding: 18px 22px 14px 22px;
+  margin-top: 16px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
-  border-radius: 8px;
 `;
 
 const RealtimeReviewWrap = styled.div`
   display: flex;
-  min-height: 140px;
-  justify-content: space-around;
+  padding: 12px;
+  border-radius: 8px;
 `;
 
-const RealtimeImgWrap = styled.div``;
-
-const RealtimeBox = styled.div``;
+const RealtimeBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 12px;
+`;
 
 const OnelineWrap = styled.div`
   display: flex;
+  gap: 8px;
 `;
 
 const RealtimeImg = styled.img`
-  width: 80px;
+  width: 80px !important;
   height: 80px;
 `;
 
 const RealtimeDescription = styled.div`
   ${(props) => props.theme.fontSize.s14h21};
   margin-top: 8px;
-  white-space: pre-line;
   text-align: left;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  flex-wrap: wrap;
 `;
 
 const RealtimeLocation = styled.div`
-  font-family: 'Noto Sans KR';
   font-weight: ${(props) => props.theme.fontWeights.bold};
+  white-space: nowrap;
+`;
+
+const CustomCarousel = styled(Carousel)`
+  .carousel-slider {
+    overflow: visible;
+  }
+
+  .control-dots {
+    bottom: -30px !important;
+  }
+
+  .dot {
+    background: #279eff !important;
+  }
 `;
 
 export default Home;

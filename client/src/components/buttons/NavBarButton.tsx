@@ -1,43 +1,31 @@
-import { Link } from 'react-router-dom';
+// * CSS, Props 수정
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-
-const NavBarButtonStyle = styled.button<{ children: React.ReactNode; isactive: string }>`
-  flex-shrink: 0;
-  padding: 8px;
-  border: none;
-  background-color: white;
-  font-weight: ${(props) =>
-    props.isactive === 'true' ? props.theme.fontWeights.extrabold : props.theme.fontWeights.bold};
-  color: ${(props) => (props.isactive === 'true' ? 'black' : props.theme.textColors.gray30)};
-  border-bottom: ${(props) => (props.isactive === 'true' ? `3px solid ${props.theme.colors.mainBlue}` : null)};
-  padding-bottom: 8px;
-  ${(props) => props.theme.fontSize.s14h21}
-`;
 
 interface NavBarButtonProps {
   children: React.ReactNode;
-  isactive: string;
-  memberId?: number;
-  onClick: () => void;
+  link: string;
 }
 
-const NavBarButton = ({ children, isactive, memberId, onClick }: NavBarButtonProps) => {
+const NavBarButton = ({ children, link }: NavBarButtonProps) => {
+  const { pathname } = useLocation();
   return (
-    <Link
-      to={
-        children === '홈'
-          ? '/'
-          : children === '예약하기'
-          ? '/reservation'
-          : children === '예약현황'
-          ? `/cares/${memberId}`
-          : '/reviews'
-      }
-    >
-      <NavBarButtonStyle isactive={isactive} onClick={onClick}>
-        {children}
-      </NavBarButtonStyle>
+    <Link to={link} style={{ width: '100%' }}>
+      <NavBarButtonStyle isActive={pathname === link}>{children}</NavBarButtonStyle>
     </Link>
   );
 };
 export default NavBarButton;
+
+const NavBarButtonStyle = styled.button<{ isActive: boolean }>`
+  width: 100%;
+  flex: 1;
+  border: none;
+  background-color: white;
+  font-weight: ${(props) => (props.isActive ? props.theme.fontWeights.extrabold : props.theme.fontWeights.bold)};
+  color: ${(props) => (props.isActive ? 'black' : props.theme.textColors.gray30)};
+  border-bottom: ${(props) => (props.isActive ? `2px solid ${props.theme.colors.mainBlue}` : null)};
+  padding-bottom: 8px;
+  margin-bottom: ${(props) => (props.isActive ? '-2px' : '0px')};
+  ${(props) => props.theme.fontSize.s14h21};
+`;
