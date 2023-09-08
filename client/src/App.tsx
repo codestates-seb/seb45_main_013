@@ -1,3 +1,5 @@
+// *레이아웃 변경
+
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -5,6 +7,7 @@ import NavHeader from './components/headers/NavHeader';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+
 import Mypage from './pages/Mypage';
 import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
@@ -15,12 +18,11 @@ import Header from './components/headers/Header';
 import RegisterPet from './pages/RegisterPet';
 import EditPet from 'pages/EditPet';
 import Search from './pages/Search';
-import Review from './pages/Review';
-import CaresPetsitter from './pages/cares/CaresPetsitter';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   min-height: 100vh;
 `;
@@ -72,6 +74,7 @@ const App = () => {
               <Route path="" element={<Home />}></Route>
               <Route path="mypage" element={<Mypage />}></Route>
               <Route path="reservation" element={<Reservation />}></Route>
+              <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>
               <Route path="/cares/:memberId" element={<Cares />}></Route>
             </Route>
             <Route path="/" element={<BackHeaderLayout />}>
