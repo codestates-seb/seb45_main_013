@@ -6,8 +6,8 @@
     "module": "esnext", // 사용할 모듈 시스템
     "moduleResolution": "node", // 모듈 해석 방식
     "noEmit": true, // 컴파일 결과를 출력하지 않도록 지정
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "resolveJsonModule": true,
