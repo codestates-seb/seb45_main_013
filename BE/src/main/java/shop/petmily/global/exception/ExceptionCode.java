@@ -6,6 +6,9 @@ public enum ExceptionCode {
     // 회원가입, 로그인, 멤버, 펫시터 관련
     MEMBER_NOT_FOUND(404, "존재하지 않는 회원입니다."),
     MEMBER_EXISTS(409, "존재하는 회원입니다."),
+    MEMBER_EMAIL_EXISTS("email", 409, "존재하는 회원입니다."),
+    MEMBER_NICKNAME_EXISTS("nickName", 409, "존재하는 회원입니다."),
+    MEMBER_PHONE_EXISTS("phone", 409, "존재하는 회원입니다."),
     PETSITTER_NOT_FOUND(404, "존재하지 않는 펫시터입니다."),
     PETSITTER_EXISTS(409, "존재하는 펫시터입니다."),
     INVALID_EMAIL_FORMAT("email" ,400, "이메일 형식에 맞지 않습니다."),

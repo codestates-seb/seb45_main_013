@@ -13,10 +13,12 @@ import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
+import shop.petmily.global.exception.ErrorResponse;
 import shop.petmily.global.exception.ExceptionCode;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +32,12 @@ public class MemberService {
     private final CustomAuthorityUtils customAuthorityUtils;
     private final S3UploadService uploadService;
 
+    @Transactional
     public Member createMember(Member member) {
+
         verifyExistsEmail(member.getEmail());
+        verifyExistsNickName(member.getNickName());
+        verifyExistsPhone(member.getPhone());
 
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
@@ -50,11 +56,11 @@ public class MemberService {
         Member findMember = findVerifiedMember(member.getMemberId());
 
         Optional.ofNullable(member.getNickName())
-                .ifPresent(nickName -> findMember.setNickName(nickName));
+                .ifPresent(nickName -> findMember.setNickName(verifyExistsNickName(nickName)));
         Optional.ofNullable(member.getPassword())
                 .ifPresent(password -> findMember.setPassword(passwordEncoder.encode(password)));
         Optional.ofNullable(member.getPhone())
-                .ifPresent(phone -> findMember.setPhone(phone));
+                .ifPresent(phone -> findMember.setPhone(verifyExistsPhone(phone)));
         Optional.ofNullable(member.getAddress())
                 .ifPresent(address -> findMember.setAddress(address));
         Optional.ofNullable(member.isPetsitterBoolean())
@@ -80,6 +86,7 @@ public class MemberService {
         return memberRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
     public void verifyAuthority(Member findMember, Long loginMemberId) {
         if (!findMember.getMemberId().equals(loginMemberId)) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_MODIFY);
@@ -92,9 +99,25 @@ public class MemberService {
         memberRepository.delete(findMember);
     }
 
-    private void verifyExistsEmail(String email) {
+    @Transactional(readOnly = true)
+    public String verifyExistsEmail(String email) {
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_EMAIL_EXISTS);
+        return email;
+    }
+
+    @Transactional(readOnly = true)
+    public String verifyExistsNickName(String nickName) {
+        Optional<Member> optionalMember = memberRepository.findByNickName(nickName);
+        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_NICKNAME_EXISTS);
+        return nickName;
+    }
+
+    @Transactional(readOnly = true)
+    public String verifyExistsPhone(String phone) {
+        Optional<Member> optionalMember = memberRepository.findByPhone(phone);
+        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
+        return phone;
     }
 
     @Transactional(readOnly = true)
@@ -104,6 +127,7 @@ public class MemberService {
         return optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    @Transactional
     public Member createMemberOAuth2(Member member) {
         Optional<Member> findMember = memberRepository.findByEmail(member.getEmail());
         if(findMember.isPresent()){
@@ -115,6 +139,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    @Transactional
     public MemberGetResponseDto findProfileMember(Long loginMemberId) {
         Member member = findMember(loginMemberId);
 
@@ -132,6 +157,7 @@ public class MemberService {
     }
 
 
+    @Transactional(readOnly = true)
     public void verifyLoginMember(Long loginMemberId, Long memberId) {
         if(loginMemberId != memberId){
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
