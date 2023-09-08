@@ -20,7 +20,7 @@ public class ReservationPostDto {
 
     private LocalTime reservationTimeEnd;
 
-    private String adress;
+    private String address;
 
     private String phone;
 

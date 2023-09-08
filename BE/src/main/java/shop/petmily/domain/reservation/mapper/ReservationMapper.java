@@ -26,7 +26,7 @@ public interface ReservationMapper {
 
         reservation.setBody(reservationPostDto.getBody());
         reservation.setPhone(reservationPostDto.getPhone());
-        reservation.setAdress(reservationPostDto.getAdress());
+        reservation.setAddress(reservationPostDto.getAddress());
         reservation.setReservationDay(reservationPostDto.getReservationDay());
         reservation.setReservationTimeStart(reservationPostDto.getReservationTimeStart());
         reservation.setReservationTimeEnd(reservationPostDto.getReservationTimeEnd());
@@ -65,7 +65,7 @@ public interface ReservationMapper {
         reservationResponseDto.setReservationDay(reservation.getReservationDay());
         reservationResponseDto.setReservationTimeStart(reservation.getReservationTimeStart());
         reservationResponseDto.setReservationTimeEnd(reservation.getReservationTimeEnd());
-        reservationResponseDto.setLocation(reservation.getAdress());
+        reservationResponseDto.setAddress(reservation.getAddress());
         reservationResponseDto.setPhone(reservation.getPhone());
         reservationResponseDto.setMemberBody(reservation.getBody());
 

@@ -75,7 +75,7 @@ public class ReservationService {
             throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
         }
 
-        String reservationLocation = extractionAddress(reservation.getAdress());
+        String reservationLocation = extractionAddress(reservation.getAddress());
 
         List<Petsitter> petsitters = petsitterRepository.findPossiblePetsitter(reservationDay, reservationPetType, reservationLocation,
                 reservation.getReservationTimeStart(), reservation.getReservationTimeEnd(), reservation.getReservationDay());

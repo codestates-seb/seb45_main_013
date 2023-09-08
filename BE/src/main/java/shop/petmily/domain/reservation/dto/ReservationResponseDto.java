@@ -27,7 +27,7 @@ public class ReservationResponseDto {
 
     private LocalTime reservationTimeEnd;
 
-    private String location;
+    private String address;
 
     private String phone;
 
