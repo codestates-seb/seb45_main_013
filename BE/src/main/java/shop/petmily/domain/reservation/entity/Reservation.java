@@ -29,7 +29,7 @@ public class Reservation extends Auditable {
     private String phone;
 
     @Column(length = 100, nullable = false)
-    private String adress;
+    private String address;
 
     @Column(nullable = false)
     private LocalDate reservationDay;
