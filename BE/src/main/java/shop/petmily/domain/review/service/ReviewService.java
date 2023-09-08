@@ -47,9 +47,12 @@ public class ReviewService {
         if (reviewRepository.existsByReservation(reservation)) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
         }
-        if (!reservation.getProgress().equals(Progress.FINISH_CARING))
-            throw new BusinessLogicException(ExceptionCode.BEFORE_FINISH_CARING);
-
+        if (!reservation.getProgress().equals(Progress.FINISH_CARING)) {
+            if (reservation.getProgress().equals(Progress.RESERVATION_CONFIRMED)) {
+                throw new BusinessLogicException(ExceptionCode.BEFORE_FINISH_CARING);
+            }
+            throw new BusinessLogicException(ExceptionCode.BEFORE_CONFIRMED);
+        }
         List<String> photos = new ArrayList<>();
         if(files != null) {
             for (MultipartFile file : files) {
