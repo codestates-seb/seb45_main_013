@@ -35,11 +35,9 @@ public class MemberService {
     @Transactional
     public Member createMember(Member member) {
 
-//        verifyExistsEmail(member.getEmail());
-//        verifyExistsNickName(member.getNickName());
-//        verifyExistsPhone(member.getPhone());
-
-        verifyExistsMember(member);
+        verifyExistsEmail(member.getEmail());
+        verifyExistsNickName(member.getNickName());
+        verifyExistsPhone(member.getPhone());
 
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
@@ -120,32 +118,6 @@ public class MemberService {
         Optional<Member> optionalMember = memberRepository.findByPhone(phone);
         if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
         return phone;
-    }
-
-    @Transactional
-    public List<ErrorResponse> verifyExistsMember(Member member) {
-        List<ErrorResponse> errors = new ArrayList<>();
-
-        Optional<Member> optionalEmail = memberRepository.findByEmail(member.getEmail());
-        Optional<Member> optionalNickName = memberRepository.findByNickName(member.getNickName());
-        Optional<Member> optionalPhone = memberRepository.findByPhone(member.getPhone());
-
-        if (optionalEmail.isPresent()) {
-            ErrorResponse error = ErrorResponse.of(ExceptionCode.MEMBER_EMAIL_EXISTS);
-            errors.add(error);
-        }
-
-        if (optionalNickName.isPresent()) {
-            ErrorResponse error = ErrorResponse.of(ExceptionCode.MEMBER_NICKNAME_EXISTS);
-            errors.add(error);
-        }
-
-        if (optionalPhone.isPresent()) {
-            ErrorResponse error = ErrorResponse.of(ExceptionCode.MEMBER_PHONE_EXISTS);
-            errors.add(error);
-        }
-
-        return errors;
     }
 
     @Transactional(readOnly = true)
