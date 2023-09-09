@@ -51,6 +51,7 @@ public class MemberController {
         return ResponseEntity.created(location).body(new SingleResponseDto<>("success create member"));
     }
 
+    //*****사진 업로드 수정 다됨 이거참고******
     @PatchMapping(value = "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
@@ -61,11 +62,6 @@ public class MemberController {
 
         requestBody.setMemberId(findMember.getMemberId());
 
-        System.out.println("-----------여기------------");
-        System.out.println(requestBody.getNickName());
-        System.out.println(requestBody.getAddress());
-        System.out.println(requestBody.getPhone());
-        System.out.println("-------requestdto------");
         memberService.updateMember(memberMapper.memberPatchDtoToMember(requestBody), file);
 
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
