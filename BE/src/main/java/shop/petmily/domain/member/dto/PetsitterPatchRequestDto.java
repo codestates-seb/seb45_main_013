@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PetsitterPatchRequestDto {
 
-    private long petsitterId;
+    private Long petsitterId;
 
     private Petsitter.PossiblePetType possiblePetType;
 

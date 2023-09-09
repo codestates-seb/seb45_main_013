@@ -12,13 +12,13 @@ import java.time.LocalTime;
 @Setter
 @Builder
 public class PetsitterPossibleResoponseDto {
-    private long petsitterId;
+    private Long petsitterId;
     private Petsitter.PossiblePetType possiblePetType;
     private String possibleLocation;
     private String possibleDay;
     private LocalTime possibleTimeStart;
     private LocalTime possibleTimeEnd;
     private double star;
-    private int reviewCount;
+    private Integer reviewCount;
     private Long monthTotalReservation;
 }

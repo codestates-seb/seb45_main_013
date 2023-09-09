@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @Setter
 @Builder
 public class PetsitterGetResponseDto {
-    private long petsitterId;
+    private Long petsitterId;
     private String email;
     private String name;
     private String nickName;
