@@ -4,19 +4,19 @@ import styled from 'styled-components';
 import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { IUser, login, setUser } from 'modules/userSlice';
+import { IUser, login, setUser } from 'store/userSlice';
 
 const Container = styled.header`
   width: 100%;
   height: 64px;
-  padding: 20px 8px;
+  padding: 20px;
   background-color: white;
 `;
 
 const BackHeader = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  const { isLogin } = useSelector((state: IUser) => state.login);
+  const { isLogin } = useSelector((state: IUser) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {

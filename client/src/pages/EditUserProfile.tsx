@@ -13,42 +13,63 @@ import Button from '@mui/material/Button';
 // import Option from '@mui/joy/Option';
 // import Textarea from '@mui/joy/Textarea';
 import { useSelector } from 'react-redux';
-import { IUser } from '../modules/userSlice';
+
 import { getCookieValue } from 'hooks/getCookie';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import UploadProfileImg from '../components/UploadProfileImg';
+import { useState } from 'react';
+import { IUser } from 'store/userSlice';
 
-// 로그인 하고 확인해보기
-// 펫시터 입력란 추가
+// 펫시터일 때 페이지 만들기
 // 버튼 수정
-//  <UploadProfileImg apiUrl='REACT_APP_UPLOAD_URL' />
-//  유효성 검사 (닉네임)
+//  유효성 검사 (변경 x -> x)
 
-interface FormData {
-  nickName: string;
-  phone: number;
-  address: string;
-  // body: string;
+interface IEditUser {
+  nickName?: string;
+  phone?: string;
+  address?: string;
+  body?: string;
 }
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const EditUserProfile = () => {
-  // const petsitter = true;
   const { name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo } = useSelector(
-    (state: IUser) => state.login,
+    (state: IUser) => state.user,
   );
-  console.log(petsitterBoolean);
 
-  const token = getCookieValue('access_token');
-  console.log(token);
-  const apiUrl = process.env.REACT_APP_API_URL;
-  console.log(`${apiUrl}/members/${memberId}`);
-  const { register, watch, handleSubmit } = useForm<FormData>();
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  console.log(watch());
-  const onSubmit = async (data: FormData) => {
-    console.log(data);
+  const handleImageFileChange = (file: File) => {
+    setImageFile(file);
+  };
+
+  const { register, handleSubmit } = useForm<IEditUser>();
+
+  const onSubmit = async (data: IEditUser) => {
+    const token = getCookieValue('access_token');
+
+    if (nickName === data.nickName) {
+      delete data.nickName;
+    }
+    if (phone === data.phone) {
+      delete data.phone;
+    }
+    if (address === data.address) {
+      delete data.address;
+    }
+
+    const formData = new FormData();
+    if (imageFile) {
+      formData.append('file', imageFile);
+    }
+    formData.append('requestBody', JSON.stringify(data));
+
+    console.log(JSON.stringify(data));
     try {
-      const response = await axios.patch(`${apiUrl}/members/${memberId}`, data, {
+      console.log(token);
+      const response = await axios.patch(`${apiUrl}/members/${memberId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -56,14 +77,22 @@ const EditUserProfile = () => {
       });
       console.log(response.data);
     } catch (error) {
-      console.error(error);
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          console.error(error.response.data);
+        } else {
+          console.error('AxiosError caught (no response):', error.message);
+        }
+      } else {
+        console.error('Non-Axios error caught:', error);
+      }
     }
   };
 
   return (
     <>
       <PageTitle>회원 정보 수정</PageTitle>
-
+      <UploadProfileImg setImageFile={handleImageFileChange} />
       <MainContainer>
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>

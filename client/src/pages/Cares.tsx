@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { IUser } from 'modules/userSlice';
+import { IUser } from 'store/userSlice';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import CareCard from '@components/buttons/Carecard';
@@ -14,7 +14,7 @@ const Cares = () => {
 
   const filters = ['전체', '예정', '완료'];
 
-  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.login);
+  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
   const [reservations, setReservations] = useState<any[]>([]);
 
   console.log(reservations);

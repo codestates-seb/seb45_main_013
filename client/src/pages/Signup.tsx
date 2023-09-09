@@ -163,7 +163,7 @@ const Signup = () => {
               {...register('nickName', { required: true })}
               error={errors.nickName ? true : false}
             />
-            {errors.nickName?.message === 'required' && <ErrorMessage>{errors.nickName?.message}</ErrorMessage>}
+            {errors.nickName?.message && <ErrorMessage>{errors.nickName?.message}</ErrorMessage>}
           </InputFormWrapper>
           <InputFormWrapper>
             <SignupInputStyle

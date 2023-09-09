@@ -5,12 +5,12 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
-import { IUser, login, setUser } from 'modules/userSlice';
+import { IUser, login, setUser } from 'store/userSlice';
 
 const NavHeader = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
-  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.login);
+  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);

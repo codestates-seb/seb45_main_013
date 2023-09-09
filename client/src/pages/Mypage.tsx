@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import MyPetmily from '../components/MyPetmily';
+import MyPetmily from '@components/MyPetmily';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { IUser } from '../modules/userSlice';
+
 import { getCookieValue } from 'hooks/getCookie';
+import { IUser } from 'store/userSlice';
 
 // petsitterBoolean 분기하기
 const Mypage = () => {
@@ -23,7 +24,7 @@ const Mypage = () => {
   const isLogin = true;
 
   const { name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo } = useSelector(
-    (state: IUser) => state.login,
+    (state: IUser) => state.user,
   );
 
   console.log(petsitterBoolean);

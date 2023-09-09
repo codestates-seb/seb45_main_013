@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from 'modules/userSlice';
+import { login } from 'store/userSlice';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
