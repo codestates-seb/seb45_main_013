@@ -54,7 +54,7 @@ public class MemberController {
     @PatchMapping(value = "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
-                                      @Valid
+                                      @Valid @ModelAttribute
                                       @RequestPart(required = false) MemberPatchRequestDto requestBody,
                                       @RequestPart(required = false) MultipartFile file) throws IOException {
         Member findMember = memberService.findMember(memberId);
