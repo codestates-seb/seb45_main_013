@@ -10,10 +10,8 @@ import { IUser } from '../modules/userSlice';
 const MyPetmily = () => {
   // 지우기
   const { name, memberId } = useSelector((state: IUser) => state.login);
-  console.log(name, memberId);
 
   const token = getCookieValue('access_token');
-  console.log(token);
 
   const [petmily, setPetmily] = useState<any[]>([]);
 
@@ -34,9 +32,6 @@ const MyPetmily = () => {
     };
     fetchData();
   }, []);
-
-  console.log(petmily);
-  console.log(petmily.length);
 
   return (
     <PetmilyContainer>

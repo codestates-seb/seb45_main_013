@@ -19,15 +19,15 @@ export const loginSlice = createSlice({
   name: 'login',
   initialState: {
     isLogin: false,
-    memberId: null,
-    name: null,
-    phone: null,
-    address: null,
-    email: null,
-    nickName: null,
-    body: null,
-    photo: null,
-    petsitterBoolean: null,
+    memberId: '',
+    name: '',
+    phone: '',
+    address: '',
+    email: '',
+    nickName: '',
+    body: '',
+    photo: '',
+    petsitterBoolean: '',
   },
   reducers: {
     login: (state) => {
@@ -41,13 +41,20 @@ export const loginSlice = createSlice({
       state.email = action.payload.email;
       state.nickName = action.payload.nickName;
       state.body = action.payload.body;
-      state.body = action.payload.photo;
+      state.photo = action.payload.photo;
+      state.petsitterBoolean = action.payload.petsitterBoolean;
     },
     deleteUser: (state) => {
       state.isLogin = false;
-      state.memberId = null;
-      state.email = null;
-      state.nickName = null;
+      state.memberId = '';
+      state.name = '';
+      state.phone = '';
+      state.address = '';
+      state.email = '';
+      state.nickName = '';
+      state.body = '';
+      state.photo = '';
+      state.petsitterBoolean = '';
     },
   },
 });

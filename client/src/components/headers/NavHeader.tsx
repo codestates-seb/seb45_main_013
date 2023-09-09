@@ -12,17 +12,21 @@ const NavHeader = () => {
   const dispatch = useDispatch();
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.login);
 
-  const [activeButton, setActiveButton] = useState('홈');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
+
+  const NavItem = [
+    { text: '홈', link: '/' },
+    { text: '예약하기', link: '/reservation' },
+    { text: '예약현황', link: `/cares/${memberId}` },
+    { text: '이용후기', link: '/reviews' },
+  ];
 
   const handleOutsideClick = (e: MouseEvent) => {
     if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target as Node)) {
       setIsModalOpen(false);
     }
   };
-
-  console.log(isModalOpen, isLogin, petsitterBoolean);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -34,13 +38,8 @@ const NavHeader = () => {
     };
   }, [isModalOpen]);
 
-  const handleNavButtonClick = (buttonText: string) => {
-    setActiveButton(buttonText);
-  };
-
   useEffect(() => {
     const accessToken = getCookieValue('access_token');
-
     if (accessToken) {
       axios
         .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
@@ -75,29 +74,11 @@ const NavHeader = () => {
           )}
         </TopHeader>
         <NavBar>
-          <NavBarButton isactive={activeButton === '홈' ? 'true' : 'false'} onClick={() => handleNavButtonClick('홈')}>
-            홈
-          </NavBarButton>
-          <NavBarButton
-            isactive={activeButton === '예약하기' ? 'true' : 'false'}
-            onClick={() => handleNavButtonClick('예약하기')}
-          >
-            예약하기
-          </NavBarButton>
-          <NavBarButton
-            isactive={activeButton === '예약현황' ? 'true' : 'false'}
-            onClick={() => handleNavButtonClick('예약현황')}
-            memberId={memberId}
-            isPetsitter={petsitterBoolean}
-          >
-            예약현황
-          </NavBarButton>
-          <NavBarButton
-            isactive={activeButton === '이용후기' ? 'true' : 'false'}
-            onClick={() => handleNavButtonClick('이용후기')}
-          >
-            이용후기
-          </NavBarButton>
+          {NavItem.map((nav) => (
+            <NavBarButton key={nav.text} link={nav.link}>
+              {nav.text}
+            </NavBarButton>
+          ))}
         </NavBar>
       </HeaderContatiner>
     </Container>
@@ -109,7 +90,7 @@ export default NavHeader;
 const Container = styled.header`
   display: flex;
   justify-content: center;
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
@@ -129,12 +110,13 @@ const HeaderContatiner = styled.div`
 const TopHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  position: relative;
+  align-items: center;
 `;
 
 const NotiUserContainer = styled.nav`
   display: flex;
   gap: 12px;
+  cursor: pointer;
 `;
 
 const NotiButton = styled.button`
@@ -142,6 +124,7 @@ const NotiButton = styled.button`
   height: 24px;
   border: none;
   background-color: white;
+  cursor: pointer;
 `;
 
 const UserButton = styled.button`
@@ -165,5 +148,7 @@ const LoginNavModal = styled.nav`
 
 const NavBar = styled.nav`
   display: flex;
+  align-items: center;
+  width: 100%;
   justify-content: space-around;
 `;
