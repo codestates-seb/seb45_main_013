@@ -154,7 +154,7 @@ export const InputStyle = styled.input`
   width: 60%;
   height: 32px;
   padding: 8px;
-  border: 1px solid ${(props) => props.theme.textColors.gray60};
+  border: 1px solid ${({ theme }) => theme.textColors.gray60};
   border-radius: 8px;
 `;
 

@@ -1,36 +1,18 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
-// 확인하기
-//  <UploadProfileImg apiUrl='REACT_APP_UPLOAD_URL' />
-
-interface UploadProfileImgProps {
-  apiUrl: string;
-}
-
-const UploadProfileImg: React.FC<UploadProfileImgProps> = ({ apiUrl }) => {
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+const UploadProfileImg = ({ setImageFile, currentImageUrl }: any) => {
+  const [previewImage, setPreviewImage] = useState<string | null>(currentImageUrl);
   const fileInputRef = React.createRef<HTMLInputElement>();
 
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    setPreviewImage(currentImageUrl);
+  }, [currentImageUrl]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewImage(imageUrl);
-
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-        const response = await axios.post(apiUrl, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        console.log(response);
-      } catch (error) {
-        console.error('error:', error);
-      }
+      setPreviewImage(URL.createObjectURL(file));
+      setImageFile(file);
     }
   };
 
@@ -63,7 +45,13 @@ const UploadProfileImg: React.FC<UploadProfileImgProps> = ({ apiUrl }) => {
       {previewImage && (
         <img src={previewImage} alt="Preview" style={{ width: '60px', height: '60px', borderRadius: '50%' }} />
       )}
-      <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} ref={fileInputRef} />
+      <input
+        type="file"
+        accept="image/jpeg image/png"
+        onChange={handleImageChange}
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+      />
     </div>
   );
 };

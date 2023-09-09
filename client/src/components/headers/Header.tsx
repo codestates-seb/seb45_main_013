@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
-import { login, setUser } from 'modules/userSlice';
+import { login, setUser } from 'store/userSlice';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -10,7 +10,7 @@ const Header = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
 
-  const { isLogin } = useSelector((state: any) => state.login);
+  const { isLogin } = useSelector((state: any) => state.user);
 
   useEffect(() => {
     const accessToken = getCookieValue('access_token');

@@ -5,11 +5,11 @@ import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { IUser } from '../modules/userSlice';
+import { IUser } from '../store/userSlice';
 
 const MyPetmily = () => {
   // 지우기
-  const { name, memberId } = useSelector((state: IUser) => state.login);
+  const { name, memberId } = useSelector((state: IUser) => state.user);
 
   const token = getCookieValue('access_token');
 

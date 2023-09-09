@@ -1,9 +1,9 @@
-import { IUser } from 'modules/userSlice';
+import { IUser } from 'store/userSlice';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 const CareCard = ({ reservation }: any) => {
-  const { petsitterBoolean } = useSelector((state: IUser) => state.login);
+  const { petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const [year, month, day] = reservation.reservationDay.split('-');
 
