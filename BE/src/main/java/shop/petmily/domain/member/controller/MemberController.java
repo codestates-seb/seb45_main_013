@@ -61,6 +61,12 @@ public class MemberController {
         memberService.verifyAuthority(findMember, loginMemberId);
 
         requestBody.setMemberId(findMember.getMemberId());
+
+        System.out.println("-----------여기------------");
+        System.out.println(requestBody.getNickName());
+        System.out.println(requestBody.getAddress());
+        System.out.println(requestBody.getPhone());
+        System.out.println("-------requestdto------");
         memberService.updateMember(memberMapper.memberPatchDtoToMember(requestBody), file);
 
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
