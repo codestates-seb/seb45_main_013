@@ -1,47 +1,30 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-
-const NavBarButtonStyle = styled.button<{ children: React.ReactNode; isactive: string }>`
-  flex-shrink: 0;
-  padding: 8px;
-  border: none;
-  background-color: white;
-  font-weight: ${(props) =>
-    props.isactive === 'true' ? props.theme.fontWeights.extrabold : props.theme.fontWeights.bold};
-  color: ${(props) => (props.isactive === 'true' ? 'black' : props.theme.textColors.gray30)};
-  border-bottom: ${(props) => (props.isactive === 'true' ? `3px solid ${props.theme.colors.mainBlue}` : null)};
-  padding-bottom: 8px;
-  ${(props) => props.theme.fontSize.s14h21}
-`;
 
 interface NavBarButtonProps {
   children: React.ReactNode;
-  isactive: string;
-  memberId?: number;
-  isPetsitter?: boolean;
-  petsitterId?: number;
-  onClick: () => void;
+  link: string;
 }
 
-const NavBarButton = ({ children, isactive, memberId, isPetsitter, petsitterId, onClick }: NavBarButtonProps) => {
+const NavBarButton = ({ children, link }: NavBarButtonProps) => {
+  const { pathname } = useLocation();
   return (
-    <Link
-      to={
-        children === '홈'
-          ? '/'
-          : children === '예약하기'
-          ? '/reservation'
-          : children === '예약현황' && isPetsitter
-          ? `/cares/petsitter/${petsitterId}`
-          : children === '예약현황' && !isPetsitter
-          ? `/cares/client/${memberId}`
-          : '/reviews'
-      }
-    >
-      <NavBarButtonStyle isactive={isactive} onClick={onClick}>
-        {children}
-      </NavBarButtonStyle>
+    <Link to={link}>
+      <NavBarButtonStyle isActive={pathname === link}>{children}</NavBarButtonStyle>
     </Link>
   );
 };
 export default NavBarButton;
+
+const NavBarButtonStyle = styled.button<{ children: React.ReactNode; isActive: boolean }>`
+  flex-shrink: 0;
+  padding: 8px;
+  border: none;
+  background-color: white;
+  font-weight: ${({ theme, isActive }) => (isActive ? theme.fontWeights.extrabold : theme.fontWeights.bold)};
+  color: ${({ theme, isActive }) => (isActive ? 'black' : theme.textColors.gray30)};
+  border-bottom: ${({ theme, isActive }) => (isActive ? `2px solid ${theme.colors.mainBlue}` : null)};
+  padding-bottom: 8px;
+  margin-bottom: ${({ isActive }) => (isActive ? '-2px' : '0px')};
+  ${(props) => props.theme.fontSize.s14h21}
+`;

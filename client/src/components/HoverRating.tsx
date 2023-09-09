@@ -5,7 +5,6 @@ import StarIcon from '@mui/icons-material/Star';
 import { useState } from 'react';
 
 const labels: { [index: string]: string } = {
-  0: '0점',
   0.5: '0.5점',
   1: '1점',
   1.5: '1.5점',
@@ -47,7 +46,7 @@ export default function CustomizedRating() {
       <StyledRating
         name="customized-color"
         value={value}
-        precision={0.5}
+        precision={1}
         getLabelText={getLabelText}
         onChange={(_, newValue) => {
           setValue(newValue);

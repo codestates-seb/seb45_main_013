@@ -21,11 +21,13 @@ const Mypage = () => {
 
   //  수정
   const isLogin = true;
-  const petsitterBoolean = true;
-  const { name, memberId, phone, address, email, nickName, body, /*petsitterBoolean,*/ photo } = useSelector(
+
+  const { name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo } = useSelector(
     (state: IUser) => state.login,
   );
-  console.log(name, memberId, phone, address, email, nickName, body, /*petsitterBoolean,*/ photo);
+
+  console.log(petsitterBoolean);
+
   // 호버 시 이미지 변화
   // 아이콘 바꾸기
   //  링크 수정

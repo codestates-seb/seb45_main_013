@@ -36,7 +36,7 @@ const EditUserProfile = () => {
   const { name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo } = useSelector(
     (state: IUser) => state.login,
   );
-  console.log(name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo);
+  console.log(petsitterBoolean);
 
   const token = getCookieValue('access_token');
   console.log(token);

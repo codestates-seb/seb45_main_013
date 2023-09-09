@@ -2,7 +2,7 @@ import { useState, ChangeEvent, useRef } from 'react';
 import HoverRating from '../components/HoverRating';
 import styled from 'styled-components';
 
-const Review = () => {
+const CreateReview = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -60,10 +60,10 @@ const Review = () => {
           ref={fileInputRef}
           style={{ display: 'none' }}
         />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <ImgSelectWrapper style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           <ImgSelectButton onClick={openFileInput}>파일 선택</ImgSelectButton>
           <div>최대 5개의 이미지를 선택할 수 있습니다.</div>
-        </div>
+        </ImgSelectWrapper>
         <ImgPreview>
           {selectedFiles.map((file, index) => (
             <ImgPrevieItem key={index} className="image-preview-item">
@@ -83,7 +83,7 @@ const Review = () => {
   );
 };
 
-export default Review;
+export default CreateReview;
 
 const MainContainer = styled.main`
   height: 100%;
@@ -161,6 +161,7 @@ const ImgContainer = styled.div`
 const ImgPreview = styled.div`
   display: flex;
   width: 100%;
+  flex-wrap: wrap;
 `;
 
 const ImgPrevieItem = styled.div`
@@ -170,7 +171,7 @@ const ImgPrevieItem = styled.div`
 `;
 
 const Img = styled.img`
-  width: 80px;
+  width: 100px;
   border-radius: 8px;
 `;
 
@@ -185,12 +186,20 @@ const ImgSelectButton = styled.button`
   padding:4px 8px;
   border-radius: 4px;
   color: white;
+  white-space: nowrap;
   &:hover {
     background-color: ${(props) => props.theme.colors.subBlue};
   }
   &:active {
     background-color: ${(props) => props.theme.colors.darkBlue};
     box-shadow: ${(props) => props.theme.shadow.inset};
+  }
+`;
+
+const ImgSelectWrapper = styled.div`
+  display: flex;
+  > div {
+    ${({ theme }) => theme.fontSize.s12h18}
   }
 `;
 
