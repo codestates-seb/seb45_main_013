@@ -51,7 +51,7 @@ public class MemberController {
         return ResponseEntity.created(location).body(new SingleResponseDto<>("success create member"));
     }
 
-    @PatchMapping(value = "/{member-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
                                       @Valid
