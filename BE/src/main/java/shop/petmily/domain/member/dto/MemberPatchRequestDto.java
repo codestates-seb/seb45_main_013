@@ -2,6 +2,7 @@ package shop.petmily.domain.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.petmily.domain.member.entity.Petsitter;
 
@@ -10,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class MemberPatchRequestDto {
     private Long memberId;
