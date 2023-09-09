@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class MemberPatchResponseDto {
-    private long memberId;
+    private Long memberId;
     private String displayName;
     private String password;
     private Member.MemberStatus status;
