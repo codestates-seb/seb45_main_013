@@ -9,16 +9,15 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class JournalPatchDto {
-    private long journalId;
+    private Long journalId;
     public void setJournalId(long journalId) {
         this.journalId = journalId;
     }
 
-    private long petsitterId;
+    private Long petsitterId;
     public void setPetsitterId(long petsitterId) {
         this.petsitterId = petsitterId;
     }

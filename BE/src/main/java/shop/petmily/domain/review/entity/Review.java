@@ -20,13 +20,13 @@ import java.util.List;
 public class Review extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reviewId;
+    private Long reviewId;
 
     @Column(length = 10000, nullable = false)
     private String body;
 
     @Range(min = 1, max = 5)
-    private int star;
+    private Integer star;
 
     @ElementCollection
     private List<String> photos = new ArrayList<>();

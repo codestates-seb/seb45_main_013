@@ -29,19 +29,18 @@ public class PetController {
         this.service = service;
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity postPet(@RequestPart PetPostDto petPostDto,
+    @PostMapping
+    public ResponseEntity postPet(@ModelAttribute PetPostDto petPostDto,
                                   @RequestPart(required = false) MultipartFile file,
-                                  @LoginMemberId Long memberId) throws IOException {
+                                  @LoginMemberId Long memberId){
         petPostDto.setMemberId(memberId);
         Pet pet = service.createPet(mapper.PetPostDtoToPet(petPostDto), file);
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = "/{pet_id}",
-                  consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = "/{pet_id}")
     public ResponseEntity patchPet(@PathVariable ("pet_id") @Positive long petId,
-                                   @RequestPart(required = false) PetPatchDto petPatchDto,
+                                   @ModelAttribute PetPatchDto petPatchDto,
                                    @RequestPart(required = false) MultipartFile file,
                                    @LoginMemberId Long memberId){
         petPatchDto.setMemberId(memberId);

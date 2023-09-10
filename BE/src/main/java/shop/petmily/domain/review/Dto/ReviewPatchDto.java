@@ -9,24 +9,23 @@ import org.hibernate.validator.constraints.Range;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ReviewPatchDto {
-    private long reviewId;
-    public void setReviewId(long reviewId) {
+    private Long reviewId;
+    public void setReviewId(Long reviewId) {
         this.reviewId = reviewId;
     }
 
-    private long memberId;
-    public void setMemberId(long memberId) {
+    private Long memberId;
+    public void setMemberId(Long memberId) {
         this.memberId = memberId;
     }
 
     private String body;
 
     @Range(min = 1, max = 5)
-    private int star;
+    private Integer star;
 
     private List<String> photos;
 }

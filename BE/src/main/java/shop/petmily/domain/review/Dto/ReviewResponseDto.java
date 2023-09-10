@@ -13,13 +13,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewResponseDto {
-    private long reviewId;
+    private Long reviewId;
 
-    private long memberId;
+    private Long memberId;
 
-    private long reservationId;
+    private Long reservationId;
 
-    private long petsitterId;
+    private Long petsitterId;
 
     private LocalDateTime createdAt;
 
@@ -29,5 +29,5 @@ public class ReviewResponseDto {
 
     private String body;
 
-    private int star;
+    private Integer star;
 }

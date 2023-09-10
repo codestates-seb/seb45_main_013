@@ -37,7 +37,7 @@ public class JournalService {
     }
 
     // 케어일지 등록
-    public Journal createJournal(Journal journal, List<MultipartFile> files) throws IOException {
+    public Journal createJournal(Journal journal, List<MultipartFile> files){
         Reservation reservation = reservationService.findVerifiedReservation(journal.getReservation().getReservationId());
         journal.setMember(reservation.getMember());
 
@@ -66,18 +66,23 @@ public class JournalService {
     }
 
     // 케어일지 수정
-    public Journal updateJournal(Journal journal, List<MultipartFile> files) throws IOException {
+    public Journal updateJournal(Journal journal, List<MultipartFile> files){
         Journal findJournal = findVerifiedJournal(journal.getJournalId());
         verifiedJournalOwner(journal.getPetsitter().getPetsitterId(), findJournal);
 
         if(journal.getBody() != null) findJournal.setBody(journal.getBody());
 
+        if(journal.getPhotos().size() != 0) {
+            findJournal.setPhotos(journal.getPhotos());
+        } else {
+            List<String> photos = new ArrayList<>();
+            findJournal.setPhotos(photos);
+        }
+
         if (files != null) {
-            List<String> newPhotos = new ArrayList<>();
             for (MultipartFile file : files) {
-                newPhotos.add(uploadService.saveFile(file));
+                findJournal.getPhotos().add(uploadService.saveFile(file));
             }
-            findJournal.setPhotos(newPhotos);
         }
 
         journalRepository.save(findJournal);
