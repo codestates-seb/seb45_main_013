@@ -21,6 +21,8 @@ public class ReservationResponseDto {
 
     private String name;
 
+    private String photo;
+
     private LocalDate reservationDay;
 
     private LocalTime reservationTimeStart;
@@ -42,6 +44,8 @@ public class ReservationResponseDto {
     private String petsitterPhone;
 
     private String petsitterBody;
+
+    private String petsitterPhoto;
 
     private Progress progress;
 
