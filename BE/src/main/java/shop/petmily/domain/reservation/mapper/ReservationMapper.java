@@ -62,6 +62,7 @@ public interface ReservationMapper {
         reservationResponseDto.setReservationId(reservation.getReservationId());
         reservationResponseDto.setMemberId(reservation.getMember().getMemberId());
         reservationResponseDto.setName(reservation.getMember().getName());
+        reservationResponseDto.setPhoto(reservation.getMember().getPhoto());
         reservationResponseDto.setReservationDay(reservation.getReservationDay());
         reservationResponseDto.setReservationTimeStart(reservation.getReservationTimeStart());
         reservationResponseDto.setReservationTimeEnd(reservation.getReservationTimeEnd());
@@ -74,11 +75,13 @@ public interface ReservationMapper {
             reservationResponseDto.setPetsitterName(null);
             reservationResponseDto.setPetsitterPhone(null);
             reservationResponseDto.setPetsitterBody(null);
+            reservationResponseDto.setPetsitterPhoto(null);
         }else {
             reservationResponseDto.setPetsitterId(reservation.getPetsitter().getPetsitterId());
             reservationResponseDto.setPetsitterName(reservation.getPetsitter().getMember().getName());
             reservationResponseDto.setPetsitterPhone(reservation.getPetsitter().getMember().getPhone());
             reservationResponseDto.setPetsitterBody(reservation.getPetsitter().getMember().getBody());
+            reservationResponseDto.setPetsitterPhoto(reservation.getPetsitter().getMember().getPhoto());
         }
         reservationResponseDto.setCreatedAt(reservation.getCreatedAt());
         reservationResponseDto.setLastModifiedAt(reservation.getLastModifiedAt());
