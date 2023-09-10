@@ -63,12 +63,13 @@ public interface ReservationMapper {
         reservationResponseDto.setMemberId(reservation.getMember().getMemberId());
         reservationResponseDto.setName(reservation.getMember().getName());
         reservationResponseDto.setPhoto(reservation.getMember().getPhoto());
+        reservationResponseDto.setBody(reservation.getMember().getBody());
         reservationResponseDto.setReservationDay(reservation.getReservationDay());
         reservationResponseDto.setReservationTimeStart(reservation.getReservationTimeStart());
         reservationResponseDto.setReservationTimeEnd(reservation.getReservationTimeEnd());
         reservationResponseDto.setAddress(reservation.getAddress());
         reservationResponseDto.setPhone(reservation.getPhone());
-        reservationResponseDto.setMemberBody(reservation.getBody());
+        reservationResponseDto.setReservationBody(reservation.getBody());
 
         if (reservation.getPetsitter() == null){
             reservationResponseDto.setPetsitterId(null);
