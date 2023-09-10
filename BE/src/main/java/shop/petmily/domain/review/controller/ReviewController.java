@@ -41,9 +41,9 @@ public class ReviewController {
     }
 
     // 후기 등록
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity postReview(@RequestPart ReviewPostDto reviewPostDto,
-                                     @RequestPart(required = false) List<MultipartFile> files,
+    @PostMapping
+    public ResponseEntity postReview(@ModelAttribute ReviewPostDto reviewPostDto,
+                                     @RequestPart(value = "file",required = false) List<MultipartFile> files,
                                      @LoginMemberId Long memberId) throws IOException {
         reviewPostDto.setMemberId(memberId);
         Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), files);
@@ -57,10 +57,10 @@ public class ReviewController {
     }
 
     // 후기 수정
-    @PatchMapping(value = "/{review-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping
     public ResponseEntity patchReview(@PathVariable("review-id") @Positive long reviewId,
-                                      @RequestPart(required = false) ReviewPatchDto reviewPatchDto,
-                                      @RequestPart(required = false) List<MultipartFile> files,
+                                      @ModelAttribute ReviewPatchDto reviewPatchDto,
+                                      @RequestPart(value = "file",required = false) List<MultipartFile> files,
                                       @LoginMemberId Long memberId) throws IOException {
         reviewPatchDto.setMemberId(memberId);
         reviewPatchDto.setReviewId(reviewId);

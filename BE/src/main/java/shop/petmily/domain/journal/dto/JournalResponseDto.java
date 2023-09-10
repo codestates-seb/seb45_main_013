@@ -13,13 +13,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JournalResponseDto {
-    private long journalId;
+    private Long journalId;
 
-    private long reservationId;
+    private Long reservationId;
 
-    private long petsitterId;
+    private Long petsitterId;
 
-    private long memberId;
+    private Long memberId;
 
     private LocalDateTime createdAt;
 

@@ -41,7 +41,7 @@ public class ReviewService {
     }
 
     // 후기 등록
-    public Review createReview(Review review, List<MultipartFile> files) throws IOException {
+    public Review createReview(Review review, List<MultipartFile> files){
         Reservation reservation = reservationService.findVerifiedReservation(review.getReservation().getReservationId());
 
         if (reviewRepository.existsByReservation(reservation)) {
@@ -71,7 +71,7 @@ public class ReviewService {
     }
 
     // 후기 수정
-    public Review updateReview(Review review, List<MultipartFile> files) throws IOException {
+    public Review updateReview(Review review, List<MultipartFile> files){
         Review findReview = findVerifiedReview(review.getReviewId());
 
         verifiedReviewOwner(review.getMember().getMemberId(), findReview);
@@ -79,12 +79,17 @@ public class ReviewService {
         if(review.getStar() != 0) findReview.setStar(review.getStar());
         if(review.getBody() != null) findReview.setBody(review.getBody());
 
+        if(review.getPhotos().size() != 0) {
+            findReview.setPhotos(review.getPhotos());
+        } else {
+            List<String> photos = new ArrayList<>();
+            findReview.setPhotos(photos);
+        }
+
         if (files != null) {
-            List<String> newPhotos = new ArrayList<>();
             for (MultipartFile file : files) {
-                newPhotos.add(uploadService.saveFile(file));
+                findReview.getPhotos().add(uploadService.saveFile(file));
             }
-            findReview.setPhotos(newPhotos);
         }
 
         reviewRepository.save(findReview);

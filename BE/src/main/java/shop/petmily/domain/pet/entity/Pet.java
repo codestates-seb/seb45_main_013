@@ -16,26 +16,26 @@ public class Pet extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long petId;
 
-    @Column
+    @Column(length = 255 ,nullable = false)
     @Enumerated(value = EnumType.STRING)
     private PetType type;
 
-    @Column
+    @Column(length = 255 ,nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private Integer age;
 
-    @Column
+    @Column(length = 255 ,nullable = false)
     private String species;
 
-    @Column
+    @Column(nullable = false)
     private Integer weight;
 
-    @Column
+    @Column(length = 500)
     private String photo;
 
-    @Column
+    @Column(length = 500)
     private String body;
 
     @Column

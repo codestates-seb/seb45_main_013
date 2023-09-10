@@ -36,10 +36,10 @@ public class JournalController {
     }
 
     // 케어일지 등록
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity postJournal(@RequestPart JournalPostDto journalPostDto,
-                                      @RequestPart(required = false) List<MultipartFile> files,
-                                      @LoginMemberId Long memberId) throws IOException {
+    @PostMapping
+    public ResponseEntity postJournal(@ModelAttribute JournalPostDto journalPostDto,
+                                      @RequestPart(value = "file",required = false) List<MultipartFile> files,
+                                      @LoginMemberId Long memberId){
         journalPostDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), files);
         JournalResponseDto response = mapper.JournalToResponse(createdJournal);
@@ -48,11 +48,11 @@ public class JournalController {
     }
 
     // 케어일지 수정
-    @PatchMapping(value = "/{journal-id}",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping("/{journal-id}")
     public ResponseEntity patchJournal(@PathVariable("journal-id") @Positive long journalId,
-                                       @RequestPart JournalPatchDto journalPatchDto,
-                                       @RequestPart(required = false) List<MultipartFile> files,
-                                       @LoginMemberId Long memberId) throws IOException {
+                                       @ModelAttribute JournalPatchDto journalPatchDto,
+                                       @RequestPart(value = "file" , required = false) List<MultipartFile> files,
+                                       @LoginMemberId Long memberId){
         journalPatchDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         journalPatchDto.setJournalId(journalId);
         Journal journal = mapper.JournalPatchDtoToJournal(journalPatchDto);

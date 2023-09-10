@@ -8,11 +8,11 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @AllArgsConstructor
 public class ReviewPostDto {
-    private long reservationId;
+    private Long reservationId;
 
-    private long petsitterId;
+    private Long petsitterId;
 
-    private long memberId;
+    private Long memberId;
 
     public void setMemberId(long memberId) {
         this.memberId = memberId;
@@ -21,5 +21,5 @@ public class ReviewPostDto {
     @NotBlank(message = "후기 내용은 공백이 아니어야 합니다")
     private String body;
 
-    private int star;
+    private Integer star;
 }

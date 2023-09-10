@@ -8,9 +8,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @AllArgsConstructor // test 하기 위해 생성함
 public class JournalPostDto {
-    private long reservationId;
+    private Long reservationId;
 
-    private long petsitterId;
+    private Long petsitterId;
     public void setPetsitterId(long petsitterId) {
         this.petsitterId = petsitterId;
     }

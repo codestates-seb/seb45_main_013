@@ -1,9 +1,11 @@
 package shop.petmily.domain.pet.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import shop.petmily.domain.pet.entity.Pet;
 
 @Getter
+@AllArgsConstructor
 public class PetPostDto {
 
     private Long memberId;

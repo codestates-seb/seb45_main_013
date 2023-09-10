@@ -1,8 +1,10 @@
 package shop.petmily.domain.pet.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class PetPatchDto {
     private Long petId;
 
