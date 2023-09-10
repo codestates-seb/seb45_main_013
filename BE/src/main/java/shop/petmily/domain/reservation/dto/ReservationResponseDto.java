@@ -23,6 +23,8 @@ public class ReservationResponseDto {
 
     private String photo;
 
+    private String body;
+
     private LocalDate reservationDay;
 
     private LocalTime reservationTimeStart;
@@ -33,7 +35,7 @@ public class ReservationResponseDto {
 
     private String phone;
 
-    private String memberBody;
+    private String reservationBody;
 
     private List<PetResponseDto> pets;
 
