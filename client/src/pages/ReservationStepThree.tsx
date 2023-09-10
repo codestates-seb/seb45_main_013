@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate /*Link*/ } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -62,7 +62,7 @@ const ReservationStepThree = () => {
   const navigate = useNavigate();
 
   const handleBackClick = () => {
-    navigate('/');
+    navigate('/reservation/step2');
   };
 
   return (
@@ -89,18 +89,20 @@ const ReservationStepThree = () => {
             {RequestPetsitterItemChunks.map((chunk, idx) => (
               <RequestContainer key={idx}>
                 {chunk.map((item) => (
-                  <RequestPetsitterBox key={item.id}>
-                    <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                    <Petsitterbox>
-                      <Nameox>{item.name}</Nameox>
-                      <RatingReviewContainer>
-                        <RatingImg src={item.ratingImg} alt="ratingImg" />
-                        {item.rating}
-                        <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                        {item.review}
-                      </RatingReviewContainer>
-                    </Petsitterbox>
-                  </RequestPetsitterBox>
+                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+                    <RequestPetsitterBox>
+                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
+                      <Petsitterbox>
+                        <Nameox>{item.name}</Nameox>
+                        <RatingReviewContainer>
+                          <RatingImg src={item.ratingImg} alt="ratingImg" />
+                          {item.rating}
+                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                          {item.review}
+                        </RatingReviewContainer>
+                      </Petsitterbox>
+                    </RequestPetsitterBox>
+                  </StyledLink>
                 ))}
               </RequestContainer>
             ))}
@@ -121,18 +123,20 @@ const ReservationStepThree = () => {
             {RequestPetsitterItemChunks.map((chunk, idx) => (
               <RequestContainer key={idx}>
                 {chunk.map((item) => (
-                  <RequestPetsitterBox key={item.id}>
-                    <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                    <Petsitterbox>
-                      <Nameox>{item.name}</Nameox>
-                      <RatingReviewContainer>
-                        <RatingImg src={item.ratingImg} alt="ratingImg" />
-                        {item.rating}
-                        <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                        {item.review}
-                      </RatingReviewContainer>
-                    </Petsitterbox>
-                  </RequestPetsitterBox>
+                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+                    <RequestPetsitterBox key={item.id}>
+                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
+                      <Petsitterbox>
+                        <Nameox>{item.name}</Nameox>
+                        <RatingReviewContainer>
+                          <RatingImg src={item.ratingImg} alt="ratingImg" />
+                          {item.rating}
+                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                          {item.review}
+                        </RatingReviewContainer>
+                      </Petsitterbox>
+                    </RequestPetsitterBox>
+                  </StyledLink>
                 ))}
               </RequestContainer>
             ))}
@@ -153,18 +157,20 @@ const ReservationStepThree = () => {
             {RequestPetsitterItemChunks.map((chunk, idx) => (
               <RequestContainer key={idx}>
                 {chunk.map((item) => (
-                  <RequestPetsitterBox key={item.id}>
-                    <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                    <Petsitterbox>
-                      <Nameox>{item.name}</Nameox>
-                      <RatingReviewContainer>
-                        <RatingImg src={item.ratingImg} alt="ratingImg" />
-                        {item.rating}
-                        <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                        {item.review}
-                      </RatingReviewContainer>
-                    </Petsitterbox>
-                  </RequestPetsitterBox>
+                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+                    <RequestPetsitterBox key={item.id}>
+                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
+                      <Petsitterbox>
+                        <Nameox>{item.name}</Nameox>
+                        <RatingReviewContainer>
+                          <RatingImg src={item.ratingImg} alt="ratingImg" />
+                          {item.rating}
+                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                          {item.review}
+                        </RatingReviewContainer>
+                      </Petsitterbox>
+                    </RequestPetsitterBox>
+                  </StyledLink>
                 ))}
               </RequestContainer>
             ))}
@@ -185,18 +191,20 @@ const ReservationStepThree = () => {
             {RequestPetsitterItemChunks.map((chunk, idx) => (
               <RequestContainer key={idx}>
                 {chunk.map((item) => (
-                  <RequestPetsitterBox key={item.id}>
-                    <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                    <Petsitterbox>
-                      <Nameox>{item.name}</Nameox>
-                      <RatingReviewContainer>
-                        <RatingImg src={item.ratingImg} alt="ratingImg" />
-                        {item.rating}
-                        <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                        {item.review}
-                      </RatingReviewContainer>
-                    </Petsitterbox>
-                  </RequestPetsitterBox>
+                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+                    <RequestPetsitterBox key={item.id}>
+                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
+                      <Petsitterbox>
+                        <Nameox>{item.name}</Nameox>
+                        <RatingReviewContainer>
+                          <RatingImg src={item.ratingImg} alt="ratingImg" />
+                          {item.rating}
+                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                          {item.review}
+                        </RatingReviewContainer>
+                      </Petsitterbox>
+                    </RequestPetsitterBox>
+                  </StyledLink>
                 ))}
               </RequestContainer>
             ))}
@@ -264,7 +272,7 @@ const RequestContainer = styled.div`
 `;
 
 const RequestPetsitterText = styled.h2`
-  margin: 8px 0;
+  margin: 8px 0 4px 0;
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
   white-space: pre-line;
@@ -310,7 +318,7 @@ const RatingImg = styled.img`
 const ReviewImg = styled.img`
   width: 14px;
   margin-right: 4px;
-  margin-left: 12px;
+  margin-left: 4px;
   padding-top: 2px;
 `;
 
@@ -326,4 +334,9 @@ const CustomCarousel = styled(Carousel)`
   .dot {
     background: #279eff !important;
   }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 `;

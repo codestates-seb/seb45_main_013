@@ -79,7 +79,7 @@ const Reservation = () => {
           </ContactContainer>
         ))}
       </RequestContainer>
-      <CustomLinkBtn to="/reservation:step2">다음 단계</CustomLinkBtn>
+      <CustomLinkBtn to="/reservation/step2">다음 단계</CustomLinkBtn>
     </MainContainer>
   );
 };
