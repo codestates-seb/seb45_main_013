@@ -1,57 +1,23 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import MyPetmily from '@components/MyPetmily';
-import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
 import { getCookieValue } from 'hooks/getCookie';
 import { IUser } from 'store/userSlice';
+import MyMenu from '@components/MyMenu';
+import MyPetsitterMenu from '@components/MyPetsitterMenu';
 
-// petsitterBoolean 분기하기
+// petsitterBoolean -> 펫시터 링크 설정
+
 const Mypage = () => {
-  //아이콘 메뉴 호버링
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
-  const handleMouseOver = (itemId: string) => {
-    setHoveredItem(itemId);
-  };
-
-  const handleMouseOut = () => {
-    setHoveredItem(null);
-  };
-
   //  수정
-  const isLogin = true;
-
-  const { name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo } = useSelector(
-    (state: IUser) => state.user,
-  );
+  const { isLogin, name, petsitterBoolean, photo } = useSelector((state: IUser) => state.user);
 
   console.log(petsitterBoolean);
 
-  // 호버 시 이미지 변화
-  // 아이콘 바꾸기
-  //  링크 수정
-  const menuItems = [
-    {
-      id: '/reservation',
-      originalImage: 'imgs/Calendar.svg',
-      hoveredImage: 'imgs/CalendarBlue.svg',
-      title: petsitterBoolean ? '예약 관리' : '나의 예약',
-    },
-    {
-      id: '/cares',
-      originalImage: 'imgs/Diary.svg',
-      hoveredImage: 'imgs/DiaryBlue.svg',
-      title: petsitterBoolean ? '케어 일지 작성' : '케어 일지',
-    },
-    {
-      id: 'mypage/edit',
-      originalImage: 'imgs/User.svg',
-      hoveredImage: 'imgs/UserBlue.svg',
-      title: petsitterBoolean ? '펫시터 정보 수정' : '회원정보 수정',
-    },
-  ];
+  useEffect(() => {
+    console.log(petsitterBoolean);
+  }, [photo]);
 
   // 지우기
   const token = getCookieValue('access_token');
@@ -73,22 +39,9 @@ const Mypage = () => {
         </MyProfile>
       </MyProfileContianer>
 
-      <MenuContainer>
-        {menuItems.map((item) => (
-          <MenuItem key={item.id} onMouseOver={() => handleMouseOver(item.id)} onMouseOut={handleMouseOut}>
-            <StyledLink to={petsitterBoolean ? `/petsitter${item.id}` : item.id}>
-              <MenuItemWrapper>
-                <MenuImage
-                  src={hoveredItem === item.id ? item.hoveredImage : item.originalImage}
-                  alt={`Button ${item.id}`}
-                />
-                <Title>{item.title}</Title>
-              </MenuItemWrapper>
-            </StyledLink>
-          </MenuItem>
-        ))}
-      </MenuContainer>
-      {isLogin && <MyPetmily />}
+      {/* 펫시터 불른 ->메뉴 컴포넌트 */}
+      {petsitterBoolean ? <MyPetsitterMenu /> : <MyMenu />}
+      {!petsitterBoolean && <MyPetmily />}
     </MypageContainer>
   );
 };
@@ -137,47 +90,6 @@ const HelloText = styled.div`
   font-weight: 600;
   display: flex;
   justify-content: space-between;
-`;
-
-// 메뉴 컨테이너
-const MenuContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-top: 60px;
-`;
-
-const MenuItem = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  border: none;
-  text-align: center;
-  cursor: pointer;
-  background-color: white;
-`;
-
-const MenuItemWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  &:hover {
-    color: ${(props) => props.theme.colors.mainBlue};
-  }
-`;
-
-const MenuImage = styled.img`
-  width: auto;
-  height: 24px;
-`;
-
-const Title = styled.span`
-  margin-top: 10px;
-  font-size: 14px;
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: #000000;
 `;
 
 export default Mypage;
