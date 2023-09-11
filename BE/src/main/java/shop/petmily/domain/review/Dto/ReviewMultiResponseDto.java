@@ -1,6 +1,7 @@
 package shop.petmily.domain.review.Dto;
 
 import lombok.Getter;
+import shop.petmily.global.dto.PageInfo;
 
 import java.util.List;
 
@@ -8,9 +9,9 @@ import java.util.List;
 public class ReviewMultiResponseDto {
     private List<ReviewResponseDto> reviews;
 
-    private ReviewPageInfo pageInfo;
+    private PageInfo pageInfo;
 
-    public ReviewMultiResponseDto(List<ReviewResponseDto> reviews, ReviewPageInfo pageInfo) {
+    public ReviewMultiResponseDto(List<ReviewResponseDto> reviews, PageInfo pageInfo) {
         this.reviews = reviews;
         this.pageInfo = pageInfo;
     }

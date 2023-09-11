@@ -6,12 +6,13 @@ import lombok.Setter;
 import shop.petmily.domain.member.entity.Petsitter;
 
 import java.sql.Time;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 @Builder
 public class PetsitterGetResponseDto {
-    private long petsitterId;
+    private Long petsitterId;
     private String email;
     private String name;
     private String nickName;
@@ -20,8 +21,9 @@ public class PetsitterGetResponseDto {
     private String photo;
     private Petsitter.PossiblePetType possiblePetType;
     private String possibleDay;
-    private Time possibleTimeStart;
-    private Time possibleTimeEnd;
+    private LocalTime possibleTimeStart;
+    private LocalTime possibleTimeEnd;
     private String body;
     private double star;
+    private int reviewCount;
 }

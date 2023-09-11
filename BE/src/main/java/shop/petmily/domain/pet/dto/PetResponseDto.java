@@ -9,19 +9,19 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class PetResponseDto {
-    private long petId;
+    private Long petId;
 
-    private long memberId;
+    private Long memberId;
 
     private Pet.PetType type;
 
     private String name;
 
-    private int age;
+    private Integer age;
 
     private String species;
 
-    private int weight;
+    private Integer weight;
 
     private String photo;
 

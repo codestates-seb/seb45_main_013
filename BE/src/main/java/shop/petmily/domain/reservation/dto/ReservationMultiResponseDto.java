@@ -1,6 +1,7 @@
 package shop.petmily.domain.reservation.dto;
 
 import lombok.Getter;
+import shop.petmily.global.dto.PageInfo;
 
 import java.util.List;
 
@@ -8,9 +9,9 @@ import java.util.List;
 public class ReservationMultiResponseDto {
     private List<ReservationResponseDto> reservations;
 
-    private ReservationPageInfo pageInfo;
+    private PageInfo pageInfo;
 
-    public ReservationMultiResponseDto(List<ReservationResponseDto> reservations, ReservationPageInfo pageInfo) {
+    public ReservationMultiResponseDto(List<ReservationResponseDto> reservations, PageInfo pageInfo) {
         this.reservations = reservations;
         this.pageInfo = pageInfo;
     }

@@ -2,7 +2,9 @@ package shop.petmily.domain.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.entity.Petsitter;
 
 import javax.persistence.Column;
@@ -10,10 +12,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class MemberPatchRequestDto {
-    private long memberId;
+    private Long memberId;
 
     @Pattern(regexp = "^[a-zA-Z가-헿0-9]{4,}$", message = "4자 이상부터 가능하며 특수 문자가 없어야 합니다.")
     private String nickName;
@@ -26,7 +27,7 @@ public class MemberPatchRequestDto {
 
     private String address;
 
-    private String photo;
+    private MultipartFile file;
 
     private String body;
 

@@ -1,27 +1,24 @@
 package shop.petmily.domain.member.service;
 
-import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.member.dto.MemberGetResponseDto;
-//import shop.petmily.domain.member.entity.Customer;
-import shop.petmily.domain.member.entity.Member;
-//import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.member.repository.MemberRepository;
-import shop.petmily.domain.member.repository.PetsitterRepository;
-import shop.petmily.domain.review.entity.Review;
-import shop.petmily.domain.review.repository.ReviewRepository;
-import shop.petmily.global.AWS.service.S3UploadService;
-import shop.petmily.global.exception.BusinessLogicException;
-import shop.petmily.global.exception.ExceptionCode;
-import shop.petmily.global.security.utils.CustomAuthorityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import shop.petmily.domain.member.dto.MemberGetResponseDto;
+import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.member.repository.MemberRepository;
+import shop.petmily.global.AWS.service.S3UploadService;
+import shop.petmily.global.exception.BusinessLogicException;
+import shop.petmily.global.exception.ErrorResponse;
+import shop.petmily.global.exception.ExceptionCode;
+import shop.petmily.global.security.utils.CustomAuthorityUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,10 +31,13 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
     private final S3UploadService uploadService;
-    private final ReviewRepository reviewRepository;
 
+    @Transactional
     public Member createMember(Member member) {
+
         verifyExistsEmail(member.getEmail());
+        verifyExistsNickName(member.getNickName());
+        verifyExistsPhone(member.getPhone());
 
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
@@ -56,11 +56,11 @@ public class MemberService {
         Member findMember = findVerifiedMember(member.getMemberId());
 
         Optional.ofNullable(member.getNickName())
-                .ifPresent(nickName -> findMember.setNickName(nickName));
+                .ifPresent(nickName -> findMember.setNickName(verifyExistsNickName(nickName)));
         Optional.ofNullable(member.getPassword())
                 .ifPresent(password -> findMember.setPassword(passwordEncoder.encode(password)));
         Optional.ofNullable(member.getPhone())
-                .ifPresent(phone -> findMember.setPhone(phone));
+                .ifPresent(phone -> findMember.setPhone(verifyExistsPhone(phone)));
         Optional.ofNullable(member.getAddress())
                 .ifPresent(address -> findMember.setAddress(address));
         Optional.ofNullable(member.isPetsitterBoolean())
@@ -72,6 +72,12 @@ public class MemberService {
             if(findMember.getPhoto() != null) uploadService.deleteFile(findMember.getPhoto());
             findMember.setPhoto(uploadService.saveFile(file));
         }
+
+//        Optional<MultipartFile> optionalPhoto = Optional.ofNullable(memberPatchRequestDto.getPhoto());
+//        if (optionalPhoto.isPresent() && !optionalPhoto.get().isEmpty()) {
+//            if(findMember.getPhoto() != null) uploadService.deleteFile(findMember.getPhoto());
+//            findMember.setPhoto(uploadService.saveFile(optionalPhoto.get()));
+//        }
 
         return memberRepository.save(findMember);
     }
@@ -86,6 +92,7 @@ public class MemberService {
         return memberRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
     public void verifyAuthority(Member findMember, Long loginMemberId) {
         if (!findMember.getMemberId().equals(loginMemberId)) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_MODIFY);
@@ -98,20 +105,35 @@ public class MemberService {
         memberRepository.delete(findMember);
     }
 
-    private void verifyExistsEmail(String email) {
+    @Transactional(readOnly = true)
+    public String verifyExistsEmail(String email) {
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_EXISTS);
+        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_EMAIL_EXISTS);
+        return email;
+    }
+
+    @Transactional(readOnly = true)
+    public String verifyExistsNickName(String nickName) {
+        Optional<Member> optionalMember = memberRepository.findByNickName(nickName);
+        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_NICKNAME_EXISTS);
+        return nickName;
+    }
+
+    @Transactional(readOnly = true)
+    public String verifyExistsPhone(String phone) {
+        Optional<Member> optionalMember = memberRepository.findByPhone(phone);
+        if (optionalMember.isPresent()) throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
+        return phone;
     }
 
     @Transactional(readOnly = true)
     public Member findVerifiedMember(long memberId) {
         Optional<Member> optionalMember =
                 memberRepository.findById(memberId);
-        Member findMember =
-                optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-        return findMember;
+        return optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    @Transactional
     public Member createMemberOAuth2(Member member) {
         Optional<Member> findMember = memberRepository.findByEmail(member.getEmail());
         if(findMember.isPresent()){
@@ -123,6 +145,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    @Transactional
     public MemberGetResponseDto findProfileMember(Long loginMemberId) {
         Member member = findMember(loginMemberId);
 
@@ -140,6 +163,7 @@ public class MemberService {
     }
 
 
+    @Transactional(readOnly = true)
     public void verifyLoginMember(Long loginMemberId, Long memberId) {
         if(loginMemberId != memberId){
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
@@ -154,21 +178,4 @@ public class MemberService {
 
         return memberRepository.save(findMember);
     }
-
-//    public double averageStar(Member member) {
-//        Petsitter findPetsitter = petsitterService.findPetsitter(member);
-//        List<Review> findReview = reviewRepository.findAllByPetsitter(findPetsitter);
-//        int totalStars = 0;
-//        int reviewCount = findReview.size();
-//
-//        for (Review review : findReview) {
-//            totalStars += review.getStar();
-//        }
-//
-//        double averageStar = (reviewCount > 0) ? ((double) totalStars / reviewCount) : 0.0;
-//
-//        String formattedAverage = String.format("%.1f", averageStar);
-//
-//        return Double.parseDouble(formattedAverage);
-//    }
 }

@@ -41,16 +41,18 @@ public class ReviewService {
     }
 
     // 후기 등록
-    public Review createReview(Review review, List<MultipartFile> files) throws IOException {
+    public Review createReview(Review review, List<MultipartFile> files){
         Reservation reservation = reservationService.findVerifiedReservation(review.getReservation().getReservationId());
-        review.setPetsitter(reservation.getPetsitter());
 
         if (reviewRepository.existsByReservation(reservation)) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
         }
-        if (!reservation.getProgress().equals(Progress.FINISH_CARING))
-            throw new BusinessLogicException(ExceptionCode.BEFORE_FINISH_CARING);
-
+        if (!reservation.getProgress().equals(Progress.FINISH_CARING)) {
+            if (reservation.getProgress().equals(Progress.RESERVATION_CONFIRMED)) {
+                throw new BusinessLogicException(ExceptionCode.BEFORE_FINISH_CARING);
+            }
+            throw new BusinessLogicException(ExceptionCode.BEFORE_CONFIRMED);
+        }
         List<String> photos = new ArrayList<>();
         if(files != null) {
             for (MultipartFile file : files) {
@@ -59,13 +61,17 @@ public class ReviewService {
         }
         review.setPhotos(photos);
 
+        Petsitter petsitter = reservation.getPetsitter();
+        review.setPetsitter(petsitter);
+        petsitter.setReviewCount(petsitter.getReviewCount()+1);
+
         reviewRepository.save(review);
 
         return review;
     }
 
     // 후기 수정
-    public Review updateReview(Review review, List<MultipartFile> files) throws IOException {
+    public Review updateReview(Review review, List<MultipartFile> files){
         Review findReview = findVerifiedReview(review.getReviewId());
 
         verifiedReviewOwner(review.getMember().getMemberId(), findReview);
@@ -73,12 +79,17 @@ public class ReviewService {
         if(review.getStar() != 0) findReview.setStar(review.getStar());
         if(review.getBody() != null) findReview.setBody(review.getBody());
 
+        if(review.getPhotos().size() != 0) {
+            findReview.setPhotos(review.getPhotos());
+        } else {
+            List<String> photos = new ArrayList<>();
+            findReview.setPhotos(photos);
+        }
+
         if (files != null) {
-            List<String> newPhotos = new ArrayList<>();
             for (MultipartFile file : files) {
-                newPhotos.add(uploadService.saveFile(file));
+                findReview.getPhotos().add(uploadService.saveFile(file));
             }
-            findReview.setPhotos(newPhotos);
         }
 
         reviewRepository.save(findReview);

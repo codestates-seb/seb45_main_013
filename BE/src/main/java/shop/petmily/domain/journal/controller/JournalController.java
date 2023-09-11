@@ -3,20 +3,21 @@ package shop.petmily.domain.journal.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.journal.dto.*;
+import shop.petmily.domain.journal.dto.JournalMultiResponseDto;
+import shop.petmily.domain.journal.dto.JournalPatchDto;
+import shop.petmily.domain.journal.dto.JournalPostDto;
+import shop.petmily.domain.journal.dto.JournalResponseDto;
 import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.journal.mapper.JournalMapper;
 import shop.petmily.domain.journal.service.JournalService;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.global.argu.LoginMemberId;
+import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,27 +36,25 @@ public class JournalController {
     }
 
     // 케어일지 등록
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity postJournal(@RequestPart JournalPostDto journalPostDto,
-                                      @RequestPart(required = false) List<MultipartFile> files,
-                                      @LoginMemberId Long memberId) throws IOException {
+    @PostMapping
+    public ResponseEntity postJournal(@ModelAttribute JournalPostDto journalPostDto,
+                                      @LoginMemberId Long memberId){
         journalPostDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
-        Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), files);
+        Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), journalPostDto.getFile());
         JournalResponseDto response = mapper.JournalToResponse(createdJournal);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // 케어일지 수정
-    @PatchMapping(value = "/{journal-id}",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping("/{journal-id}")
     public ResponseEntity patchJournal(@PathVariable("journal-id") @Positive long journalId,
-                                       @RequestPart JournalPatchDto journalPatchDto,
-                                       @RequestPart(required = false) List<MultipartFile> files,
-                                       @LoginMemberId Long memberId) throws IOException {
+                                       @ModelAttribute JournalPatchDto journalPatchDto,
+                                       @LoginMemberId Long memberId){
         journalPatchDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         journalPatchDto.setJournalId(journalId);
         Journal journal = mapper.JournalPatchDtoToJournal(journalPatchDto);
-        JournalResponseDto response = mapper.JournalToResponse(service.updateJournal(journal, files));
+        JournalResponseDto response = mapper.JournalToResponse(service.updateJournal(journal, journalPatchDto.getFile()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -75,7 +74,7 @@ public class JournalController {
                                       @RequestParam("size") @Positive int size,
                                       @LoginMemberId Long memberId) {
         Page<Journal> journalPage = service.findMemberJournal(page, size, memberId);
-        JournalPageInfo pageInfo = new JournalPageInfo(page, size, (int) journalPage.getTotalElements(), journalPage.getTotalPages());
+        PageInfo pageInfo = new PageInfo(page, size, (int) journalPage.getTotalElements(), journalPage.getTotalPages());
 
         List<Journal> journals = journalPage.getContent();
         List<JournalResponseDto> response =

@@ -1,12 +1,17 @@
 package shop.petmily.domain.member.controller;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import io.jsonwebtoken.ExpiredJwtException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.dto.*;
 import shop.petmily.domain.member.entity.Member;
@@ -20,19 +25,12 @@ import shop.petmily.global.dto.LoginMemberResponseDto;
 import shop.petmily.global.dto.PageResponseDto;
 import shop.petmily.global.dto.SingleResponseDto;
 import shop.petmily.global.utils.UriCreator;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/members")
@@ -53,22 +51,23 @@ public class MemberController {
         return ResponseEntity.created(location).body(new SingleResponseDto<>("success create member"));
     }
 
-    @PatchMapping(value = "/{member-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    //*****사진 업로드 수정 다됨 이거참고******
+    @PatchMapping(value = "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
-                                      @RequestPart(required = false) MemberPatchRequestDto requestBody,
-                                      @RequestPart(required = false) MultipartFile file) throws IOException {
+                                      @Valid @ModelAttribute MemberPatchRequestDto requestBody) throws IOException {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
 
         requestBody.setMemberId(findMember.getMemberId());
-        memberService.updateMember(memberMapper.memberPatchDtoToMember(requestBody), file);
+
+        memberService.updateMember(memberMapper.memberPatchDtoToMember(requestBody), requestBody.getFile());
 
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
     }
 
     @PatchMapping("/{member-id}/photo")
-    public ResponseEntity photoDeletePet(@PathVariable ("member-id") @Positive long memberId,
+    public ResponseEntity photoDeleteMember(@PathVariable ("member-id") @Positive long memberId,
                                          @LoginMemberId Long loginMemberId) throws IOException {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
@@ -94,8 +93,6 @@ public class MemberController {
     public ResponseEntity<PetsitterPossibleResoponseDto> getPetsitterPossible(@LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(loginMemberId);
         Petsitter findPetsitter = petsitterService.findPetsitter(findMember);
-//        findPetsitter.setStar(memberService.averageStar(findMember));
-//        petsitterService.addPetsitterProfile(findPetsitter);
         PetsitterPossibleResoponseDto petsitterPossibleResoponseDto = petsitterService.findPossible(findPetsitter);
         return new ResponseEntity<>(petsitterPossibleResoponseDto, HttpStatus.OK);
     }
@@ -125,11 +122,13 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping("/user")
-    public ResponseEntity accountUserDetails(@LoginMemberId Long loginMemberId) {
-        Member findMember = memberService.findMember(loginMemberId);
 
-        return new ResponseEntity<>(new LoginMemberResponseDto(memberMapper.memberToLoginMemberResponseDto(findMember)), HttpStatus.OK);
-    }
+
+//    @ResponseStatus(value = HttpStatus.OK)
+//    @GetMapping("/user")
+//    public ResponseEntity accountUserDetails(@LoginMemberId Long loginMemberId) {
+//        Member findMember = memberService.findMember(loginMemberId);
+//
+//        return new ResponseEntity<>(new LoginMemberResponseDto(memberMapper.memberToLoginMemberResponseDto(findMember)), HttpStatus.OK);
+//    }
 }

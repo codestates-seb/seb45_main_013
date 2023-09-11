@@ -3,18 +3,20 @@ package shop.petmily.domain.review.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.service.PetsitterService;
-import shop.petmily.domain.review.Dto.*;
+import shop.petmily.domain.review.Dto.ReviewMultiResponseDto;
+import shop.petmily.domain.review.Dto.ReviewPatchDto;
+import shop.petmily.domain.review.Dto.ReviewPostDto;
+import shop.petmily.domain.review.Dto.ReviewResponseDto;
 import shop.petmily.domain.review.entity.Review;
 import shop.petmily.domain.review.mapper.ReviewMapper;
 import shop.petmily.domain.review.service.ReviewService;
 import shop.petmily.global.argu.LoginMemberId;
+import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
 import java.io.IOException;
@@ -37,12 +39,11 @@ public class ReviewController {
     }
 
     // 후기 등록
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity postReview(@RequestPart ReviewPostDto reviewPostDto,
-                                     @RequestPart(required = false) List<MultipartFile> files,
-                                     @LoginMemberId Long memberId) throws IOException {
+    @PostMapping
+    public ResponseEntity postReview(@ModelAttribute ReviewPostDto reviewPostDto,
+                                     @LoginMemberId Long memberId)  {
         reviewPostDto.setMemberId(memberId);
-        Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), files);
+        Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), reviewPostDto.getFile());
         ReviewResponseDto response = mapper.reviewToResponse(createdReview);
 
         Petsitter findPetsitter = createdReview.getPetsitter();
@@ -53,15 +54,14 @@ public class ReviewController {
     }
 
     // 후기 수정
-    @PatchMapping(value = "/{review-id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping("/{review-id}")
     public ResponseEntity patchReview(@PathVariable("review-id") @Positive long reviewId,
-                                      @RequestPart(required = false) ReviewPatchDto reviewPatchDto,
-                                      @RequestPart(required = false) List<MultipartFile> files,
+                                      @ModelAttribute ReviewPatchDto reviewPatchDto,
                                       @LoginMemberId Long memberId) throws IOException {
         reviewPatchDto.setMemberId(memberId);
         reviewPatchDto.setReviewId(reviewId);
         Review review = mapper.reviewPatchToReview(reviewPatchDto);
-        Review updatedReview = service.updateReview(review, files);
+        Review updatedReview = service.updateReview(review, reviewPatchDto.getFile());
         ReviewResponseDto response = mapper.reviewToResponse(updatedReview);
 
         Petsitter findPetsitter = updatedReview.getPetsitter();
@@ -89,7 +89,7 @@ public class ReviewController {
 
         reviewPage = service.findAllReviews(page, size, petsitterId);
 
-        ReviewPageInfo pageInfo = new ReviewPageInfo(page, size, (int) reviewPage.getTotalElements(), reviewPage.getTotalPages());
+        PageInfo pageInfo = new PageInfo(page, size, (int) reviewPage.getTotalElements(), reviewPage.getTotalPages());
 
         List<Review> reviews = reviewPage.getContent();
         List<ReviewResponseDto> response =

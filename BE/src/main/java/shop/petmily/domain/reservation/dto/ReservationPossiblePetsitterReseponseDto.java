@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 
 @Setter
 @Getter
 public class ReservationPossiblePetsitterReseponseDto {
-    private long memberId;
+    private Long memberId;
 
     private Long petsitterId;
 
@@ -33,9 +34,11 @@ public class ReservationPossiblePetsitterReseponseDto {
 
     private String possibleDay;
 
-    private Time possibleTimeStart;
+    private LocalTime possibleTimeStart;
 
-    private Time possibleTimeEnd;
+    private LocalTime possibleTimeEnd;
 
     private double star;
+
+    private Integer reviewCount;
 }

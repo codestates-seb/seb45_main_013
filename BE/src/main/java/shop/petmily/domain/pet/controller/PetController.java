@@ -29,32 +29,28 @@ public class PetController {
         this.service = service;
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity postPet(@RequestPart PetPostDto petPostDto,
-                                  @RequestPart(required = false) MultipartFile file,
-                                  @LoginMemberId Long memberId) throws IOException {
+    @PostMapping
+    public ResponseEntity postPet(@ModelAttribute PetPostDto petPostDto,
+                                  @LoginMemberId Long memberId){
         petPostDto.setMemberId(memberId);
-        Pet pet = service.createPet(mapper.PetPostDtoToPet(petPostDto), file);
+        Pet pet = service.createPet(mapper.PetPostDtoToPet(petPostDto), petPostDto.getFile());
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = "/{pet_id}",
-                  consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = "/{pet_id}")
     public ResponseEntity patchPet(@PathVariable ("pet_id") @Positive long petId,
-                                   @RequestPart(required = false) PetPatchDto petPatchDto,
-                                   @RequestPart(required = false) MultipartFile file,
-                                   @LoginMemberId Long memberId) throws IOException {
-        petPatchDto = (petPatchDto == null) ? new PetPatchDto() : petPatchDto;
+                                   @ModelAttribute PetPatchDto petPatchDto,
+                                   @LoginMemberId Long memberId){
         petPatchDto.setMemberId(memberId);
         petPatchDto.setPetId(petId);
 
-        Pet pet = service.updatePet(mapper.PetPatchDtoToPet(petPatchDto), file);
+        Pet pet = service.updatePet(mapper.PetPatchDtoToPet(petPatchDto), petPatchDto.getFile());
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
     }
 
     @PatchMapping("/{pet_id}/photo")
     public ResponseEntity photoDeletePet(@PathVariable ("pet_id") @Positive long petId,
-                                         @LoginMemberId Long memberId) throws IOException {
+                                         @LoginMemberId Long memberId) {
         Pet pet = service.photoDelete(petId, memberId);
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
     }

@@ -3,36 +3,43 @@ package shop.petmily.domain.reservation.dto;
 import lombok.Getter;
 import lombok.Setter;
 import shop.petmily.domain.pet.dto.PetResponseDto;
+import shop.petmily.domain.reservation.entity.Progress;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 public class ReservationResponseDto {
-    private long reservationId;
+    private Long reservationId;
 
-    private long memberId;
+    private Long memberId;
 
     private String name;
 
-    private Date reservationDay;
+    private String photo;
 
-    private Time reservationTimeStart;
+    private String body;
 
-    private Time reservationTimeEnd;
+    private LocalDate reservationDay;
 
-    private String location;
+    private LocalTime reservationTimeStart;
+
+    private LocalTime reservationTimeEnd;
+
+    private String address;
 
     private String phone;
 
-    private String memberBody;
+    private String reservationBody;
 
     private List<PetResponseDto> pets;
 
-    private long petsitterId;
+    private Long petsitterId;
 
     private String petsitterName;
 
@@ -40,9 +47,12 @@ public class ReservationResponseDto {
 
     private String petsitterBody;
 
-    private String progress;
+    private String petsitterPhoto;
+
+    private Progress progress;
 
     private LocalDateTime createdAt;
     
     private LocalDateTime lastModifiedAt;
 }
+

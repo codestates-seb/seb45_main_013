@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,13 +38,16 @@ public class Petsitter {
     private String possibleDay;
 
     @Column(length = 255)
-    private Time possibleTimeStart;
+    private LocalTime possibleTimeStart;
 
     @Column(length = 255)
-    private Time possibleTimeEnd;
+    private LocalTime possibleTimeEnd;
 
     @Column
     private double star;
+
+    @Column
+    private int reviewCount;
 
     public enum PossiblePetType {
 

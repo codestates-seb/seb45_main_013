@@ -2,17 +2,19 @@ package shop.petmily.domain.review.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 public class ReviewPostDto {
-    private long reservationId;
+    private Long reservationId;
 
-    private long petsitterId;
+    private Long petsitterId;
 
-    private long memberId;
+    private Long memberId;
 
     public void setMemberId(long memberId) {
         this.memberId = memberId;
@@ -21,5 +23,7 @@ public class ReviewPostDto {
     @NotBlank(message = "후기 내용은 공백이 아니어야 합니다")
     private String body;
 
-    private int star;
+    private Integer star;
+
+    private List<MultipartFile> file;
 }

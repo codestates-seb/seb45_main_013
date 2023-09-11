@@ -1,24 +1,29 @@
 package shop.petmily.domain.pet.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@AllArgsConstructor
 public class PetPatchDto {
-    private long petId;
+    private Long petId;
 
     public void setPetId(long petId) {this.petId = petId;}
 
-    private long memberId;
+    private Long memberId;
 
     public void setMemberId(long memberId) {this.memberId = memberId;}
 
-    private int age;
+    private Integer age;
 
-    private int weight;
+    private Integer weight;
 
     private String body;
 
     private String name;
 
     private Boolean neutering;
+
+    private MultipartFile file;
 }
