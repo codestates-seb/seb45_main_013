@@ -121,14 +121,6 @@ const Home = () => {
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  margin-top: 84px;
-  background-color: #fefdff;
-`;
-
-const AdContainer = styled.a`
-  display: flex;
-  flex-direction: column;
   width: 100%;
   margin-top: 16px;
 `;
@@ -262,6 +254,7 @@ const ReviewImg = styled.img`
   margin-right: 4px;
   margin-left: 12px;
   padding-top: 2px;
+`;
 
 const RealtimeReviewContainer = styled.div`
   margin-top: 16px;

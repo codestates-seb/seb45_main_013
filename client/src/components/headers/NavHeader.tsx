@@ -6,6 +6,7 @@ import NavBarButton from '../buttons/NavBarButton';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IUser, deleteUser, login, setUser } from 'store/userSlice';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const NavHeader = () => {
   const dispatch = useDispatch();

@@ -136,7 +136,7 @@ const EditUserProfile = () => {
   return (
     <>
       <PageTitle>회원 정보 수정</PageTitle>
-       <MainContainer>
+      <MainContainer>
         <UploadProfileImg currentImageUrl={photo} setImageFile={handleImageFileChange} />
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>
