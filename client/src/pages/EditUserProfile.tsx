@@ -136,7 +136,7 @@ const EditUserProfile = () => {
   return (
     <>
       <PageTitle>회원 정보 수정</PageTitle>
-       <MainContainer>
+      <MainContainer>
         <UploadProfileImg currentImageUrl={photo} setImageFile={handleImageFileChange} />
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>
@@ -219,16 +219,17 @@ const Info = styled.div`
 `;
 
 const LinkContainer = styled.div`
-  margin-top: 36px;
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: 36px;
 `;
 
 const StyledButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
+
   ${(props) => props.theme.fontSize.s14h21}
   &:hover {
     color: ${(props) => props.theme.colors.mainBlue};

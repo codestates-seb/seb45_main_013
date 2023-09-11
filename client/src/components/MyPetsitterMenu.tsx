@@ -76,6 +76,7 @@ const MenuItem = styled.button`
 const MenuItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
+
   &:hover {
     color: ${(props) => props.theme.colors.mainBlue};
   }
@@ -93,6 +94,6 @@ const Title = styled.span`
 
 const StyledLink = styled(Link)`
   text-decoration: none;
-  color: #000000;
+  color: #000;
 `;
 export default MyPetsitterMenu;

@@ -2,18 +2,17 @@ import styled from 'styled-components';
 
 const GoogleOAuthButtonStyle = styled.button`
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   height: 32px;
-
+  padding-right: 80px;
+  padding-left: 12px;
   border: 1px solid ${({ theme }) => theme.textColors.gray40};
   border-radius: 8px;
   color: ${({ theme }) => theme.textColors.gray60};
   background-color: white;
   font-family: inherit;
-  padding-left: 12px;
-  padding-right: 80px;
 
   &:hover {
     background-color: ${({ theme }) => theme.textColors.primary};

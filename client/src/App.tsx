@@ -50,14 +50,14 @@ const AddNavHeaderLayout = () => {
   );
 };
 
-const HeaderLayout = () => {
-  return (
-    <>
-      <Header />
-      <Outlet />
-    </>
-  );
-};
+// const HeaderLayout = () => {
+//   return (
+//     <>
+//       <Header />
+//       <Outlet />
+//     </>
+//   );
+// };
 
 const BackHeaderLayout = () => {
   return (

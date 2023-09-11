@@ -227,8 +227,8 @@ const MainContainer = styled.main`
 const SignupContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 100px;
   width: 100%;
+  margin-top: 100px;
   max-width: 360px;
 `;
 

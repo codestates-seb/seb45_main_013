@@ -225,11 +225,11 @@ const MainContainer = styled.div`
 
 const StatusHeader = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  width: calc(100% + 12 * 2);
-  margin: 0px -12px 0px -12px;
   align-items: center;
+  justify-content: space-between;
+  width: calc(100% + 12 * 2);
+  margin: 0 -12px;
+  padding: 12px;
   background-color: ${(props) => props.theme.textColors.secondary};
 `;
 
@@ -257,8 +257,8 @@ const PetsitterContainer = styled.div`
 const RequestPetsitterContainer = styled.div`
   margin-bottom: 20px;
   padding: 12px;
-  background-color: ${(props) => props.theme.textColors.secondary};
   border-radius: 8px;
+  background-color: ${(props) => props.theme.textColors.secondary};
 
   &:last-child {
     margin-bottom: 0;
@@ -272,7 +272,7 @@ const RequestContainer = styled.div`
 `;
 
 const RequestPetsitterText = styled.h2`
-  margin: 8px 0 4px 0;
+  margin: 8px 0 4px;
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
   white-space: pre-line;
@@ -285,17 +285,17 @@ const RequestPetsitterBox = styled.div`
 `;
 
 const ProfileImg = styled.img`
-  margin-bottom: 4px;
   width: 79px;
   height: 77px;
+  margin-bottom: 4px;
   border-radius: 79px;
 `;
 
 const Petsitterbox = styled.div`
   display: flex;
   flex-direction: column;
-  text-align: center;
   margin-right: 8px;
+  text-align: center;
 `;
 
 const Nameox = styled.div`

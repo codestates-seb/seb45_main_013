@@ -6,7 +6,7 @@ import NavBarButton from '../buttons/NavBarButton';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IUser, deleteUser, login, setUser } from 'store/userSlice';
-
+const apiUrl = process.env.REACT_APP_API_URL;
 const NavHeader = () => {
   const dispatch = useDispatch();
   const { isLogin, memberId } = useSelector((state: IUser) => state.user);
@@ -97,8 +97,8 @@ const Container = styled.header`
   position: sticky;
   top: 0;
   left: 0;
-  width: 100%;
   z-index: 100;
+  width: 100%;
 `;
 
 const HeaderContatiner = styled.div`
@@ -116,7 +116,6 @@ const TopHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  align-items: center;
 `;
 
 const NotiUserContainer = styled.nav`
@@ -134,7 +133,6 @@ const NotiButton = styled.button`
 
 const UserButton = styled.button`
   border: none;
-  cursor: pointer;
   background-color: white;
   cursor: pointer;
 `;
@@ -156,6 +154,6 @@ const LoginNavModal = styled.nav`
 const NavBar = styled.nav`
   display: flex;
   align-items: center;
-  width: 100%;
   justify-content: space-around;
+  width: 100%;
 `;

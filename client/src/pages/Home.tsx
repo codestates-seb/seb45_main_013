@@ -226,7 +226,7 @@ const ReservationButton = styled.button`
 `;
 
 const DiscriptionText = styled.div`
-  display: -webkit-box;
+  display: box;
   overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -288,7 +288,7 @@ const RealtimeDescription = styled.div`
   ${(props) => props.theme.fontSize.s14h21};
   margin-top: 8px;
   text-align: left;
-  display: -webkit-box;
+  display: box;
   overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
