@@ -18,7 +18,6 @@ import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -203,10 +202,12 @@ public class MemberService {
             favorite.setMember(member);
             favorite.setPetsitter(petsitter);
             member.getFavoritePetsitters().add(favorite);
-        } else {
-            member.getFavoritePetsitters().remove(favorite);
+            favoriteRepository.save(favorite);
         }
-
+        if (favorite != null) {
+            favoriteRepository.delete(favorite);
+        }
         memberRepository.save(member);
     }
 }
+

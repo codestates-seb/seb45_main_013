@@ -69,6 +69,6 @@ public class Petsitter {
         this.member = member;
     }
 
-    @OneToMany(mappedBy = "petsitter", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "petsitter", cascade = CascadeType.ALL)
     private Set<MemberFavoritePetsitter> favoritedByMembers = new HashSet<>();
 }

@@ -119,7 +119,7 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
     }
 
-    // 찜 기능
+    // 찜 기능 (총합)
     @PatchMapping("/favorite")
     public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
                                             @RequestParam Long petsitterId) {
