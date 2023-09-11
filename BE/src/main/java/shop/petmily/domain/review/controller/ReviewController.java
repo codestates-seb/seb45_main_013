@@ -3,11 +3,9 @@ package shop.petmily.domain.review.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.review.Dto.ReviewMultiResponseDto;
@@ -43,10 +41,9 @@ public class ReviewController {
     // 후기 등록
     @PostMapping
     public ResponseEntity postReview(@ModelAttribute ReviewPostDto reviewPostDto,
-                                     @RequestPart(value = "file",required = false) List<MultipartFile> files,
-                                     @LoginMemberId Long memberId) throws IOException {
+                                     @LoginMemberId Long memberId)  {
         reviewPostDto.setMemberId(memberId);
-        Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), files);
+        Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), reviewPostDto.getFile());
         ReviewResponseDto response = mapper.reviewToResponse(createdReview);
 
         Petsitter findPetsitter = createdReview.getPetsitter();
@@ -57,15 +54,14 @@ public class ReviewController {
     }
 
     // 후기 수정
-    @PatchMapping
+    @PatchMapping("/{review-id}")
     public ResponseEntity patchReview(@PathVariable("review-id") @Positive long reviewId,
                                       @ModelAttribute ReviewPatchDto reviewPatchDto,
-                                      @RequestPart(value = "file",required = false) List<MultipartFile> files,
                                       @LoginMemberId Long memberId) throws IOException {
         reviewPatchDto.setMemberId(memberId);
         reviewPatchDto.setReviewId(reviewId);
         Review review = mapper.reviewPatchToReview(reviewPatchDto);
-        Review updatedReview = service.updateReview(review, files);
+        Review updatedReview = service.updateReview(review, reviewPatchDto.getFile());
         ReviewResponseDto response = mapper.reviewToResponse(updatedReview);
 
         Petsitter findPetsitter = updatedReview.getPetsitter();

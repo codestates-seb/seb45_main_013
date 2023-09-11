@@ -2,8 +2,10 @@ package shop.petmily.domain.review.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -22,4 +24,6 @@ public class ReviewPostDto {
     private String body;
 
     private Integer star;
+
+    private List<MultipartFile> file;
 }

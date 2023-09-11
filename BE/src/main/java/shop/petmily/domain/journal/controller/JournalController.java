@@ -3,12 +3,13 @@ package shop.petmily.domain.journal.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import shop.petmily.domain.journal.dto.*;
+import shop.petmily.domain.journal.dto.JournalMultiResponseDto;
+import shop.petmily.domain.journal.dto.JournalPatchDto;
+import shop.petmily.domain.journal.dto.JournalPostDto;
+import shop.petmily.domain.journal.dto.JournalResponseDto;
 import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.journal.mapper.JournalMapper;
 import shop.petmily.domain.journal.service.JournalService;
@@ -17,7 +18,6 @@ import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,10 +38,9 @@ public class JournalController {
     // 케어일지 등록
     @PostMapping
     public ResponseEntity postJournal(@ModelAttribute JournalPostDto journalPostDto,
-                                      @RequestPart(value = "file",required = false) List<MultipartFile> files,
                                       @LoginMemberId Long memberId){
         journalPostDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
-        Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), files);
+        Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), journalPostDto.getFile());
         JournalResponseDto response = mapper.JournalToResponse(createdJournal);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -51,12 +50,11 @@ public class JournalController {
     @PatchMapping("/{journal-id}")
     public ResponseEntity patchJournal(@PathVariable("journal-id") @Positive long journalId,
                                        @ModelAttribute JournalPatchDto journalPatchDto,
-                                       @RequestPart(value = "file" , required = false) List<MultipartFile> files,
                                        @LoginMemberId Long memberId){
         journalPatchDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         journalPatchDto.setJournalId(journalId);
         Journal journal = mapper.JournalPatchDtoToJournal(journalPatchDto);
-        JournalResponseDto response = mapper.JournalToResponse(service.updateJournal(journal, files));
+        JournalResponseDto response = mapper.JournalToResponse(service.updateJournal(journal, journalPatchDto.getFile()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

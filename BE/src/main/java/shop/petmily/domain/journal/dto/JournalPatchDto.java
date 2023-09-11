@@ -4,7 +4,7 @@ package shop.petmily.domain.journal.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,4 +25,6 @@ public class JournalPatchDto {
     private String body;
 
     private List<String> photos;
+
+    private List<MultipartFile> file;
 }
