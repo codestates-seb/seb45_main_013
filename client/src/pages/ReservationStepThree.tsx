@@ -221,6 +221,7 @@ const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 0 12px 0 12px;
 `;
 
 const StatusHeader = styled.div`

@@ -278,27 +278,25 @@ const StatusHeader = styled.div`
   gap: 120px;
   position: relative;
 
-  &::after {
+  /* &::after {
     content: '';
     position: absolute;
     left: 0;
     bottom: -2px; //컨테이너 하단에 위치하도록 설정
     width: 240px; // 밑줄의 길이 설정
     height: 2px; // 밑줄의 두께 설정
-    background-color: ${(props) => props.theme.colors.mainBlue};
+    background-color: ${(props) => props.theme.colors.mainBlue}; */
   }
 `;
 
 const BackImg = styled.img``;
 
 const StatusTitleText = styled.div`
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s12h18};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
 `;
 
 const PageNumberText = styled.div`
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s12h18};
   font-weight: ${(props) => props.theme.fontWeights.light};
 `;
@@ -310,7 +308,6 @@ const SelectPetContainer = styled.div`
 `;
 
 const SelectPetText = styled.div`
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s18h27};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
 `;
@@ -430,7 +427,6 @@ const SelectPetImg = styled.img`
 
 const SelectPetName = styled.div`
   margin-top: 8px;
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s14h21};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
 `;
@@ -440,14 +436,12 @@ const NoticeContainer = styled.div`
 `;
 
 const NoticeTitleText = styled.div`
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
 `;
 
 const NoticeText = styled.div`
   margin-top: 20px;
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s12h18};
   font-weight: ${(props) => props.theme.fontWeights.normal};
   line-height: 28px;
@@ -460,7 +454,6 @@ const NoticeText = styled.div`
 
 const VerificationTitleText = styled.div`
   margin-top: 24px;
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
   color: ${(props) => props.theme.colors.red};
@@ -468,7 +461,6 @@ const VerificationTitleText = styled.div`
 
 const VerificationText = styled.div`
   margin-top: 16px;
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s12h18};
   font-weight: ${(props) => props.theme.fontWeights.normal};
   line-height: 28px;
@@ -477,7 +469,6 @@ const VerificationText = styled.div`
 
 const ImpossibleCaseTitleText = styled.div`
   margin-top: 24px;
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
   color: ${(props) => props.theme.colors.red};
@@ -485,7 +476,6 @@ const ImpossibleCaseTitleText = styled.div`
 
 const ImpossibleCaseText = styled.div`
   margin-top: 16px;
-  font-family: 'Noto Sans KR';
   ${(props) => props.theme.fontSize.s12h18};
   font-weight: ${(props) => props.theme.fontWeights.normal};
   line-height: 28px;

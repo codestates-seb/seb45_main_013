@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -7,6 +9,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers';
 import { TextField } from '@mui/material';
+import { Modal, Sheet } from '@mui/joy';
+import DaumPostcode from 'react-daum-postcode';
 
 const ContactItem = [
   // 추후 UseEffect로 데이터 받아오기
@@ -19,6 +23,43 @@ const ContactItem = [
 
 const Reservation = () => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [sido, setSido] = useState('');
+  const [sigungu, setSigugu] = useState('');
+  const [remainAddress, setRemainAddress] = useState('');
+  const [zonecode, setZonecode] = useState('');
+
+  const onToggleModal = () => {
+    setIsModalOpen(true);
+  };
+
+  interface IFormInput {
+    error: boolean;
+    address: string;
+  }
+
+  const {
+    register,
+    clearErrors,
+    formState: { errors },
+  } = useForm<IFormInput>();
+
+  const handleComplete = (data: any) => {
+    // 우편번호 저장
+    setZonecode(data.zonecode);
+    // 시.도 저장
+    setSido(data.sido);
+    // 구.군 저장
+    setSigugu(data.sigungu.length > 3 ? data.sigungu.split('').splice(0, 3).join('') : data.sigungu);
+    // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
+    const splitAddress = data.address.split(' ').splice(2).join(' ');
+    if (data) {
+      clearErrors('address');
+    }
+    setRemainAddress(splitAddress);
+    setIsModalOpen(false);
+  };
 
   const handleBackClick = () => {
     navigate('/');
@@ -57,7 +98,28 @@ const Reservation = () => {
           </LocalizationProvider>
         </BasicTimePickerContainer>
         <ScheduleText>{'어디로 방문할까요?'}</ScheduleText>
-        <TextField id="outlined-basic" label="주소를 입력해주세요" variant="outlined" fullWidth />
+        <TextField
+          id="outlined-basic"
+          label="주소를 입력해주세요"
+          variant="outlined"
+          fullWidth
+          value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
+          {...register('address', { required: true })}
+          error={errors.address?.type === 'required'}
+          onClick={onToggleModal}
+          onKeyDown={onToggleModal}
+        />
+        {isModalOpen && (
+          <Modal
+            open={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Sheet sx={{ width: '360px;' }}>
+              <DaumPostcode onComplete={handleComplete} />
+            </Sheet>
+          </Modal>
+        )}
       </ReservationContainer>
 
       <RequestContainer>
@@ -88,6 +150,7 @@ const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 0 12px 12px 12px;
 `;
 
 const StatusHeader = styled.div`

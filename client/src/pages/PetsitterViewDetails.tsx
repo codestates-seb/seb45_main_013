@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import { Route, Routes /*Link*/ } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
+
+import Reviews from '@components/Reviews';
+import PossibleReservationTime from '@components/PossibleReservationTime';
 
 const PetsitterDetailsItem = [
   // 추후에 UseEffect로 데이터 받아올 데이터
@@ -91,15 +93,17 @@ const PetsitterViewDetails = () => {
           </BookmarkContainer>
 
           <ViewDetailsContainer>
-            {NavItem.map((nav) => (
-              <NavBarButton key={nav.text} isActive={activeTab === nav.link} onClick={() => setActiveTab(nav.link)}>
-                {nav.text}
-              </NavBarButton>
-            ))}
-            <Routes>
-              <Route path="/possibleReservationTime" />
-              <Route path="/reviews" />
-            </Routes>
+            <TabButtonsContainer>
+              {NavItem.map((nav) => (
+                <NavBarButton key={nav.text} isActive={activeTab === nav.link} onClick={() => setActiveTab(nav.link)}>
+                  {nav.text}
+                </NavBarButton>
+              ))}
+            </TabButtonsContainer>
+            <TabContentContainer>
+              {activeTab === '/possibleReservationTime' && <PossibleReservationTime />}
+              {activeTab === '/reviews' && <Reviews />}
+            </TabContentContainer>
           </ViewDetailsContainer>
           <CustomLinkBtn>예약 하기</CustomLinkBtn>
         </MainContainer>
@@ -219,6 +223,7 @@ const BookmarkContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 14px 12px 0 12px;
   padding: 8px 16px;
   background-color: ${(props) => props.theme.colors.white};
   box-shadow: ${(props) => props.theme.shadow.dp01};
@@ -226,7 +231,6 @@ const BookmarkContainer = styled.div`
   color: ${(props) => props.theme.textColors.gray00};
   font-size: ${(props) => props.theme.fontSize.s18h27};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
-  white-space: nowrap;
 `;
 
 const RatingImg = styled.img`
@@ -253,17 +257,18 @@ const StyledButton = styled(Button)`
 
 const ViewDetailsContainer = styled.div`
   display: flex;
+  flex-direction: column;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.white};
-  margin-top: 16px;
+  margin: 16px 12px 12px 12px;
   padding-top: 16px; !important;
-  height: 229px;
-  box-shadow: ${(props) => props.theme.shadow.dp01};  
+  height: 320px;
+  box-shadow: ${(props) => props.theme.shadow.dp01};
 `;
 
 const CustomLinkBtn = styled.button`
-  width: 100%;
   border-radius: 8px;
+  margin: 12px 12px 12px 12px;
   padding: 12px;
   color: white;
   text-align: center;
@@ -279,8 +284,17 @@ const NavBarButton = styled.button<{ isActive: boolean }>`
   font-weight: ${(props) => (props.isActive ? props.theme.fontWeights.extrabold : props.theme.fontWeights.bold)};
   color: ${(props) => (props.isActive ? 'black' : props.theme.textColors.gray30)};
   border-bottom: ${(props) => (props.isActive ? `2px solid ${props.theme.colors.mainBlue}` : null)};
-  padding-bottom: 8px;
+  padding-bottom: 36px;
   margin-bottom: ${(props) => (props.isActive ? '-2px' : '0px')};
   ${(props) => props.theme.fontSize.s14h21};
   height: 16%;
+`;
+
+const TabButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const TabContentContainer = styled.div`
+  display: flex;
 `;
