@@ -66,4 +66,7 @@ public class Petsitter {
     public Petsitter(Member member) {
         this.member = member;
     }
+
+    @OneToMany(mappedBy = "petsitter")
+    private List<MemberFavoritePetsitter> favoritedByMembers = new ArrayList<>();
 }

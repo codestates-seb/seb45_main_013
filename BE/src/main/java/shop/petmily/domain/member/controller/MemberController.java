@@ -130,4 +130,12 @@ public class MemberController {
 
         return new ResponseEntity<>(new LoginMemberResponseDto(memberMapper.memberToLoginMemberResponseDto(findMember)), HttpStatus.OK);
     }
+
+    // 찜 기능
+    @PostMapping("/favorite")
+    public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
+                                            @RequestParam Long petsitterId) {
+        memberService.toggleFavorite(memberId, petsitterId);
+        return new ResponseEntity<>(new SingleResponseDto<>("success toggle favorite"), HttpStatus.OK);
+    }
 }

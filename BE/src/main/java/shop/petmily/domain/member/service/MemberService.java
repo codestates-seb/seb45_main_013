@@ -9,16 +9,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.dto.MemberGetResponseDto;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.MemberFavoritePetsitter;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
-import shop.petmily.global.exception.ErrorResponse;
 import shop.petmily.global.exception.ExceptionCode;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -171,5 +170,40 @@ public class MemberService {
         findMember.setPhoto(null);
 
         return memberRepository.save(findMember);
+    }
+
+    // 찜 기능
+    @Transactional
+    public void toggleFavorite(Long memberId, Long petsitterId) {
+        Member member = findVerifiedMember(memberId);
+        Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
+
+        List<MemberFavoritePetsitter> favoritePetSitters = member.getFavoritePetsitters();
+
+        // 이미 찜한 경우 찜하기 취소
+        if (isFavorite(member, petsitter)) {
+            removeFavorite(member, petsitter);
+        } else { // 찜하지 않은 경우 찜하기
+            addFavorite(member, petsitter);
+        }
+
+        memberRepository.save(member);
+    }
+
+    private boolean isFavorite(Member member, Petsitter petsitter) {
+        return member.getFavoritePetsitters().stream()
+                .anyMatch(favorite -> favorite.getPetsitter().equals(petsitter));
+    }
+
+    private void addFavorite(Member member, Petsitter petsitter) {
+        MemberFavoritePetsitter favorite = new MemberFavoritePetsitter();
+        favorite.setMember(member);
+        favorite.setPetsitter(petsitter);
+        member.getFavoritePetsitters().add(favorite);
+    }
+
+    private void removeFavorite(Member member, Petsitter petsitter) {
+        List<MemberFavoritePetsitter> favoritePetSitters = member.getFavoritePetsitters();
+        favoritePetSitters.removeIf(favorite -> favorite.getPetsitter().equals(petsitter));
     }
 }
