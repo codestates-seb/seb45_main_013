@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import NavBarButton from '../buttons/NavBarButton';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { getCookieValue } from 'hooks/getCookie';
+import NavBarButton from '../buttons/NavBarButton';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { IUser, deleteUser, login, setUser } from 'store/userSlice';
 
 const NavHeader = () => {
-  const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
   const { isLogin, memberId } = useSelector((state: IUser) => state.user);
   console.log('로그인: ', isLogin);
@@ -32,7 +31,6 @@ const NavHeader = () => {
     if (isModalOpen) {
       window.addEventListener('click', handleOutsideClick);
     }
-
     return () => {
       window.removeEventListener('click', handleOutsideClick);
     };
@@ -100,14 +98,15 @@ const Container = styled.header`
   top: 0;
   left: 0;
   width: 100%;
+  z-index: 100;
 `;
+
 const HeaderContatiner = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
   height: 84px;
-  padding: 12px 12px 0;
   background-color: white;
   max-width: 600px;
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
@@ -115,6 +114,7 @@ const HeaderContatiner = styled.div`
 
 const TopHeader = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
   align-items: center;
 `;
@@ -134,6 +134,7 @@ const NotiButton = styled.button`
 
 const UserButton = styled.button`
   border: none;
+  cursor: pointer;
   background-color: white;
   cursor: pointer;
 `;

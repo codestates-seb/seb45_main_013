@@ -11,6 +11,9 @@ import Signup from '@pages/Signup';
 import Mypage from './pages/Mypage';
 import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
+import ReservationStepTwo from '@pages/ReservationStepTwo';
+import ReservationStepThree from '@pages/ReservationStepThree';
+import PetsitterViewDetails from '@pages/PetsitterViewDetails';
 import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
 import Header from './components/headers/Header';
@@ -75,6 +78,8 @@ const App = () => {
               <Route path="" element={<Home />} />
               <Route path="mypage" element={<Mypage />} />
               <Route path="reservation" element={<Reservation />} />
+              <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>
+              <Route path="reservation/step3" element={<ReservationStepThree />}></Route>
               <Route path="cares/:memberId" element={<Cares />} />
               <Route path="cares/:memberId/:reservationId/review" element={<CreateReview />} />
               <Route path="cares/:petsitterId/:reservationId/journal" element={<CreateJournal />} />
@@ -87,6 +92,7 @@ const App = () => {
               {/* <Route path="mypage/:petId/edit" element={<EditPet />}></Route> */}
               <Route path="mypage/pets/edit" element={<EditPet />} />
               <Route path="search" element={<Search />} />
+              <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

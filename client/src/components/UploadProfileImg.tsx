@@ -13,8 +13,6 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const BucketUrl = process.env.REACT_APP_BUCKET_URL;
 const defaultProfileImg = 'imgs/DefaultUserProfile.jpg';
 
-const BucketUrl = process.env.REACT_APP_BUCKET_URL;
-
 const UploadProfileImg = ({ setImageFile, currentImageUrl }: any) => {
   const [previewImage, setPreviewImage] = useState<string | null>(currentImageUrl);
   const fileInputRef = React.createRef<HTMLInputElement>();
