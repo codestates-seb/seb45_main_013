@@ -55,20 +55,19 @@ public class MemberController {
     @PatchMapping(value = "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
-                                      @Valid @ModelAttribute MemberPatchRequestDto requestBody,
-                                      @RequestPart(required = false) MultipartFile file) throws IOException {
+                                      @Valid @ModelAttribute MemberPatchRequestDto requestBody) throws IOException {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
 
         requestBody.setMemberId(findMember.getMemberId());
 
-        memberService.updateMember(memberMapper.memberPatchDtoToMember(requestBody), file);
+        memberService.updateMember(memberMapper.memberPatchDtoToMember(requestBody), requestBody.getFile());
 
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
     }
 
     @PatchMapping("/{member-id}/photo")
-    public ResponseEntity photoDeletePet(@PathVariable ("member-id") @Positive long memberId,
+    public ResponseEntity photoDeleteMember(@PathVariable ("member-id") @Positive long memberId,
                                          @LoginMemberId Long loginMemberId) throws IOException {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
@@ -123,10 +122,6 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping("/user")
-    public ResponseEntity accountUserDetails(@LoginMemberId Long loginMemberId) {
-        Member findMember = memberService.findMember(loginMemberId);
 
         return new ResponseEntity<>(new LoginMemberResponseDto(memberMapper.memberToLoginMemberResponseDto(findMember)), HttpStatus.OK);
     }
@@ -138,4 +133,12 @@ public class MemberController {
         memberService.toggleFavorite(memberId, petsitterId);
         return new ResponseEntity<>(new SingleResponseDto<>("success toggle favorite"), HttpStatus.OK);
     }
+
+//    @ResponseStatus(value = HttpStatus.OK)
+//    @GetMapping("/user")
+//    public ResponseEntity accountUserDetails(@LoginMemberId Long loginMemberId) {
+//        Member findMember = memberService.findMember(loginMemberId);
+//
+//        return new ResponseEntity<>(new LoginMemberResponseDto(memberMapper.memberToLoginMemberResponseDto(findMember)), HttpStatus.OK);
+//    }
 }

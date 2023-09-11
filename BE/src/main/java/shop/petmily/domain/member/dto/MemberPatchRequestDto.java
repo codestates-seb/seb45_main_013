@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.entity.Petsitter;
 
 import javax.persistence.Column;
@@ -26,7 +27,7 @@ public class MemberPatchRequestDto {
 
     private String address;
 
-    private String photo;
+    private MultipartFile file;
 
     private String body;
 

@@ -11,9 +11,16 @@ import shop.petmily.domain.member.dto.PetsitterPossibleResoponseDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.PetsitterRepository;
+import shop.petmily.domain.reservation.entity.Progress;
+import shop.petmily.domain.reservation.entity.Reservation;
+import shop.petmily.domain.reservation.repository.ReservationRepository;
+import shop.petmily.domain.reservation.service.ReservationService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +31,7 @@ import java.util.stream.Collectors;
 public class PetsitterService {
 
     private final PetsitterRepository petsitterRepository;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public Petsitter addPetsitterProfile(Petsitter petsitter) {
@@ -59,8 +67,24 @@ public class PetsitterService {
     }
 
     public PetsitterPossibleResoponseDto findPossible(Petsitter petsitter) {
+        LocalDate now = LocalDate.now();
+        int year = now.getYear();
+        Month currentMonth = now.getMonth();
 
-        long monthTotalReservation = 0;
+        LocalDate firstDayOfThisWeek = now.with(DayOfWeek.MONDAY); // 이번 주의 월요일
+        LocalDate lastDayOfThisWeek = firstDayOfThisWeek.plusDays(6); // 이번 주의 일요일
+
+        LocalDate today = LocalDate.now();
+
+        List<Reservation> reservations = reservationRepository.findByPetsitter(petsitter);
+
+        long monthTotalReservationCount = getMonthTotalReservation(reservations, year, currentMonth);
+        long thisWeekReservationCount = getThisWeekReservationCount(reservations, firstDayOfThisWeek, lastDayOfThisWeek);
+        long todayReservationCount = getTodayReservationCount(reservations, today);
+        long confirmedReservationCount = getConfirmedReservationCount(reservations, year, currentMonth);
+        long requestReservationCount = getRequestReservationCount(reservations, year, currentMonth);
+//        long cancelledReservationCount = getCancelledReservationCount(reservations, year, currentMonth);
+//        long finishCaringReservationCount = getFinishCaringReservationCount(reservations, year, currentMonth);
 
         return PetsitterPossibleResoponseDto.builder()
                 .petsitterId(petsitter.getPetsitterId())
@@ -71,9 +95,65 @@ public class PetsitterService {
                 .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                 .star(petsitter.getStar())
                 .reviewCount(petsitter.getReviewCount())
-//                .monthTotalReservation(monthTotalReservation)
+                .monthTotalReservationCount(monthTotalReservationCount)
+                .thisWeekReservationCount(thisWeekReservationCount)
+                .todayReservationCount(todayReservationCount)
+                .confirmedReservationCount(confirmedReservationCount)
+                .requestReservationCount(requestReservationCount)
+//                .cancelledReservationCount(cancelledReservationCount)
+//                .finishCaringReservationCount(finishCaringReservationCount)
                 .build();
     }
+
+    private long getMonthTotalReservation(List<Reservation> reservations, int year, Month month) {
+        return reservations.stream()
+                .filter(reservation ->
+                        reservation.getProgress() == Progress.RESERVATION_REQUEST ||
+                        reservation.getProgress() == Progress.RESERVATION_CONFIRMED &&
+                        reservation.getReservationDay().getYear() == year &&
+                        reservation.getReservationDay().getMonth() == month
+                        )
+                .count();
+    }
+
+    private long getThisWeekReservationCount(List<Reservation> reservations, LocalDate firstDayOfThisWeek, LocalDate lastDayOfThisWeek) {
+        return reservations.stream()
+                .filter(reservation -> {
+                    LocalDate reservationDate = reservation.getReservationDay();
+                    return !reservationDate.isBefore(firstDayOfThisWeek) && !reservationDate.isAfter(lastDayOfThisWeek);
+                })
+                .count();
+    }
+
+    private long getTodayReservationCount(List<Reservation> reservations, LocalDate today) {
+        return reservations.stream()
+                .filter(reservation -> reservation.getReservationDay().isEqual(today))
+                .count();
+    }
+
+    private long getReservationCountByStatus(List<Reservation> reservations, int year, Month month, Progress status) {
+        return reservations.stream()
+                .filter(reservation -> reservation.getProgress() == status &&
+                        reservation.getReservationDay().getYear() == year &&
+                        reservation.getReservationDay().getMonth() == month)
+                .count();
+    }
+
+    private long getConfirmedReservationCount(List<Reservation> reservations, int year, Month month) {
+        return getReservationCountByStatus(reservations, year, month, Progress.RESERVATION_CONFIRMED);
+    }
+
+    private long getRequestReservationCount(List<Reservation> reservations, int year, Month month) {
+        return getReservationCountByStatus(reservations, year, month, Progress.RESERVATION_REQUEST);
+    }
+
+//    private long getCancelledReservationCount(List<Reservation> reservations, int year, Month month) {
+//        return getReservationCountByStatus(reservations, year, month, Progress.RESERVATION_CANCELLED);
+//    }
+
+//    private long getFinishCaringReservationCount(List<Reservation> reservations, int year, Month month) {
+//        return getReservationCountByStatus(reservations, year, month, Progress.FINISH_CARING);
+//    }
 
     public Page<PetsitterGetResponseDto> findPetsittersWithFilters(Map<String, String> params, Pageable pageable) {
         String nameFilter = params.get("name");
@@ -89,6 +169,7 @@ public class PetsitterService {
     private List<Member> getPetsittersWithFilters(String nameFilter, String starFilter, String reviewCountFilter) {
         List<Member> petsitters = petsitterRepository.findAllMembersWithPetsitterBooleanTrue();
 
+        // 이름 검색 필터
         if (nameFilter != null && !nameFilter.isEmpty()) {
             final String filterText = nameFilter;
             petsitters = petsitters.stream()
@@ -96,7 +177,8 @@ public class PetsitterService {
                     .collect(Collectors.toList());
         }
 
-        if (starFilter != null && !starFilter.isEmpty()) {
+        // 별점 검색 필터
+        if (starFilter != null && !starFilter.isEmpty()) { // 별점 3 일때, 3.9 ~ 3.0 조회
             double starValue = Double.parseDouble(starFilter);
             petsitters = petsitters.stream()
                     .filter(member -> {
@@ -106,19 +188,20 @@ public class PetsitterService {
                     .sorted((member1, member2) -> {
                         double star1 = member1.getPetsitter().getStar();
                         double star2 = member2.getPetsitter().getStar();
-                        return Double.compare(star2, star1); // 내림차순 정렬
+                        return Double.compare(star2, star1);
                     })
                     .collect(Collectors.toList());
-        } else {
+        } else { // 별점 null 일때, 5.0 ~ 0.0 조회
             petsitters = petsitters.stream()
                     .sorted((member1, member2) -> {
                         double star1 = member1.getPetsitter().getStar();
                         double star2 = member2.getPetsitter().getStar();
-                        return Double.compare(star2, star1); // 내림차순 정렬
+                        return Double.compare(star2, star1);
                     })
                     .collect(Collectors.toList());
         }
 
+        // 리뷰 카운트 검색 필터
         if (reviewCountFilter != null && !reviewCountFilter.isEmpty()) {
             int reviewCountValue = Integer.parseInt(reviewCountFilter);
             petsitters = petsitters.stream()

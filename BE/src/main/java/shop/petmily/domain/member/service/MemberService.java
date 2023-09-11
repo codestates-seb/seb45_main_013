@@ -72,6 +72,12 @@ public class MemberService {
             findMember.setPhoto(uploadService.saveFile(file));
         }
 
+//        Optional<MultipartFile> optionalPhoto = Optional.ofNullable(memberPatchRequestDto.getPhoto());
+//        if (optionalPhoto.isPresent() && !optionalPhoto.get().isEmpty()) {
+//            if(findMember.getPhoto() != null) uploadService.deleteFile(findMember.getPhoto());
+//            findMember.setPhoto(uploadService.saveFile(optionalPhoto.get()));
+//        }
+
         return memberRepository.save(findMember);
     }
 
