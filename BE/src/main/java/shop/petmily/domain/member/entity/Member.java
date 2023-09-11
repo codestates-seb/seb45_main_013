@@ -11,7 +11,9 @@ import shop.petmily.global.audit.Auditable;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -83,7 +85,7 @@ public class Member extends Auditable {
     }
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private List<MemberFavoritePetsitter> favoritePetsitters = new ArrayList<>();
+    private Set<MemberFavoritePetsitter> favoritePetsitters = new HashSet<>();
 
     public void setRoles(List<String> roles) {
         this.roles = new ArrayList<>(roles);

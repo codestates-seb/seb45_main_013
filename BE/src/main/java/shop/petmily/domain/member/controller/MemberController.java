@@ -25,7 +25,6 @@ import shop.petmily.global.utils.UriCreator;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
@@ -119,8 +118,8 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
     }
 
-    // 찜 기능
-    @PostMapping("/favorite")
+    // 찜 기능 (총합)
+    @PatchMapping("/favorite")
     public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
                                             @RequestParam Long petsitterId) {
         memberService.toggleFavorite(memberId, petsitterId);
