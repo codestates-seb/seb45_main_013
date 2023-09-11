@@ -89,7 +89,7 @@ const ReservationStepThree = () => {
             {RequestPetsitterItemChunks.map((chunk, idx) => (
               <RequestContainer key={idx}>
                 {chunk.map((item) => (
-                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+                  <StyledLink to={`/petsitters/:${item.id}`} key={item.id}>
                     <RequestPetsitterBox>
                       <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
                       <Petsitterbox>

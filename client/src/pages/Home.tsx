@@ -57,10 +57,10 @@ const Home = () => {
       <CustomLink to={'/search'}>펫시터 검색</CustomLink>
       <LinkContainer>
         <PetsitterLink>
-          <Link to={'/petsitters'}>펫시터 보기</Link>
+          <StyledLink to={'/petsitters'}>펫시터 보기</StyledLink>
         </PetsitterLink>
         <PetsitterLink>
-          <Link to={'/qna'}>펫시터QnA</Link>
+          <StyledLink to={'/qna'}>펫시터QnA</StyledLink>
         </PetsitterLink>
       </LinkContainer>
       <AdSubContainer>
@@ -153,6 +153,11 @@ const PetsitterLink = styled.a`
   font-weight: ${(props) => props.theme.fontWeights.bold};
   ${(props) => props.theme.fontSize.s16h24};
   box-shadow: ${(props) => props.theme.shadow.dp01};
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 `;
 
 const AdSubContainer = styled.div`

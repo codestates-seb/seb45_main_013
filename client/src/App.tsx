@@ -13,6 +13,7 @@ import EditUserProfile from './pages/EditUserProfile';
 import Reservation from './pages/Reservation';
 import ReservationStepTwo from 'pages/ReservationStepTwo';
 import ReservationStepThree from 'pages/ReservationStepThree';
+import PetsitterViewDetails from './pages/PetsitterViewDetails';
 import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
 import Header from './components/headers/Header';
@@ -87,6 +88,7 @@ const App = () => {
               {/* <Route path="mypage/:petId/edit" element={<EditPet />}></Route> */}
               <Route path="mypage/pets/edit" element={<EditPet />}></Route>
               <Route path="search" element={<Search />}></Route>
+              <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
             </Route>
             <Route path="/cares/:memberId/:reservationId/review" element={<Reservation />}></Route>
             <Route path="/cares/:petsitterId" element={<Cares />}></Route>

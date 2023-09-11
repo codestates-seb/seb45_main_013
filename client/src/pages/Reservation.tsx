@@ -182,6 +182,7 @@ const CustomLinkBtn = styled(Link)`
   text-align: center;
   margin-top: 16px;
   background-color: ${({ theme }) => theme.colors.mainBlue};
+  text-decoration: none;
 `;
 
 export default Reservation;
