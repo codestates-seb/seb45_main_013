@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.PetsitterQueryDsl;
-import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.pet.entity.Pet;
@@ -16,11 +15,11 @@ import shop.petmily.domain.pet.service.PetService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.entity.ReservationPet;
-import shop.petmily.domain.reservation.repository.ReservationPetRepository;
 import shop.petmily.domain.reservation.repository.ReservationRepository;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
+import javax.transaction.Transactional;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,26 +30,21 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final MemberService memberService;
-    private final PetsitterRepository petsitterRepository;
-    private final ReservationPetRepository reservationPetRepository;
     private final PetService petService;
     private final PetsitterService petsitterService;
     private final PetsitterQueryDsl petsitterQueryDsl;
 
     public ReservationService(ReservationRepository reservationRepository,
                               MemberService memberService,
-                              PetsitterRepository petsitterRepository,
-                              ReservationPetRepository reservationPetRepository,
                               PetService petService,
                               PetsitterService petsitterService,
                               PetsitterQueryDsl petsitterQueryDsl) {
         this.reservationRepository = reservationRepository;
         this.memberService = memberService;
-        this.petsitterRepository = petsitterRepository;
-        this.reservationPetRepository = reservationPetRepository;
         this.petService = petService;
         this.petsitterService = petsitterService;
         this.petsitterQueryDsl = petsitterQueryDsl;

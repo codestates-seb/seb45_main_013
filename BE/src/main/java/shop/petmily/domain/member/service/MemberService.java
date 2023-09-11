@@ -53,7 +53,7 @@ public class MemberService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
-    public Member updateMember(Member member, MultipartFile file) throws IOException {
+    public Member updateMember(Member member, MultipartFile file) {
         Member findMember = findVerifiedMember(member.getMemberId());
 
         Optional.ofNullable(member.getNickName())
@@ -64,8 +64,6 @@ public class MemberService {
                 .ifPresent(phone -> findMember.setPhone(verifyExistsPhone(phone)));
         Optional.ofNullable(member.getAddress())
                 .ifPresent(address -> findMember.setAddress(address));
-        Optional.ofNullable(member.isPetsitterBoolean())
-                .ifPresent(petsitterBoolean -> findMember.setPetsitterBoolean(petsitterBoolean));
         Optional.ofNullable(member.getBody())
                 .ifPresent(body -> findMember.setBody(body));
 
@@ -79,6 +77,18 @@ public class MemberService {
 //            if(findMember.getPhoto() != null) uploadService.deleteFile(findMember.getPhoto());
 //            findMember.setPhoto(uploadService.saveFile(optionalPhoto.get()));
 //        }
+
+        return memberRepository.save(findMember);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+    public Member updatePetsitterBoolean(Member member) {
+        Member findMember = findVerifiedMember(member.getMemberId());
+
+        Optional.ofNullable(member.getRoles())
+                .ifPresent(roles -> findMember.setRoles(roles));
+        Optional.ofNullable(member.isPetsitterBoolean())
+                .ifPresent(petsitterBoolean -> findMember.setPetsitterBoolean(petsitterBoolean));
 
         return memberRepository.save(findMember);
     }

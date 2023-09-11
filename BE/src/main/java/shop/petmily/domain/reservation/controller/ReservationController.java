@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import shop.petmily.domain.journal.dto.JournalResponseDto;
+import shop.petmily.domain.journal.mapper.JournalMapper;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.reservation.dto.ReservationMultiResponseDto;
 import shop.petmily.domain.reservation.dto.ReservationPossiblePetsitterReseponseDto;
@@ -13,12 +15,14 @@ import shop.petmily.domain.reservation.dto.ReservationPostDto;
 import shop.petmily.domain.reservation.dto.ReservationResponseDto;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.mapper.ReservationMapper;
+import shop.petmily.domain.reservation.repository.ReservationQuertDsl;
 import shop.petmily.domain.reservation.service.ReservationService;
+import shop.petmily.domain.review.Dto.ReviewResponseDto;
+import shop.petmily.domain.review.mapper.ReviewMapper;
 import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +33,19 @@ import java.util.stream.Collectors;
 public class ReservationController {
     private final ReservationMapper mapper;
     private final ReservationService service;
+    private final JournalMapper journalMapper;
+    private final ReviewMapper reviewMapper;
+    private final ReservationQuertDsl reservationQuertDsl;
 
-    public ReservationController(ReservationMapper mapper, ReservationService service) {
+
+    public ReservationController(ReservationMapper mapper, ReservationService service,
+                                 JournalMapper journalMapper, ReviewMapper reviewMapper,
+                                 ReservationQuertDsl reservationQuertDsl) {
         this.mapper = mapper;
         this.service = service;
+        this.journalMapper = journalMapper;
+        this.reviewMapper = reviewMapper;
+        this.reservationQuertDsl = reservationQuertDsl;
     }
 
     //임시예약으로 등록하고<<등록안하는거로 변경...예약가능 펫시터 list보여주기
@@ -71,6 +84,14 @@ public class ReservationController {
         Reservation reservation = service.findReservation(reservationId);
         ReservationResponseDto response = mapper.reservationToReservationResponseDto(reservation);
 
+        JournalResponseDto journalResponseDto =
+                journalMapper.JournalToResponse(reservationQuertDsl.findJournalByReservation(reservation));
+        response.setJournal(journalResponseDto);
+
+        ReviewResponseDto reviewResponseDto =
+                reviewMapper.reviewToResponse(reservationQuertDsl.findReviewByReservation(reservation));
+        response.setReview(reviewResponseDto);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -86,8 +107,20 @@ public class ReservationController {
         List<Reservation> reservations = reservationPage.getContent();
         List<ReservationResponseDto> response =
                 reservations.stream()
-                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
-                        .collect(Collectors.toList());
+                        .map(reservation -> {
+                                    ReservationResponseDto reservationResponseDto =
+                                            mapper.reservationToReservationResponseDto(reservation);
+
+                                    JournalResponseDto journalResponseDto =
+                                            journalMapper.JournalToResponse(reservationQuertDsl.findJournalByReservation(reservation));
+                                    reservationResponseDto.setJournal(journalResponseDto);
+
+                                    ReviewResponseDto reviewResponseDto =
+                                            reviewMapper.reviewToResponse(reservationQuertDsl.findReviewByReservation(reservation));
+                                    reservationResponseDto.setReview(reviewResponseDto);
+
+                                    return reservationResponseDto;
+                                }).collect(Collectors.toList());
 
         return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
     }
@@ -104,8 +137,20 @@ public class ReservationController {
         List<Reservation> reservations = reservationPage.getContent();
         List<ReservationResponseDto> response =
                 reservations.stream()
-                        .map(reservation -> mapper.reservationToReservationResponseDto(reservation))
-                        .collect(Collectors.toList());
+                        .map(reservation -> {
+                            ReservationResponseDto reservationResponseDto =
+                                    mapper.reservationToReservationResponseDto(reservation);
+
+                            JournalResponseDto journalResponseDto =
+                                    journalMapper.JournalToResponse(reservationQuertDsl.findJournalByReservation(reservation));
+                            reservationResponseDto.setJournal(journalResponseDto);
+
+                            ReviewResponseDto reviewResponseDto =
+                                    reviewMapper.reviewToResponse(reservationQuertDsl.findReviewByReservation(reservation));
+                            reservationResponseDto.setReview(reviewResponseDto);
+
+                            return reservationResponseDto;
+                        }).collect(Collectors.toList());
 
         return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
     }
@@ -127,6 +172,7 @@ public class ReservationController {
 
         return HttpStatus.OK;
     }
+
     //예약 취소(멤버)
     @PatchMapping("/{reservation-id}/membercancel")
     public HttpStatus cancelReservationMember(@PathVariable("reservation-id") @Positive long reservationId,
@@ -152,7 +198,6 @@ public class ReservationController {
 //
 //        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
 //    }
-
 
 
 //    // 예약 수정 (회원)
