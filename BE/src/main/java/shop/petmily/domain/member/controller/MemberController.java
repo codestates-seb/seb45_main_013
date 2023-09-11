@@ -122,10 +122,6 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
     }
 
-
-        return new ResponseEntity<>(new LoginMemberResponseDto(memberMapper.memberToLoginMemberResponseDto(findMember)), HttpStatus.OK);
-    }
-
     // 찜 기능
     @PostMapping("/favorite")
     public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
