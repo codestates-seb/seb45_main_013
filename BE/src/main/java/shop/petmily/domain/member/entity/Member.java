@@ -81,4 +81,8 @@ public class Member extends Auditable {
     public Member(Long memberId) {
         this.memberId = memberId;
     }
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+    private List<MemberFavoritePetsitter> favoritePetsitters = new ArrayList<>();
+
 }

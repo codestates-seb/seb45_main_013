@@ -9,16 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.dto.MemberGetResponseDto;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.MemberFavoritePetsitter;
 import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.member.repository.FavoriteRepository;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
-import shop.petmily.global.exception.ErrorResponse;
 import shop.petmily.global.exception.ExceptionCode;
 import shop.petmily.global.security.utils.CustomAuthorityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +27,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final FavoriteRepository favoriteRepository;
     private final PetsitterService petsitterService;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
@@ -177,5 +178,25 @@ public class MemberService {
         findMember.setPhoto(null);
 
         return memberRepository.save(findMember);
+    }
+
+    // 찜 기능
+    @Transactional
+    public void toggleFavorite(Long memberId, Long petsitterId) {
+        Member member = findVerifiedMember(memberId);
+        Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
+
+        MemberFavoritePetsitter favorite = favoriteRepository.findByMemberAndPetsitter(member, petsitter);
+
+        if (favorite == null) {
+            favorite = new MemberFavoritePetsitter();
+            favorite.setMember(member);
+            favorite.setPetsitter(petsitter);
+            member.getFavoritePetsitters().add(favorite);
+        } else {
+            member.getFavoritePetsitters().remove(favorite);
+        }
+
+        memberRepository.save(member);
     }
 }
