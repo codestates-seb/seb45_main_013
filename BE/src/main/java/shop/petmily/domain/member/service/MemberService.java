@@ -11,6 +11,7 @@ import shop.petmily.domain.member.dto.MemberGetResponseDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.MemberFavoritePetsitter;
 import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.member.repository.FavoriteRepository;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final FavoriteRepository favoriteRepository;
     private final PetsitterService petsitterService;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
@@ -184,30 +186,17 @@ public class MemberService {
         Member member = findVerifiedMember(memberId);
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
 
-        // 이미 찜한 경우 찜하기 취소
-        if (isFavorite(member, petsitter)) {
-            removeFavorite(member, petsitter);
-        } else { // 찜하지 않은 경우 찜하기
-            addFavorite(member, petsitter);
+        MemberFavoritePetsitter favorite = favoriteRepository.findByMemberAndPetsitter(member, petsitter);
+
+        if (favorite == null) {
+            favorite = new MemberFavoritePetsitter();
+            favorite.setMember(member);
+            favorite.setPetsitter(petsitter);
+            member.getFavoritePetsitters().add(favorite);
+        } else {
+            member.getFavoritePetsitters().remove(favorite);
         }
 
         memberRepository.save(member);
-    }
-
-    private boolean isFavorite(Member member, Petsitter petsitter) {
-        return member.getFavoritePetsitters().stream()
-                .anyMatch(favorite -> favorite.getPetsitter().equals(petsitter));
-    }
-
-    private void addFavorite(Member member, Petsitter petsitter) {
-        MemberFavoritePetsitter favorite = new MemberFavoritePetsitter();
-        favorite.setMember(member);
-        favorite.setPetsitter(petsitter);
-        member.getFavoritePetsitters().add(favorite);
-    }
-
-    private void removeFavorite(Member member, Petsitter petsitter) {
-        List<MemberFavoritePetsitter> favoritePetSitters = member.getFavoritePetsitters();
-        favoritePetSitters.removeIf(favorite -> favorite.getPetsitter().equals(petsitter));
     }
 }

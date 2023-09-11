@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
 
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberFavoritePetsitter {
+public class MemberFavoritePetsitter extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -82,7 +82,7 @@ public class Member extends Auditable {
         this.memberId = memberId;
     }
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<MemberFavoritePetsitter> favoritePetsitters = new ArrayList<>();
 
 }
