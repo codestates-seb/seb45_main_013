@@ -82,9 +82,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     private String delegateAccessToken(Member member, List<String> authorities){
 
         Map<String,Object> claims = new HashMap<>();
-        claims.put("username", member.getEmail());
+        claims.put("email", member.getEmail());
         claims.put("roles", member.getRoles());
-        claims.put("nickName", member.getNickName());
+//        claims.put("nickName", member.getNickName());
         claims.put("id", member.getMemberId());
 
         String subject = member.getEmail();
@@ -112,9 +112,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 .scheme("http")
 //                .host("petmily.shop")
                 .host("localhost")
-//                .port(80)
+                .port(3000)
 //                .path("/")
-                .path("/receive-token.html")
+//                .path("/receive-token.html")
                 .queryParams(queryParams)
                 .build()
                 .toUri();
