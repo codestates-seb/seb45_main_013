@@ -184,8 +184,6 @@ public class MemberService {
         Member member = findVerifiedMember(memberId);
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
 
-        List<MemberFavoritePetsitter> favoritePetSitters = member.getFavoritePetsitters();
-
         // 이미 찜한 경우 찜하기 취소
         if (isFavorite(member, petsitter)) {
             removeFavorite(member, petsitter);
