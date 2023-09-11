@@ -9,7 +9,9 @@ import javax.persistence.*;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -68,5 +70,5 @@ public class Petsitter {
     }
 
     @OneToMany(mappedBy = "petsitter", cascade = CascadeType.PERSIST)
-    private List<MemberFavoritePetsitter> favoritedByMembers = new ArrayList<>();
+    private Set<MemberFavoritePetsitter> favoritedByMembers = new HashSet<>();
 }

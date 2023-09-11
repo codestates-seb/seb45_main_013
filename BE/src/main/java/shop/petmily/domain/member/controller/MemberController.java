@@ -120,7 +120,7 @@ public class MemberController {
     }
 
     // 찜 기능
-    @PostMapping("/favorite")
+    @PatchMapping("/favorite")
     public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
                                             @RequestParam Long petsitterId) {
         memberService.toggleFavorite(memberId, petsitterId);
