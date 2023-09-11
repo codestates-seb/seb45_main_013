@@ -83,7 +83,7 @@ public class PetsitterQueryDsl {
                 .where(
                         petsitter.petsitterId.eq(requestPetsitter.getPetsitterId()),
                         petsitter.possibleDay.startsWith(possibleDay),
-                        petsitter.possiblePetType.eq(possiblePetType).or(petsitter.possiblePetType.eq(Petsitter.PossiblePetType.PET_ALL)),
+                        petsitter.possiblePetType.eq(possiblePetType),
                         petsitter.possibleLocation.any().eq(possibleLocation),
                         petsitter.possibleTimeStart.loe(reservationTimeStart),
                         petsitter.possibleTimeEnd.goe(reservationTimeEnd)
