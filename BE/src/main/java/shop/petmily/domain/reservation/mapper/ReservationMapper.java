@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Mapper(componentModel = "Spring")
 public interface ReservationMapper {
 
@@ -48,13 +47,6 @@ public interface ReservationMapper {
 
         return reservation;
     }
-
-//    @Mapping(source = "memberId", target = "member.memberId")
-//    @Mapping(source = "petsitterId", target = "petsitter.petsitterId")
-//    Reservation reservationCreateDtoToRservation(ReservationCreateDto reservationCreateDto);
-
-//    @Mapping(source = "memberId", target = "member.memberId")
-//    Reservation reservationPatchDtoToReservation(ReservationPatchDto reservationPatchDto);
 
     default ReservationResponseDto reservationToReservationResponseDto(Reservation reservation){
         ReservationResponseDto reservationResponseDto = new ReservationResponseDto();
@@ -131,4 +123,11 @@ public interface ReservationMapper {
         reseponseDto.setReviewCount(petsitter.getReviewCount());
         return reseponseDto;
     }
+
+    //    @Mapping(source = "memberId", target = "member.memberId")
+//    @Mapping(source = "petsitterId", target = "petsitter.petsitterId")
+//    Reservation reservationCreateDtoToRservation(ReservationCreateDto reservationCreateDto);
+
+    //    @Mapping(source = "memberId", target = "member.memberId")
+//    Reservation reservationPatchDtoToReservation(ReservationPatchDto reservationPatchDto);
 }

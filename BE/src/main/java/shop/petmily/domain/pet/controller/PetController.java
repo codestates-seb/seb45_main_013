@@ -31,22 +31,20 @@ public class PetController {
 
     @PostMapping
     public ResponseEntity postPet(@ModelAttribute PetPostDto petPostDto,
-                                  @RequestPart(required = false) MultipartFile file,
                                   @LoginMemberId Long memberId){
         petPostDto.setMemberId(memberId);
-        Pet pet = service.createPet(mapper.PetPostDtoToPet(petPostDto), file);
+        Pet pet = service.createPet(mapper.PetPostDtoToPet(petPostDto), petPostDto.getFile());
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.CREATED);
     }
 
     @PatchMapping(value = "/{pet_id}")
     public ResponseEntity patchPet(@PathVariable ("pet_id") @Positive long petId,
                                    @ModelAttribute PetPatchDto petPatchDto,
-                                   @RequestPart(required = false) MultipartFile file,
                                    @LoginMemberId Long memberId){
         petPatchDto.setMemberId(memberId);
         petPatchDto.setPetId(petId);
 
-        Pet pet = service.updatePet(mapper.PetPatchDtoToPet(petPatchDto), file);
+        Pet pet = service.updatePet(mapper.PetPatchDtoToPet(petPatchDto), petPatchDto.getFile());
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
     }
 
