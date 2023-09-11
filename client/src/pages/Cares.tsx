@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { IUser } from 'store/userSlice';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CareCard from '@components/buttons/Carecard';
+import CareCard from '@components/Carecard';
 import { getCookieValue } from 'hooks/getCookie';
 
 const Cares = () => {
   const [filter, setFilter] = useState('전체');
   const apiUrl = process.env.REACT_APP_API_URL;
   const { memberId: id } = useParams();
+  const navigate = useNavigate();
 
   const filters = ['전체', '예정', '완료'];
 
@@ -18,9 +19,16 @@ const Cares = () => {
   const [reservations, setReservations] = useState<any[]>([]);
 
   console.log(reservations);
+
   const handleFilter = (e: any) => {
     setFilter(e.target.innerText);
   };
+  useEffect(() => {
+    if (!isLogin || (id && memberId !== +id)) {
+      alert('권한이 없습니다.');
+      navigate('/');
+    }
+  }, []);
 
   useEffect(() => {
     const accessToken = getCookieValue('access_token');
@@ -53,9 +61,11 @@ const Cares = () => {
           ))}
         </FilterContainer>
         <CareCardContainer>
-          {Array.isArray(reservations) &&
-            reservations.length > 0 &&
-            reservations.map((reservation) => <CareCard key={reservation.reservationId} reservation={reservation} />)}
+          {Array.isArray(reservations) && reservations.length > 0 ? (
+            reservations.map((reservation) => <CareCard key={reservation.reservationId} reservation={reservation} />)
+          ) : (
+            <div>등록된 예약이 없습니다.</div>
+          )}
         </CareCardContainer>
       </CareContainer>
     </MainContainer>
@@ -95,5 +105,4 @@ const CareCardContainer = styled.div`
   flex-direction: column;
   padding-top: 16px;
   gap: 16px;
-  overflow-y: auto;
 `;

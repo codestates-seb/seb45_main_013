@@ -1,30 +1,10 @@
-import axios from 'axios';
-import { getCookieValue } from 'hooks/getCookie';
-import { login, setUser } from 'store/userSlice';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Header = () => {
-  const apiUrl = process.env.REACT_APP_API_URL;
-  const dispatch = useDispatch();
-
   const { isLogin } = useSelector((state: any) => state.user);
 
-  useEffect(() => {
-    const accessToken = getCookieValue('access_token');
-
-    if (accessToken) {
-      axios
-        .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then((res) => {
-          dispatch(login());
-          dispatch(setUser(res.data));
-        })
-        .catch((error) => console.log(error));
-    }
-  }, [isLogin]);
   return (
     <Container>
       <Link to="/">

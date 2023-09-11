@@ -53,6 +53,7 @@ const EditUserProfile = () => {
 
   const onSubmit = async (data: IEditUser) => {
     const token = getCookieValue('access_token');
+
     console.log(JSON.stringify(data));
 
     const formData = new FormData();
@@ -77,7 +78,6 @@ const EditUserProfile = () => {
     });
 
     try {
-      console.log(token);
       const response = await axios.patch(`${apiUrl}/members/${memberId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -136,7 +136,7 @@ const EditUserProfile = () => {
   return (
     <>
       <PageTitle>회원 정보 수정</PageTitle>
-      <MainContainer>
+       <MainContainer>
         <UploadProfileImg currentImageUrl={photo} setImageFile={handleImageFileChange} />
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>
