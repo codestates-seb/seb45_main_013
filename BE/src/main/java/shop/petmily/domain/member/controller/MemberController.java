@@ -25,7 +25,6 @@ import shop.petmily.global.utils.UriCreator;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
