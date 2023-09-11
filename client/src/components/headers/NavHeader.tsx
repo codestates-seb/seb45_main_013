@@ -5,13 +5,13 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
-import { IUser, login, setUser } from 'store/userSlice';
+import { IUser, deleteUser, login, setUser } from 'store/userSlice';
 
 const NavHeader = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useDispatch();
-  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
-
+  const { isLogin, memberId } = useSelector((state: IUser) => state.user);
+  console.log('로그인: ', isLogin);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,6 +40,7 @@ const NavHeader = () => {
 
   useEffect(() => {
     const accessToken = getCookieValue('access_token');
+
     if (accessToken) {
       axios
         .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
@@ -47,7 +48,12 @@ const NavHeader = () => {
           dispatch(login());
           dispatch(setUser(res.data));
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          dispatch(deleteUser());
+          console.log(error);
+        });
+    } else if (!accessToken) {
+      dispatch(deleteUser());
     }
   }, [isLogin]);
 
@@ -116,7 +122,6 @@ const TopHeader = styled.div`
 const NotiUserContainer = styled.nav`
   display: flex;
   gap: 12px;
-  cursor: pointer;
 `;
 
 const NotiButton = styled.button`
@@ -130,6 +135,7 @@ const NotiButton = styled.button`
 const UserButton = styled.button`
   border: none;
   background-color: white;
+  cursor: pointer;
 `;
 
 const LoginNavModal = styled.nav`

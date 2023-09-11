@@ -30,8 +30,7 @@ const StyledRating = styled(Rating)({
   },
 });
 
-export default function CustomizedRating() {
-  const [value, setValue] = useState<number | null>(5);
+export default function CustomizedRating({ value, setValue }: any) {
   const [hover, setHover] = useState(-1);
 
   return (

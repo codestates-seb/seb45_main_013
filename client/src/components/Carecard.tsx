@@ -1,9 +1,12 @@
 import { IUser } from 'store/userSlice';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+
+const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 const CareCard = ({ reservation }: any) => {
-  const { petsitterBoolean } = useSelector((state: IUser) => state.user);
+  const { memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const [year, month, day] = reservation.reservationDay.split('-');
 
@@ -13,24 +16,37 @@ const CareCard = ({ reservation }: any) => {
         <div>
           <PetsitterContainer>
             <PetsitterInfo>
-              <div>{reservation.name}</div>
-              <div>{petsitterBoolean ? '펫시터님' : '고객님'}</div>
+              <div>{petsitterBoolean ? reservation.name : reservation.petsitterName}</div>
+              <div>{petsitterBoolean ? '고객님' : '펫시터님'}</div>
             </PetsitterInfo>
           </PetsitterContainer>
           <PetInfo>
-            {reservation.pets.map((pet: any) => (
-              <div key={pet.petId}>{pet.name}</div>
-            ))}
+            <label htmlFor="petName">맡기실 펫 :</label>
+            <PetName id="petName">
+              {reservation.pets.map((pet: any) => (
+                <div key={pet.petId}>{pet.name}</div>
+              ))}
+            </PetName>
           </PetInfo>
           <PlaceTimeWrapper>
-            <div>{reservation.location}</div>
-            <div>
-              {year}.{month}.{day} {reservation.reservationTimeStart} ~ {year}.{month}.{day}{' '}
-              {reservation.reservationTimeEnd}
-            </div>
+            <Wrapper>
+              <label htmlFor="address">주소 :</label>
+              <div id="address">{reservation.address}</div>
+            </Wrapper>
+            <Wrapper>
+              <label htmlFor="time">예약시간 :</label>
+              <div id="time">
+                {year.split('20')[1]}.{month}.{day} {reservation.reservationTimeStart.slice(0, 5)} ~{' '}
+                {year.split('20')[1]}.{month}.{day} {reservation.reservationTimeEnd.slice(0, 5)}
+              </div>
+            </Wrapper>
           </PlaceTimeWrapper>
         </div>
-        <ImgDiv />
+        {reservation.photo ? (
+          <img src={reservation.photo.replace(/https:\/\/bucketUrl/g, `${bucketUrl}`)} alt="img" />
+        ) : (
+          <ImgDiv />
+        )}
       </FirstLine>
       <SecondLine>
         <ButtonContainer>
@@ -60,7 +76,7 @@ const CareCard = ({ reservation }: any) => {
           ) : !petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
               <ActiveButton>케어일지</ActiveButton>
-              <ActiveButton>후기</ActiveButton>
+              <ActiveLink to={`/cares/${memberId}/${reservation.reservationId}/review`}>후기</ActiveLink>
             </>
           ) : null}
         </ButtonContainer>
@@ -97,7 +113,6 @@ const PetsitterInfo = styled.div`
   display: flex;
   gap: 4px;
   align-items: flex-end;
-
   div:nth-child(1) {
     ${(props) => props.theme.fontSize.s16h24}
   }
@@ -107,19 +122,41 @@ const PetsitterInfo = styled.div`
     color:${(props) => props.theme.textColors.gray40}
   }
 `;
+
 const PetInfo = styled.div`
-  > div {
-    ${(props) => props.theme.fontSize.s12h18}
+  display: flex;
+  gap: 4px;
+  > label {
+    ${({ theme }) => theme.fontSize.s14h21}
   }
+  > div {
+    ${({ theme }) => theme.fontSize.s14h21}
+  }
+`;
+
+const PetName = styled.div`
+  display: flex;
+  ${({ theme }) => theme.fontSize.s12h18}
+  gap: 8px;
 `;
 
 const PlaceTimeWrapper = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  > label {
+    ${({ theme }) => theme.fontSize.s14h21}
+  }
 
   > div {
-    ${(props) => props.theme.fontSize.s12h18}
-    color: ${(props) => props.theme.textColors.gray40}
+    color: ${({ theme }) => theme.textColors.gray40};
+    ${({ theme }) => theme.fontSize.s12h18}
   }
 `;
 
@@ -150,6 +187,31 @@ const ActiveButton = styled.button`
   border-radius: 4px;
   padding: 4px 8px;
   border: none;
-  ${(props) => props.theme.fontSize.s14h21}
+  ${({ theme }) => theme.fontSize.s14h21}
   font-family:inherit;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.subBlue};
+  }
+  &:active {
+    background-color: ${({ theme }) => theme.colors.darkBlue};
+    box-shadow: ${({ theme }) => theme.shadow.inset};
+  }
+`;
+
+const ActiveLink = styled(Link)`
+  color: white;
+  cursor: pointer;
+  ${({ theme }) => theme.fontSize.s14h21}
+  background-color: ${({ theme }) => theme.colors.mainBlue};
+  border-radius: 4px;
+  padding: 4px 8px;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.subBlue};
+  }
+  &:active {
+    background-color: ${({ theme }) => theme.colors.darkBlue};
+    box-shadow: ${({ theme }) => theme.shadow.inset};
+  }
 `;

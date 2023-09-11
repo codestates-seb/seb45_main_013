@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
+const BucketUrl = process.env.REACT_APP_BUCKET_URL;
+
 const UploadProfileImg = ({ setImageFile, currentImageUrl }: any) => {
   const [previewImage, setPreviewImage] = useState<string | null>(currentImageUrl);
   const fileInputRef = React.createRef<HTMLInputElement>();
 
   useEffect(() => {
-    setPreviewImage(currentImageUrl);
+    setPreviewImage(currentImageUrl.replace(/https:\/\/bucketUrl/g, `${BucketUrl}`));
   }, [currentImageUrl]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
