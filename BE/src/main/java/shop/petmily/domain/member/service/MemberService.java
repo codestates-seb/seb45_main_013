@@ -204,10 +204,7 @@ public class MemberService {
             member.getFavoritePetsitters().add(favorite);
             favoriteRepository.save(favorite);
         }
-        if (favorite != null) {
-            favoriteRepository.delete(favorite);
-        }
-        memberRepository.save(member);
+        favoriteRepository.delete(favorite);
     }
 }
 
