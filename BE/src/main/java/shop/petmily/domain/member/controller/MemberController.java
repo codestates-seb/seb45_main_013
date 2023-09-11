@@ -52,7 +52,7 @@ public class MemberController {
     @PatchMapping(value = "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
-                                      @Valid @ModelAttribute MemberPatchRequestDto requestBody) throws IOException {
+                                      @Valid @ModelAttribute MemberPatchRequestDto requestBody) {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
 
@@ -65,7 +65,7 @@ public class MemberController {
 
     @PatchMapping("/{member-id}/photo")
     public ResponseEntity photoDeleteMember(@PathVariable ("member-id") @Positive long memberId,
-                                         @LoginMemberId Long loginMemberId) throws IOException {
+                                            @LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
         memberService.photoDelete(findMember.getMemberId());

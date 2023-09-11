@@ -85,4 +85,11 @@ public class Member extends Auditable {
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<MemberFavoritePetsitter> favoritePetsitters = new ArrayList<>();
 
+    public void setRoles(List<String> roles) {
+        this.roles = new ArrayList<>(roles);
+    }
+
+    public void setPetsitterBoolean(boolean petsitterBoolean) {
+        this.petsitterBoolean = petsitterBoolean;
+    }
 }
