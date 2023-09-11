@@ -3,8 +3,8 @@ package shop.petmily.domain.review.Dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,4 +28,6 @@ public class ReviewPatchDto {
     private Integer star;
 
     private List<String> photos;
+
+    private List<MultipartFile> file;
 }
