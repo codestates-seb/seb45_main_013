@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { IUser } from 'store/userSlice';
 import styled from 'styled-components';
 
 interface NavBarButtonProps {
