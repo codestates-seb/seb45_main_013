@@ -1,46 +1,72 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { IUser } from 'store/userSlice';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import CareCard from '@components/Carecard';
+import { getCookieValue } from 'hooks/getCookie';
 
 const Cares = () => {
   const [filter, setFilter] = useState('전체');
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const { memberId: id } = useParams();
+  const navigate = useNavigate();
 
-  console.log(filter);
+  const filters = ['전체', '예정', '완료'];
+
+  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
+  const [reservations, setReservations] = useState<any[]>([]);
+
+  console.log(reservations);
+
   const handleFilter = (e: any) => {
     setFilter(e.target.innerText);
   };
+  useEffect(() => {
+    if (!isLogin || (id && memberId !== +id)) {
+      alert('권한이 없습니다.');
+      navigate('/');
+    }
+  }, []);
+
+  useEffect(() => {
+    const accessToken = getCookieValue('access_token');
+
+    if (isLogin && id && memberId === +id) {
+      axios
+        .get(
+          `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=1&size=10${
+            filter === '예정' ? '&condition=expected' : filter === '완료' ? '&condition=finish' : ''
+          }`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        )
+        .then((res) => setReservations(res.data.reservations))
+        .catch((error) => console.log(error));
+    }
+  }, [filter]);
+
   return (
     <MainContainer>
       <CareContainer>
         <FilterContainer>
-          <FilterButtonStyle onClick={handleFilter}>전체</FilterButtonStyle>
-          <FilterButtonStyle onClick={handleFilter}>예정</FilterButtonStyle>
-          <FilterButtonStyle onClick={handleFilter}>완료</FilterButtonStyle>
+          {filters.map((el, index) => (
+            <FilterButtonStyle key={index} onClick={handleFilter} $filter={filter === el}>
+              {el}
+            </FilterButtonStyle>
+          ))}
         </FilterContainer>
-        <CareCardConatainer>
-          <CareCard>
-            <FirstLine>
-              <PetsitterContainer>
-                <ImgDiv></ImgDiv>
-                <PetsitterInfo>
-                  <div>홍길동 펫시터님</div>
-                </PetsitterInfo>
-              </PetsitterContainer>
-              <Pets>나비, 백구</Pets>
-            </FirstLine>
-            <SecondLine>
-              <PlaceTimeWrapper>
-                <div>서울 강남구 테헤란로 415 8층</div>
-                <div>23년 8월 12일 9시 ~ 23년 8월 12일 18시</div>
-              </PlaceTimeWrapper>
-            </SecondLine>
-            <ThirdLine>
-              <ButtonContainer>
-                <ApplicationButton>예약신청</ApplicationButton>
-                <CancelButton>취소하기</CancelButton>
-              </ButtonContainer>
-            </ThirdLine>
-          </CareCard>
-        </CareCardConatainer>
+        <CareCardContainer>
+          {Array.isArray(reservations) && reservations.length > 0 ? (
+            reservations.map((reservation) => <CareCard key={reservation.reservationId} reservation={reservation} />)
+          ) : (
+            <div>등록된 예약이 없습니다.</div>
+          )}
+        </CareCardContainer>
       </CareContainer>
     </MainContainer>
   );
@@ -50,113 +76,33 @@ export default Cares;
 
 const MainContainer = styled.main`
   height: 100%;
-  background-color: white;
   padding: 12px;
+  background-color: white;
 `;
 
 const CareContainer = styled.div`
-  padding-top: 24px;
   display: flex;
   flex-direction: column;
+  padding-top: 24px;
 `;
 
 const FilterContainer = styled.div`
   display: flex;
-
   gap: 8px;
 `;
 
-const FilterButtonStyle = styled.div`
+const FilterButtonStyle = styled.div<{ $filter: boolean | undefined }>`
   padding: 4px 8px;
-  background-color: red;
+  border: ${({ theme, $filter }) => ($filter ? 'none' : `1px solid ${theme.colors.mainBlue}`)};
   border-radius: 4px;
-`;
-
-const CareCardConatainer = styled.div`
-  padding-top: 16px;
-`;
-
-const CareCard = styled.div`
-  padding: 12px;
-  border: 1px solid ${(props) => props.theme.lineColors.coolGray80};
-  border-radius: 8px;
-`;
-
-const FirstLine = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const PetsitterContainer = styled.div`
-  display: flex;
-  gap: 4px;
-`;
-
-const ImgDiv = styled.div`
-  background-color: ${(props) => props.theme.textColors.primary};
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-`;
-
-const PetsitterInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  div:nth-child(1) {
-    ${(props) => props.theme.fontSize.s16h24}
-  }
-`;
-const Pets = styled.div`
-  ${(props) => props.theme.fontSize.s16h24}
-`;
-
-const SecondLine = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
-const PlaceTimeWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  div:nth-child(1) {
-    text-align: right;
-    ${(props) => props.theme.fontSize.s12h18}
-  }
-  div:nth-child(2) {
-    text-align: right;
-    ${(props) => props.theme.fontSize.s12h18}
-  }
-`;
-
-const ThirdLine = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 4px;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const ApplicationButton = styled.div`
-  background-color: white;
-  padding: 4px 8px;
-  border: 1px solid ${(props) => props.theme.colors.mainBlue};
-  border-radius: 4px;
-  font-family: inherit;
-  ${(props) => props.theme.fontSize.s14h21}
-`;
-
-const CancelButton = styled.button`
+  color: ${({ $filter }) => ($filter ? 'white' : 'black')};
+  background-color: ${({ theme, $filter }) => ($filter ? theme.colors.mainBlue : 'white')};
   cursor: pointer;
-  background-color: ${(props) => props.theme.colors.mainBlue};
-  color: white;
-  border-radius: 4px;
-  padding: 4px 8px;
-  border: none;
-  ${(props) => props.theme.fontSize.s14h21}
-  font-family:inherit;
+`;
+
+const CareCardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+  gap: 16px;
 `;

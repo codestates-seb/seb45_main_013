@@ -5,66 +5,27 @@ import { getCookieValue } from 'hooks/getCookie';
 import NavBarButton from '../buttons/NavBarButton';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IUser, login, setUser } from 'modules/userSlice';
-// * 디자인 수정, CSS 변경, Arr로 관리, 함수 분리
-const apiUrl = process.env.REACT_APP_API_URL;
+import { IUser, deleteUser, login, setUser } from 'store/userSlice';
 
 const NavHeader = () => {
   const dispatch = useDispatch();
-  const accessToken = getCookieValue('access_token');
-  const { isLogin, memberId } = useSelector((state: IUser) => state.login);
-
-  const NavItem = [
-    {
-      text: '홈',
-      link: '/',
-    },
-    {
-      text: '예약하기',
-      link: '/reservation',
-    },
-    {
-      text: '예약현황',
-      link: `/cares/${memberId}`,
-    },
-    {
-      text: '이용후기',
-      link: '/reviews',
-    },
-  ];
-
-  // 모달
+  const { isLogin, memberId } = useSelector((state: IUser) => state.user);
+  console.log('로그인: ', isLogin);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
+
+  const NavItem = [
+    { text: '홈', link: '/' },
+    { text: '예약하기', link: '/reservation' },
+    { text: '예약현황', link: `/cares/${memberId}` },
+    { text: '이용후기', link: '/reviews' },
+  ];
 
   const handleOutsideClick = (e: MouseEvent) => {
     if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target as Node)) {
       setIsModalOpen(false);
     }
   };
-
-  // 로그인 확인
-  const handleGetToken = async () => {
-    try {
-      if (accessToken) {
-        const result = axios.get(`${apiUrl}/members/my-page`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (result) {
-          dispatch(login());
-          dispatch(setUser(result));
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (accessToken) {
-      handleGetToken();
-    }
-  }, []);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -74,6 +35,25 @@ const NavHeader = () => {
       window.removeEventListener('click', handleOutsideClick);
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    const accessToken = getCookieValue('access_token');
+
+    if (accessToken) {
+      axios
+        .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
+        .then((res) => {
+          dispatch(login());
+          dispatch(setUser(res.data));
+        })
+        .catch((error) => {
+          dispatch(deleteUser());
+          console.log(error);
+        });
+    } else if (!accessToken) {
+      dispatch(deleteUser());
+    }
+  }, [isLogin]);
 
   return (
     <Container>
@@ -136,7 +116,7 @@ const TopHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  align-items: center;
 `;
 
 const NotiUserContainer = styled.nav`
@@ -145,6 +125,8 @@ const NotiUserContainer = styled.nav`
 `;
 
 const NotiButton = styled.button`
+  width: 24px;
+  height: 24px;
   border: none;
   background-color: white;
   cursor: pointer;
@@ -154,6 +136,7 @@ const UserButton = styled.button`
   border: none;
   cursor: pointer;
   background-color: white;
+  cursor: pointer;
 `;
 
 const LoginNavModal = styled.nav`
@@ -173,6 +156,6 @@ const LoginNavModal = styled.nav`
 const NavBar = styled.nav`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
+  justify-content: space-around;
 `;

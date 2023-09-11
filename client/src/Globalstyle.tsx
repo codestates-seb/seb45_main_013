@@ -18,6 +18,9 @@ const GlobalStyle = createGlobalStyle`
         background-color: #F5F6F8;
         font-family: 'Noto Sans KR', Roboto, sans-serif;
     }
+    a {
+        text-decoration: none;
+    }
 
 `;
 

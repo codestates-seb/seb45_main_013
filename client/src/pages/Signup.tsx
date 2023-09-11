@@ -1,30 +1,39 @@
 import styled, { keyframes } from 'styled-components';
 import { ErrorMessage, SubmitButtonStyle } from './Login';
-import GoogleOAuthButton from '../components/buttons/OAuthButton';
-import UploadProfileImg from '../components/UploadProfileImg';
+import GoogleOAuthButton from '@components/buttons/OAuthButton';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { Modal, Sheet } from '@mui/joy';
 import DaumPostcode from 'react-daum-postcode';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-interface IFormSignpInputs {
-  name: string;
-  phone: number;
-  address: string;
-  detailAddress: string;
-  email: string;
-  nickName: string;
-  password: string;
-  passwordConfirm: string;
-  petsitterBoolean: boolean;
-}
+const apiUrl = process.env.REACT_APP_API_URL;
+
+const schema = yup.object().shape({
+  name: yup.string().required('이름은 필수입니다.'),
+  phone: yup.string().required('전화번호는 필수입니다.'),
+  address: yup.string().required('주소는 필수입니다.'),
+  detailAddress: yup.string().required('상세주소는 필수입니다.'),
+  email: yup.string().email('이메일 형식을 지켜주세요.').required('ID는 필수입니다.'),
+  nickName: yup.string().required('닉네임은 필수입니다.'),
+  password: yup
+    .string()
+    .min(8, '비밀번호는 8자리 이상이어야 합니다.')
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)/, '최소 1개의 영문자와 1개의 숫자를 반드시 포함해야 합니다. ')
+    .required('비밀번호는 필수입니다.'),
+  passwordConfirm: yup.lazy(() => {
+    return yup.string().oneOf([yup.ref('password'), ''], '비밀번호가 서로 다릅니다.');
+  }),
+  photo: yup.string(),
+  petsitterBoolean: yup.boolean(),
+});
+type IFormSignupInputs = yup.InferType<typeof schema>;
 
 const Signup = () => {
-  const apiUrl = process.env.REACT_APP_API_URL;
-
-  const naviagate = useNavigate();
+  const navigate = useNavigate();
   const [isSignupLoading, setIsSignupLoading] = useState(false);
 
   const {
@@ -33,7 +42,7 @@ const Signup = () => {
     setError,
     clearErrors,
     formState: { errors },
-  } = useForm<IFormSignpInputs>();
+  } = useForm<IFormSignupInputs>({ resolver: yupResolver(schema) });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -62,7 +71,7 @@ const Signup = () => {
     setIsModalOpen(false);
   };
 
-  const onSubmit = async (data: IFormSignpInputs) => {
+  const onSubmit = async (data: IFormSignupInputs) => {
     setIsSignupLoading(true);
 
     const { name, phone, address, detailAddress, email, nickName, password, petsitterBoolean } = data;
@@ -75,7 +84,7 @@ const Signup = () => {
     }
 
     try {
-      const data = await axios.post(`${apiUrl}/members`, {
+      const { data } = await axios.post(`${apiUrl}/members`, {
         name,
         phone,
         address: `${address} ${detailAddress}`,
@@ -84,29 +93,12 @@ const Signup = () => {
         password,
         petsitterBoolean,
       });
-      if (data.status === 200) {
-        naviagate('/login');
+      if (data.status === 201) {
+        alert('가입을 축하합니다.');
+        navigate('/login');
       }
     } catch (error: any) {
-      const { fieldErrors } = error.response.data;
-
-      if (error?.response.status === 400) {
-        for (let i = 0; i < fieldErrors.length; i++) {
-          if (fieldErrors[i].field === 'name') {
-            setError('name', { type: 'serverError', message: fieldErrors[i].reason });
-          } else if (fieldErrors[i].field === 'password') {
-            setError('password', { type: 'serverError', message: fieldErrors[i].reason });
-          } else if (fieldErrors[i].field === 'phone') {
-            setError('phone', { type: 'serverError', message: fieldErrors[i].reason });
-          } else if (fieldErrors[i].field === 'nickName') {
-            setError('nickName', { type: 'serverError', message: fieldErrors[i].reason });
-          } else if (fieldErrors[i].field === 'email') {
-            setError('email', { type: 'serverError', message: fieldErrors[i].reason });
-          } else if (fieldErrors[i].field === 'address') {
-            setError('address', { type: 'serverError', message: fieldErrors[i].reason });
-          }
-        }
-      }
+      console.log(error);
     }
     setIsSignupLoading(false);
   };
@@ -118,113 +110,79 @@ const Signup = () => {
           <div>We&apos;re Petmily!</div>
           <div>회원가입</div>
         </TitleContainer>
-        <ImgContainer>
-          <UploadProfileImg />
-        </ImgContainer>
-        <InputForm onSubmit={handleSubmit(onSubmit)}>
-          <div>
+        <ImgContainer>{/* <UploadProfileImg /> */}</ImgContainer>
+        <InputFormContainer onSubmit={handleSubmit(onSubmit)}>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="이름"
               type="text"
               {...register('name', { required: true })}
-              error={errors.name?.type}
-            ></SignupInputStyle>
-            {errors.name?.type === 'required' ? (
-              <ErrorMessage>이름을 입력해주세요.</ErrorMessage>
-            ) : (
-              <ErrorMessage>{errors.name?.message}</ErrorMessage>
-            )}
-          </div>
-          <div>
+              error={errors.name ? true : false}
+            />
+            {errors.name?.message && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
+          </InputFormWrapper>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="연락처"
               {...register('phone', { required: true })}
-              error={errors.phone?.type}
-            ></SignupInputStyle>
-            {errors.phone?.type === 'required' ? (
-              <ErrorMessage>연락처를 입력해주세요.</ErrorMessage>
-            ) : (
-              <ErrorMessage>{errors.phone?.message}</ErrorMessage>
-            )}
-          </div>
-          <div>
+              error={errors.phone ? true : false}
+            />
+            {errors.phone?.message && <ErrorMessage>{errors.phone?.message}</ErrorMessage>}
+          </InputFormWrapper>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="주소"
               value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
               {...register('address', { required: true })}
-              error={errors.address?.type}
               onClick={onToggleModal}
               onKeyDown={onToggleModal}
-            ></SignupInputStyle>
-            {errors.address?.type === 'required' ? (
-              <ErrorMessage>주소를 입력해주세요.</ErrorMessage>
-            ) : (
-              <ErrorMessage>{errors.address?.message}</ErrorMessage>
-            )}
-          </div>
-          <div>
+              error={errors.address ? true : false}
+            />
+            {errors.address?.message && <ErrorMessage>{errors.address?.message}</ErrorMessage>}
+          </InputFormWrapper>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="상세주소"
               {...register('detailAddress', { required: true })}
-              error={errors.detailAddress?.type}
-            ></SignupInputStyle>
-            {errors.detailAddress?.type === 'required' ? (
-              <ErrorMessage>상세주소를 입력해주세요.</ErrorMessage>
-            ) : (
-              <ErrorMessage>{errors.detailAddress?.message}</ErrorMessage>
-            )}
-          </div>
-          <div>
+              error={errors.detailAddress ? true : false}
+            />
+            {errors.detailAddress?.message && <ErrorMessage>{errors.detailAddress?.message}</ErrorMessage>}
+          </InputFormWrapper>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="이메일"
               type="email"
               {...register('email', { required: true })}
-              error={errors.email?.type}
-            ></SignupInputStyle>
-            {errors.email?.type === 'required' ? (
-              <ErrorMessage>이메일을 입력해주세요.</ErrorMessage>
-            ) : (
-              <ErrorMessage>{errors.email?.message}</ErrorMessage>
-            )}
-          </div>
-          <div>
+              error={errors.email ? true : false}
+            />
+            {errors.email?.message && <ErrorMessage>{errors.email?.message}</ErrorMessage>}
+          </InputFormWrapper>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="닉네임"
               {...register('nickName', { required: true })}
-              error={errors.nickName?.type}
-            ></SignupInputStyle>
-            {errors.nickName?.type === 'required' ? (
-              <ErrorMessage>닉네임을 입력해주세요.</ErrorMessage>
-            ) : (
-              <ErrorMessage>{errors.nickName?.message}</ErrorMessage>
-            )}
-          </div>
-          <div>
+              error={errors.nickName ? true : false}
+            />
+            {errors.nickName?.message && <ErrorMessage>{errors.nickName?.message}</ErrorMessage>}
+          </InputFormWrapper>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="비밀번호"
               type="password"
               {...register('password', { required: true })}
-              error={errors.password?.type}
-            ></SignupInputStyle>
-            {errors.password?.type === 'required' ? (
-              <ErrorMessage>비밀번호를 입력해주세요</ErrorMessage>
-            ) : (
-              <ErrorMessage>{errors.password?.message}</ErrorMessage>
-            )}
-          </div>
-          <div>
+              error={errors.password ? true : false}
+            />
+            {errors.password?.message && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
+          </InputFormWrapper>
+          <InputFormWrapper>
             <SignupInputStyle
               placeholder="비밀번호 확인"
               type="password"
               {...register('passwordConfirm', { required: true })}
-              error={errors.passwordConfirm?.type}
-            ></SignupInputStyle>
-            {errors.passwordConfirm?.type === 'required' ? (
-              <ErrorMessage>비밀번호 확인을 입력해주세요</ErrorMessage>
-            ) : errors.passwordConfirm?.type === 'dismatch' || errors.passwordConfirm?.type === 'serverError' ? (
-              <ErrorMessage>{errors.passwordConfirm?.message}</ErrorMessage>
-            ) : null}
-          </div>
+              error={errors.passwordConfirm ? true : false}
+            />
+            {errors.passwordConfirm?.message && <ErrorMessage>{errors.passwordConfirm?.message}</ErrorMessage>}
+          </InputFormWrapper>
           <CheckBoxWrapper>
             <CheckBoxLabel htmlFor="isPetsitter">펫시터로 가입하기</CheckBoxLabel>
             <input type="checkbox" id="isPetsitter" {...register('petsitterBoolean')} />
@@ -240,7 +198,7 @@ const Signup = () => {
             </div>
             <GoogleOAuthButton>Sign up with Google</GoogleOAuthButton>
           </ButtonContainer>
-        </InputForm>
+        </InputFormContainer>
       </SignupContainer>
       {isModalOpen && (
         <Modal
@@ -262,15 +220,16 @@ export default Signup;
 const MainContainer = styled.main`
   display: flex;
   justify-content: center;
-  height: 100%;
+  width: 100%;
   background-color: white;
 `;
+
 const SignupContainer = styled.div`
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 10%;
-  width: 280px;
+  margin-top: 100px;
+  width: 100%;
+  max-width: 360px;
 `;
 
 const TitleContainer = styled.div`
@@ -293,35 +252,33 @@ const ImgContainer = styled.div`
   padding: 36px;
 `;
 
-const InputForm = styled.form`
+const InputFormContainer = styled.form`
   display: flex;
   flex-direction: column;
   gap: 16px;
 `;
 
-const SignupInputStyle = styled.input<{ error: string | undefined }>`
+const InputFormWrapper = styled.div``;
+
+const SignupInputStyle = styled.input<{ error: boolean | null }>`
   width: 100%;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid
-    ${(props) =>
-      props.error === 'required' || props.error === 'dismatch' || props.error === 'serverError'
-        ? props.theme.colors.mainBlue
-        : props.theme.lineColors.coolGray80};
+  border: 1px solid;
+  border: 1px solid ${({ theme, error }) => (error ? 'red' : theme.lineColors.coolGray80)};
   padding: 8px;
-  ${(props) => props.theme.fontSize.s14h21}
+  ${({ theme }) => theme.fontSize.s14h21}
   font-family: inherit;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
-
   gap: 16px;
 `;
 const CheckBoxWrapper = styled.div`
-  padding-left: 4px;
   display: flex;
+  padding-left: 4px;
   gap: 8px;
 `;
 
@@ -331,15 +288,14 @@ const CheckBoxLabel = styled.label`
 `;
 
 const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  width: 18px;
-  height: 18px;
   top: 19px;
   left: 12px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 18px;
+  height: 18px;
 `;
 
 const spin = keyframes`
@@ -348,10 +304,10 @@ const spin = keyframes`
 `;
 
 const Spinner = styled.div`
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  border-top: 2px solid #ffffff;
   width: 100%;
   height: 100%;
+  border: 2px solid rgb(255 255 255 / 60%);
+  border-radius: 50%;
   animation: ${spin} 1.2s linear infinite;
+  border-top: 2px solid #fff;
 `;

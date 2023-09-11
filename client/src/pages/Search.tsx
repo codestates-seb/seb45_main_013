@@ -22,10 +22,10 @@ const SearchContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  overflow: auto;
   height: 100%;
   border: 1px solid black;
   background-color: #fefdff;
-  overflow: auto;
 `;
 
 const SearchHeader = styled.div`
@@ -39,13 +39,13 @@ const SearchTitleText = styled.div`
 `;
 
 const InputContainer = styled.div`
-  margin: 44px 40px 0 40px;
+  margin: 44px 40px 0;
 `;
 
 const SearchInput = styled.input``;
 
 const SearchBody = styled.div`
-  margin: 44px 40px 0 40px;
+  margin: 44px 40px 0;
 `;
 
 const ResultContainer = styled.div``;

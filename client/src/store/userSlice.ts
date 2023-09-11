@@ -1,22 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface IUser {
-  login: {
+  user: {
     isLogin: boolean;
     memberId: number;
     name: string;
-    phone: number;
+    phone: string;
     address: string;
     email: string;
     nickName: string;
     body: string;
     photo: string;
-    petsitterBoolean: boolean;
+    petsitterBoolean: string;
   };
 }
 
-export const loginSlice = createSlice({
-  name: 'login',
+export const userSlice = createSlice({
+  name: 'user',
   initialState: {
     isLogin: false,
     memberId: '',
@@ -59,5 +59,5 @@ export const loginSlice = createSlice({
   },
 });
 
-export const { login, setUser, deleteUser } = loginSlice.actions;
-export default loginSlice.reducer;
+export const { login, setUser, deleteUser } = userSlice.actions;
+export default userSlice.reducer;

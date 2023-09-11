@@ -2,30 +2,31 @@ import styled from 'styled-components';
 
 const GoogleOAuthButtonStyle = styled.button`
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  height: 32px;
-  padding-right: 28px;
-  padding-left: 12px;
-  border: 1px solid ${(props) => props.theme.textColors.gray40};
-  border-radius: 8px;
-  color: ${(props) => props.theme.textColors.gray60};
-  background-color: white;
+  align-items: center;
   width: 100%;
-  font-family: 'Noto Sans KR';
+  height: 32px;
+
+  border: 1px solid ${({ theme }) => theme.textColors.gray40};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.textColors.gray60};
+  background-color: white;
+  font-family: inherit;
+  padding-left: 12px;
+  padding-right: 80px;
 
   &:hover {
-    background-color: ${(props) => props.theme.textColors.primary};
+    background-color: ${({ theme }) => theme.textColors.primary};
   }
 
   &:active {
-    background-color: ${(props) => props.theme.textColors.gray50};
-    box-shadow: ${(props) => props.theme.shadow.inset};
+    background-color: ${({ theme }) => theme.textColors.gray50};
+    box-shadow: ${({ theme }) => theme.shadow.inset};
   }
 
   div {
-    color: ${(props) => props.theme.textColors.gray40};
-    ${(props) => props.theme.fontSize.s16h24};
+    color: ${({ theme }) => theme.textColors.gray40};
+    ${({ theme }) => theme.fontSize.s16h24};
   }
 `;
 

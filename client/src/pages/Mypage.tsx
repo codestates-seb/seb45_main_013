@@ -1,60 +1,47 @@
 import styled from 'styled-components';
-import { useState } from 'react';
-import MyPetmily from '../components/MyPetmily';
-// import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import MyPetmily from '@components/MyPetmily';
+import { useSelector } from 'react-redux';
+import { getCookieValue } from 'hooks/getCookie';
+import { IUser } from 'store/userSlice';
+import MyMenu from '@components/MyMenu';
+import MyPetsitterMenu from '@components/MyPetsitterMenu';
 
-// 폰트 사이즈, 웨이트 안먹힘
-// 아이콘 메뉴 간격
+// petsitterBoolean -> 펫시터 링크 설정
 
 const Mypage = () => {
-  //아이콘 메뉴 호버링
-  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+  //  수정
+  const { isLogin, name, petsitterBoolean, photo } = useSelector((state: IUser) => state.user);
 
-  const handleMouseOver = (itemId: number) => {
-    setHoveredItem(itemId);
-  };
+  console.log(petsitterBoolean);
 
-  const handleMouseOut = () => {
-    setHoveredItem(null);
-  };
+  useEffect(() => {
+    console.log(petsitterBoolean);
+  }, [photo]);
 
-  // const isLogin: boolean = useSelector((state) => state.login.isLogin);
-  // const username: string = useSelector((state) => state.login.username);
+  // 지우기
+  const token = getCookieValue('access_token');
+  console.log(token);
 
   return (
     <MypageContainer>
       <MyProfileContianer>
         <MyProfile>
-          <MyPhoto
-            src="https://brandsmkt.com/wp-content/uploads/2020/06/dog-lover-760x506-1-696x463.jpg"
-            alt="user profile image"
-          />
-          {/* <TextField>
-            {isLogin ? (
-              <>
-                <NameText>{`${username} 님`}</NameText>
-                <HelloText>안녕하세요!</HelloText>
-              </>
-            ) : (
-              <NameText>로그인 후 이용해주세요.</NameText>
-            )}
-          </TextField> */}
+          {isLogin && photo ? (
+            <MyPhoto src={photo} alt="user profile image" />
+          ) : (
+            <MyPhoto src="imgs/DefaultUser.svg" alt="default profile image" />
+          )}
+          <TextField>
+            <NameText>{`${name} 님`}</NameText>
+            <HelloText>안녕하세요!</HelloText>
+          </TextField>
         </MyProfile>
-        <EditLink href="mypage/edit">회원정보 수정</EditLink>
       </MyProfileContianer>
 
-      <MenuContainer>
-        {menuItems.map((item) => (
-          <MenuItem key={item.id} onMouseOver={() => handleMouseOver(item.id)} onMouseOut={handleMouseOut}>
-            <MenuImage
-              src={hoveredItem === item.id ? item.hoveredImage : item.originalImage}
-              alt={`Button ${item.id}`}
-            />
-            <Title>{item.title}</Title>
-          </MenuItem>
-        ))}
-      </MenuContainer>
-      <MyPetmily />
+      {/* 펫시터 불른 ->메뉴 컴포넌트 */}
+      {petsitterBoolean ? <MyPetsitterMenu /> : <MyMenu />}
+      {!petsitterBoolean && <MyPetmily />}
     </MypageContainer>
   );
 };
@@ -87,89 +74,22 @@ const MyPhoto = styled.img`
   border-radius: 50%;
 `;
 
-// const TextField = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-around;
-// `;
-
-// const NameText = styled.div`
-//   ${(props) => props.theme.fontSize.s20h30};
-//   font-weight: 600;
-// `;
-
-// const HelloText = styled.div`
-//   ${(props) => props.theme.fontSize.s16h24};
-//   font-weight: 600;
-//   display: flex;
-//   justify-content: space-between;
-// `;
-
-// 메뉴 컨테이너
-const MenuContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-top: 60px;
-`;
-
-const MenuItem = styled.button`
+const TextField = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  flex: 1;
-  border: none;
-  text-align: center;
-  cursor: pointer;
-  background-color: white;
-
-  &:hover {
-    color: ${(props) => props.theme.colors.mainBlue};
-  }
+  justify-content: space-around;
 `;
 
-const MenuImage = styled.img`
-  width: auto;
-  height: 24px;
+const NameText = styled.div`
+  ${(props) => props.theme.fontSize.s18h27};
+  font-weight: 600;
 `;
 
-// 호버 시 이미지 변화
-// 아이콘 바꾸기
-const menuItems = [
-  {
-    id: 1,
-    originalImage: 'imgs/Calendar.svg',
-    hoveredImage: 'imgs/CalendarBlue.svg',
-    title: '나의 예약',
-  },
-  {
-    id: 2,
-    originalImage: 'imgs/Diary.svg',
-    hoveredImage: 'imgs/DiaryBlue.svg',
-    title: '케어 일지',
-  },
-  {
-    id: 3,
-    originalImage: 'imgs/Heart.svg',
-    hoveredImage: 'imgs/HeartBlue.svg',
-    title: '회원정보 수정',
-  },
-];
-
-const Title = styled.span`
-  margin-top: 10px;
-  font-size: 14px;
-`;
-
-const EditLink = styled.a`
+const HelloText = styled.div`
+  ${(props) => props.theme.fontSize.s16h24};
+  font-weight: 600;
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-  padding-top: 20px;
-  color: ${(props) => props.theme.colors.mainBlue};
-  font-size: 14px;
-  text-decoration: underline;
-  cursor: pointer;
-  text-decoration-line: none;
+  justify-content: space-between;
 `;
 
 export default Mypage;

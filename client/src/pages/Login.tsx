@@ -1,16 +1,23 @@
 import styled, { keyframes } from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
-import GoogleOAuthButton from '../components/buttons/OAuthButton';
+import GoogleOAuthButton from '@components/buttons/OAuthButton';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from 'modules/userSlice';
+import { login } from 'store/userSlice';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-interface IFormLoginInputs {
-  email: string;
-  password: string;
-}
+const schema = yup.object().shape({
+  email: yup.string().email('이메일 형식을 지켜주세요.').required('ID는 필수입니다.'),
+  password: yup
+    .string()
+    .min(8, '비밀번호는 8자리 이상이어야 합니다.')
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)/, '최소 1개의 영문자와 1개의 숫자를 반드시 포함해야 합니다. ')
+    .required('비밀번호는 필수입니다.'),
+});
+type IFormLoginInputs = yup.InferType<typeof schema>;
 
 const Login = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -22,21 +29,37 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
-  } = useForm<IFormLoginInputs>();
+  } = useForm<IFormLoginInputs>({
+    resolver: yupResolver(schema),
+  });
 
   const onSubmit = async (data: IFormLoginInputs) => {
     setIsLoginLoading(true);
     const { email, password } = data;
     try {
-      const { data } = await axios.post(`${apiUrl}/auth/login`, { email, password });
-      document.cookie = `access_token=${data.accessToken}; path=/;`;
-      document.cookie = `refresh_token=${data.refreshToken}; path=/;`;
+      const { data, status } = await axios.post(`${apiUrl}/auth/login`, { email, password });
 
-      dispatch(login());
-      navigate('/');
-    } catch (error) {
+      if (status === 200) {
+        document.cookie = `access_token=${data.accessToken}; path=/;`;
+        document.cookie = `refresh_token=${data.refreshToken}; path=/;`;
+
+        dispatch(login());
+        navigate('/');
+      }
+    } catch (error: any) {
       console.log(error);
+
+      if (error.response.data.status === 400) {
+        for (let i = 0; i < error.response.data.length; i++) {
+          if (error.response.data.field === 'email') {
+            setError('email', { type: 'serverError', message: '이메일 형식에 맞지 않습니다.' });
+          } else if (error.response.data.field === 'password') {
+            setError('password', { type: 'serverError', message: '영어롸' });
+          }
+        }
+      }
     }
     setIsLoginLoading(false);
   };
@@ -47,22 +70,12 @@ const Login = () => {
         <img src="/imgs/Logo.svg" alt="logo" width="150px" height="48px" />
         <InputForm>
           <div>
-            <LoginInputStyle
-              type="text"
-              placeholder="아이디"
-              {...register('email', { required: true })}
-              error={errors.email?.type}
-            />
-            {errors.email?.type === '' && <ErrorMessage>아이디를 입력해주세요.</ErrorMessage>}
+            <LoginInputStyle type="email" placeholder="아이디" {...register('email', { required: true })} />
+            {errors.email?.message && <ErrorMessage>{errors.email?.message}</ErrorMessage>}
           </div>
           <div>
-            <LoginInputStyle
-              type="password"
-              placeholder="비밀번호"
-              {...register('password', { required: true })}
-              error={errors.password?.message}
-            />
-            {errors.password?.message === '' && <ErrorMessage>비밀번호를 입력해주세요.</ErrorMessage>}
+            <LoginInputStyle type="password" placeholder="비밀번호" {...register('password', { required: true })} />
+            {errors.password?.message && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
           </div>
           <div style={{ position: 'relative' }}>
             <SubmitButtonStyle type="submit">로 그 인</SubmitButtonStyle>
@@ -74,9 +87,7 @@ const Login = () => {
           </div>
           <GoogleOAuthButton>Log in with Google</GoogleOAuthButton>
         </InputForm>
-        <LinkContainer>
-          <Link to="/signup">회원가입하기</Link>
-        </LinkContainer>
+        <CustomLink to="/signup">회원가입하기</CustomLink>
       </LoginContainer>
     </MainContainer>
   );
@@ -84,10 +95,10 @@ const Login = () => {
 
 export default Login;
 
-const MainContainer = styled.div`
+const MainContainer = styled.main`
   display: flex;
   justify-content: center;
-  height: 100%;
+  width: 100%;
   background-color: white;
 `;
 
@@ -95,15 +106,14 @@ const LoginContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: absolute;
-  top: 25%;
-  width: 240px;
+  margin-top: 100px;
+  width: 100%;
+  max-width: 360px;
 `;
 
 const InputForm = styled.form`
   display: flex;
   flex-direction: column;
-
   justify-content: center;
   width: 100%;
   margin-top: 32px;
@@ -115,60 +125,55 @@ export const SubmitButtonStyle = styled.button`
   height: 32px;
   width: 100%;
   border-radius: 8px;
-  background-color: ${(props) => props.theme.colors.mainBlue};
+  background-color: ${({ theme }) => theme.colors.mainBlue};
   border: none;
   color: white;
-  ${(props) => props.theme.fontSize.s16h24};
-  font-family: 'inherit';
-  font-weight: ${(props) => props.theme.fontWeights.bold};
+  ${({ theme }) => theme.fontSize.s16h24};
+
+  font-weight: ${({ theme }) => theme.fontWeights.bold};
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.subBlue};
+    background-color: ${({ theme }) => theme.colors.subBlue};
   }
 
   &:active {
-    background-color: ${(props) => props.theme.colors.darkBlue};
-    box-shadow: ${(props) => props.theme.shadow.inset};
+    background-color: ${({ theme }) => theme.colors.darkBlue};
+    box-shadow: ${({ theme }) => theme.shadow.inset};
   }
 `;
 
-const LinkContainer = styled.div`
+const CustomLink = styled(Link)`
   margin-top: 12px;
-
-  a {
-    font-size: ${(props) => props.theme.fontSize.s14h21};
-    text-decoration-line: none;
-    color: ${(props) => props.theme.colors.mainBlue};
-  }
+  color: ${({ theme }) => theme.colors.mainBlue};
+  font-size: ${({ theme }) => theme.fontSize.s14h21};
+  text-decoration-line: none;
 `;
 
-const LoginInputStyle = styled.input<{ error: string | undefined }>`
+const LoginInputStyle = styled.input`
   width: 100%;
   height: 32px;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid
-    ${(props) => (props.error === 'required' ? props.theme.colors.mainBlue : props.theme.lineColors.coolGray80)};
-  ${(props) => props.theme.fontSize.s14h21};
+  border: 1px solid ${({ theme }) => theme.colors.mainBlue};
+  ${({ theme }) => theme.fontSize.s14h21};
 `;
 
 export const ErrorMessage = styled.p`
-  padding-left: 4px;
-  font-size: 10px;
   margin-top: 4px;
-  color: ${(props) => props.theme.colors.paleBlue};
+  padding-left: 4px;
+  color: ${({ theme }) => theme.colors.paleBlue};
+  font-size: 12px;
 `;
 
 const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  width: 18px;
-  height: 18px;
   top: 19px;
   left: 12px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 18px;
+  height: 18px;
 `;
 
 const spin = keyframes`
@@ -177,10 +182,10 @@ const spin = keyframes`
 `;
 
 const Spinner = styled.div`
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  border-top: 2px solid #ffffff;
   width: 100%;
   height: 100%;
+  border: 2px solid rgb(255 255 255 / 60%);
+  border-radius: 50%;
   animation: ${spin} 1.2s linear infinite;
+  border-top: 2px solid #fff;
 `;

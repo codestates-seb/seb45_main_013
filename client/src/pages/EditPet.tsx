@@ -7,7 +7,7 @@ import {
   InputLabelStyle,
   InputStyle,
 } from './RegisterPet';
-import UploadProfileImg from '../components/UploadProfileImg';
+// import UploadProfileImg from '../components/UploadProfileImg';
 import Button from '@mui/material/Button';
 import Textarea from '@mui/joy/Textarea';
 
@@ -17,7 +17,7 @@ const EditPet = () => {
       <PageTitle>Petmily 정보 수정</PageTitle>
 
       <MainContainer>
-        <UploadProfileImg />
+        {/* <UploadProfileImg /> */}
 
         <InputContainer>
           <RegisterInputWrapper>
