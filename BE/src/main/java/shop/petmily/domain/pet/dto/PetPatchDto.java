@@ -2,6 +2,7 @@ package shop.petmily.domain.pet.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @AllArgsConstructor
@@ -23,4 +24,6 @@ public class PetPatchDto {
     private String name;
 
     private Boolean neutering;
+
+    private MultipartFile file;
 }
