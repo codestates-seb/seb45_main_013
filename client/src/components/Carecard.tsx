@@ -43,9 +43,9 @@ const CareCard = ({ reservation }: any) => {
           </PlaceTimeWrapper>
         </div>
         {reservation.photo ? (
-          <img src={reservation.photo.replace(/https:\/\/bucketUrl/g, `${bucketUrl}`)} alt="img" />
+          <Photo src={reservation.photo.replace(/https:\/\/bucketUrl/g, `${bucketUrl}`)} alt="img" />
         ) : (
-          <ImgDiv />
+          <EmptyImgDiv />
         )}
       </FirstLine>
       <SecondLine>
@@ -59,9 +59,15 @@ const CareCard = ({ reservation }: any) => {
               <InActiveButton>예약확정</InActiveButton>
               <ActiveButton>취소하기</ActiveButton>
             </>
-          ) : petsitterBoolean && reservation.progess === 'RESERVATION_FINISHING' ? (
+          ) : petsitterBoolean && reservation.progress === 'RESERVATION_CANCELLED' ? (
             <>
-              <ActiveButton>케어일지</ActiveButton>
+              <InActiveButton>고객에 의해 취소</InActiveButton>
+            </>
+          ) : petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
+            <>
+              <ActiveLink to={`/cares/${reservation.petsitterId}/${reservation.reservationId}/journal`}>
+                케어일지
+              </ActiveLink>
             </>
           ) : null}
           {!petsitterBoolean && reservation.progress == 'RESERVATION_REQUEST' ? (
@@ -69,9 +75,13 @@ const CareCard = ({ reservation }: any) => {
               <InActiveButton>예약신청</InActiveButton>
               <ActiveButton>취소하기</ActiveButton>
             </>
-          ) : !petsitterBoolean && reservation.progess === 'RESERVATION_CONFIRM' ? (
+          ) : !petsitterBoolean && reservation.progress === 'RESERVATION_CONFIRM' ? (
             <>
               <InActiveButton>예약확정</InActiveButton>
+            </>
+          ) : !petsitterBoolean && reservation.progress === 'RESERVATION_CANCELLED' ? (
+            <>
+              <InActiveButton>펫시터에 의해 취소</InActiveButton>
             </>
           ) : !petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
@@ -102,7 +112,13 @@ const PetsitterContainer = styled.div`
   gap: 4px;
 `;
 
-const ImgDiv = styled.div`
+const Photo = styled.img`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+`;
+
+const EmptyImgDiv = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 50%;

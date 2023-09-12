@@ -29,7 +29,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm<IFormLoginInputs>({
     resolver: yupResolver(schema),
@@ -41,24 +40,20 @@ const Login = () => {
     try {
       const { data, status } = await axios.post(`${apiUrl}/auth/login`, { email, password });
 
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 1);
+
       if (status === 200) {
         document.cookie = `access_token=${data.accessToken}; path=/;`;
-        document.cookie = `refresh_token=${data.refreshToken}; path=/;`;
+        document.cookie = `refresh_token=${data.refreshToken}; expires=${expirationDate.toUTCString()}; path=/;`;
 
         dispatch(login());
         navigate('/');
       }
     } catch (error: any) {
       console.log(error);
-
-      if (error.response.data.status === 400) {
-        for (let i = 0; i < error.response.data.length; i++) {
-          if (error.response.data.field === 'email') {
-            setError('email', { type: 'serverError', message: '이메일 형식에 맞지 않습니다.' });
-          } else if (error.response.data.field === 'password') {
-            setError('password', { type: 'serverError', message: '영어롸' });
-          }
-        }
+      if (error.response.data.message === '이메일 또는 비밀번호가 일치하지 않습니다.') {
+        alert(error.response.data.message);
       }
     }
     setIsLoginLoading(false);
