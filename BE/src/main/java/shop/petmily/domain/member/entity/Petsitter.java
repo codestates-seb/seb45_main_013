@@ -8,9 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -69,5 +67,5 @@ public class Petsitter {
     }
 
     @OneToMany(mappedBy = "petsitter", cascade = CascadeType.ALL)
-    private Set<MemberFavoritePetsitter> favoritedByMembers = new HashSet<>();
+    private List<MemberFavoritePetsitter> favoritedByMembers = new ArrayList<>();
 }

@@ -16,6 +16,7 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.mapper.MemberMapper;
 import shop.petmily.domain.member.mapper.PetsitterMapper;
+import shop.petmily.domain.member.service.FavoriteService;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.global.argu.LoginMemberId;
@@ -26,6 +27,7 @@ import shop.petmily.global.utils.UriCreator;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,6 +41,7 @@ public class MemberController {
     private final PetsitterService petsitterService;
     private final MemberMapper memberMapper;
     private final PetsitterMapper petsitterMapper;
+    private final FavoriteService favoriteService;
 
     @PostMapping
     public ResponseEntity postMember(@Valid @RequestBody MemberPostRequestDto requestBody) {
@@ -118,12 +121,19 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
     }
 
-    // 찜 기능 (총합)
+    // 찜 하기 + 찜 취소
     @PatchMapping("/favorite")
     public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
                                             @RequestParam Long petsitterId) {
-        memberService.toggleFavorite(memberId, petsitterId);
+        favoriteService.toggleFavorite(memberId, petsitterId);
         return new ResponseEntity<>(new SingleResponseDto<>("해당 펫시터가 찜 선택(취소) 되었습니다"), HttpStatus.OK);
+    }
+
+    // 찜한 펫시터 목록 조회
+    @GetMapping("/favorite")
+    public ResponseEntity<List<FavoriteResponseDto>> getFavoritePetsitters(@LoginMemberId Long memberId) {
+        List<FavoriteResponseDto> favoritePetsitters = favoriteService.findFavoritePetsitters(memberId);
+        return ResponseEntity.ok(favoritePetsitters);
     }
 
 //    @ResponseStatus(value = HttpStatus.OK)

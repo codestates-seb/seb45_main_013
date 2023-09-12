@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.dto.MemberGetResponseDto;
 import shop.petmily.domain.member.entity.Member;
-import shop.petmily.domain.member.entity.MemberFavoritePetsitter;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.FavoriteRepository;
 import shop.petmily.domain.member.repository.MemberRepository;
@@ -187,24 +186,6 @@ public class MemberService {
         findMember.setPhoto(null);
 
         return memberRepository.save(findMember);
-    }
-
-    // 찜 기능
-    @Transactional
-    public void toggleFavorite(Long memberId, Long petsitterId) {
-        Member member = findVerifiedMember(memberId);
-        Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
-
-        MemberFavoritePetsitter favorite = favoriteRepository.findByMemberAndPetsitter(member, petsitter);
-
-        if (favorite == null) {
-            favorite = new MemberFavoritePetsitter();
-            favorite.setMember(member);
-            favorite.setPetsitter(petsitter);
-            member.getFavoritePetsitters().add(favorite);
-            favoriteRepository.save(favorite);
-        }
-        favoriteRepository.delete(favorite);
     }
 }
 

@@ -1,19 +1,15 @@
 package shop.petmily.domain.member.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
-import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -84,9 +80,6 @@ public class Member extends Auditable {
         this.memberId = memberId;
     }
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private Set<MemberFavoritePetsitter> favoritePetsitters = new HashSet<>();
-
     public void setRoles(List<String> roles) {
         this.roles = new ArrayList<>(roles);
     }
@@ -94,4 +87,6 @@ public class Member extends Auditable {
     public void setPetsitterBoolean(boolean petsitterBoolean) {
         this.petsitterBoolean = petsitterBoolean;
     }
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+    private List<MemberFavoritePetsitter> favoritePetsitters = new ArrayList<>();
 }

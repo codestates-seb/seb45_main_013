@@ -14,7 +14,6 @@ import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.repository.ReservationRepository;
-import shop.petmily.domain.reservation.service.ReservationService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
