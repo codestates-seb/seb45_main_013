@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import Rating from '@mui/material/Rating';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 // 추후 UseEffect로 데이터 받아올 데이터 (내가 자주 이용하는 펫시터)
 const OftenPetsitterItem = [
@@ -51,6 +52,26 @@ const RealtimeReviewItem = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  useEffect(() => {
+    if (search) {
+      console.log(search);
+      const accessToken = search.split('=')[1].split('&')[0];
+      const refreshToken = search.split('=')[2];
+      console.log('accessToken', accessToken);
+      console.log('refreshToken', refreshToken);
+
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 1);
+
+      document.cookie = `access_token=${accessToken}; path=/;`;
+      document.cookie = `refresh_token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/;`;
+
+      navigate('/');
+    }
+  }, []);
+
   return (
     <HomeContainer>
       <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />

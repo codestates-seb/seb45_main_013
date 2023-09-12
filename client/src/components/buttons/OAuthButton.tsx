@@ -1,4 +1,25 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+interface Props {
+  children: string;
+}
+const apiUrl = process.env.REACT_APP_API_URL;
+
+const GoogleOAuthButton = ({ children }: Props) => {
+  const handleGooleOAuth = () => {
+    window.location.assign(`${apiUrl}/oauth2/authorization/google`);
+  };
+  return (
+    <GoogleOAuthButtonStyle onClick={handleGooleOAuth}>
+      <img src="/imgs/GoogleLogo.svg" alt="google logo" width="24"></img>
+      <div>{children}</div>
+    </GoogleOAuthButtonStyle>
+  );
+};
+
+export default GoogleOAuthButton;
 
 const GoogleOAuthButtonStyle = styled.button`
   display: flex;
@@ -28,18 +49,3 @@ const GoogleOAuthButtonStyle = styled.button`
     ${({ theme }) => theme.fontSize.s16h24};
   }
 `;
-
-interface ParentProps {
-  children: string;
-}
-
-const GoogleOAuthButton = ({ children }: ParentProps) => {
-  return (
-    <GoogleOAuthButtonStyle>
-      <img src="/imgs/GoogleLogo.svg" alt="google logo" width="24"></img>
-      <div>{children}</div>
-    </GoogleOAuthButtonStyle>
-  );
-};
-
-export default GoogleOAuthButton;

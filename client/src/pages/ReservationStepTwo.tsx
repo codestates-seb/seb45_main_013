@@ -80,13 +80,13 @@ const ReservationStepTwo = () => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     // try {
-    //   const response = await axios.post('http://localhost:8080/pets/', newPetData);
-    //   if(response.status === 200) {
-    //   alert('등록 성공');
-    //   handleModalClose();
+    // const response = await axios.post('http://localhost:8080/pets/', newPetData);
+    // if(response.status === 200) {
+    // alert('등록 성공');
+    // handleModalClose();
     // } catch (err) {
-    //   alert('등록 실패');
-    //   console.log(err);
+    // alert('등록 실패');
+    // console.log(err);
     // }
   };
 
@@ -375,7 +375,7 @@ const Label = styled.label`
   position: relative;
   cursor: pointer;
   /* width: 120px;
-  height: 120px; */
+height: 120px; */
 
   &:before {
     background-color: white;

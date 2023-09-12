@@ -9,8 +9,6 @@ import {
 } from './RegisterPet';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
-// import Select from '@mui/joy/Select';
-// import Option from '@mui/joy/Option';
 import Textarea from '@mui/joy/Textarea';
 import { useSelector } from 'react-redux';
 import { getCookieValue } from 'hooks/getCookie';
@@ -21,7 +19,7 @@ import { useState } from 'react';
 import { IUser } from 'store/userSlice';
 import { deleteCookie } from 'hooks/deleteCookie';
 
-// 보호자, 펫시터 같이 , 펫시터만 입력란 추가
+// 보호자, 펫시터 같이
 // 버튼 수정
 // 주소 API 사용하기
 // 로그아웃, 회원탈퇴
@@ -36,12 +34,9 @@ interface IEditUser {
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const EditUserProfile = () => {
-  // 수정 후 이동
   const navigate = useNavigate();
 
-  const { name, memberId, phone, address, email, nickName, body, petsitterBoolean, photo } = useSelector(
-    (state: IUser) => state.user,
-  );
+  const { name, memberId, phone, address, email, nickName, body, photo } = useSelector((state: IUser) => state.user);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -173,33 +168,7 @@ const EditUserProfile = () => {
               {...register('body')}
             />
           </RegisterInputWrapper>
-          {/* {petsitterBoolean && (
-<>
-<RegisterInputWrapper>
-<InputLabelStyle htmlFor="petType">케어 가능한 펫</InputLabelStyle>
-<Select
-sx={{
-width: '60%',
-height: 32,
-borderRadius: 8,
-border: '1px solid #A6A6A6',
-fontSize: 14,
-}}
-{...register('petType')}
->
-<Option sx={{ fontSize: 14 }} value="dog">
-강아지
-</Option>
-<Option sx={{ fontSize: 14 }} value="cat">
-고양이
-</Option>
-<Option sx={{ fontSize: 14 }} value="both">
-모두
-</Option>
-</Select>
-</RegisterInputWrapper>
-</>
-)} */}
+
           <Button type="submit" variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
             수정하기
           </Button>
@@ -218,14 +187,14 @@ const Info = styled.div`
   width: 60%;
 `;
 
-const LinkContainer = styled.div`
+export const LinkContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
   margin-top: 36px;
 `;
 
-const StyledButton = styled.button`
+export const StyledButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
