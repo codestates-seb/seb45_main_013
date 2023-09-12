@@ -222,16 +222,17 @@ const MainContainer = styled.div`
   flex-direction: column;
   width: 100%;
   padding: 0 12px 0 12px;
+  background-color: #fefdff;
 `;
 
 const StatusHeader = styled.div`
   display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: space-between;
-  width: calc(100% + 12 * 2);
-  margin: 0 -12px;
-  padding: 12px;
   background-color: ${(props) => props.theme.textColors.secondary};
+  min-height: 48px;
+  gap: 120px;
+  position: relative;
 `;
 
 const BackImg = styled.img`
@@ -259,7 +260,8 @@ const RequestPetsitterContainer = styled.div`
   margin-bottom: 20px;
   padding: 12px;
   border-radius: 8px;
-  background-color: ${(props) => props.theme.textColors.secondary};
+  background-color: ${(props) => props.theme.colors.white};
+  box-shadow: ${(props) => props.theme.shadow.dp01};
 
   &:last-child {
     margin-bottom: 0;
