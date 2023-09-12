@@ -52,6 +52,7 @@ public class ReservationService {
         this.reservationQueryDsl = reservationQueryDsl;
     }
 
+    //예약정보로 예약이 가능한 펫시터를 찾는다
     public List<Petsitter> findReservationPossiblePetsitter(Reservation reservation){
 
         if (reservation.getReservationTimeStart().isAfter(reservation.getReservationTimeEnd())
@@ -62,9 +63,9 @@ public class ReservationService {
         List<Pet> reservationRequestPets = reservation.getReservationPets().stream()
                 .map(reservationPet -> {
                     Long reservationPetId = reservationPet.getPet().getPetId();
-                    Pet findedreservationPet = petService.findPet(reservationPetId);
-                    petService.verifiedPetOwner(findedreservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
-                    return findedreservationPet;
+                    Pet findedReservationPet = petService.findPet(reservationPetId);
+                    petService.verifiedPetOwner(findedReservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
+                    return findedReservationPet;
                 }).collect(Collectors.toList());
 
         Petsitter.PossiblePetType reservationPetType = verifiedReservationPetType(reservationRequestPets);
@@ -79,6 +80,7 @@ public class ReservationService {
         return petsitters;
     }
 
+    //예약정보와 펫시터정보를 검증하고 예약을 생성한다.
     public Reservation createReservation(Reservation reservation) {
 
         if (reservation.getReservationTimeStart().isAfter(reservation.getReservationTimeEnd())
@@ -122,12 +124,14 @@ public class ReservationService {
         return  reservationRepository.save(reservation);
     }
 
+    //예약정보 1개찾기
     public Reservation findReservation(Long reservationId) {
         Reservation reservation = findVerifiedReservation(reservationId);
 
         return reservation;
     }
 
+    //멤버의 예약정보 전체조회 or 조건에따라 조회
     public Page<Reservation> findMemberReservations(int page, int size, Long id, String condition) {
         Member member = memberService.findMember(id);
 
@@ -147,6 +151,7 @@ public class ReservationService {
         }
     }
 
+    //펫시터의 예약정보 전체조회 or 조건에따라 조회
     public Page<Reservation> findPetsitterReservations(int page, int size, Long id, String condition) {
         Petsitter petsitter= memberService.findMember(id).getPetsitter();
 
@@ -167,6 +172,7 @@ public class ReservationService {
         }
     }
 
+    //펫시터 예약정보만 조회
     public List<ScheduledPetsitterReservationDto> getPetsitterSchedule(long petsitterId) {
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
         return reservationQueryDsl.findPetsitterSchedule(petsitter);
@@ -239,7 +245,8 @@ public class ReservationService {
         }
     }
 
-    @Scheduled(cron = "1 0,30 * * * *") // 0분, 30분마다 예약체크
+    // 0분, 30분마다 예약체크
+    @Scheduled(cron = "1 0,30 * * * *")
     public void reservationCompleteCheck() {
         List<Reservation> reservations = reservationQueryDsl.findReservationsByDateTime();
 
@@ -251,6 +258,7 @@ public class ReservationService {
                 });
     }
 
+    //예약으로 들어온 pet 타입 확인
     public Petsitter.PossiblePetType verifiedReservationPetType(List<Pet> reservationRequestPets) {
         boolean hasCat = reservationRequestPets.stream().anyMatch(pet -> pet.getType() == Pet.PetType.CAT);
         boolean hasDog = reservationRequestPets.stream().anyMatch(pet -> pet.getType() == Pet.PetType.DOG);
@@ -266,6 +274,7 @@ public class ReservationService {
         }
     }
 
+    //예약주소에서 시,군,구 만 추출
     public String extractionAddress(String originAdress){
         Pattern pattern = Pattern.compile("(서울|대전|대구|울산|부산|광주|세종특별자치시)\\s([가-힣]+[구군])?|([가-힣]+[시군])\\s([가-힣]+[구])?");
         Matcher matcher = pattern.matcher(originAdress);
