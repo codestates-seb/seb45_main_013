@@ -4,13 +4,11 @@ import { Link } from 'react-router-dom';
 import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { IUser } from '../store/userSlice';
+
+const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const MyPetmily = () => {
-  // 지우기
-  const { name, memberId } = useSelector((state: IUser) => state.user);
-
   const token = getCookieValue('access_token');
 
   const [petmily, setPetmily] = useState<any[]>([]);
@@ -33,6 +31,8 @@ const MyPetmily = () => {
     fetchData();
   }, []);
 
+  console.log(petmily);
+
   return (
     <PetmilyContainer>
       <TextContainer>
@@ -47,17 +47,22 @@ const MyPetmily = () => {
       </TextContainer>
 
       {petmily.length > 0 ? (
-        petmily.map((pet, petId) => (
-          <PetmilyCard key={petId}>
+        petmily.map((pet) => (
+          <PetmilyCard key={pet.petId}>
             <div style={{ display: 'flex', justifyContent: 'end', padding: '4px' }}>
-              <Link to="/mypage/pets/edit">
+              <Link to={`/mypage/${pet.petId}/edit`}>
                 <PetsButton>
                   <img src="imgs/Edit.svg" alt="EditPets" />
                 </PetsButton>
               </Link>
             </div>
+
             <PetInfoContainer>
-              {pet.photo ? <PetImg src={pet.photo} alt="pet" /> : <PetImg src="imgs/Pet.svg" alt="Default" />}
+              {pet.photo ? (
+                <PetImg src={pet.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="pet" />
+              ) : (
+                <PetImg src="imgs/Pet.svg" alt="Default" />
+              )}
               <PetInfo>
                 {pet.name} / {pet.gender}
               </PetInfo>
@@ -97,9 +102,8 @@ const TextContainer = styled.div`
 
 const Text = styled.div`
   margin-bottom: 30px;
-  font-weight: 700;
-  font-size: 18px;
-  font-family: 'Noto Sans';
+  font-weight: 900;
+  ${(props) => props.theme.fontSize.s18h27};
 `;
 
 const PetsButton = styled.button`
@@ -135,7 +139,7 @@ const PetInfo = styled.div`
   margin-top: 4px;
   color: ${(props) => props.theme.textColors.gray00};
   font-weight: ${(props) => props.theme.fontWeights.bold};
-  font-size: ${(props) => props.theme.fontSize.s14h21};
+  ${(props) => props.theme.fontSize.s14h21};
 `;
 
 // 반려동물이 없을 때

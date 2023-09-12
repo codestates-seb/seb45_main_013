@@ -23,6 +23,7 @@ import Search from './pages/Search';
 import CreateReview from './pages/CreateReview';
 import NotFound from '@pages/404';
 import CreateJournal from '@pages/CreateJournal';
+import SitterSchedule from '@pages/SitterSchedule';
 
 const Container = styled.div`
   display: flex;
@@ -89,10 +90,10 @@ const App = () => {
               <Route path="signup" element={<Signup />} />
               <Route path="mypage/edit" element={<EditUserProfile />} />
               <Route path="mypage/register" element={<RegisterPet />} />
-              {/* <Route path="mypage/:petId/edit" element={<EditPet />}></Route> */}
-              <Route path="mypage/pets/edit" element={<EditPet />} />
+              <Route path="mypage/:petId/edit" element={<EditPet />}></Route>
               <Route path="search" element={<Search />} />
               <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
+              <Route path="petsitters/:memberId/schedule" element={<SitterSchedule />}></Route>
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -6,29 +6,32 @@ import { getCookieValue } from 'hooks/getCookie';
 import { IUser } from 'store/userSlice';
 import MyMenu from '@components/MyMenu';
 import MyPetsitterMenu from '@components/MyPetsitterMenu';
+import MySchedule from '@components/MySchedule';
 
 // petsitterBoolean -> 펫시터 링크 설정
+const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 
 const Mypage = () => {
   //  수정
   const { isLogin, name, petsitterBoolean, photo } = useSelector((state: IUser) => state.user);
+  // console.log(petsitterBoolean);
 
-  console.log(petsitterBoolean);
-
+  let PhotoUrl = 'imgs/DefaultUser.svg';
+  if (photo) {
+    PhotoUrl = photo.replace(/https:\/\/bucketUrl/g, BucketUrl);
+  }
   useEffect(() => {
     console.log(petsitterBoolean);
   }, [photo]);
 
-  // 지우기
   const token = getCookieValue('access_token');
-  console.log(token);
 
   return (
     <MypageContainer>
       <MyProfileContianer>
         <MyProfile>
           {isLogin && photo ? (
-            <MyPhoto src={photo} alt="user profile image" />
+            <MyPhoto src={PhotoUrl} alt="user profile image" />
           ) : (
             <MyPhoto src="imgs/DefaultUser.svg" alt="default profile image" />
           )}
@@ -39,9 +42,9 @@ const Mypage = () => {
         </MyProfile>
       </MyProfileContianer>
 
-      {/* 펫시터 불른 ->메뉴 컴포넌트 */}
+      {/* 펫시터 불린 ->메뉴 컴포넌트 */}
       {petsitterBoolean ? <MyPetsitterMenu /> : <MyMenu />}
-      {!petsitterBoolean && <MyPetmily />}
+      {petsitterBoolean ? <MySchedule /> : <MyPetmily />}
     </MypageContainer>
   );
 };
