@@ -13,7 +13,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const BucketUrl = process.env.REACT_APP_BUCKET_URL;
 const defaultProfileImg = 'imgs/DefaultUserProfile.jpg';
 
-const UploadProfileImg = ({ setImageFile, currentImageUrl }: any) => {
+const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
   const [previewImage, setPreviewImage] = useState<string | null>(currentImageUrl);
   const fileInputRef = React.createRef<HTMLInputElement>();
   const [openModal, setOpenModal] = useState(false);
@@ -58,15 +58,20 @@ const UploadProfileImg = ({ setImageFile, currentImageUrl }: any) => {
 
   const handleDelete = async () => {
     const token = getCookieValue('access_token');
-    console.log(token);
     try {
-      const response = await axios.patch(`${apiUrl}/members/${memberId}/photo`, null, {
+      let endpoint;
+      if (petId) {
+        endpoint = `${apiUrl}/pets/${petId}/photo`;
+      } else {
+        endpoint = `${apiUrl}/members/${memberId}/photo`;
+      }
+
+      const response = await axios.patch(endpoint, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (response.data.data === 'success delete photo') {
+      if (response.data) {
         alert('삭제되었습니다');
         setPreviewImage(defaultProfileImg);
         setImageFile(null);
@@ -112,13 +117,7 @@ const UploadProfileImg = ({ setImageFile, currentImageUrl }: any) => {
       {previewImage && (
         <img src={previewImage} alt="Preview" style={{ width: '60px', height: '60px', borderRadius: '50%' }} />
       )}
-      <input
-        type="file"
-        accept="image/jpeg image/png"
-        onChange={handleImageChange}
-        style={{ display: 'none' }}
-        ref={fileInputRef}
-      />
+      <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} ref={fileInputRef} />
       <Modal open={openModal} onClose={handleCloseModal}>
         <ModalBody
           hasImage={!!previewImage && previewImage !== defaultProfileImg}
