@@ -71,16 +71,26 @@ interface PossibleReservationTimeProps {
   selectedDate: dayjs.Dayjs | null;
   // eslint-disable-next-line no-unused-vars
   setSelectedDate: (date: dayjs.Dayjs | null) => void;
-  selectedTime: string;
-  setSelectedTime: Dispatch<SetStateAction<string>>;
+  selectedTimes: string[];
+  setSelectedTimes: Dispatch<SetStateAction<string[]>>;
 }
 
 const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
   selectedDate,
   setSelectedDate,
-  selectedTime,
-  setSelectedTime,
+  selectedTimes,
+  setSelectedTimes,
 }) => {
+  const handleTimeSelect = (time: string) => {
+    if (selectedTimes.includes(time)) {
+      setSelectedTimes(selectedTimes.filter((t) => t !== time));
+    } else {
+      if (selectedTimes.length < 2) {
+        setSelectedTimes([...selectedTimes, time].sort());
+      }
+    }
+  };
+
   return (
     <MainContainer>
       <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthShort: `M` }}>
@@ -91,7 +101,7 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
             value={selectedDate}
             onChange={(newValue) => {
               setSelectedDate(newValue);
-              setSelectedTime('');
+              setSelectedTimes([]);
             }}
             disablePast
             shouldDisableDate={disableSpecificDates}
@@ -111,8 +121,8 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
                   return (
                     <Button
                       key={time}
-                      variant={selectedTime === time ? 'contained' : 'outlined'}
-                      onClick={() => setSelectedTime(time)}
+                      variant={selectedTimes.includes(time) ? 'contained' : 'outlined'}
+                      onClick={() => handleTimeSelect(time)}
                       disabled={isDisabled}
                     >
                       {convertTo12Hour(time)}
@@ -132,8 +142,8 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
                   return (
                     <Button
                       key={time}
-                      variant={selectedTime === time ? 'contained' : 'outlined'}
-                      onClick={() => setSelectedTime(time)}
+                      variant={selectedTimes.includes(time) ? 'contained' : 'outlined'}
+                      onClick={() => handleTimeSelect(time)}
                       disabled={isDisabled}
                     >
                       {convertTo12Hour(time)}
