@@ -224,7 +224,7 @@ public class PetsitterService {
                 .collect(Collectors.toList());
     }
 
-    private PetsitterGetResponseDto mapToPetsitterGetResponseDto(Member member) {
+    public PetsitterGetResponseDto mapToPetsitterGetResponseDto(Member member) {
         Petsitter petsitter = findPetsitter(member);
         return PetsitterGetResponseDto.builder()
                 .petsitterId(petsitter.getPetsitterId())
@@ -236,6 +236,7 @@ public class PetsitterService {
                 .photo(member.getPhoto())
                 .body(member.getBody())
                 .possiblePetType(petsitter.getPossiblePetType())
+                .possibleLocation(petsitter.getPossibleLocation())
                 .possibleDay(petsitter.getPossibleDay())
                 .possibleTimeStart(petsitter.getPossibleTimeStart())
                 .possibleTimeEnd(petsitter.getPossibleTimeEnd())

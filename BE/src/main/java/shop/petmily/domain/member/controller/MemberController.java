@@ -131,8 +131,8 @@ public class MemberController {
 
     // 찜한 펫시터 목록 조회
     @GetMapping("/favorite")
-    public ResponseEntity<List<FavoriteResponseDto>> getFavoritePetsitters(@LoginMemberId Long memberId) {
-        List<FavoriteResponseDto> favoritePetsitters = favoriteService.findFavoritePetsitters(memberId);
+    public ResponseEntity<List<PetsitterGetResponseDto>> getFavoritePetsitters(@LoginMemberId Long memberId) {
+        List<PetsitterGetResponseDto> favoritePetsitters = favoriteService.findFavoritePetsitters(memberId);
         return new ResponseEntity<>(favoritePetsitters, HttpStatus.OK);
     }
 
