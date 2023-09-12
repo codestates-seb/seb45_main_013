@@ -38,6 +38,14 @@ public class SecurityConfig {
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
 
+    @Getter
+    @Value("${jwt.main_ec2_url}")
+    private String ec2_url;
+
+    @Getter
+    @Value("${jwt.main_buket_url}")
+    private String buket_url;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -99,7 +107,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000", "http://api.petmily.shop", "http://petmily.shop"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000", "http://api.petmily.shop/", "http://petmily.shop/", ec2_url, buket_url));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
