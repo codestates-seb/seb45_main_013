@@ -3,7 +3,7 @@ package shop.petmily.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.petmily.domain.member.dto.FavoriteResponseDto;
+import shop.petmily.domain.member.dto.PetsitterGetResponseDto;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.MemberFavoritePetsitter;
 import shop.petmily.domain.member.entity.Petsitter;
@@ -39,7 +39,7 @@ public class FavoriteService {
     }
 
     // 찜한 펫시터 목록 조회
-    public List<FavoriteResponseDto> findFavoritePetsitters(Long memberId) {
+    public List<PetsitterGetResponseDto> findFavoritePetsitters(Long memberId) {
         Member member = memberService.findVerifiedMember(memberId);
         List<MemberFavoritePetsitter> favoritePetsitters = favoriteRepository.findByMember(member);
 
@@ -47,14 +47,20 @@ public class FavoriteService {
                 .sorted(Comparator.comparingLong(MemberFavoritePetsitter::getId).reversed())
                 .map(favorite -> {
                     Petsitter petsitter = favorite.getPetsitter();
-                    return FavoriteResponseDto.builder()
+                    return PetsitterGetResponseDto.builder()
                             .petsitterId(petsitter.getPetsitterId())
-                            .petsitterName(petsitter.getMember().getName())
+                            .email(petsitter.getMember().getEmail())
+                            .name(petsitter.getMember().getName())
+                            .nickName(petsitter.getMember().getNickName())
+                            .phone(petsitter.getMember().getPhone())
+                            .address(petsitter.getMember().getAddress())
+                            .photo(petsitter.getMember().getPhoto())
                             .possiblePetType(petsitter.getPossiblePetType())
                             .possibleLocation(petsitter.getPossibleLocation())
                             .possibleDay(petsitter.getPossibleDay())
                             .possibleTimeStart(petsitter.getPossibleTimeStart())
                             .possibleTimeEnd(petsitter.getPossibleTimeEnd())
+                            .body(petsitter.getMember().getBody())
                             .star(petsitter.getStar())
                             .reviewCount(petsitter.getReviewCount())
                             .build();
