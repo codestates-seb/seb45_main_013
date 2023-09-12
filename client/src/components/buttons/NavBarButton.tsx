@@ -2,6 +2,8 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IUser } from 'store/userSlice';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { IUser } from 'store/userSlice';
 
 interface NavBarButtonProps {
   children: React.ReactNode;

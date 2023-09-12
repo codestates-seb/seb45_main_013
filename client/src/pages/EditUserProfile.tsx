@@ -188,16 +188,17 @@ const Info = styled.div`
 `;
 
 export const LinkContainer = styled.div`
-  margin-top: 36px;
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: 36px;
 `;
 
 export const StyledButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
+
   ${(props) => props.theme.fontSize.s14h21}
   &:hover {
     color: ${(props) => props.theme.colors.mainBlue};

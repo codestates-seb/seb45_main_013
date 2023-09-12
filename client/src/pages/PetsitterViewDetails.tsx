@@ -1,8 +1,11 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import { Route, Routes /*Link*/ } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
+
+import Reviews from '@components/Reviews';
+import PossibleReservationTime from '@components/PossibleReservationTime';
+import dayjs from 'dayjs';
 
 const PetsitterDetailsItem = [
   // 추후에 UseEffect로 데이터 받아올 데이터
@@ -45,9 +48,32 @@ const careertwo = () => (
   </>
 );
 
+const convertTo12Hour = (time: string) => {
+  const timeParts = time.split(':');
+  let hours = parseInt(timeParts[0]);
+  const minutes = parseInt(timeParts[1]);
+
+  const period = hours >= 12 ? 'PM' : 'AM';
+
+  if (hours > 12) {
+    hours -= 12;
+  } else if (hours === 0) {
+    hours = 12;
+  }
+
+  return `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${period}`;
+};
+
 const PetsitterViewDetails = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState(NavItem[0].link);
+  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string>('');
+
+  const handleResetReservationClick = () => {
+    setSelectedDate(null);
+    setSelectedTime('');
+  };
 
   const handleBookmarkClick = () => {
     setIsBookmarked(!isBookmarked);
@@ -91,15 +117,36 @@ const PetsitterViewDetails = () => {
           </BookmarkContainer>
 
           <ViewDetailsContainer>
-            {NavItem.map((nav) => (
-              <NavBarButton key={nav.text} isActive={activeTab === nav.link} onClick={() => setActiveTab(nav.link)}>
-                {nav.text}
-              </NavBarButton>
-            ))}
-            <Routes>
-              <Route path="/possibleReservationTime" />
-              <Route path="/reviews" />
-            </Routes>
+            <TabButtonsContainer>
+              {NavItem.map((nav) => (
+                <NavBarButton key={nav.text} isActive={activeTab === nav.link} onClick={() => setActiveTab(nav.link)}>
+                  {nav.text}
+                </NavBarButton>
+              ))}
+            </TabButtonsContainer>
+            <TabContentContainer>
+              {activeTab === '/possibleReservationTime' && (
+                <PossibleReservationTime
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
+                  selectedTime={selectedTime}
+                  setSelectedTime={setSelectedTime}
+                />
+              )}
+              {activeTab === '/reviews' && <Reviews />}
+            </TabContentContainer>
+            {selectedDate && selectedTime && (
+              <ConfirmationSection>
+                <ConfirmationText>예약확인</ConfirmationText>
+                <ConfirmationDate>
+                  예약 날짜: {selectedDate ? selectedDate.format('YYYY-MM-DD') : '날짜를 선택하세요'}
+                </ConfirmationDate>
+                <ConfirmationTime>예약 시간: {convertTo12Hour(selectedTime)}</ConfirmationTime>
+                <StyledCancelButton variant="outlined" color="error" onClick={handleResetReservationClick}>
+                  취소
+                </StyledCancelButton>
+              </ConfirmationSection>
+            )}
           </ViewDetailsContainer>
           <CustomLinkBtn>예약 하기</CustomLinkBtn>
         </MainContainer>
@@ -122,7 +169,9 @@ const ImgContainer = styled.div`
   position: absolute;
   width: 100%;
   top: -64px;
-  border-radius: 0px 0px 110px 0px;
+  /* border-radius: 0px 0px 110px 0px; */
+  border-bottom-left-radius: 50% 15%;
+  border-bottom-right-radius: 50% 15%;
   height: 280px;
   overflow: hidden;
   z-index: 1;
@@ -166,7 +215,7 @@ const CareablePet = styled.div`
 
 const PetsitterName = styled.div`
   color: ${(props) => props.theme.colors.white};
-  font-size: ${(props) => props.theme.fontSize.s20h30};
+  font-size: 28px;
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
 `;
 
@@ -219,6 +268,7 @@ const BookmarkContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 14px 12px 0 12px;
   padding: 8px 16px;
   background-color: ${(props) => props.theme.colors.white};
   box-shadow: ${(props) => props.theme.shadow.dp01};
@@ -226,7 +276,6 @@ const BookmarkContainer = styled.div`
   color: ${(props) => props.theme.textColors.gray00};
   font-size: ${(props) => props.theme.fontSize.s18h27};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
-  white-space: nowrap;
 `;
 
 const RatingImg = styled.img`
@@ -253,17 +302,19 @@ const StyledButton = styled(Button)`
 
 const ViewDetailsContainer = styled.div`
   display: flex;
+  flex-direction: column;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.white};
-  margin-top: 16px;
-  padding-top: 16px; !important;
-  height: 229px;
-  box-shadow: ${(props) => props.theme.shadow.dp01};  
+  margin: 16px 12px 12px 12px;
+  padding-top: 16px;
+  /* min-height: 320px; */
+  box-shadow: ${(props) => props.theme.shadow.dp01};
+  overflow: visible;
 `;
 
 const CustomLinkBtn = styled.button`
-  width: 100%;
   border-radius: 8px;
+  margin: 12px 12px 12px 12px;
   padding: 12px;
   color: white;
   text-align: center;
@@ -279,8 +330,44 @@ const NavBarButton = styled.button<{ isActive: boolean }>`
   font-weight: ${(props) => (props.isActive ? props.theme.fontWeights.extrabold : props.theme.fontWeights.bold)};
   color: ${(props) => (props.isActive ? 'black' : props.theme.textColors.gray30)};
   border-bottom: ${(props) => (props.isActive ? `2px solid ${props.theme.colors.mainBlue}` : null)};
-  padding-bottom: 8px;
+  padding-bottom: 36px;
   margin-bottom: ${(props) => (props.isActive ? '-2px' : '0px')};
   ${(props) => props.theme.fontSize.s14h21};
   height: 16%;
 `;
+
+const TabButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const TabContentContainer = styled.div`
+  display: flex;
+  padding: 0 12px 12px 12px;
+`;
+
+const ConfirmationSection = styled.div`
+  padding: 16px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 16px;
+`;
+
+const ConfirmationText = styled.div`
+  color: ${(props) => props.theme.colors.white};
+  background-color: ${(props) => props.theme.colors.mainBlue};
+  margin-bottom: 48px;
+  padding: 12px;
+  border-radius: 8px;
+`;
+
+const ConfirmationDate = styled.div`
+  margin-bottom: 16px;
+`;
+
+const ConfirmationTime = styled.div`
+  margin-bottom: 24px;
+`;
+
+const StyledCancelButton = styled(Button)``;

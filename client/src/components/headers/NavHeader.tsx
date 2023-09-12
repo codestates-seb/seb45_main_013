@@ -8,6 +8,8 @@ import { getCookieValue } from 'hooks/getCookie';
 import { IUser, deleteUser, login, setUser } from 'store/userSlice';
 import { deleteCookie } from 'hooks/deleteCookie';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const NavHeader = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
@@ -144,6 +146,7 @@ const Container = styled.header`
   position: sticky;
   top: 0;
   left: 0;
+  z-index: 100;
   width: 100%;
 `;
 
@@ -162,7 +165,6 @@ const HeaderContatiner = styled.div`
 const TopHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
 `;
 
 const NotiUserContainer = styled.nav`
@@ -217,6 +219,6 @@ const LogoutButton = styled.button`
 const NavBar = styled.nav`
   display: flex;
   align-items: center;
-  width: 100%;
   justify-content: space-around;
+  width: 100%;
 `;

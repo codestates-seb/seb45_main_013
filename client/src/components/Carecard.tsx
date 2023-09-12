@@ -129,6 +129,7 @@ const PetsitterInfo = styled.div`
   display: flex;
   gap: 4px;
   align-items: flex-end;
+
   div:nth-child(1) {
     ${(props) => props.theme.fontSize.s16h24}
   }
@@ -142,9 +143,11 @@ const PetsitterInfo = styled.div`
 const PetInfo = styled.div`
   display: flex;
   gap: 4px;
+
   > label {
     ${({ theme }) => theme.fontSize.s14h21}
   }
+
   > div {
     ${({ theme }) => theme.fontSize.s14h21}
   }
@@ -209,6 +212,7 @@ const ActiveButton = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.colors.subBlue};
   }
+
   &:active {
     background-color: ${({ theme }) => theme.colors.darkBlue};
     box-shadow: ${({ theme }) => theme.shadow.inset};
@@ -226,6 +230,7 @@ const ActiveLink = styled(Link)`
   &:hover {
     background-color: ${({ theme }) => theme.colors.subBlue};
   }
+
   &:active {
     background-color: ${({ theme }) => theme.colors.darkBlue};
     box-shadow: ${({ theme }) => theme.shadow.inset};

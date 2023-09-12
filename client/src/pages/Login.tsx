@@ -101,8 +101,8 @@ const LoginContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 100px;
   width: 100%;
+  margin-top: 100px;
   max-width: 360px;
 `;
 
@@ -124,7 +124,6 @@ export const SubmitButtonStyle = styled.button`
   border: none;
   color: white;
   ${({ theme }) => theme.fontSize.s16h24};
-
   font-weight: ${({ theme }) => theme.fontWeights.bold};
 
   &:hover {
