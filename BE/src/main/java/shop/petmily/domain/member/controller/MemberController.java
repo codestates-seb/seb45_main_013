@@ -133,7 +133,7 @@ public class MemberController {
     @GetMapping("/favorite")
     public ResponseEntity<List<FavoriteResponseDto>> getFavoritePetsitters(@LoginMemberId Long memberId) {
         List<FavoriteResponseDto> favoritePetsitters = favoriteService.findFavoritePetsitters(memberId);
-        return ResponseEntity.ok(favoritePetsitters);
+        return new ResponseEntity<>(favoritePetsitters, HttpStatus.OK);
     }
 
 //    @ResponseStatus(value = HttpStatus.OK)
