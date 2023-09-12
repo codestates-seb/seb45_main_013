@@ -12,17 +12,16 @@ import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.pet.service.PetService;
+import shop.petmily.domain.reservation.dto.ScheduledPetsitterReservationDto;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.entity.ReservationPet;
+import shop.petmily.domain.reservation.repository.ReservationQueryDsl;
 import shop.petmily.domain.reservation.repository.ReservationRepository;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
 import javax.transaction.Transactional;
-import java.sql.Date;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -37,20 +36,28 @@ public class ReservationService {
     private final PetService petService;
     private final PetsitterService petsitterService;
     private final PetsitterQueryDsl petsitterQueryDsl;
+    private final ReservationQueryDsl reservationQueryDsl;
 
     public ReservationService(ReservationRepository reservationRepository,
                               MemberService memberService,
                               PetService petService,
                               PetsitterService petsitterService,
-                              PetsitterQueryDsl petsitterQueryDsl) {
+                              PetsitterQueryDsl petsitterQueryDsl,
+                              ReservationQueryDsl reservationQueryDsl) {
         this.reservationRepository = reservationRepository;
         this.memberService = memberService;
         this.petService = petService;
         this.petsitterService = petsitterService;
         this.petsitterQueryDsl = petsitterQueryDsl;
+        this.reservationQueryDsl = reservationQueryDsl;
     }
 
     public List<Petsitter> findReservationPossiblePetsitter(Reservation reservation){
+
+        if (reservation.getReservationTimeStart().isAfter(reservation.getReservationTimeEnd())
+                ||(reservation.getReservationTimeStart().equals(reservation.getReservationTimeEnd()))) {
+            throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
+        }
 
         List<Pet> reservationRequestPets = reservation.getReservationPets().stream()
                 .map(reservationPet -> {
@@ -64,11 +71,6 @@ public class ReservationService {
 
         String reservationDay = reservation.getReservationDay().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
-        if (reservation.getReservationTimeStart().isAfter(reservation.getReservationTimeEnd())
-                ||(reservation.getReservationTimeStart().equals(reservation.getReservationTimeEnd()))) {
-            throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
-        }
-
         String reservationLocation = extractionAddress(reservation.getAddress());
 
         List<Petsitter> petsitters = petsitterQueryDsl.findPossiblePetsitters(reservationDay, reservationPetType, reservationLocation,
@@ -78,6 +80,11 @@ public class ReservationService {
     }
 
     public Reservation createReservation(Reservation reservation) {
+
+        if (reservation.getReservationTimeStart().isAfter(reservation.getReservationTimeEnd())
+                ||(reservation.getReservationTimeStart().equals(reservation.getReservationTimeEnd()))) {
+            throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
+        }
 
         Member findedMember = memberService.findMember(reservation.getMember().getMemberId());
         reservation.setMember(findedMember);
@@ -160,7 +167,12 @@ public class ReservationService {
         }
     }
 
-//     예약 확정 (펫시터)
+    public List<ScheduledPetsitterReservationDto> getPetsitterSchedule(long petsitterId) {
+        Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
+        return reservationQueryDsl.findPetsitterSchedule(petsitter);
+    }
+
+    //     예약 확정 (펫시터)
     public Reservation confirmReservationStatus(Long reservationId, Long id) {
         Reservation reservation = findVerifiedReservation(reservationId);
         Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
@@ -174,7 +186,7 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-//     예약 취소 (펫시터)
+    //     예약 취소 (펫시터)
     public Reservation cancelReservationPetsitter(Long reservationId, Long id) {
         Reservation reservation = findVerifiedReservation(reservationId);
         Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
@@ -203,7 +215,6 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-
     // 유효한 예약인지 확인
     public Reservation findVerifiedReservation(Long reservationId) {
         Optional<Reservation> optionalReservation = reservationRepository.findById(reservationId);
@@ -221,24 +232,21 @@ public class ReservationService {
         }
     }
 
-//     예약에 해당하는 펫시터인지 확인
+    //     예약에 해당하는 펫시터인지 확인
     public void verifiedReservationOwnerPetSitter(Long petSitterId, Reservation verifiedReservation) {
         if (petSitterId != verifiedReservation.getPetsitter().getPetsitterId()) {
             throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
     }
 
-    @Scheduled(cron = "0 1,31 * * * *") // 1분, 31분마다 예약체크 > 취소가아나면서 시간지낫으면 예약완료
+    @Scheduled(cron = "1 0,30 * * * *") // 0분, 30분마다 예약체크
     public void reservationCompleteCheck() {
-        Date today = Date.valueOf(LocalDateTime.now().toLocalDate());
-
-        List<Reservation> reservations = reservationRepository.findByReservationDay(today);
+        List<Reservation> reservations = reservationQueryDsl.findReservationsByDateTime();
 
         reservations.stream()
-                .filter(reservation -> reservation.getReservationTimeEnd().isBefore(LocalTime.now())
-                        && reservation.getProgress() != Progress.RESERVATION_CANCELLED)
                 .forEach(reservation -> {
-                    reservation.setProgress(Progress.FINISH_CARING);
+                    if(reservation.getProgress() == Progress.RESERVATION_REQUEST) reservation.setProgress(Progress.RESERVATION_CANCELLED);
+                    if(reservation.getProgress() == Progress.RESERVATION_CONFIRMED) reservation.setProgress(Progress.FINISH_CARING);
                     reservationRepository.save(reservation);
                 });
     }
