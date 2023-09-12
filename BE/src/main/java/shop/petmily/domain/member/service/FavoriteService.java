@@ -9,6 +9,7 @@ import shop.petmily.domain.member.entity.MemberFavoritePetsitter;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.FavoriteRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class FavoriteService {
         List<MemberFavoritePetsitter> favoritePetsitters = favoriteRepository.findByMember(member);
 
         return favoritePetsitters.stream()
+                .sorted(Comparator.comparingLong(MemberFavoritePetsitter::getId).reversed())
                 .map(favorite -> {
                     Petsitter petsitter = favorite.getPetsitter();
                     return FavoriteResponseDto.builder()
@@ -55,7 +57,6 @@ public class FavoriteService {
                             .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                             .star(petsitter.getStar())
                             .reviewCount(petsitter.getReviewCount())
-                            // 필요에 따라 추가 필드를 설정
                             .build();
                 })
                 .collect(Collectors.toList());
