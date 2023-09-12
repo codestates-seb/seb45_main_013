@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useEffect } from 'react';
 import MyPetmily from '@components/MyPetmily';
 import { useSelector } from 'react-redux';
-import { getCookieValue } from 'hooks/getCookie';
 import { IUser } from 'store/userSlice';
 import MyMenu from '@components/MyMenu';
 import MyPetsitterMenu from '@components/MyPetsitterMenu';
@@ -14,7 +13,8 @@ const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 const Mypage = () => {
   //  수정
   const { isLogin, name, petsitterBoolean, photo } = useSelector((state: IUser) => state.user);
-  // console.log(petsitterBoolean);
+
+  console.log(petsitterBoolean);
 
   let PhotoUrl = 'imgs/DefaultUser.svg';
   if (photo) {
@@ -24,14 +24,16 @@ const Mypage = () => {
     console.log(petsitterBoolean);
   }, [photo]);
 
-  const token = getCookieValue('access_token');
+  useEffect(() => {
+    console.log(petsitterBoolean);
+  }, [photo]);
 
   return (
     <MypageContainer>
       <MyProfileContianer>
         <MyProfile>
           {isLogin && photo ? (
-            <MyPhoto src={PhotoUrl} alt="user profile image" />
+            <MyPhoto src={photo} alt="user profile image" />
           ) : (
             <MyPhoto src="imgs/DefaultUser.svg" alt="default profile image" />
           )}
@@ -42,7 +44,7 @@ const Mypage = () => {
         </MyProfile>
       </MyProfileContianer>
 
-      {/* 펫시터 불린 ->메뉴 컴포넌트 */}
+      {/* 펫시터 불른 ->메뉴 컴포넌트 */}
       {petsitterBoolean ? <MyPetsitterMenu /> : <MyMenu />}
       {petsitterBoolean ? <MySchedule /> : <MyPetmily />}
     </MypageContainer>
