@@ -70,11 +70,11 @@ public class SecurityConfig {
                         .antMatchers(HttpMethod.PATCH, "/pets/**").hasRole("MEMBER")
                         .antMatchers(HttpMethod.DELETE, "/pets/**").hasRole("MEMBER")
 
+                        .antMatchers(HttpMethod.POST, "/reservations").hasRole("MEMBER")
                         .antMatchers(HttpMethod.POST, "/reservations/petsitters").hasRole("MEMBER")
-                        .antMatchers(HttpMethod.PATCH, "/reservations/petsitters").hasRole("MEMBER")
-                        .antMatchers(HttpMethod.GET, "/reservations/petsitters").hasAnyRole("MEMBER", "PETSITTER")
                         .antMatchers(HttpMethod.GET, "/reservations/member/**").hasRole("MEMBER")
                         .antMatchers(HttpMethod.GET, "/reservations/petsitter/**").hasRole("PETSITTER")
+                        .antMatchers(HttpMethod.PATCH, "reservations/*/confirm").hasRole("PETSITTER")
                         .antMatchers(HttpMethod.PATCH, "/reservations/*/petsittercancel").hasRole("PETSITTER")
                         .antMatchers(HttpMethod.PATCH, "/reservations/*/membercancel").hasRole("MEMBER")
 
