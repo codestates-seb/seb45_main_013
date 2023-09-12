@@ -109,7 +109,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         return UriComponentsBuilder
                 .newInstance()
-                .scheme("http")
+                .scheme("https")
                 .host("petmily.shop")
 //                .host("localhost")
 //                .port(3000)
