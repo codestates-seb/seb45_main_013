@@ -30,6 +30,7 @@ public class PetService {
         this.memberService = memberService;
     }
 
+    //펫생성
     public Pet createPet(Pet pet, MultipartFile file){
         if(file != null) pet.setPhoto(uploadService.saveFile(file));
         repository.save(pet);
@@ -37,6 +38,7 @@ public class PetService {
         return repository.save(pet);
     }
 
+    //펫수정
     public Pet updatePet(Pet pet, MultipartFile file){
         Pet verifiedPet = verifiedPet(pet.getPetId());
         String beforeFileName = null;
@@ -70,6 +72,7 @@ public class PetService {
         return savedPet;
     }
 
+    //펫사진삭제
     public Pet photoDelete(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
@@ -89,28 +92,33 @@ public class PetService {
         return savedPet;
     }
 
+    //펫1마리 정보 찾기
     public Pet findPet(Long petId){
         Pet verifiedPet = verifiedPet(petId);
         return  verifiedPet;
     }
 
+    //특정 멤버 펫 전부 찾기
     public List<Pet> findPets(Long memberId){
         Member member = memberService.findMember(memberId);
         return  repository.findByMember(member);
     }
 
+    //펫삭제
     public void deletePet(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
         repository.delete(verifiedPet);
     }
 
+    //펫 검증
     private Pet verifiedPet(Long petId) {
         Optional<Pet> optionalPet = repository.findById(petId);
         Pet pet = optionalPet.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PET_NOT_EXIST));
         return pet;
     }
 
+    //펫 주인 판별
     public void verifiedPetOwner(long originMemberId, Long requestMemberId) {
         if (originMemberId != requestMemberId) throw new BusinessLogicException(ExceptionCode.NOT_MY_PET);
     }

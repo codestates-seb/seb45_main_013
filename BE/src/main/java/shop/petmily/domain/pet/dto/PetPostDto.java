@@ -16,28 +16,27 @@ public class PetPostDto {
 
     public void setMemberId(long memberId) {this.memberId = memberId;}
 
-    @NotNull
+    @NotNull(message = "'CAT' or 'DOG' 입력해 주세요")
     private Pet.PetType type;
 
-    @NotBlank
+    @NotBlank(message = "이름을 입력해 주세요")
     private String name;
 
-    @NotNull
+    @NotNull(message = "나이를 입력해 주세요.")
     private Integer age;
 
-    @NotBlank
+    @NotBlank(message = "종을 입력해 주세요.")
     private String species;
 
-    @NotNull
+    @NotNull(message = "몸무게를 입력해 주세요.")
     private Integer weight;
 
-    @NotBlank
     private String body;
 
-    @NotNull
+    @NotNull(message = "성별을 입력해 주세요.")
     private Boolean male;
 
-    @NotNull
+    @NotNull(message = "중성화 여부를 입력해 주세요.")
     private Boolean neutering;
 
     private MultipartFile file;

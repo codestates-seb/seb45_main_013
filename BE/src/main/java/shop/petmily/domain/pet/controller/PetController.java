@@ -1,8 +1,10 @@
 package shop.petmily.domain.pet.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.pet.dto.PetPatchDto;
@@ -13,11 +15,14 @@ import shop.petmily.domain.pet.mapper.PetMapper;
 import shop.petmily.domain.pet.service.PetService;
 import shop.petmily.global.argu.LoginMemberId;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Validated
+@Slf4j
 @RequestMapping("/pets")
 @RestController
 public class PetController {
@@ -29,14 +34,16 @@ public class PetController {
         this.service = service;
     }
 
+    //펫등록
     @PostMapping
-    public ResponseEntity postPet(@ModelAttribute PetPostDto petPostDto,
+    public ResponseEntity postPet(@Valid  @ModelAttribute PetPostDto petPostDto,
                                   @LoginMemberId Long memberId){
         petPostDto.setMemberId(memberId);
         Pet pet = service.createPet(mapper.PetPostDtoToPet(petPostDto), petPostDto.getFile());
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.CREATED);
     }
 
+    //펫수정
     @PatchMapping(value = "/{pet_id}")
     public ResponseEntity patchPet(@PathVariable ("pet_id") @Positive long petId,
                                    @ModelAttribute PetPatchDto petPatchDto,
@@ -48,6 +55,7 @@ public class PetController {
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
     }
 
+    //펫사진삭제
     @PatchMapping("/{pet_id}/photo")
     public ResponseEntity photoDeletePet(@PathVariable ("pet_id") @Positive long petId,
                                          @LoginMemberId Long memberId) {
@@ -55,12 +63,14 @@ public class PetController {
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
     }
 
+    //펫 1마리 정보 찾기
     @GetMapping("/{pet_id}")
     public ResponseEntity findPet(@PathVariable ("pet_id") @Positive long petId){
         Pet pet = service.findPet(petId);
         return new ResponseEntity(mapper.PetToPetResponseDto(pet), HttpStatus.OK);
     }
 
+    //특정 member의 모든펫정보 찾기
     @GetMapping
     public ResponseEntity findPetsByMember(@LoginMemberId Long memberId){
         List<Pet> pets = service.findPets(memberId);
@@ -71,6 +81,7 @@ public class PetController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+    //펫삭제
     @DeleteMapping("/{pet_id}")
     public HttpStatus deletePet(@PathVariable ("pet_id") @Positive long petId,
                                 @LoginMemberId Long memberId){
