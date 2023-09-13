@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 // import axios from 'axios';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
+// import DialogContentText from '@mui/material/DialogContentText';
 import TextField from '@mui/material/TextField';
 
-import LinkButton from 'components/buttons/LinkButton';
+import LinkButton from '@components/buttons/LinkButton';
+import UploadPetImg from '@components/UploadProfileImg';
 
 const MyPetItem = [
   // 추후 useEffect로 데이터 받아올 데이터 (내 반려동물)
@@ -31,8 +33,21 @@ const MyPetItem = [
   },
 ];
 
+interface IRegisterPet {
+  type: 'DOG' | 'CAT';
+  name: string;
+  age: number;
+  species: string;
+  weight: number;
+  body: string;
+  male: boolean;
+  neutering: boolean;
+}
+
 const ReservationStepTwo = () => {
   const navigate = useNavigate();
+  const defaultProfileImg = 'imgs/DefaultUserProfile.jpg'; // Upload Image 사용
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   // const [petItems, setPetItems] = useState<MyPetItem[]>(MyPetItem);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,6 +68,12 @@ const ReservationStepTwo = () => {
   const [isCat, setIsCat] = useState(false);
   const [gender, setGender] = useState(null);
 
+  const { register } = useForm<IRegisterPet>();
+
+  const handleImageFileChange = (file: File) => {
+    setImageFile(file);
+  };
+
   const handleBackClick = () => {
     navigate('/reservation');
   };
@@ -69,16 +90,16 @@ const ReservationStepTwo = () => {
     setIsModalOpen(false);
   };
 
-  const handleGenderCheck = (e: any) => {
-    setGender(e.target.value);
-    setNewPetData({ ...newPetData, gender: e.target.value });
-  };
+  // const handleGenderCheck = (e: any) => {
+  //   setGender(e.target.value);
+  //   setNewPetData({ ...newPetData, gender: e.target.value });
+  // };
 
   const handleNewPetChange = (e: { target: { name: any; value: any } }) => {
     setNewPetData({ ...newPetData, [e.target.name]: e.target.value });
   };
   const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
+    //   e.preventDefault();
     // try {
     // const response = await axios.post('http://localhost:8080/pets/', newPetData);
     // if(response.status === 200) {
@@ -87,7 +108,6 @@ const ReservationStepTwo = () => {
     // } catch (err) {
     // alert('등록 실패');
     // console.log(err);
-    // }
   };
 
   return (
@@ -124,7 +144,10 @@ const ReservationStepTwo = () => {
                 <Dialog open={isModalOpen} onClose={handleModalClose}>
                   <DialogTitle>반려동물 등록</DialogTitle>
                   <DialogContent>
-                    <DialogContentText>반려동물 소개는 마이페이지에서 펫 수정을 통해 등록해주세요!</DialogContentText>
+                    {/* <DialogContentText>반려동물 소개는 마이페이지에서 펫 수정을 통해 등록해주세요!</DialogContentText> */}
+                    <UploadPetImgbox>
+                      <UploadPetImg currentImageUrl={defaultProfileImg} setImageFile={handleImageFileChange} />
+                    </UploadPetImgbox>
                     <PetButtonContainer>
                       <PetButton onClick={() => setIsCat(false)} iscat={isCat ? 'true' : 'false'}>
                         <img src="/icons/DogIcon.svg" alt="dogIcon" />
@@ -165,29 +188,32 @@ const ReservationStepTwo = () => {
                       fullWidth
                       onChange={handleNewPetChange}
                     />
-                    <CheckBoxContainer>
-                      <CheckBoxGenderWrapper>
-                        <input
-                          type="radio"
-                          name="gender"
-                          value="male"
-                          onChange={handleGenderCheck}
-                          checked={gender === 'male'}
-                        ></input>
-                        <img src="/icons/MaleIcon.svg" alt="maleIcon"></img>
-                        <CheckBoxGenderWrapper>
-                          <input
-                            type="radio"
-                            name="gender"
-                            value="female"
-                            onChange={handleGenderCheck}
-                            checked={gender === 'female'}
-                          ></input>
-                          <img src="/icons/FemaleIcon.svg" alt="femaleIcon"></img>
-                        </CheckBoxGenderWrapper>
-                      </CheckBoxGenderWrapper>
-                    </CheckBoxContainer>
-
+                    <TextField
+                      margin="dense"
+                      id="body"
+                      label="나의 펫소개"
+                      type="text"
+                      fullWidth
+                      onChange={handleNewPetChange}
+                    />
+                    <RegisterInputWrapper>
+                      <InputLabelStyle htmlFor="neutering">중성화</InputLabelStyle>
+                      <RadioWrapper>
+                        <input type="radio" value="true" {...register('neutering')} />
+                        <RadioLabel htmlFor="male">했음</RadioLabel>
+                        <input type="radio" value="false" {...register('neutering')} />
+                        <RadioLabel htmlFor="female">안했음</RadioLabel>
+                      </RadioWrapper>
+                    </RegisterInputWrapper>
+                    <RegisterInputWrapper>
+                      <InputLabelStyle htmlFor="male">성별</InputLabelStyle>
+                      <RadioWrapper>
+                        <input type="radio" value="true" {...register('male')} />
+                        <RadioLabel htmlFor="male">남자아이</RadioLabel>
+                        <input type="radio" value="false" {...register('male')} />
+                        <RadioLabel htmlFor="female">여자아이</RadioLabel>
+                      </RadioWrapper>
+                    </RegisterInputWrapper>
                     <form onSubmit={handleSubmit}>
                       <Button variant="contained" color="primary" type="submit" fullWidth>
                         등록하기
@@ -227,7 +253,6 @@ const ReservationStepTwo = () => {
     </MainContainer>
   );
 };
-
 const noticeText = () => (
   <>
     · 급식할 사료의 양
@@ -327,12 +352,48 @@ const ButtonContainer = styled.div`
 
 const PetButtonContainer = styled.div`
   display: flex;
+  /* flex-direction: column; */
   justify-content: center;
   height: 32px;
   border-radius: 8px;
   overflow: hidden;
   width: 100%;
   margin: 16px 0 4px 0;
+`;
+
+export const RegisterInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px;
+`;
+
+export const InputLabelStyle = styled.label`
+  ${(props) => props.theme.fontSize.s16h24};
+`;
+
+export const RadioLabel = styled.label`
+  ${(props) => props.theme.fontSize.s14h21};
+  margin-left: -3px;
+  margin-right: 8px;
+  color: ${({ theme }) => theme.textColors.gray60};
+  input:checked + & {
+    color: #279eff;
+  }
+`;
+
+const UploadPetImgbox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+`;
+
+export const RadioWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 68%;
 `;
 
 const PetButton = styled.button<{ iscat: string }>`
@@ -344,18 +405,6 @@ const PetButton = styled.button<{ iscat: string }>`
   border: none;
   background-color: ${(props) =>
     props.iscat === 'true' ? props.theme.textColors.gray50 : props.theme.colors.mainBlue};
-`;
-
-const CheckBoxContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 14px 0 14px 0;
-`;
-
-const CheckBoxGenderWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
 `;
 
 const SelectPetImgContainer = styled.div`
