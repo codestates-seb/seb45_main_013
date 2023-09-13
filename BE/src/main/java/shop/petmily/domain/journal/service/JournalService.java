@@ -1,5 +1,6 @@
 package shop.petmily.domain.journal.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,29 +17,22 @@ import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class JournalService {
     private final JournalRepository journalRepository;
     private final ReservationService reservationService;
     private final S3UploadService uploadService;
 
-    public JournalService(JournalRepository journalRepository,
-                          ReservationService reservationService,
-                          S3UploadService uploadService) {
-        this.journalRepository = journalRepository;
-        this.reservationService = reservationService;
-        this.uploadService = uploadService;
-    }
-
     // 케어일지 등록
     public Journal createJournal(Journal journal, List<MultipartFile> files){
         Reservation reservation = reservationService.findVerifiedReservation(journal.getReservation().getReservationId());
+        journal.setReservation(reservation);
         journal.setMember(reservation.getMember());
 
         if (journalRepository.existsByReservation(reservation)) {
@@ -114,8 +108,9 @@ public class JournalService {
 
     // 접근자가 케어일지에 권한이 있는지 확인
     public void verifiedJournalOwner(long id, Journal verifiedJournal){
-        if (id != verifiedJournal.getReservation().getPetsitter().getPetsitterId()
-            && id!= verifiedJournal.getMember().getMemberId()){
+        if ((id == verifiedJournal.getReservation().getPetsitter().getPetsitterId())
+                || (id == verifiedJournal.getMember().getMemberId())){
+        } else {
             throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
     }
