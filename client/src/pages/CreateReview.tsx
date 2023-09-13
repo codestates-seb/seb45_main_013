@@ -10,6 +10,8 @@ import { getCookieValue } from 'hooks/getCookie';
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
+const accessToken = getCookieValue('access_token');
+
 const CreateReview = () => {
   const navigate = useNavigate();
   const { memberId: careMemberId, reservationId: careReservationId } = useParams();
@@ -21,10 +23,8 @@ const CreateReview = () => {
   const [review, setReview] = useState<any>();
   const [reviewImages, setReviewImages] = useState([]);
 
-  const [star, setStar] = useState<number | null>(review?.star || 5);
-
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-
+  const [star, setStar] = useState<number | null>(review?.star || 5);
   const [reviewText, setReviewText] = useState('');
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
@@ -62,8 +62,6 @@ const CreateReview = () => {
 
   // 리뷰 등록
   const handleSubmit = async () => {
-    const accessToken = getCookieValue('access_token');
-
     setIsRegisterLoading(true);
 
     const formData = new FormData();
@@ -73,25 +71,17 @@ const CreateReview = () => {
       selectedFiles.map((file) => formData.append('file', file));
     }
 
-    // review 이미지 다 삭제하고 보내거나 review 이미지 있으면 보내기
-    if (reviewImages) {
-      const reviewImagesString = reviewImages.join(',');
-      formData.append('photos', reviewImagesString);
-    } else if (!reviewImages) {
-      formData.append('photos', '');
-    }
-
     formData.append('star', String(star));
     formData.append('reservationId', reservation.reservationId);
     formData.append('body', reviewText);
 
     try {
-      const response = await axios.patch(`${apiUrl}/reviews/${review.reviewId}`, formData, {
+      const response = await axios.post(`${apiUrl}/reviews`, formData, {
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
       });
 
       if (response.status === 200) {
-        alert('리뷰가 수정되었습니다.');
+        alert('리뷰가 등록되었습니다.');
         navigate(`/cares/${memberId}`);
       }
     } catch (error: any) {
@@ -100,6 +90,43 @@ const CreateReview = () => {
         alert(error.response.data.message);
         navigate(-1);
       }
+    }
+
+    setIsRegisterLoading(false);
+  };
+
+  // 리뷰 수정
+  const handleEditSubmit = async () => {
+    setIsRegisterLoading(true);
+
+    const formData = new FormData();
+
+    formData.append('body', reviewText);
+    formData.append('star', String(star));
+
+    // review 이미지 다 삭제하고 보내거나 review 이미지 있으면 보내기
+    if (reviewImages) {
+      const reviewImagesString = reviewImages.join(',');
+      formData.append('photos', reviewImagesString);
+    } else if (!reviewImages) {
+      formData.append('photos', '');
+    }
+
+    if (selectedFiles) {
+      selectedFiles.map((file) => formData.append('file', file));
+    }
+
+    try {
+      const response = await axios.patch(`${apiUrl}/reviews/${review?.reviewId}`, formData, {
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (response.status === 200) {
+        alert('리뷰가 수정되었습니다.');
+        navigate(`/cares/${memberId}/`);
+      }
+    } catch (error) {
+      console.log(error);
     }
 
     setIsRegisterLoading(false);
@@ -117,14 +144,22 @@ const CreateReview = () => {
 
           const review = res.data.review;
           const photos = res.data.review.photos;
-          if (review && photos) {
+
+          if (review) {
             setReview(review);
+            setReviewText(review.body);
+            setStar(review.star);
 
-            const modifiedReviewImages = photos.map((photoUrl: any) =>
-              photoUrl.replace('https://bucketUrl', bucketUrl),
-            );
+            if (photos) {
+              const modifiedReviewImages = photos.map((photoUrl: any) => {
+                if (photoUrl.includes('https://bucketUrl')) {
+                  return photoUrl.replace('https://bucketUrl', bucketUrl);
+                }
+                return '';
+              });
 
-            setReviewImages(modifiedReviewImages);
+              setReviewImages(modifiedReviewImages);
+            }
           }
         });
       } catch (error: any) {
@@ -133,12 +168,10 @@ const CreateReview = () => {
     }
   }, []);
 
-  console.log(review);
-
   return (
     <MainContainer>
       <TitleReservationContainer>
-        <Title>리뷰 작성</Title>
+        <Title>후기 작성</Title>
         <ReservationContainer>
           <FirstLine>
             <Info>
@@ -211,7 +244,7 @@ const CreateReview = () => {
         />
       </TextContainer>
       <ButtonContainer>
-        <button onClick={handleSubmit}>{review ? '리뷰 수정' : '리뷰 등록'}</button>
+        <button onClick={review ? handleEditSubmit : handleSubmit}>{review ? '후기 수정' : '후기 등록'}</button>
         {isRegisterLoading && (
           <LoadingContainer>
             <Spinner />

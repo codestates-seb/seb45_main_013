@@ -11,11 +11,10 @@ import { deleteCookie } from 'hooks/deleteCookie';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const NavHeader = () => {
-  const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { isLogin, memberId } = useSelector((state: IUser) => state.user);
+  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
   console.log('로그인: ', isLogin);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -66,7 +65,7 @@ const NavHeader = () => {
     return () => window.removeEventListener('click', handleOutsideClick);
   }, [isModalOpen]);
 
-  // 유저 정보 가져오기
+  /// 유저 정보 가져오기
   useEffect(() => {
     const accessToken = getCookieValue('access_token');
     const refreshToken = getCookieValue('refresh_token');
@@ -75,7 +74,6 @@ const NavHeader = () => {
       axios
         .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
         .then((res) => {
-          console.log(res);
           dispatch(login());
           dispatch(setUser(res.data));
         })
@@ -99,8 +97,6 @@ const NavHeader = () => {
       dispatch(deleteUser());
     }
   }, [isLogin]);
-
-  console.log(isModalOpen);
 
   return (
     <Container>
