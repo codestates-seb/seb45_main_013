@@ -9,7 +9,7 @@ import java.time.LocalTime;
 
 @Getter
 @AllArgsConstructor
-public class ScheduledPetsitterReservationDto {
+public class PetsitterScheduledResponseDto {
     private Long reservationId;
 
     private LocalDate reservationDate;
