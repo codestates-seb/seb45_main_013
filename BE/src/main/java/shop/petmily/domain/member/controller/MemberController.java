@@ -43,6 +43,7 @@ public class MemberController {
     private final PetsitterMapper petsitterMapper;
     private final FavoriteService favoriteService;
 
+    // 회원 등록
     @PostMapping
     public ResponseEntity postMember(@Valid @RequestBody MemberPostRequestDto requestBody) {
         Member member = memberService.createMember(memberMapper.memberPostDtoToMember(requestBody));
@@ -51,6 +52,7 @@ public class MemberController {
     }
 
     //*****사진 업로드 수정 다됨 이거참고******
+    // 회원 정보 수정
     @PatchMapping(value = "/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
@@ -65,6 +67,7 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
     }
 
+    // 회원정보 사진 삭제
     @PatchMapping("/{member-id}/photo")
     public ResponseEntity photoDeleteMember(@PathVariable ("member-id") @Positive long memberId,
                                             @LoginMemberId Long loginMemberId) {
@@ -74,6 +77,7 @@ public class MemberController {
         return new ResponseEntity(new SingleResponseDto<>("success delete photo"), HttpStatus.OK);
     }
 
+    // 펫시터 프로필 수정
     @PatchMapping("/petsitters/{member-id}")
     public ResponseEntity patchPetsitterPossible(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
@@ -88,6 +92,7 @@ public class MemberController {
         return new ResponseEntity<>(new SingleResponseDto<>("success modify member"), HttpStatus.OK);
     }
 
+    // 펫시터 프로필 조회
     @GetMapping("/petsitters")
     public ResponseEntity<PetsitterPossibleResoponseDto> getPetsitterPossible(@LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(loginMemberId);
@@ -96,6 +101,7 @@ public class MemberController {
         return new ResponseEntity<>(petsitterPossibleResoponseDto, HttpStatus.OK);
     }
 
+    // 펫시터 검색 및 필터링 조회 (이름, 별점, 리뷰수)
     @GetMapping("/search")
     @JsonManagedReference
     public ResponseEntity getPetsitters(@RequestParam Map<String, String> params, @PageableDefault(page = 0, size = 20, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -106,6 +112,7 @@ public class MemberController {
         return new ResponseEntity<>(PageResponseDto.of(petsitters.getContent(), petsitters), HttpStatus.OK);
     }
 
+    // 회원 정보 조회
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/my-page")
     public ResponseEntity<MemberGetResponseDto> getMember(@LoginMemberId Long loginMemberId) {
@@ -113,6 +120,7 @@ public class MemberController {
         return new ResponseEntity<>(memberGetResponseDto, HttpStatus.OK);
     }
 
+    // 회원정보 삭제
     @DeleteMapping("/{member-id}")
     public ResponseEntity deleteMember(@PathVariable("member-id") @Positive long memberId, @LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(memberId);

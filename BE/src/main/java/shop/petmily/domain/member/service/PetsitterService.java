@@ -20,6 +20,7 @@ import shop.petmily.global.exception.ExceptionCode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -168,6 +169,12 @@ public class PetsitterService {
     private List<Member> getPetsittersWithFilters(String nameFilter, String starFilter, String reviewCountFilter) {
         List<Member> petsitters = petsitterRepository.findAllMembersWithPetsitterBooleanTrue();
 
+        // 기본 정렬 : petsitterId 내림차순
+        petsitters.sort(Comparator.comparing(member -> {
+            Petsitter petsitter = member.getPetsitter();
+            return (petsitter != null) ? petsitter.getPetsitterId() : 0;
+        }, Comparator.reverseOrder()));
+
         // 이름 검색 필터
         if (nameFilter != null && !nameFilter.isEmpty()) {
             final String filterText = nameFilter;
@@ -177,26 +184,14 @@ public class PetsitterService {
         }
 
         // 별점 검색 필터
-        if (starFilter != null && !starFilter.isEmpty()) { // 별점 3 일때, 3.9 ~ 3.0 조회
+        if (starFilter != null && !starFilter.isEmpty()) {
             double starValue = Double.parseDouble(starFilter);
             petsitters = petsitters.stream()
                     .filter(member -> {
-                        double memberStar = member.getPetsitter().getStar();
-                        return memberStar >= starValue && memberStar < (starValue + 1.0);
+                        Petsitter petsitter = member.getPetsitter();
+                        return petsitter != null && petsitter.getStar() >= starValue;
                     })
-                    .sorted((member1, member2) -> {
-                        double star1 = member1.getPetsitter().getStar();
-                        double star2 = member2.getPetsitter().getStar();
-                        return Double.compare(star2, star1);
-                    })
-                    .collect(Collectors.toList());
-        } else { // 별점 null 일때, 5.0 ~ 0.0 조회
-            petsitters = petsitters.stream()
-                    .sorted((member1, member2) -> {
-                        double star1 = member1.getPetsitter().getStar();
-                        double star2 = member2.getPetsitter().getStar();
-                        return Double.compare(star2, star1);
-                    })
+                    .sorted(Comparator.comparing(member -> member.getPetsitter().getStar(), Comparator.reverseOrder()))
                     .collect(Collectors.toList());
         }
 
@@ -205,9 +200,10 @@ public class PetsitterService {
             int reviewCountValue = Integer.parseInt(reviewCountFilter);
             petsitters = petsitters.stream()
                     .filter(member -> {
-                        int reviewCount = member.getPetsitter().getReviewCount();
-                        return reviewCount >= reviewCountValue;
+                        Petsitter petsitter = member.getPetsitter();
+                        return petsitter != null && petsitter.getReviewCount() >= reviewCountValue;
                     })
+                    .sorted(Comparator.comparing(member -> member.getPetsitter().getReviewCount(), Comparator.reverseOrder()))
                     .collect(Collectors.toList());
         }
 
