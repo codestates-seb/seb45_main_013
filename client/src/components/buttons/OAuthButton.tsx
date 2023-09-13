@@ -1,13 +1,12 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 interface Props {
   children: string;
 }
-const apiUrl = process.env.REACT_APP_API_URL;
 
 const GoogleOAuthButton = ({ children }: Props) => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const handleGooleOAuth = () => {
     window.location.assign(`${apiUrl}/oauth2/authorization/google`);
   };

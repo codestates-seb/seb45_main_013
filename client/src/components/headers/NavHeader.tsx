@@ -83,11 +83,19 @@ const NavHeader = () => {
           // access token 재발급
           if (error.response.data.status === 401) {
             const refreshToken = getCookieValue('refresh_token');
+
             axios
-              .post(`${apiUrl}/refreshToken`, { headers: { Authorization: `Bearer ${refreshToken}` } })
+              .post(`${apiUrl}/refreshToken`, {}, { headers: { Refresh: refreshToken } })
               .then((res) => {
-                if (res.data.access_token) {
-                  document.cookie = `access_token=${res.data.accessToken}; path=/;`;
+                console.log(res);
+                if (res.data.access_token && res.data.refresh_token) {
+                  const expirationDate = new Date();
+                  expirationDate.setDate(expirationDate.getDate() + 1);
+
+                  document.cookie = `access_token=${res.data.access_token}; path=/;`;
+                  document.cookie = `access_token=${
+                    res.data.refresh_token
+                  }; expires=${expirationDate.toUTCString()}; path=/;`;
                 }
               })
               .catch((error) => console.log(error));
