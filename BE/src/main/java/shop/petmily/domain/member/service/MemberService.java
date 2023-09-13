@@ -12,6 +12,7 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.FavoriteRepository;
 import shop.petmily.domain.member.repository.MemberRepository;
+import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
@@ -27,6 +28,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final FavoriteRepository favoriteRepository;
     private final PetsitterService petsitterService;
+    private final PetsitterRepository petsitterRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
     private final S3UploadService uploadService;
@@ -111,6 +113,10 @@ public class MemberService {
     @Transactional
     public void removeMember(long memberId) {
         Member findMember = findVerifiedMember(memberId);
+        if (findMember.isPetsitterBoolean()) {
+            Petsitter findPetsitter = petsitterService.findPetsitter(findMember);
+            petsitterRepository.delete(findPetsitter);
+        }
         memberRepository.delete(findMember);
     }
 
