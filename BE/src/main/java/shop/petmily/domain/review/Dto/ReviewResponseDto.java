@@ -30,4 +30,13 @@ public class ReviewResponseDto {
     private String body;
 
     private Integer star;
+
+    private List<String> petNames;
+
+    private List<String> petPhotos;
+
+    private String petsitterName;
+
+    private String petsitterPhoto;
+
 }

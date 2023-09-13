@@ -94,7 +94,7 @@ public class ReviewController {
         List<Review> reviews = reviewPage.getContent();
         List<ReviewResponseDto> response =
                 reviews.stream()
-                        .map(review -> mapper.reviewsToResponseDto(review))
+                        .map(review -> mapper.reviewToResponse(review))
                         .collect(Collectors.toList());
 
         return new ResponseEntity<>(new ReviewMultiResponseDto(response, pageInfo), HttpStatus.OK);

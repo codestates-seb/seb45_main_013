@@ -2,12 +2,15 @@ package shop.petmily.domain.review.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import shop.petmily.domain.pet.entity.Pet;
+import shop.petmily.domain.reservation.entity.ReservationPet;
 import shop.petmily.domain.review.Dto.ReviewPatchDto;
 import shop.petmily.domain.review.Dto.ReviewPostDto;
 import shop.petmily.domain.review.Dto.ReviewResponseDto;
 import shop.petmily.domain.review.entity.Review;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Mapper(componentModel = "Spring")
 public interface ReviewMapper {
@@ -19,24 +22,35 @@ public interface ReviewMapper {
     @Mapping(source = "memberId", target = "member.memberId")
     Review reviewPatchToReview(ReviewPatchDto reviewPatchDto);
 
-    @Mapping(source = "member.memberId", target = "memberId")
-    @Mapping(source = "petsitter.petsitterId", target = "petsitterId")
-    @Mapping(source = "reservation.reservationId", target = "reservationId")
-    ReviewResponseDto reviewToResponse(Review createdReview);
+    default ReviewResponseDto reviewToResponse(Review review) {
+        ReviewResponseDto response = new ReviewResponseDto();
+        response.setReviewId(review.getReviewId());
+        response.setMemberId(review.getReservation().getMember().getMemberId());
+        response.setReservationId(review.getReservation().getReservationId());
+        response.setPetsitterId(review.getPetsitter().getPetsitterId());
 
-    default ReviewResponseDto reviewsToResponseDto(Review review) {
-        ReviewResponseDto dto = new ReviewResponseDto();
-        dto.setReviewId(review.getReviewId());
-        dto.setMemberId(review.getReservation().getMember().getMemberId());
-        dto.setReservationId(review.getReservation().getReservationId());
-        dto.setPetsitterId(review.getReservation().getPetsitter().getPetsitterId());
-        dto.setCreatedAt(review.getCreatedAt());
-        dto.setLastModifiedAt(review.getLastModifiedAt());
-        dto.setBody(review.getBody());
-        dto.setPhotos(new ArrayList<>(review.getPhotos()));
-        dto.setStar(review.getStar());
+        response.setCreatedAt(review.getCreatedAt());
+        response.setLastModifiedAt(review.getLastModifiedAt());
+        response.setBody(review.getBody());
+        response.setPhotos(new ArrayList<>(review.getPhotos()));
+        response.setStar(review.getStar());
+        response.setPetsitterName(review.getReservation().getPetsitter().getMember().getName());
+        response.setPetsitterPhoto(review.getReservation().getPetsitter().getMember().getPhoto());
 
-        return dto;
+
+        List<String> petNames = new ArrayList<>();
+        List<String> petPhotos = new ArrayList<>();
+
+        for (ReservationPet reservationPet : review.getReservation().getReservationPets()) {
+            Pet pet = reservationPet.getPet();
+            petNames.add(pet.getName());
+            petPhotos.add(pet.getPhoto());
+        }
+
+        response.setPetNames(petNames);
+        response.setPetPhotos(petPhotos);
+
+        return response;
     }
 
 }

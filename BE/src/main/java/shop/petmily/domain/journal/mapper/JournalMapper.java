@@ -28,6 +28,7 @@ public interface JournalMapper {
         response.setReservationId(journal.getReservation().getReservationId());
         response.setPetsitterId(journal.getPetsitter().getPetsitterId());
         response.setMemberId(journal.getMember().getMemberId());
+
         response.setCreatedAt(journal.getCreatedAt());
         response.setLastModifiedAt(journal.getLastModifiedAt());
         response.setBody(journal.getBody());
