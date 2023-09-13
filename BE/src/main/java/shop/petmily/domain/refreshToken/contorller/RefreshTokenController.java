@@ -3,8 +3,10 @@ package shop.petmily.domain.refreshToken.contorller;
 import org.springframework.transaction.annotation.Transactional;
 import shop.petmily.domain.member.dto.MemberLoginDto;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.domain.member.service.MemberService;
+import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
@@ -31,6 +33,7 @@ public class RefreshTokenController {
 
     private final JwtTokenizer jwtTokenizer;
     private final MemberService memberService;
+    private final PetsitterService petsitterService;
     private final RefreshTokenService refreshTokenService;
     private final CustomAuthorityUtils customAuthorityUtils;
 
@@ -44,6 +47,9 @@ public class RefreshTokenController {
         Member member = memberService.findMember(refreshClaims.get("sub").toString());
         member.setRoles(customAuthorityUtils.chageRoles(member));
         member.setPetsitterBoolean(true);
+
+        Petsitter petsitter = new Petsitter(member);
+        petsitterService.addPetsitterProfile(petsitter);
 
         memberService.updatePetsitterBoolean(member);
 
