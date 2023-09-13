@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import Rating from '@mui/material/Rating';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Divider } from '@mui/material';
 
 const PetsittersItem = [
   // 추후 DB에서 받아올 예정
@@ -51,31 +51,22 @@ const NewPetsitterItem = [
     id: 1,
     name: '홍길동',
     location: '서울시 강남구',
-    rating: `5.0`,
-    shortContent: `강아지가 너무 귀여워요!`,
     profileImg: '/imgs/PetsitterPhoto.svg',
-    ratingImg: '/imgs/Star.svg',
-    describe: `진짜 매일같이 정성스럽게돌봐주시는 덕분에 사람을더 좋아하게 되는거 같아요ㅜㅜ`,
+    describe: `자신있습니다 맡겨주세요자신있습니다 맡겨주세요자신있습니다 맡겨주세요자신있습니다 맡겨주세요`,
   },
   {
     id: 2,
     name: '펫당근',
     location: '경기 수원시',
-    rating: `4.0`,
-    shortContent: `제가 너무 귀여워요!`,
     profileImg: '/imgs/PetsitterPhoto.svg',
-    ratingImg: '/imgs/Star.svg',
-    describe: `조금 케어가 부족한거 같아요`,
+    describe: `사실 케어에 자신이 없습니다. 사실 케어에 자신이 없습니다. 사실 케어에 자신이 없습니다. 사실 케어에 자신이 없습니다.`,
   },
   {
     id: 3,
     name: '문단속',
     location: '전라도 광주시',
-    rating: `2.0`,
-    shortContent: `펫시터님이 너무 귀여워요!`,
     profileImg: '/imgs/PetsitterPhoto.svg',
-    ratingImg: '/imgs/Star.svg',
-    describe: `펫시터님이 잘 케어해주세요!`,
+    describe: `펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!`,
   },
 ];
 
@@ -100,12 +91,12 @@ const ViewPetsitters = () => {
       <StatusHeader>
         <StatusTitleText>펫시터 보기</StatusTitleText>
       </StatusHeader>
-      <NewPetsitterText>새로 온 펫시터</NewPetsitterText>
-      <NewIntroContainer>
+      <HotPetsitterText>별점이 높은 펫시터</HotPetsitterText>
+      <HotIntroContainer>
         <StyledCarousel
           showThumbs={false}
           showStatus={false}
-          autoPlay={true}
+          autoPlay={false}
           emulateTouch={true}
           stopOnHover={true}
           infiniteLoop={true}
@@ -114,23 +105,29 @@ const ViewPetsitters = () => {
           showIndicators={false}
         >
           {NewPetsitterItem.map((item) => (
-            <NewWrap key={item.id}>
-              <NewPetsitterImg src={item.profileImg} alt="Profile" />
-              <NewFaceBox>
+            <HotWrap key={item.id}>
+              <TitleContainer>
                 <OnelineWrap>
-                  <NewPetsitterLocation>{item.location}</NewPetsitterLocation>
-                  <Rating name="read-only" value={Number(item.rating)} size="small" readOnly />
+                  <TitleName>{item.name}</TitleName>
+                  <PetsitterText>펫시터</PetsitterText>
                 </OnelineWrap>
-                <NewPetsitterDescription>
+              </TitleContainer>
+              <DobleQuotationImg src="/imgs/DoubleQuotationMark.svg" alt="DobleQuotation" />
+              <HotPetsitterImg src={item.profileImg} alt="Profile" />
+              <HotFaceBox>
+                <HotPetsitterReview>
                   {item.describe.length > 20
                     ? item.describe.substring(0, 19) + '\n' + item.describe.substring(19)
                     : item.describe}
-                </NewPetsitterDescription>
-              </NewFaceBox>
-            </NewWrap>
+                </HotPetsitterReview>
+                <Divider />
+                <NewPetsitterLocation>{item.location}</NewPetsitterLocation>
+              </HotFaceBox>
+            </HotWrap>
           ))}
         </StyledCarousel>
-      </NewIntroContainer>
+      </HotIntroContainer>
+
       <PetsitterContainer>
         <RequestPetsitterContainer>
           <RequestPetsitterText>{`내가 찜한 펫시터`}</RequestPetsitterText>
@@ -167,7 +164,7 @@ const ViewPetsitters = () => {
           </CustomCarousel>
         </RequestPetsitterContainer>
         <RequestPetsitterContainer>
-          <RequestPetsitterText>{`별점이 높은 펫시터`}</RequestPetsitterText>
+          <RequestPetsitterText>{`새로 온 펫시터`}</RequestPetsitterText>
           <CustomCarousel
             showThumbs={false}
             showStatus={false}
@@ -253,7 +250,8 @@ const StatusHeader = styled.div`
   justify-content: space-around;
   align-items: center;
   background-color: ${(props) => props.theme.textColors.secondary};
-  min-height: 48px;
+  margin-top: -64px;
+  min-height: 64px;
   gap: 120px;
   position: relative;
 `;
@@ -263,56 +261,88 @@ const StatusTitleText = styled.div`
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
 `;
 
-const NewPetsitterText = styled.h2`
+const HotPetsitterText = styled.h2`
   margin-top: 36px;
   padding: 0 12px;
   ${(props) => props.theme.fontSize.s18h27};
   font-weight: ${(props) => props.theme.fontWeights.bold};
 `;
 
-const NewIntroContainer = styled.div`
-  margin: 16px 12px 0 12px;
+const HotIntroContainer = styled.div`
+  margin: 12px 12px 0 12px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
   border-radius: 8px;
-  width: 90%;
 `;
 
-const NewWrap = styled.div`
-  display: flex;
-  padding: 28px;
+const HotWrap = styled.div`
+  position: relative;
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `;
 
-const NewPetsitterImg = styled.img`
-  width: 80px !important;
-  height: 80px;
+const TitleContainer = styled.div`
+  display: flex;
+  position: relative;
+  background-color: ${(props) => props.theme.colors.mainBlue};
+  border-radius: 8px 8px 0 0;
+  padding: 12px 0 12px 32px;
 `;
 
-const NewFaceBox = styled.div`
+const DobleQuotationImg = styled.img`
+  width: 20px;
+  height: 13px;
+  margin-top: 18px;
+  position: absolute;
+  left: -40%;
+`;
+
+const TitleName = styled.div`
+  ${(props) => props.theme.fontSize.s18h27};
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  color: ${(props) => props.theme.colors.white};
+`;
+
+const PetsitterText = styled.div`
+  ${(props) => props.theme.fontSize.s14h21};
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  color: ${(props) => props.theme.textColors.primary};
+  margin: 5px 0 0 8px;
+`;
+
+const HotPetsitterImg = styled.img`
+  width: 60px !important;
+  height: 60px;
+  position: absolute;
+  top: 18px;
+  right: 14%;
+`;
+
+const HotFaceBox = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-left: 12px;
+  padding: 8px 40px 14px 40px;
 `;
 
 const OnelineWrap = styled.div`
   display: flex;
-  gap: 8px;
 `;
 
 const NewPetsitterLocation = styled.div`
   font-weight: ${(props) => props.theme.fontWeights.bold};
   white-space: nowrap;
+  margin-top: 14px;
+  text-align: left;
 `;
 
-const NewPetsitterDescription = styled.div`
+const HotPetsitterReview = styled.div`
   ${(props) => props.theme.fontSize.s14h21};
-  margin-top: 8px;
+  margin-top: 36px;
+  margin-bottom: 14px;
   text-align: left;
   display: box;
   overflow: hidden;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   flex-wrap: wrap;
