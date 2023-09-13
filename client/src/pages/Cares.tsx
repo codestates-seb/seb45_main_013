@@ -6,12 +6,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CareCard from '@components/Carecard';
 import { getCookieValue } from 'hooks/getCookie';
+import { useInView } from 'react-intersection-observer';
 
 const Cares = () => {
   const [filter, setFilter] = useState('전체');
   const apiUrl = process.env.REACT_APP_API_URL;
   const { memberId: id } = useParams();
   const navigate = useNavigate();
+
+  const { ref, inView } = useInView();
 
   const filters = ['전체', '예정', '완료'];
 
@@ -66,6 +69,7 @@ const Cares = () => {
           ) : (
             <div>등록된 예약이 없습니다.</div>
           )}
+          <div ref={ref}>Loading...</div>
         </CareCardContainer>
       </CareContainer>
     </MainContainer>

@@ -24,6 +24,7 @@ import CreateReview from './pages/CreateReview';
 import NotFound from '@pages/404';
 import CreateJournal from '@pages/CreateJournal';
 import SitterSchedule from '@pages/SitterSchedule';
+import OAuthBranch from '@pages/OAuthBranch';
 
 const Container = styled.div`
   display: flex;
@@ -83,11 +84,12 @@ const App = () => {
               <Route path="reservation/step3" element={<ReservationStepThree />}></Route>
               <Route path="cares/:memberId" element={<Cares />} />
               <Route path="cares/:memberId/:reservationId/review" element={<CreateReview />} />
-              <Route path="cares/:petsitterId/:reservationId/journal" element={<CreateJournal />} />
+              <Route path="cares/:memberId/:reservationId/journal" element={<CreateJournal />} />
             </Route>
             <Route path="/" element={<BackHeaderLayout />}>
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
+              <Route path="signup/branch" element={<OAuthBranch />} />
               <Route path="mypage/edit" element={<EditUserProfile />} />
               <Route path="mypage/register" element={<RegisterPet />} />
               <Route path="mypage/:petId/edit" element={<EditPet />}></Route>

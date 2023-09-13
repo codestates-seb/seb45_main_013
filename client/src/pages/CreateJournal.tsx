@@ -9,17 +9,22 @@ import styled, { keyframes } from 'styled-components';
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
+const accessToken = getCookieValue('access_token');
+
 const CreateJournal = () => {
   const navigate = useNavigate();
-  const { petsitterId, reservationId } = useParams();
+  const { _, reservationId } = useParams();
+
+  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
   const [reservation, setReservation] = useState<any>();
+  const [journal, setJournal] = useState<any>(null);
+  const [journalImages, setJournalImages] = useState([]);
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [journalText, setJournalText] = useState('');
-
-  const { isLogin, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   let year, month, day;
   if (reservation && reservation.reservationDay) {
@@ -29,7 +34,7 @@ const CreateJournal = () => {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      if (selectedFiles.length + files.length <= 5) {
+      if (selectedFiles.length + journalImages.length + files.length <= 5) {
         setSelectedFiles([...selectedFiles, ...Array.from(files)]);
       } else {
         alert('최대 5개의 이미지를 선택할 수 있습니다.');
@@ -42,44 +47,106 @@ const CreateJournal = () => {
     setSelectedFiles(selectedFiles.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleRemoveReviewImage = (indexToRemove: number) => {
+    setJournalImages(journalImages.filter((_, index) => index !== indexToRemove));
+  };
+
   const openFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  // 리뷰 등록
+  // 일지 등록
   const handleSubmit = async () => {
-    const accessToken = getCookieValue('access_token');
     setIsRegisterLoading(true);
 
-    if (accessToken && isLogin) {
-      const formData = new FormData();
-      formData.append('reservationId', reservation.reservationId);
-      formData.append('body', journalText);
-      if (selectedFiles) {
-        selectedFiles.map((file) => formData.append('file', file));
-      }
+    const formData = new FormData();
 
-      try {
-        const response = await axios.post(`${apiUrl}/journals`, formData, {
-          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
-        });
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
+    formData.append('reservationId', reservation.reservationId);
+    formData.append('body', journalText);
 
-      setIsRegisterLoading(false);
+    if (selectedFiles) {
+      selectedFiles.map((file) => formData.append('file', file));
     }
+
+    try {
+      const response = await axios.post(`${apiUrl}/journals`, formData, {
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
+      });
+      if (response.data.status === 201) {
+        alert('일지가 등록 되었습니다.');
+        navigate(`/cares/${memberId}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setIsRegisterLoading(false);
   };
 
-  console.log(reservation);
+  // 일지 수정
+  const handleEditSubmit = async () => {
+    setIsRegisterLoading(true);
 
+    const formData = new FormData();
+    formData.append('body', journalText);
+
+    if (journalImages) {
+      const journalImagesString = journalImages.join(',');
+      formData.append('photos', journalImagesString);
+    } else if (!journal) {
+      formData.append('photos', '');
+    }
+
+    if (selectedFiles) {
+      selectedFiles.map((file) => formData.append('file', file));
+    }
+
+    try {
+      const response = await axios.patch(`${apiUrl}/journals/${journal?.journalId}`, formData, {
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
+      });
+      if (response.status === 200) {
+        alert('일지가 수정되었습니다.');
+        navigate(`/cares/${memberId}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setIsRegisterLoading(false);
+  };
+
+  // 예약 조회
   useEffect(() => {
-    if (isLogin && petsitterBoolean) {
+    if (!isLogin || !petsitterBoolean) {
+      alert('권한이 없습니다.');
+      navigate('/');
+    } else {
       try {
-        axios.get(`${apiUrl}/reservations/${reservationId}`).then((res) => setReservation(res.data));
+        axios.get(`${apiUrl}/reservations/${reservationId}`).then((res) => {
+          setReservation(res.data);
+
+          const journal = res.data.journal;
+          const photos = res.data.journal?.photos;
+
+          if (journal) {
+            setJournal(journal);
+            setJournalText(journal.body);
+
+            if (photos) {
+              const modifiedJournalImages = photos.map((photoUrl: any) => {
+                if (photoUrl.includes('https://bucketUrl')) {
+                  return photoUrl.replace('https://bucketUrl', bucketUrl);
+                }
+                return '';
+              });
+
+              setJournalImages(modifiedJournalImages);
+            }
+          }
+        });
       } catch (error: any) {
         console.log(error);
         if (error.response.status === 404) {
@@ -89,12 +156,6 @@ const CreateJournal = () => {
       }
     }
   }, []);
-
-  // useEffect(() => {
-  //   try {
-  //     axios.get(`${apiUrl}/journals/${}`)
-  //   } catch (error) {}
-  // }, []);
 
   return (
     <MainContainer>
@@ -149,14 +210,28 @@ const CreateJournal = () => {
               </RemoveButton>
             </ImgPrevieItem>
           ))}
+          {journalImages.map((imageUrl, index) => (
+            <ImgPrevieItem key={index} className="image-preview-item">
+              <Img src={imageUrl} alt={`Journal Image ${index}`} />
+              <RemoveButton onClick={() => handleRemoveReviewImage(index)}>
+                <img src="/icons/X.png" alt="x" width="10"></img>
+              </RemoveButton>
+            </ImgPrevieItem>
+          ))}
         </ImgPreview>
       </ImgContainer>
       <TextContainer>
         <TextTitle>리뷰</TextTitle>
-        <TextArea placeholder="케어 중 무슨 일이 있었나요?" onChange={(e) => setJournalText(e.target.value)} />
+        <TextArea
+          placeholder="케어 중 무슨 일이 있었나요?"
+          defaultValue={journal?.body && journal?.body}
+          onChange={(e) => setJournalText(e.target.value)}
+        />
       </TextContainer>
       <ButtonContainer>
-        <button onChange={handleSubmit}>케어일지 등록</button>
+        <button onClick={journal ? handleEditSubmit : handleSubmit}>
+          {journal ? '케어일지 수정' : '케어일지 등록'}
+        </button>
         {isRegisterLoading && (
           <LoadingContainer>
             <Spinner />
