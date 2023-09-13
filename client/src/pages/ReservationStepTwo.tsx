@@ -221,6 +221,7 @@ const ReservationStepTwo = () => {
           /*onClick={handleClickNext}*/
           width="100%"
           height="48px"
+          fontSize="16"
         />
       </LinkButtonContainer>
     </MainContainer>
@@ -285,8 +286,8 @@ const StatusHeader = styled.div`
     bottom: -2px; //컨테이너 하단에 위치하도록 설정
     width: 240px; // 밑줄의 길이 설정
     height: 2px; // 밑줄의 두께 설정
-    background-color: ${(props) => props.theme.colors.mainBlue}; */
-  }
+    background-color: ${(props) => props.theme.colors.mainBlue}; 
+  }*/
 `;
 
 const BackImg = styled.img``;
@@ -487,7 +488,7 @@ const ImpossibleCaseText = styled.div`
 `;
 
 const LinkButtonContainer = styled.div`
-  margin: 48px 36px 20px 36px;
+  margin: 32px 24px 20px 24px;
   display: flex;
   justify-content: center;
   align-items: center;

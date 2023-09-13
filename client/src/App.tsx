@@ -10,6 +10,7 @@ import Signup from '@pages/Signup';
 
 import Mypage from './pages/Mypage';
 import EditUserProfile from './pages/EditUserProfile';
+import ViewPetsitters from './pages/ViewPetsitters';
 import Reservation from './pages/Reservation';
 import ReservationStepTwo from '@pages/ReservationStepTwo';
 import ReservationStepThree from '@pages/ReservationStepThree';
@@ -92,6 +93,7 @@ const App = () => {
               <Route path="mypage/register" element={<RegisterPet />} />
               <Route path="mypage/:petId/edit" element={<EditPet />}></Route>
               <Route path="search" element={<Search />} />
+              <Route path="petsitters" element={<ViewPetsitters />}></Route>
               <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
               <Route path="petsitters/:memberId/schedule" element={<SitterSchedule />}></Route>
             </Route>

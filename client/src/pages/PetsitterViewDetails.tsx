@@ -49,6 +49,7 @@ const careertwo = () => (
 );
 
 const convertTo12Hour = (time: string) => {
+  // 24시간 -> 12시간으로 변환
   const timeParts = time.split(':');
   let hours = parseInt(timeParts[0]);
   const minutes = parseInt(timeParts[1]);
@@ -109,7 +110,7 @@ const PetsitterViewDetails = () => {
             <MiddleLineImg src="/imgs/MiddleLine.svg" alt="middleLine" />
             <StyledButton variant="text" onClick={handleBookmarkClick}>
               <BookmarkIcon
-                src={isBookmarked ? '/imgs/BeforeBookmark.svg' : '/icons/Bookmark.svg'}
+                src={isBookmarked ? '/icons/Bookmark.svg' : '/imgs/BeforeBookmark.svg'}
                 alt="bookmarkIcon"
               />
               찜하기
