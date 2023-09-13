@@ -11,7 +11,7 @@ import { IUser } from 'store/userSlice';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BucketUrl = process.env.REACT_APP_BUCKET_URL;
-const defaultProfileImg = 'imgs/DefaultUserProfile.jpg';
+const defaultProfileImg = '/imgs/DefaultUserProfile.jpg';
 
 const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
   const [previewImage, setPreviewImage] = useState<string | null>(currentImageUrl);
@@ -107,15 +107,15 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
       onClick={handleClickUploadArea}
       onKeyPress={handleKeyPress}
       style={{
-        width: '60px',
-        height: '60px',
+        width: '100px',
+        height: '100px',
         borderRadius: '50%',
         cursor: 'pointer',
         backgroundColor: 'lightgray',
       }}
     >
       {previewImage && (
-        <img src={previewImage} alt="Preview" style={{ width: '60px', height: '60px', borderRadius: '50%' }} />
+        <img src={previewImage} alt="Preview" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
       )}
       <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} ref={fileInputRef} />
       <Modal open={openModal} onClose={handleCloseModal}>

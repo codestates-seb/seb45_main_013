@@ -4,13 +4,17 @@ import { Link } from 'react-router-dom';
 import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import AspectRatio from '@mui/joy/AspectRatio';
+import Card from '@mui/joy/Card';
+import CardContent from '@mui/joy/CardContent';
+import CardOverflow from '@mui/joy/CardOverflow';
+import Divider from '@mui/joy/Divider';
 
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const MyPetmily = () => {
   const token = getCookieValue('access_token');
-
   const [petmily, setPetmily] = useState<any[]>([]);
 
   useEffect(() => {
@@ -20,7 +24,7 @@ const MyPetmily = () => {
 
     const fetchData = async () => {
       try {
-        const getPets = await axios.get(`${process.env.REACT_APP_API_URL}/pets`, { headers });
+        const getPets = await axios.get(`${apiUrl}/pets`, { headers });
         console.log(getPets);
         const petmily = getPets.data;
         setPetmily(petmily);
@@ -48,30 +52,29 @@ const MyPetmily = () => {
 
       {petmily.length > 0 ? (
         petmily.map((pet) => (
-          <PetmilyCard key={pet.petId}>
-            <div style={{ display: 'flex', justifyContent: 'end', padding: '4px' }}>
+          <Card key={pet.petId} variant="outlined" sx={{ width: '100%', mb: '32px' }}>
+            <CardOverflow>
+              <AspectRatio ratio="2">
+                {pet.photo ? <img src={pet.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="pet" /> : <PetImg />}
+              </AspectRatio>
               <Link to={`/mypage/${pet.petId}/edit`}>
                 <PetsButton>
                   <img src="imgs/Edit.svg" alt="EditPets" />
                 </PetsButton>
               </Link>
-            </div>
-
-            <PetInfoContainer>
-              {pet.photo ? (
-                <PetImg src={pet.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="pet" />
-              ) : (
-                <PetImg src="imgs/Pet.svg" alt="Default" />
-              )}
-              <PetInfo>
-                {pet.name} / {pet.gender}
-              </PetInfo>
-              <PetInfo>{pet.breed}</PetInfo>
-              <PetInfo>
-                {pet.age}살 / {pet.weight}kg
-              </PetInfo>
-            </PetInfoContainer>
-          </PetmilyCard>
+            </CardOverflow>
+            <CardContent>
+              <PetInfo>{pet.name}</PetInfo>
+            </CardContent>
+            <CardOverflow variant="soft">
+              <Divider inset="context" />
+              <CardContent orientation="horizontal">
+                <PetInfo>
+                  {pet.age}살 / {pet.weight}kg
+                </PetInfo>
+              </CardContent>
+            </CardOverflow>
+          </Card>
         ))
       ) : (
         <NoPetsContainer>
@@ -115,7 +118,7 @@ const PetsButton = styled.button`
 `;
 
 // 등록된 petmily 카드
-const PetmilyCard = styled.div`
+export const PetmilyCard = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -124,17 +127,25 @@ const PetmilyCard = styled.div`
   box-shadow: 0 2px 10px 0 #cdcdcd;
 `;
 
-const PetInfoContainer = styled.div`
+const PetImg = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 70%;
+    height: 70%;
+    background-image: url('imgs/Petmily.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
 `;
 
-const PetImg = styled.img`
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-`;
 const PetInfo = styled.div`
   margin-top: 4px;
   color: ${(props) => props.theme.textColors.gray00};

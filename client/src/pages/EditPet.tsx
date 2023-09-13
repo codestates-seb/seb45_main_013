@@ -136,7 +136,7 @@ const EditPet = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.data) {
+      if (response.data === 'NO_CONTENT') {
         alert('펫이 삭제되었습니다');
         navigate('/mypage');
       }
