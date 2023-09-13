@@ -49,6 +49,7 @@ const careertwo = () => (
 );
 
 const convertTo12Hour = (time: string) => {
+  // 24시간 -> 12시간으로 변환
   const timeParts = time.split(':');
   let hours = parseInt(timeParts[0]);
   const minutes = parseInt(timeParts[1]);
@@ -67,12 +68,12 @@ const convertTo12Hour = (time: string) => {
 const PetsitterViewDetails = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState(NavItem[0].link);
-  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [selectedDates, setSelectedDates] = useState<dayjs.Dayjs | null>(null);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
   const handleResetReservationClick = () => {
-    setSelectedDate(null);
-    setSelectedTime('');
+    setSelectedDates(null);
+    setSelectedTimes([]);
   };
 
   const handleBookmarkClick = () => {
@@ -109,7 +110,7 @@ const PetsitterViewDetails = () => {
             <MiddleLineImg src="/imgs/MiddleLine.svg" alt="middleLine" />
             <StyledButton variant="text" onClick={handleBookmarkClick}>
               <BookmarkIcon
-                src={isBookmarked ? '/imgs/BeforeBookmark.svg' : '/icons/Bookmark.svg'}
+                src={isBookmarked ? '/icons/Bookmark.svg' : '/imgs/BeforeBookmark.svg'}
                 alt="bookmarkIcon"
               />
               찜하기
@@ -127,21 +128,28 @@ const PetsitterViewDetails = () => {
             <TabContentContainer>
               {activeTab === '/possibleReservationTime' && (
                 <PossibleReservationTime
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  selectedTime={selectedTime}
-                  setSelectedTime={setSelectedTime}
+                  selectedDate={selectedDates}
+                  setSelectedDate={setSelectedDates}
+                  selectedTimes={selectedTimes}
+                  setSelectedTimes={setSelectedTimes}
                 />
               )}
               {activeTab === '/reviews' && <Reviews />}
             </TabContentContainer>
-            {selectedDate && selectedTime && (
+            {selectedDates && selectedTimes && (
               <ConfirmationSection>
                 <ConfirmationText>예약확인</ConfirmationText>
                 <ConfirmationDate>
-                  예약 날짜: {selectedDate ? selectedDate.format('YYYY-MM-DD') : '날짜를 선택하세요'}
+                  예약 날짜: {selectedDates ? selectedDates.format('YYYY-MM-DD') : '날짜를 선택하세요'}
                 </ConfirmationDate>
-                <ConfirmationTime>예약 시간: {convertTo12Hour(selectedTime)}</ConfirmationTime>
+                {selectedTimes.length > 0 && (
+                  <>
+                    <ConfirmationTime>예약 시작 시간: {convertTo12Hour(selectedTimes[0])}</ConfirmationTime>
+                    <ConfirmationTime>
+                      예약 종료 시간: {convertTo12Hour(selectedTimes[selectedTimes.length - 1])}
+                    </ConfirmationTime>
+                  </>
+                )}
                 <StyledCancelButton variant="outlined" color="error" onClick={handleResetReservationClick}>
                   취소
                 </StyledCancelButton>

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -11,6 +11,8 @@ import { TimePicker } from '@mui/x-date-pickers';
 import { TextField } from '@mui/material';
 import { Modal, Sheet } from '@mui/joy';
 import DaumPostcode from 'react-daum-postcode';
+
+import LinkButton from 'components/buttons/LinkButton';
 
 const ContactItem = [
   // 추후 UseEffect로 데이터 받아오기
@@ -76,21 +78,21 @@ const Reservation = () => {
       <ReservationContainer>
         <ScheduleText>{`언제 펫시터가 필요하신가요?`}</ScheduleText>
         <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthShort: `M` }}>
-          <DemoContainer sx={{ paddingTop: 0 }} components={['DatePicker']}>
+          <DemoContainer sx={{ paddingTop: 1 }} components={['DatePicker']}>
             <DatePicker label="날짜를 입력해주세요" format="YYYY-MM-DD" />
           </DemoContainer>
         </LocalizationProvider>
         <ScheduleText>{'방문시간'}</ScheduleText>
         <BasicTimePickerContainer>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['TimePicker']} sx={{ flex: 1, paddingTop: 0 }}>
+            <DemoContainer components={['TimePicker']} sx={{ flex: 1, paddingTop: 1 }}>
               <StyledTimePicker>
                 <TimePicker label="Check In" sx={{ flex: 1 }} />
               </StyledTimePicker>
             </DemoContainer>
           </LocalizationProvider>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['TimePicker']} sx={{ flex: 1, paddingTop: 0 }}>
+            <DemoContainer components={['TimePicker']} sx={{ flex: 1, paddingTop: 1 }}>
               <StyledTimePicker>
                 <TimePicker label="Check Out" sx={{ flex: 1 }} />
               </StyledTimePicker>
@@ -141,26 +143,29 @@ const Reservation = () => {
           </ContactContainer>
         ))}
       </RequestContainer>
-      <CustomLinkBtn to="/reservation/step2">다음 단계</CustomLinkBtn>
+      <LinkButtonContainer>
+        <StyledLinkButton link="/reservation/step2" text="다음단계" width="100%" height="48px" fontSize="16" />
+      </LinkButtonContainer>
     </MainContainer>
   );
 };
+
+export default Reservation;
 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 0 12px 12px 12px;
 `;
 
 const StatusHeader = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  width: calc(100% + 12 * 2);
-  margin: 0px -12px 0px -12px;
+  justify-content: space-around;
   align-items: center;
   background-color: ${(props) => props.theme.textColors.secondary};
+  min-height: 48px;
+  gap: 120px;
+  position: relative;
 
   /* &::after {
     content: '';
@@ -190,6 +195,7 @@ const PageNumberText = styled.div`
 const ReservationContainer = styled.div`
   padding-bottom: 16px;
   border-bottom: 1px solid ${(props) => props.theme.textColors.primary};
+  padding: 12px;
 `;
 
 const ScheduleText = styled.h2`
@@ -215,6 +221,7 @@ const RequestContainer = styled.div`
   margin: 8px 0;
   padding-bottom: 40px;
   border-bottom: 1px solid ${(props) => props.theme.textColors.primary};
+  padding: 12px;
 `;
 
 const ContactContainer = styled.div`
@@ -237,15 +244,14 @@ const ContactSubText = styled.div`
   color: ${(props) => props.theme.textColors.primary};
 `;
 
-const CustomLinkBtn = styled(Link)`
-  width: 100%;
-  border-radius: 12px;
-  padding: 12px;
-  color: white;
-  text-align: center;
-  margin-top: 16px;
-  background-color: ${({ theme }) => theme.colors.mainBlue};
-  text-decoration: none;
+const LinkButtonContainer = styled.div`
+  margin: 12px 24px 20px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-export default Reservation;
+const StyledLinkButton = styled(LinkButton)`
+  border-radius: 12px;
+  height: 36px;
+`;
