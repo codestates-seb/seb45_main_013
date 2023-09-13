@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Rating from '@mui/material/Rating';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 // 추후 UseEffect로 데이터 받아올 데이터 (내가 자주 이용하는 펫시터)
@@ -77,11 +77,11 @@ const Home = () => {
       <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
       <CustomLink to={'/search'}>펫시터 검색</CustomLink>
       <LinkContainer>
-        <PetsitterLink>
-          <StyledLink to={'/petsitters'}>펫시터 보기</StyledLink>
+        <PetsitterLink onClick={() => navigate('/petsitters')}>
+          <StyledLink>펫시터 보기</StyledLink>
         </PetsitterLink>
-        <PetsitterLink>
-          <StyledLink to={'/qna'}>펫시터QnA</StyledLink>
+        <PetsitterLink onClick={() => navigate('/qna')}>
+          <StyledLink>펫시터QnA</StyledLink>
         </PetsitterLink>
       </LinkContainer>
       <AdSubContainer>
@@ -177,7 +177,7 @@ const PetsitterLink = styled.a`
   box-shadow: ${(props) => props.theme.shadow.dp01};
 `;
 
-const StyledLink = styled(Link)`
+const StyledLink = styled.div`
   text-decoration: none;
   color: inherit;
 `;
