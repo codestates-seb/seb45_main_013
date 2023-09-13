@@ -26,6 +26,7 @@ import NotFound from '@pages/404';
 import CreateJournal from '@pages/CreateJournal';
 import SitterSchedule from '@pages/SitterSchedule';
 import OAuthBranch from '@pages/OAuthBranch';
+import ViewJournal from '@pages/ViewJournal';
 
 const Container = styled.div`
   display: flex;
@@ -96,6 +97,8 @@ const App = () => {
               <Route path="mypage/:petId/edit" element={<EditPet />}></Route>
               <Route path="search" element={<Search />} />
               <Route path="petsitters" element={<ViewPetsitters />}></Route>
+              <Route path="cares/journal/:journalId" element={<ViewJournal />}></Route>
+
               <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
               <Route path="petsitters/:memberId/schedule" element={<SitterSchedule />}></Route>
             </Route>
