@@ -158,8 +158,14 @@ public class MemberService {
     public MemberGetResponseDto findProfileMember(Long loginMemberId) {
         Member member = findMember(loginMemberId);
 
+        Long petsitterId = null;
+        if (member.getPetsitter() != null) {
+            petsitterId = member.getPetsitter().getPetsitterId();
+        }
+
         return MemberGetResponseDto.builder()
                 .memberId(member.getMemberId())
+                .petsitterId(petsitterId)
                 .email(member.getEmail())
                 .name(member.getName())
                 .nickName(member.getNickName())
