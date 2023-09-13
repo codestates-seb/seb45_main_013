@@ -10,6 +10,8 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 
+import { Analytics } from '@vercel/analytics/react';
+
 const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
@@ -23,5 +25,6 @@ root.render(
         </ThemeProvider>
       </PersistGate>
     </Provider>
+    <Analytics />
   </React.StrictMode>,
 );
