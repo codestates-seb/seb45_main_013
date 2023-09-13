@@ -5,7 +5,7 @@ import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.pet.dto.PetResponseDto;
 import shop.petmily.domain.pet.entity.Pet;
-import shop.petmily.domain.reservation.dto.ReservationPossiblePetsitterReseponseDto;
+import shop.petmily.domain.reservation.dto.PossiblePetsitterResponseDto;
 import shop.petmily.domain.reservation.dto.ReservationPostDto;
 import shop.petmily.domain.reservation.dto.ReservationResponseDto;
 import shop.petmily.domain.reservation.entity.Reservation;
@@ -106,8 +106,8 @@ public interface ReservationMapper {
         return reservationResponseDto;
     }
 
-    default ReservationPossiblePetsitterReseponseDto petsitterToReservationPossiblePetsitterReseponseDto(Petsitter petsitter){
-        ReservationPossiblePetsitterReseponseDto reseponseDto = new ReservationPossiblePetsitterReseponseDto();
+    default PossiblePetsitterResponseDto petsitterToReservationPossiblePetsitterReseponseDto(Petsitter petsitter){
+        PossiblePetsitterResponseDto reseponseDto = new PossiblePetsitterResponseDto();
         reseponseDto.setMemberId(petsitter.getMember().getMemberId());
         reseponseDto.setPetsitterId(petsitter.getPetsitterId());
         reseponseDto.setName(petsitter.getMember().getName());
@@ -126,11 +126,4 @@ public interface ReservationMapper {
         reseponseDto.setReviewCount(petsitter.getReviewCount());
         return reseponseDto;
     }
-
-    //    @Mapping(source = "memberId", target = "member.memberId")
-//    @Mapping(source = "petsitterId", target = "petsitter.petsitterId")
-//    Reservation reservationCreateDtoToRservation(ReservationCreateDto reservationCreateDto);
-
-    //    @Mapping(source = "memberId", target = "member.memberId")
-//    Reservation reservationPatchDtoToReservation(ReservationPatchDto reservationPatchDto);
 }

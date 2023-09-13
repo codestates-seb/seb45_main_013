@@ -25,7 +25,7 @@ public enum ExceptionCode {
 
     // 예약, 펫
     RESERVATION_NOT_EXIST(404, "존재하지 않는 예약정보입니다."),
-    TIME_REQUEST_NOT_ALLOWED(400,"올바르지 않은 시간요청입니다."),
+    TIME_REQUEST_NOT_ALLOWED(400,"시작시간이 종료시간보다 늦을수 없습니다."),
     NOT_STATUS_CONFIRM(400, "예약확정 가능한 상태가 아닙니다."),
     NOT_STATUS_CANCEL(400,"예약취소 가능한 상태가 아닙니다."),
     PET_NOT_EXIST(404,"존재하지 않는 펫 입니다."),

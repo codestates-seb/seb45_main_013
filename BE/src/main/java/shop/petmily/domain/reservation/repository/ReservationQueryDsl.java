@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.reservation.dto.ScheduledPetsitterReservationDto;
+import shop.petmily.domain.reservation.dto.PetsitterScheduledResponseDto;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.review.entity.Review;
@@ -56,9 +56,9 @@ public class ReservationQueryDsl {
                 .fetch();
     }
 
-    public List<ScheduledPetsitterReservationDto> findPetsitterSchedule(Petsitter requestPetsitter) {
+    public List<PetsitterScheduledResponseDto> findPetsitterSchedule(Petsitter requestPetsitter) {
         return jpaQueryFactory
-                .select(Projections.constructor(ScheduledPetsitterReservationDto.class,
+                .select(Projections.constructor(PetsitterScheduledResponseDto.class,
                         reservation.reservationId,
                         reservation.reservationDay,
                         reservation.reservationTimeStart,

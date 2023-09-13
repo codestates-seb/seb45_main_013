@@ -3,13 +3,12 @@ package shop.petmily.domain.reservation.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.List;
 
 @Setter
 @Getter
-public class ReservationPossiblePetsitterReseponseDto {
+public class PossiblePetsitterResponseDto {
     private Long memberId;
 
     private Long petsitterId;

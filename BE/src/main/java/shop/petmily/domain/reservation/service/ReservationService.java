@@ -12,7 +12,7 @@ import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.pet.service.PetService;
-import shop.petmily.domain.reservation.dto.ScheduledPetsitterReservationDto;
+import shop.petmily.domain.reservation.dto.PetsitterScheduledResponseDto;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.entity.ReservationPet;
@@ -173,12 +173,12 @@ public class ReservationService {
     }
 
     //펫시터 예약정보만 조회
-    public List<ScheduledPetsitterReservationDto> getPetsitterSchedule(long petsitterId) {
+    public List<PetsitterScheduledResponseDto> getPetsitterSchedule(long petsitterId) {
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
         return reservationQueryDsl.findPetsitterSchedule(petsitter);
     }
 
-    //     예약 확정 (펫시터)
+    //예약 확정 (펫시터)
     public Reservation confirmReservationStatus(Long reservationId, Long id) {
         Reservation reservation = findVerifiedReservation(reservationId);
         Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
@@ -192,7 +192,7 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    //     예약 취소 (펫시터)
+    //예약 취소 (펫시터)
     public Reservation cancelReservationPetsitter(Long reservationId, Long id) {
         Reservation reservation = findVerifiedReservation(reservationId);
         Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
@@ -285,52 +285,4 @@ public class ReservationService {
 
         throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_ADDRESS);
     }
-
-    //    public Reservation createTemporaryReservation(Reservation reservation){
-//        reservation.setProgress(Progress.BEFORE_PETSITTER_SELECTION);
-//
-//        return reservationRepository.save(reservation);
-//    }
-
-    // 예약 내용 수정
-//    public Reservation updateReservation(Reservation reservation) {
-//        Reservation findReservation = findVerifiedReservation(reservation.getReservationId());
-//
-//        verifiedReservationOwnerMember(reservation.getMember().getMemberId(), findReservation);
-//
-//        Optional.ofNullable(reservation.getReservationTimeStart())
-//                .ifPresent(findReservation::setReservationTimeStart);
-//        Optional.ofNullable(reservation.getReservationTimeEnd())
-//                .ifPresent(findReservation::setReservationTimeEnd);
-//        Optional.ofNullable(reservation.getBody())
-//                .ifPresent(findReservation::setBody);
-//
-//        reservationRepository.save(findReservation);
-//        findReservation.setLastModifiedAt(LocalDateTime.now());
-//        return findReservation;
-//    }
-
-    //    예약 삭제
-//    public void deleteReservation(long reservationId, long memberId) {
-//        Reservation findReservation = findVerifiedReservation(reservationId);
-//        verifiedReservationOwner(memberId, findReservation);
-//
-//        reservationRepository.delete(findReservation);
-//    }
-
-//    public List<Petsitter> findDayTimePossiblePetsitters(Reservation reservation, String type, String location){
-
-//        List<Petsitter> dayTimePossiblePetsitters = new ArrayList<>();
-//        for (Petsitter petsitter : dayPossiblePetsitters) {
-//            LocalTime petsitterPossibleTimeStart = petsitter.getPossibleTimeStart().toLocalTime();
-//            LocalTime petsitterPossibleTimeEnd = petsitter.getPossibleTimeEnd().toLocalTime();
-//
-//            if ((petsitterPossibleTimeStart.equals(reservationStartTime) || petsitterPossibleTimeStart.isBefore(reservationStartTime)) &&
-//                    (petsitterPossibleTimeEnd.equals(reservationEndTime) || petsitterPossibleTimeEnd.isAfter(reservationEndTime))) {
-//                dayTimePossiblePetsitters.add(petsitter);
-//            }
-//        }
-
-    //        return dayPossiblePetsitters;
-//    }
 }
