@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -70,6 +71,17 @@ public class ExceptionAdvice {
 
         final ErrorResponse response = ErrorResponse.of(HttpStatus.BAD_REQUEST,
                 e.getMessage());
+
+        return response;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBindException(BindException e) {
+        String errorMessage = e.getFieldError().getDefaultMessage();
+
+        final ErrorResponse response = ErrorResponse.of(HttpStatus.BAD_REQUEST,
+                errorMessage);
 
         return response;
     }
