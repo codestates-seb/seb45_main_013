@@ -24,14 +24,16 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl, defaultProfile
   const fileInputRef = React.createRef<HTMLInputElement>();
   const [openModal, setOpenModal] = useState(false);
   const { memberId } = useSelector((state: IUser) => state.user);
-  const hasSavedImage = !!currentImageUrl;
+  const [isImageOnServer, setImageOnServer] = useState<boolean>(false);
 
   useEffect(() => {
     if (currentImageUrl) {
       setPreviewImage(currentImageUrl.replace(/https:\/\/bucketUrl/g, BucketUrl));
+      setImageOnServer(true);
     } else {
       console.log(defaultProfileImg);
       setPreviewImage(defaultProfileImg);
+      setImageOnServer(false);
     }
   }, [currentImageUrl, defaultProfileImg]);
 
@@ -64,40 +66,45 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl, defaultProfile
   };
 
   const handleDelete = async () => {
-    const token = getCookieValue('access_token');
-    try {
-      let endpoint;
-      // 펫 유저 사진 엔드 포인트 나누는 방법
-      if (petId) {
-        endpoint = `${apiUrl}/pets/${petId}/photo`;
-      } else {
-        endpoint = `${apiUrl}/members/${memberId}/photo`;
-      }
-
-      const response = await axios.patch(endpoint, null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.data) {
-        alert('삭제되었습니다');
-        setPreviewImage(defaultProfileImg);
-        setImageFile(null);
-        handleCloseModal();
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response) {
-          console.error(error.response.data);
+    if (isImageOnServer) {
+      const token = getCookieValue('access_token');
+      try {
+        let endpoint;
+        // 펫 유저 사진 엔드 포인트 나누는 방법
+        if (petId) {
+          endpoint = `${apiUrl}/pets/${petId}/photo`;
         } else {
-          console.error('AxiosError caught (no response):', error.message);
+          endpoint = `${apiUrl}/members/${memberId}/photo`;
         }
-      } else {
-        console.error('Non-Axios error caught:', error);
+
+        const response = await axios.patch(endpoint, null, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data) {
+          alert('삭제되었습니다');
+          setPreviewImage(defaultProfileImg);
+          setImageFile(null);
+          handleCloseModal();
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            console.error(error.response.data);
+          } else {
+            console.error('AxiosError caught (no response):', error.message);
+          }
+        } else {
+          console.error('Non-Axios error caught:', error);
+        }
       }
+    } else {
+      setPreviewImage(defaultProfileImg);
+      setImageFile(null);
+      handleCloseModal();
     }
   };
-
   const handleClickUploadArea = () => {
     handleOpenModal();
   };
@@ -129,7 +136,6 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl, defaultProfile
       <Modal open={openModal} onClose={handleCloseModal}>
         <ModalBody
           hasImage={!!previewImage && previewImage !== defaultProfileImg}
-          hasSavedImage={hasSavedImage}
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -140,7 +146,7 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl, defaultProfile
   );
 };
 
-const ModalBody = ({ hasImage, hasSavedImage, onAdd, onEdit, onDelete, onClose }: any) => {
+const ModalBody = ({ hasImage, onAdd, onEdit, onDelete, onClose }: any) => {
   const [hadImage, setHadImage] = useState(hasImage);
 
   useEffect(() => {
@@ -166,9 +172,7 @@ const ModalBody = ({ hasImage, hasSavedImage, onAdd, onEdit, onDelete, onClose }
       {hasImage ? (
         <>
           <Button onClick={onEdit}>수정</Button>
-          <Button onClick={onDelete} disabled={!hasSavedImage}>
-            삭제
-          </Button>
+          <Button onClick={onDelete}>삭제</Button>
         </>
       ) : (
         <Button onClick={onAdd}>추가</Button>
