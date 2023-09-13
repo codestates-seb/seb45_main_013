@@ -17,7 +17,6 @@ import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +42,7 @@ public class ReviewService {
     // 후기 등록
     public Review createReview(Review review, List<MultipartFile> files){
         Reservation reservation = reservationService.findVerifiedReservation(review.getReservation().getReservationId());
+        review.setReservation(reservation);
 
         if (reviewRepository.existsByReservation(reservation)) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
