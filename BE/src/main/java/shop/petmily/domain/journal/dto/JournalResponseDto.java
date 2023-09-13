@@ -29,4 +29,12 @@ public class JournalResponseDto {
 
     private List<String> photos;
 
+    private List<String> petNames;
+
+    private List<String> petPhotos;
+
+    private String petsitterName;
+
+    private String petsitterPhoto;
+
 }
