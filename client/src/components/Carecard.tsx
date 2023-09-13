@@ -1,15 +1,41 @@
 import { IUser } from 'store/userSlice';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { getCookieValue } from 'hooks/getCookie';
 
+const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 const CareCard = ({ reservation }: any) => {
+  const navigate = useNavigate();
   const { memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const [year, month, day] = reservation.reservationDay.split('-');
 
+  // 고객이 신청한거 취소
+  const handleClientCancel = async () => {
+    const accessToken = getCookieValue('access_token');
+
+    try {
+      const response = await axios.patch(
+        `${apiUrl}/reservations/${reservation.reservationId}/membercancel`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+
+      console.log(response);
+      if (response.status === 200) {
+        alert('예약이 취소 되었습니다.');
+        navigate(`cares/${memberId}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <CareCardContainer>
       <FirstLine>
@@ -73,7 +99,7 @@ const CareCard = ({ reservation }: any) => {
           {!petsitterBoolean && reservation.progress == 'RESERVATION_REQUEST' ? (
             <>
               <InActiveButton>예약신청</InActiveButton>
-              <ActiveButton>취소하기</ActiveButton>
+              <ActiveButton onClick={handleClientCancel}>취소하기</ActiveButton>
             </>
           ) : !petsitterBoolean && reservation.progress === 'RESERVATION_CONFIRM' ? (
             <>

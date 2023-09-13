@@ -4,6 +4,7 @@ export interface IUser {
   user: {
     isLogin: boolean;
     memberId: number;
+    petsitterId: number;
     name: string;
     phone: string;
     address: string;
@@ -20,6 +21,7 @@ export const userSlice = createSlice({
   initialState: {
     isLogin: false,
     memberId: '',
+    petsitterId: '',
     name: '',
     phone: '',
     address: '',
@@ -35,6 +37,7 @@ export const userSlice = createSlice({
     },
     setUser: (state, action) => {
       state.memberId = action.payload.memberId;
+      state.petsitterId = action.payload.petsitterId;
       state.name = action.payload.name;
       state.phone = action.payload.phone;
       state.address = action.payload.address;
@@ -47,6 +50,7 @@ export const userSlice = createSlice({
     deleteUser: (state) => {
       state.isLogin = false;
       state.memberId = '';
+      state.petsitterId = '';
       state.name = '';
       state.phone = '';
       state.address = '';
