@@ -9,15 +9,31 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const OAuthBranch = () => {
   const navigate = useNavigate();
 
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + 1);
+
   // 펫시터는 다른 token으로 교체
   const handlePetsitterOAuth = async () => {
     const refreshToken = getCookieValue('refresh_token');
     try {
-      const response = await axios.post(`${apiUrl}/refreshToken/petsitterToken`, {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`,
+      const response = await axios.post(
+        `${apiUrl}/refreshToken/petsitterToken`,
+        {},
+        {
+          headers: {
+            Refresh: refreshToken,
+          },
         },
-      });
+      );
+      if (response.status === 200) {
+        document.cookie = `access_token=${response.data.accessToken}; path=/;`;
+        document.cookie = `refresh_token=${
+          response.data.refreshToken
+        }; expires=${expirationDate.toUTCString()}; path=/;`;
+
+        alert('회원가입이 완료되었습니다!');
+        navigate('/');
+      }
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -33,13 +49,10 @@ const OAuthBranch = () => {
       const accessToken = search.split('=')[1].split('&')[0];
       const refreshToken = search.split('=')[2];
 
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 1);
-
       document.cookie = `access_token=${accessToken}; path=/;`;
       document.cookie = `refresh_token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/;`;
 
-      navigate('/');
+      navigate('/signup/branch');
     }
   }, []);
 
