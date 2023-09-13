@@ -24,16 +24,12 @@ const Mypage = () => {
     console.log(petsitterBoolean);
   }, [photo]);
 
-  useEffect(() => {
-    console.log(petsitterBoolean);
-  }, [photo]);
-
   return (
     <MypageContainer>
       <MyProfileContianer>
         <MyProfile>
           {isLogin && photo ? (
-            <MyPhoto src={photo} alt="user profile image" />
+            <MyPhoto src={PhotoUrl} alt="user profile image" />
           ) : (
             <MyPhoto src="imgs/DefaultUser.svg" alt="default profile image" />
           )}

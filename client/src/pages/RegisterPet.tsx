@@ -36,7 +36,7 @@ const RegisterPet = () => {
   const [type, setType] = useState<'DOG' | 'CAT' | null>(null);
 
   // Upload Image 사용
-  const defaultProfileImg = 'imgs/DefaultUserProfile.jpg';
+  const defaultProfileImg = '/imgs/PetProfile.png';
   const [imageFile, setImageFile] = useState<File | null>(null);
   const handleImageFileChange = (file: File) => {
     setImageFile(file);
@@ -94,7 +94,11 @@ const RegisterPet = () => {
       <PageTitle>나의 Petmily 등록</PageTitle>
 
       <MainContainer>
-        <UploadProfileImg currentImageUrl={defaultProfileImg} setImageFile={handleImageFileChange} />
+        <UploadProfileImg
+          currentImageUrl={imageFile ? URL.createObjectURL(imageFile) : defaultProfileImg}
+          setImageFile={handleImageFileChange}
+          defaultProfileImg="/imgs/PetProfile.png"
+        />
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <ButtonContainer>
             <PetButton

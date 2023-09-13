@@ -132,7 +132,11 @@ const EditUserProfile = () => {
     <>
       <PageTitle>회원 정보 수정</PageTitle>
       <MainContainer>
-        <UploadProfileImg currentImageUrl={photo} setImageFile={handleImageFileChange} />
+        <UploadProfileImg
+          currentImageUrl={photo}
+          setImageFile={handleImageFileChange}
+          defaultProfileImg="/imgs/DefaultUserProfile.jpg"
+        />
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="username">이름</InputLabelStyle>
