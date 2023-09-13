@@ -10,6 +10,8 @@ import CardContent from '@mui/joy/CardContent';
 import CardOverflow from '@mui/joy/CardOverflow';
 import Divider from '@mui/joy/Divider';
 
+// 펫 이미지 없을 때 크기 수정
+
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -55,7 +57,13 @@ const MyPetmily = () => {
           <Card key={pet.petId} variant="outlined" sx={{ width: '100%', mb: '32px' }}>
             <CardOverflow>
               <AspectRatio ratio="2">
-                {pet.photo ? <img src={pet.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="pet" /> : <PetImg />}
+                {pet.photo ? (
+                  <img src={pet.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="pet" />
+                ) : pet.type === 'CAT' ? (
+                  <img src="imgs/CatProfile.png" alt="Cat" />
+                ) : (
+                  <img src="imgs//PetProfile.png" alt="Dog" />
+                )}
               </AspectRatio>
               <Link to={`/mypage/${pet.petId}/edit`}>
                 <PetsButton>
@@ -125,25 +133,6 @@ export const PetmilyCard = styled.div`
   padding: 12px;
   border-radius: 4px;
   box-shadow: 0 2px 10px 0 #cdcdcd;
-`;
-
-const PetImg = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-
-  &::before {
-    content: '';
-    display: inline-block;
-    width: 70%;
-    height: 70%;
-    background-image: url('imgs/Petmily.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
 `;
 
 const PetInfo = styled.div`

@@ -8,16 +8,23 @@ import { IUser } from 'store/userSlice';
 
 //  DefaultUserProfile 이미지 안보임
 //  모달 디자인
-
+// 사용
+{
+  /* <UploadProfileImg
+          currentImageUrl={imageFile ? URL.createObjectURL(imageFile) : defaultProfileImg}
+          setImageFile={handleImageFileChange}
+          defaultProfileImg="/imgs/PetProfile.png"
+        /> */
+}
 const apiUrl = process.env.REACT_APP_API_URL;
 const BucketUrl = process.env.REACT_APP_BUCKET_URL;
-const defaultProfileImg = '/imgs/DefaultUserProfile.jpg';
 
-const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
+const UploadProfileImg = ({ petId, setImageFile, currentImageUrl, defaultProfileImg }: any) => {
   const [previewImage, setPreviewImage] = useState<string | null>(currentImageUrl);
   const fileInputRef = React.createRef<HTMLInputElement>();
   const [openModal, setOpenModal] = useState(false);
   const { memberId } = useSelector((state: IUser) => state.user);
+  const hasSavedImage = !!currentImageUrl;
 
   useEffect(() => {
     if (currentImageUrl) {
@@ -26,7 +33,7 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
       console.log(defaultProfileImg);
       setPreviewImage(defaultProfileImg);
     }
-  }, [currentImageUrl]);
+  }, [currentImageUrl, defaultProfileImg]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -60,6 +67,7 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
     const token = getCookieValue('access_token');
     try {
       let endpoint;
+      // 펫 유저 사진 엔드 포인트 나누는 방법
       if (petId) {
         endpoint = `${apiUrl}/pets/${petId}/photo`;
       } else {
@@ -121,6 +129,7 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
       <Modal open={openModal} onClose={handleCloseModal}>
         <ModalBody
           hasImage={!!previewImage && previewImage !== defaultProfileImg}
+          hasSavedImage={hasSavedImage}
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -131,7 +140,7 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl }: any) => {
   );
 };
 
-const ModalBody = ({ hasImage, onAdd, onEdit, onDelete, onClose }: any) => {
+const ModalBody = ({ hasImage, hasSavedImage, onAdd, onEdit, onDelete, onClose }: any) => {
   const [hadImage, setHadImage] = useState(hasImage);
 
   useEffect(() => {
@@ -157,7 +166,9 @@ const ModalBody = ({ hasImage, onAdd, onEdit, onDelete, onClose }: any) => {
       {hasImage ? (
         <>
           <Button onClick={onEdit}>수정</Button>
-          <Button onClick={onDelete}>삭제</Button>
+          <Button onClick={onDelete} disabled={!hasSavedImage}>
+            삭제
+          </Button>
         </>
       ) : (
         <Button onClick={onAdd}>추가</Button>

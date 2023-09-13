@@ -36,7 +36,28 @@ interface IEditPet {
 const EditPet = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchPetData = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/pets/${petId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data) {
+          setPet(response.data);
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPetData();
+  }, []);
+
+  // 펫아이디 나오는지 확인
   const { petId } = useParams();
+  console.log(petId);
   const [pet, setPet] = useState<IEditPet>({
     name: '',
     age: '',
@@ -55,25 +76,6 @@ const EditPet = () => {
   };
 
   const { register, handleSubmit } = useForm<IEditPet>();
-
-  useEffect(() => {
-    const fetchPetData = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/pets/${petId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.data) {
-          setPet(response.data);
-          console.log(response.data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchPetData();
-  }, [petId]);
 
   const onSubmit = async (data: IEditPet) => {
     const token = getCookieValue('access_token');
@@ -160,7 +162,12 @@ const EditPet = () => {
         <StyledButton onClick={deletePet}>삭제</StyledButton>
       </BtnContainer>
       <MainContainer>
-        <UploadProfileImg petId={petId} currentImageUrl={pet.photo} setImageFile={handleImageFileChange} />
+        <UploadProfileImg
+          petId={petId}
+          currentImageUrl={pet.photo}
+          setImageFile={handleImageFileChange}
+          defaultProfileImg="/imgs/PetProfile.png"
+        />
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="name">이름</InputLabelStyle>
