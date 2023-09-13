@@ -43,6 +43,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String nickName = (String) oAuth2User.getAttributes().get("name");
 
         Member member = new Member();
+        member.setName(nickName);
         member.setNickName(nickName);
         member.setEmail(email);
         member.setPassword("google_OAuth2");
