@@ -71,11 +71,8 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         response.setHeader("Authorization",headerValue);
         response.setHeader("Refresh",refreshToken);
 
-        RefreshToken refreshTokenEntity = new RefreshToken();
-        refreshTokenEntity.setValue(refreshToken);
-        refreshTokenEntity.setMember(member);
-        refreshTokenEntity.setExpirationDate(claims.getExpiration());
-        refreshTokenService.addRefreshToken(refreshTokenEntity);
+        if (refreshTokenService.findRefreshToken(member) != null) refreshTokenService.deleteRefreshToken(member);
+        refreshTokenService.createRefreshTokenEntity(member, refreshToken, claims);
 
         getRedirectStrategy().sendRedirect(request,response,uri);
     }

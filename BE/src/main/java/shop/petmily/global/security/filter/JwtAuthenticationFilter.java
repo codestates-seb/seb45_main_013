@@ -87,16 +87,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setHeader("Authorization", "Bearer" + accessToken);
         response.setHeader("Refresh", refreshToken);
 
-        RefreshToken refreshTokenEntity = new RefreshToken();
-        refreshTokenEntity.setValue(refreshToken);
-        refreshTokenEntity.setMember(member);
-        refreshTokenEntity.setExpirationDate(claims.getExpiration());
-        refreshTokenService.addRefreshToken(refreshTokenEntity);
+        if (refreshTokenService.findRefreshToken(member) != null) refreshTokenService.deleteRefreshToken(member);
+
+        refreshTokenService.createRefreshTokenEntity(member, refreshToken, claims);
 
         MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-//                .nickName(member.getNickName())
                 .build();
 
         String body = new Gson().toJson(loginResponse);
@@ -111,7 +108,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", member.getEmail());
         claims.put("roles", member.getRoles());
-//        claims.put("nickName", member.getNickName());
         claims.put("id", member.getMemberId());
 
         String subject = member.getEmail();

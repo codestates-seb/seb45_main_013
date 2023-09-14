@@ -1,6 +1,6 @@
 package shop.petmily.domain.refreshToken.service;
 
-import lombok.Data;
+import io.jsonwebtoken.Claims;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.domain.refreshToken.repository.RefreshTokenRepository;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +25,13 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
+//    @Transactional
+//    public void deleteRefreshToken(String refreshToken) {
+//        refreshTokenRepository.findByValue(refreshToken).ifPresent(refreshTokenRepository::delete);
+//    }
     @Transactional
-    public void deleteRefreshToken(String refreshToken) {
-        refreshTokenRepository.findByValue(refreshToken).ifPresent(refreshTokenRepository::delete);
+    public void deleteRefreshToken(Member member) {
+        refreshTokenRepository.delete(findRefreshToken(member));
     }
 
     @Transactional(readOnly = true)
@@ -38,7 +41,7 @@ public class RefreshTokenService {
 
     @Transactional(readOnly = true)
     public RefreshToken findRefreshToken(Member member) {
-        return refreshTokenRepository.findTopByMemberOrderByExpirationDateDesc(member).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
+        return refreshTokenRepository.findByMember(member);
     }
 
     public void deleteExpiredTokens() {
@@ -46,4 +49,14 @@ public class RefreshTokenService {
         List<RefreshToken> expiredTokens = refreshTokenRepository.findByExpirationDateBefore(now);
         refreshTokenRepository.deleteAll(expiredTokens);
     }
+
+    public void createRefreshTokenEntity(Member member, String refreshToken, Claims claims) {
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setValue(refreshToken);
+        refreshTokenEntity.setMember(member);
+        refreshTokenEntity.setExpirationDate(claims.getExpiration());
+        refreshTokenRepository.save(refreshTokenEntity);
+    }
+
+
 }
