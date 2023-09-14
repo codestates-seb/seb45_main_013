@@ -19,9 +19,6 @@ import { StyledButton } from './EditUserProfile';
 
 // 이름, 나이, 몸무게, 바디, 중성화 수정 가능
 
-const apiUrl = process.env.REACT_APP_API_URL;
-const token = getCookieValue('access_token');
-
 interface IEditPet {
   name: string;
   age: string;
@@ -33,10 +30,28 @@ interface IEditPet {
   photo: string;
 }
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const EditPet = () => {
   const navigate = useNavigate();
 
+  // 펫아이디 나오는지 확인
+  const { petId } = useParams();
+  console.log(petId);
+
+  const [pet, setPet] = useState<IEditPet>({
+    name: '',
+    age: '',
+    species: '',
+    weight: '',
+    body: '',
+    male: false,
+    neutering: false,
+    photo: '',
+  });
+
   useEffect(() => {
+    const token = getCookieValue('access_token');
     const fetchPetData = async () => {
       try {
         const response = await axios.get(`${apiUrl}/pets/${petId}`, {
@@ -54,20 +69,6 @@ const EditPet = () => {
     };
     fetchPetData();
   }, []);
-
-  // 펫아이디 나오는지 확인
-  const { petId } = useParams();
-  console.log(petId);
-  const [pet, setPet] = useState<IEditPet>({
-    name: '',
-    age: '',
-    species: '',
-    weight: '',
-    body: '',
-    male: false,
-    neutering: false,
-    photo: '',
-  });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
 
