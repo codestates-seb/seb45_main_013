@@ -191,11 +191,11 @@ public class MemberService {
         }
     }
 
-    @Transactional
     public Member photoDelete(long memberId) {
         Member findMember = findVerifiedMember(memberId);
-        uploadService.deleteFile(findMember.getPhoto());
+
         findMember.setPhoto(null);
+        uploadService.deleteFile(findMember.getPhoto());
 
         return memberRepository.save(findMember);
     }

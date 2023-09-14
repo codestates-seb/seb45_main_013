@@ -43,6 +43,7 @@ public class PetsitterService {
         return petsitterRepository.findByMember(member).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
+    @Transactional
     public Petsitter updatePetsitter(Petsitter petsitter) {
         Petsitter findPetsitter = findVerifiedPetsitter(petsitter.getPetsitterId());
         Optional.ofNullable(petsitter.getPossibleLocation())
@@ -220,6 +221,7 @@ public class PetsitterService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public PetsitterGetResponseDto mapToPetsitterGetResponseDto(Member member) {
         Petsitter petsitter = findPetsitter(member);
         return PetsitterGetResponseDto.builder()

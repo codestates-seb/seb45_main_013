@@ -45,7 +45,7 @@ public class MemberController {
 
     // 회원 등록
     @PostMapping
-    public ResponseEntity postMember(@Valid @RequestBody MemberPostRequestDto requestBody) {
+    public ResponseEntity<SingleResponseDto<String>> postMember(@Valid @RequestBody MemberPostRequestDto requestBody) {
         Member member = memberService.createMember(memberMapper.memberPostDtoToMember(requestBody));
         URI location = UriCreator.createUri(MEMBER_DEFAULT_URL, member.getMemberId());
         return ResponseEntity.created(location).body(new SingleResponseDto<>("success create member"));
@@ -54,9 +54,9 @@ public class MemberController {
     //*****사진 업로드 수정 다됨 이거참고******
     // 회원 정보 수정
     @PatchMapping(value = "/{member-id}")
-    public ResponseEntity patchMember(@PathVariable("member-id") @Positive long memberId,
+    public ResponseEntity<SingleResponseDto<String>> patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
-                                      @Valid @ModelAttribute MemberPatchRequestDto requestBody) {
+                                      @Valid MemberPatchRequestDto requestBody) {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
 
@@ -69,17 +69,17 @@ public class MemberController {
 
     // 회원정보 사진 삭제
     @PatchMapping("/{member-id}/photo")
-    public ResponseEntity photoDeleteMember(@PathVariable ("member-id") @Positive long memberId,
+    public ResponseEntity<SingleResponseDto<String>> photoDeleteMember(@PathVariable ("member-id") @Positive long memberId,
                                             @LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
         memberService.photoDelete(findMember.getMemberId());
-        return new ResponseEntity(new SingleResponseDto<>("success delete photo"), HttpStatus.OK);
+        return new ResponseEntity<>(new SingleResponseDto<>("success delete photo"), HttpStatus.OK);
     }
 
     // 펫시터 프로필 수정
     @PatchMapping("/petsitters/{member-id}")
-    public ResponseEntity patchPetsitterPossible(@PathVariable("member-id") @Positive long memberId,
+    public ResponseEntity<SingleResponseDto<String>> patchPetsitterPossible(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
                                       @Valid @RequestBody PetsitterPatchRequestDto requestBody) {
         Member findMember = memberService.findMember(memberId);
@@ -104,7 +104,7 @@ public class MemberController {
     // 펫시터 검색 및 필터링 조회 (이름, 별점, 리뷰수)
     @GetMapping("/search")
     @JsonManagedReference
-    public ResponseEntity getPetsitters(@RequestParam Map<String, String> params, @PageableDefault(page = 0, size = 20, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<PageResponseDto> getPetsitters(@RequestParam Map<String, String> params, @PageableDefault(page = 0, size = 20, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         // 펫시터 서비스에서 펫시터 목록을 조회
         Page<PetsitterGetResponseDto> petsitters = petsitterService.findPetsittersWithFilters(params, pageable);
@@ -122,7 +122,7 @@ public class MemberController {
 
     // 회원정보 삭제
     @DeleteMapping("/{member-id}")
-    public ResponseEntity deleteMember(@PathVariable("member-id") @Positive long memberId, @LoginMemberId Long loginMemberId) {
+    public ResponseEntity<SingleResponseDto<String>> deleteMember(@PathVariable("member-id") @Positive long memberId, @LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
         memberService.removeMember(findMember.getMemberId());
@@ -131,7 +131,7 @@ public class MemberController {
 
     // 찜 하기 + 찜 취소
     @PatchMapping("/favorite")
-    public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
+    public ResponseEntity<SingleResponseDto<String>> favoritePetsitter(@LoginMemberId Long memberId,
                                             @RequestParam Long petsitterId) {
         favoriteService.toggleFavorite(memberId, petsitterId);
         return new ResponseEntity<>(new SingleResponseDto<>("해당 펫시터가 찜 선택(취소) 되었습니다"), HttpStatus.OK);
