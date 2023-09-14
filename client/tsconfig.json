@@ -8,6 +8,7 @@
     "noEmit": true, // 컴파일 결과를 출력하지 않도록 지정
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "resolveJsonModule": true,

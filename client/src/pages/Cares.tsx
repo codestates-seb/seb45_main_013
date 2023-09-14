@@ -9,8 +9,10 @@ import { getCookieValue } from 'hooks/getCookie';
 import { useInView } from 'react-intersection-observer';
 
 const Cares = () => {
-  const [filter, setFilter] = useState('전체');
   const apiUrl = process.env.REACT_APP_API_URL;
+  const accessToken = getCookieValue('access_token');
+
+  const [filter, setFilter] = useState('전체');
   const { memberId: id } = useParams();
   const navigate = useNavigate();
 
@@ -20,8 +22,6 @@ const Cares = () => {
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
   const [reservations, setReservations] = useState<any[]>([]);
-
-  console.log(reservations);
 
   const handleFilter = (e: any) => {
     setFilter(e.target.innerText);
@@ -34,8 +34,6 @@ const Cares = () => {
   }, []);
 
   useEffect(() => {
-    const accessToken = getCookieValue('access_token');
-
     if (isLogin && id && memberId === +id) {
       axios
         .get(
@@ -48,10 +46,13 @@ const Cares = () => {
             },
           },
         )
-        .then((res) => setReservations(res.data.reservations))
+        .then((res) => {
+          console.log(res);
+          setReservations(res.data.reservations);
+        })
         .catch((error) => console.log(error));
     }
-  }, [filter]);
+  }, [accessToken, filter]);
 
   return (
     <MainContainer>
