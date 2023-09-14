@@ -26,6 +26,7 @@ const CreateJournal = lazy(() => import('@pages/CreateJournal'));
 const SitterSchedule = lazy(() => import('@pages/SitterSchedule'));
 const OAuthBranch = lazy(() => import('@pages/OAuthBranch'));
 const ViewJournal = lazy(() => import('@pages/ViewJournal'));
+const QnA = lazy(() => import('@pages/QnA'));
 const NotFound = lazy(() => import('@pages/404'));
 
 const Container = styled.div`
@@ -97,6 +98,7 @@ const App = () => {
                 <Route path="mypage/register" element={<RegisterPet />} />
                 <Route path="mypage/:petId/edit" element={<EditPet />}></Route>
                 <Route path="search" element={<Search />} />
+                <Route path="qna" element={<QnA />} />
                 <Route path="petsitters" element={<ViewPetsitters />}></Route>
                 <Route path="cares/journal/:journalId" element={<ViewJournal />}></Route>
                 <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
