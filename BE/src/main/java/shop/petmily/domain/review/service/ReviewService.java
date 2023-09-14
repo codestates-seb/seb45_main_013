@@ -1,5 +1,6 @@
 package shop.petmily.domain.review.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,21 +24,12 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationService reservationService;
     private final PetsitterService petsitterService;
     private final S3UploadService uploadService;
-
-    public ReviewService(ReviewRepository reviewRepository,
-                         ReservationService reservationService,
-                         S3UploadService uploadService,
-                         PetsitterService petsitterService) {
-        this.reviewRepository = reviewRepository;
-        this.reservationService = reservationService;
-        this.uploadService = uploadService;
-        this.petsitterService = petsitterService;
-    }
 
     // 후기 등록
     public Review createReview(Review review, List<MultipartFile> files){
