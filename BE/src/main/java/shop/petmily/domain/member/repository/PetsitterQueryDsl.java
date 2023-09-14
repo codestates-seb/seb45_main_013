@@ -1,9 +1,11 @@
 package shop.petmily.domain.member.repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.reservation.dto.PossiblePetsitterDto;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 
@@ -23,7 +25,7 @@ public class PetsitterQueryDsl {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    public List<Petsitter> findPossiblePetsitters(String possibleDay,
+    public List<PossiblePetsitterDto.Response> findPossiblePetsitters(String possibleDay,
                                          Petsitter.PossiblePetType possiblePetType,
                                          String possibleLocation,
                                          LocalTime reservationTimeStart,
@@ -31,7 +33,15 @@ public class PetsitterQueryDsl {
                                          LocalDate reservationDate){
 
         return jpaQueryFactory
-                .selectFrom(petsitter)
+                .select(Projections.constructor(PossiblePetsitterDto.Response.class,
+                        petsitter.member.memberId,
+                        petsitter.petsitterId,
+                        petsitter.member.name,
+                        petsitter.member.nickName,
+                        petsitter.member.photo,
+                        petsitter.star,
+                        petsitter.reviewCount))
+                .from(petsitter)
                 .where(
                         petsitter.possibleDay.startsWith(possibleDay),
                         petsitter.possiblePetType.eq(possiblePetType).or(petsitter.possiblePetType.eq(Petsitter.PossiblePetType.PET_ALL)),
@@ -72,7 +82,7 @@ public class PetsitterQueryDsl {
         return true;
     }
 
-    public boolean petstiierPossibleCheck(Petsitter requestPetsitter,
+    public boolean petsitterPossibleCheck(Petsitter requestPetsitter,
                                           String possibleDay,
                                           Petsitter.PossiblePetType possiblePetType,
                                           String possibleLocation,
@@ -83,7 +93,7 @@ public class PetsitterQueryDsl {
                 .where(
                         petsitter.petsitterId.eq(requestPetsitter.getPetsitterId()),
                         petsitter.possibleDay.startsWith(possibleDay),
-                        petsitter.possiblePetType.eq(possiblePetType),
+                        petsitter.possiblePetType.eq(possiblePetType).or(petsitter.possiblePetType.eq(Petsitter.PossiblePetType.PET_ALL)),
                         petsitter.possibleLocation.any().eq(possibleLocation),
                         petsitter.possibleTimeStart.loe(reservationTimeStart),
                         petsitter.possibleTimeEnd.goe(reservationTimeEnd)

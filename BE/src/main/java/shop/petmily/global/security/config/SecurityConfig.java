@@ -107,7 +107,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000", "https://api.petmily.shop/", "https://petmily.shop/", "https://petmily.vercel.app/",ec2_url, buket_url));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
+                "https://api.petmily.shop/", "https://petmily.shop/", "https://petmily.vercel.app/",ec2_url, buket_url));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
 

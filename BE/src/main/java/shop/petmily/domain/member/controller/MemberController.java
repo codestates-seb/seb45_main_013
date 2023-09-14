@@ -56,7 +56,7 @@ public class MemberController {
     @PatchMapping(value = "/{member-id}")
     public ResponseEntity<SingleResponseDto<String>> patchMember(@PathVariable("member-id") @Positive long memberId,
                                       @LoginMemberId Long loginMemberId,
-                                      @Valid MemberPatchRequestDto requestBody) {
+                                      @Valid @ModelAttribute MemberPatchRequestDto requestBody) {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
 

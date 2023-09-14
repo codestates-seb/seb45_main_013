@@ -36,7 +36,7 @@ public class PetController {
 
     //펫등록
     @PostMapping
-    public ResponseEntity postPet(@Valid  @ModelAttribute PetPostDto petPostDto,
+    public ResponseEntity postPet(@Valid PetPostDto petPostDto,
                                   @LoginMemberId Long memberId){
         petPostDto.setMemberId(memberId);
         Pet pet = service.createPet(mapper.PetPostDtoToPet(petPostDto), petPostDto.getFile());
@@ -46,7 +46,7 @@ public class PetController {
     //펫수정
     @PatchMapping(value = "/{pet_id}")
     public ResponseEntity patchPet(@PathVariable ("pet_id") @Positive long petId,
-                                   @ModelAttribute PetPatchDto petPatchDto,
+                                   PetPatchDto petPatchDto,
                                    @LoginMemberId Long memberId){
         petPatchDto.setMemberId(memberId);
         petPatchDto.setPetId(petId);

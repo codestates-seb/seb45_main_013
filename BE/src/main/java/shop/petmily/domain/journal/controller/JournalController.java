@@ -37,7 +37,7 @@ public class JournalController {
 
     // 케어일지 등록
     @PostMapping
-    public ResponseEntity<JournalResponseDto> postJournal(JournalPostDto journalPostDto,
+    public ResponseEntity<JournalResponseDto> postJournal( @ModelAttribute JournalPostDto journalPostDto,
                                                           @LoginMemberId Long memberId){
         journalPostDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), journalPostDto.getFile());
@@ -49,7 +49,7 @@ public class JournalController {
     // 케어일지 수정
     @PatchMapping("/{journal-id}")
     public ResponseEntity<JournalResponseDto> patchJournal(@PathVariable("journal-id") @Positive long journalId,
-                                                           JournalPatchDto journalPatchDto,
+                                                           @ModelAttribute JournalPatchDto journalPatchDto,
                                                            @LoginMemberId Long memberId){
         journalPatchDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         journalPatchDto.setJournalId(journalId);

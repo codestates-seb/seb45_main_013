@@ -4,10 +4,9 @@ import org.mapstruct.Mapper;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.pet.dto.PetResponseDto;
+import shop.petmily.domain.pet.dto.ReservationPostPetDto;
 import shop.petmily.domain.pet.entity.Pet;
-import shop.petmily.domain.reservation.dto.PossiblePetsitterResponseDto;
-import shop.petmily.domain.reservation.dto.ReservationPostDto;
-import shop.petmily.domain.reservation.dto.ReservationResponseDto;
+import shop.petmily.domain.reservation.dto.*;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.entity.ReservationPet;
 
@@ -17,20 +16,47 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "Spring")
 public interface ReservationMapper {
 
-    default Reservation reservationPostDtoToReservation(ReservationPostDto reservationPostDto){
+    default Reservation possiblePetsitterDtoToReservation(PossiblePetsitterDto.Request requestBody){
         Reservation reservation = new Reservation();
+
         Member member = new Member();
-        member.setMemberId(reservationPostDto.getMemberId());
+        member.setMemberId(requestBody.getMemberId());
         reservation.setMember(member);
 
-        reservation.setBody(reservationPostDto.getBody());
-        reservation.setPhone(reservationPostDto.getPhone());
-        reservation.setAddress(reservationPostDto.getAddress());
-        reservation.setReservationDay(reservationPostDto.getReservationDay());
-        reservation.setReservationTimeStart(reservationPostDto.getReservationTimeStart());
-        reservation.setReservationTimeEnd(reservationPostDto.getReservationTimeEnd());
+        reservation.setReservationDay(requestBody.getReservationDay());
+        reservation.setReservationTimeStart(requestBody.getReservationTimeStart());
+        reservation.setReservationTimeEnd(requestBody.getReservationTimeEnd());
+        reservation.setAddress(requestBody.getAddress());
 
-        List<ReservationPet> reservationPets = reservationPostDto.getPetId().stream()
+        List<ReservationPet> reservationPets = requestBody.getPetId().stream()
+                .map(petId -> {
+                    ReservationPet reservationPet = new ReservationPet();
+                    reservationPet.setReservation(reservation);
+                    Pet pet = new Pet();
+                    pet.setPetId(petId);
+                    reservationPet.setPet(pet);
+                    return reservationPet;
+                }).collect(Collectors.toList());
+        reservation.setReservationPets(reservationPets);
+
+        return reservation;
+    }
+
+    default Reservation reservationPostDtoToReservation(ReservationPostDto.Request requestBody){
+        Reservation reservation = new Reservation();
+
+        Member member = new Member();
+        member.setMemberId(requestBody.getMemberId());
+        reservation.setMember(member);
+
+        reservation.setBody(requestBody.getBody());
+        reservation.setPhone(requestBody.getPhone());
+        reservation.setAddress(requestBody.getAddress());
+        reservation.setReservationDay(requestBody.getReservationDay());
+        reservation.setReservationTimeStart(requestBody.getReservationTimeStart());
+        reservation.setReservationTimeEnd(requestBody.getReservationTimeEnd());
+
+        List<ReservationPet> reservationPets = requestBody.getPetId().stream()
                 .map(petId -> {
                     ReservationPet reservationPet = new ReservationPet();
                     reservationPet.setReservation(reservation);
@@ -42,52 +68,34 @@ public interface ReservationMapper {
         reservation.setReservationPets(reservationPets);
 
         Petsitter petsitter = new Petsitter();
-        petsitter.setPetsitterId(reservationPostDto.getPetsitterId());
+        petsitter.setPetsitterId(requestBody.getPetsitterId());
         reservation.setPetsitter(petsitter);
 
         return reservation;
     }
 
-    default ReservationResponseDto reservationToReservationResponseDto(Reservation reservation){
-        ReservationResponseDto reservationResponseDto = new ReservationResponseDto();
+    default ReservationsDto.MemberResponse reservationToReservationMemberResponseDto(Reservation reservation){
+        ReservationsDto.MemberResponse response = new ReservationsDto.MemberResponse();
 
-        reservationResponseDto.setReservationId(reservation.getReservationId());
-        reservationResponseDto.setMemberId(reservation.getMember().getMemberId());
-        reservationResponseDto.setName(reservation.getMember().getName());
-        reservationResponseDto.setNickName(reservation.getMember().getNickName());
-        reservationResponseDto.setPhoto(reservation.getMember().getPhoto());
-        reservationResponseDto.setBody(reservation.getMember().getBody());
-        reservationResponseDto.setReservationDay(reservation.getReservationDay());
-        reservationResponseDto.setReservationTimeStart(reservation.getReservationTimeStart());
-        reservationResponseDto.setReservationTimeEnd(reservation.getReservationTimeEnd());
-        reservationResponseDto.setAddress(reservation.getAddress());
-        reservationResponseDto.setPhone(reservation.getPhone());
-        reservationResponseDto.setReservationBody(reservation.getBody());
+        response.setReservationId(reservation.getReservationId());
+        response.setReservationDay(reservation.getReservationDay());
+        response.setReservationTimeStart(reservation.getReservationTimeStart());
+        response.setReservationTimeEnd(reservation.getReservationTimeEnd());
+        response.setAddress(reservation.getAddress());
+        response.setPhone(reservation.getPhone());
+        response.setReservationBody(reservation.getBody());
+        response.setProgress(reservation.getProgress());
 
-        if (reservation.getPetsitter() == null){
-            reservationResponseDto.setPetsitterId(null);
-            reservationResponseDto.setPetsitterName(null);
-            reservationResponseDto.setPetsitterPhone(null);
-            reservationResponseDto.setPetsitterBody(null);
-            reservationResponseDto.setPetsitterPhoto(null);
-            reservationResponseDto.setNickName(null);
-        }else {
-            reservationResponseDto.setPetsitterId(reservation.getPetsitter().getPetsitterId());
-            reservationResponseDto.setPetsitterName(reservation.getPetsitter().getMember().getName());
-            reservationResponseDto.setPetsitterPhone(reservation.getPetsitter().getMember().getPhone());
-            reservationResponseDto.setPetsitterBody(reservation.getPetsitter().getMember().getBody());
-            reservationResponseDto.setPetsitterPhoto(reservation.getPetsitter().getMember().getPhoto());
-            reservationResponseDto.setPetsitterNickName(reservation.getPetsitter().getMember().getNickName());
-        }
-        reservationResponseDto.setCreatedAt(reservation.getCreatedAt());
-        reservationResponseDto.setLastModifiedAt(reservation.getLastModifiedAt());
-        reservationResponseDto.setProgress(reservation.getProgress());
+        response.setPetsitterId(reservation.getPetsitter().getPetsitterId());
+        response.setPetsitterName(reservation.getPetsitter().getMember().getName());
+        response.setPetsitterPhone(reservation.getPetsitter().getMember().getPhone());
+        response.setPetsitterPhoto(reservation.getPetsitter().getMember().getPhoto());
+        response.setPetsitterNickName(reservation.getPetsitter().getMember().getNickName());
 
-        List<PetResponseDto> pets = reservation.getReservationPets().stream()
+        List<ReservationsDto.PetResponse> pets = reservation.getReservationPets().stream()
                 .map(reservationPet -> {
-                    PetResponseDto petResponseDto = new PetResponseDto();
+                    ReservationsDto.PetResponse petResponseDto = new ReservationsDto.PetResponse();
                     petResponseDto.setPetId(reservationPet.getPet().getPetId());
-                    petResponseDto.setMemberId(reservation.getMember().getMemberId());
                     petResponseDto.setType(reservationPet.getPet().getType());
                     petResponseDto.setName(reservationPet.getPet().getName());
                     petResponseDto.setAge(reservationPet.getPet().getAge());
@@ -97,33 +105,48 @@ public interface ReservationMapper {
                     petResponseDto.setBody(reservationPet.getPet().getBody());
                     petResponseDto.setMale(reservationPet.getPet().getMale());
                     petResponseDto.setNeutering(reservationPet.getPet().getNeutering());
-                    petResponseDto.setCreatedAt(reservationPet.getPet().getCreatedAt());
-                    petResponseDto.setLastModifiedAt(reservationPet.getPet().getLastModifiedAt());
                     return petResponseDto;
                 }).collect(Collectors.toList());
-        reservationResponseDto.setPets(pets);
+        response.setPets(pets);
 
-        return reservationResponseDto;
+        return response;
     }
 
-    default PossiblePetsitterResponseDto petsitterToReservationPossiblePetsitterReseponseDto(Petsitter petsitter){
-        PossiblePetsitterResponseDto reseponseDto = new PossiblePetsitterResponseDto();
-        reseponseDto.setMemberId(petsitter.getMember().getMemberId());
-        reseponseDto.setPetsitterId(petsitter.getPetsitterId());
-        reseponseDto.setName(petsitter.getMember().getName());
-        reseponseDto.setNickName(petsitter.getMember().getNickName());
-        reseponseDto.setPhone(petsitter.getMember().getPhone());
-        reseponseDto.setEmail(petsitter.getMember().getEmail());
-        reseponseDto.setAddress(petsitter.getMember().getAddress());
-        reseponseDto.setPhoto(petsitter.getMember().getPhoto());
-        reseponseDto.setBody(petsitter.getMember().getBody());
-        reseponseDto.setPossiblePetType(String.valueOf(petsitter.getPossiblePetType()));
-        reseponseDto.setPossibleLocation(petsitter.getPossibleLocation());
-        reseponseDto.setPossibleDay(petsitter.getPossibleDay());
-        reseponseDto.setPossibleTimeStart(petsitter.getPossibleTimeStart());
-        reseponseDto.setPossibleTimeEnd(petsitter.getPossibleTimeEnd());
-        reseponseDto.setStar(petsitter.getStar());
-        reseponseDto.setReviewCount(petsitter.getReviewCount());
-        return reseponseDto;
+    default ReservationsDto.PetsitterResponse reservationToReservationPetsitterResponseDto(Reservation reservation){
+        ReservationsDto.PetsitterResponse response = new ReservationsDto.PetsitterResponse();
+
+        response.setReservationId(reservation.getReservationId());
+        response.setReservationDay(reservation.getReservationDay());
+        response.setReservationTimeStart(reservation.getReservationTimeStart());
+        response.setReservationTimeEnd(reservation.getReservationTimeEnd());
+        response.setAddress(reservation.getAddress());
+        response.setPhone(reservation.getPhone());
+        response.setReservationBody(reservation.getBody());
+        response.setProgress(reservation.getProgress());
+
+        response.setMemberId(reservation.getMember().getMemberId());
+        response.setMemberName(reservation.getMember().getName());
+        response.setMemberNickName(reservation.getMember().getNickName());
+        response.setMemberPhoto(reservation.getMember().getPhoto());
+        response.setMemberPhoto(reservation.getMember().getBody());
+
+        List<ReservationsDto.PetResponse> pets = reservation.getReservationPets().stream()
+                .map(reservationPet -> {
+                    ReservationsDto.PetResponse petResponseDto = new ReservationsDto.PetResponse();
+                    petResponseDto.setPetId(reservationPet.getPet().getPetId());
+                    petResponseDto.setType(reservationPet.getPet().getType());
+                    petResponseDto.setName(reservationPet.getPet().getName());
+                    petResponseDto.setAge(reservationPet.getPet().getAge());
+                    petResponseDto.setSpecies(reservationPet.getPet().getSpecies());
+                    petResponseDto.setWeight(reservationPet.getPet().getWeight());
+                    petResponseDto.setPhoto(reservationPet.getPet().getPhoto());
+                    petResponseDto.setBody(reservationPet.getPet().getBody());
+                    petResponseDto.setMale(reservationPet.getPet().getMale());
+                    petResponseDto.setNeutering(reservationPet.getPet().getNeutering());
+                    return petResponseDto;
+                }).collect(Collectors.toList());
+        response.setPets(pets);
+
+        return response;
     }
 }
