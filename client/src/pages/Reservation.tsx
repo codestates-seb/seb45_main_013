@@ -17,6 +17,8 @@ import isBetween from 'dayjs/plugin/isBetween';
 
 import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setReservation } from 'store/reservationSlice';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -31,32 +33,26 @@ const ContactItem = [
 
 interface IFormInput {
   address: string;
-  body: string;
   error: boolean;
 }
 
 const Reservation = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const accessToken = getCookieValue('access_token');
   const now = new Date();
 
   const nowDate = dayjs(now).format('YYYY-MM-DD');
-  console.log(now);
+
   const nowTime = dayjs(now).format('HH:mm:ss');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [reservationDay, setReservationDay] = useState<any>('');
   const [reservationTimeStart, setReservationTimeStart] = useState<any>('');
   const [reservationTimeEnd, setReservationTimeEnd] = useState('');
 
   now.setMonth(now.getMonth() + 3);
   const modifiedNow = now.toISOString().slice(0, 10);
-
-  console.log(modifiedNow);
-
-  console.log('시작: ', reservationTimeStart);
-  console.log('끝: ', reservationTimeEnd);
 
   const [sido, setSido] = useState('');
   const [sigungu, setSigugu] = useState('');
@@ -111,9 +107,10 @@ const Reservation = () => {
   };
 
   const onSubmit = async (data: any) => {
-    const { address, body } = data;
-    if (reservationDay && reservationTimeStart && reservationTimeEnd && address && body) {
-      console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address, body });
+    const { address } = data;
+    if (reservationDay && reservationTimeStart && reservationTimeEnd && address) {
+      console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address });
+      dispatch(setReservation({ reservationDay, reservationTimeStart, reservationTimeEnd, address }));
       navigate('/reservation/step2');
     } else if (!reservationTimeStart || !reservationTimeEnd) {
       alert('시간을 확인해주세요');
@@ -207,7 +204,7 @@ const Reservation = () => {
             </Sheet>
           </Modal>
         )}
-        <RequestContainer>
+        {/* <RequestContainer>
           <ScheduleText>{'요청사항'}</ScheduleText>
           <TextField
             {...register('body', { required: true })}
@@ -227,7 +224,7 @@ const Reservation = () => {
               </TextContainer>
             </ContactContainer>
           ))}
-        </RequestContainer>
+        </RequestContainer> */}
         <ButtonContainer>
           <StyledButton type="submit">다음단계</StyledButton>
         </ButtonContainer>
