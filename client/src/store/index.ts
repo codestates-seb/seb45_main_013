@@ -5,10 +5,12 @@ import storage from 'redux-persist/lib/storage';
 
 import userReducer from './userSlice';
 import reservationReducer from './reservationSlice';
+import petaddReducer from './petaddSlice';
 
 const reducers = combineReducers({
   user: userReducer,
   reservation: reservationReducer,
+  petadd: petaddReducer,
 });
 
 const persistConfig = {
@@ -22,5 +24,7 @@ const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
+
+export type RootState = ReturnType<typeof store.getState>;
 
 export default store;

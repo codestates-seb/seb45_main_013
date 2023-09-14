@@ -1,7 +1,10 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPetAdd } from 'store/petaddSlice';
+import { RootState } from 'store';
 import axios from 'axios';
 
 import Button from '@mui/material/Button';
@@ -13,25 +16,28 @@ import TextField from '@mui/material/TextField';
 
 import LinkButton from '@components/buttons/LinkButton';
 import UploadPetImg from '@components/UploadProfileImg';
+import { getCookieValue } from 'hooks/getCookie';
 
-const MyPetItem = [
-  // 추후 useEffect로 데이터 받아올 데이터 (내 반려동물)
-  {
-    petId: 4,
-    memberId: 1,
-    type: 'CAT',
-    name: '나비',
-    age: 3,
-    species: '코숏',
-    weight: 5,
-    photo: 'https://petmily-img.s3.ap-northeast-2.amazonaws.com/ab7a57d8-48f4-40b6-aed2-742edb06dde0_cat002.jpeg',
-    body: '착한냥이냥이냥이',
-    male: null,
-    neutering: null,
-    createdAt: '2023-09-03T13:10:08.337088',
-    lastModifiedAt: '2023-09-04T22:45:10.208151',
-  },
-];
+const apiUrl = process.env.REACT_APP_API_URL;
+
+// const MyPetItem = [
+//   // 추후 useEffect로 데이터 받아올 데이터 (내 반려동물)
+//   {
+//     petId: 4,
+//     memberId: 1,
+//     type: 'CAT',
+//     name: '나비',
+//     age: 3,
+//     species: '코숏',
+//     weight: 5,
+//     photo: 'https://petmily-img.s3.ap-northeast-2.amazonaws.com/ab7a57d8-48f4-40b6-aed2-742edb06dde0_cat002.jpeg',
+//     body: '착한냥이냥이냥이',
+//     male: null,
+//     neutering: null,
+//     createdAt: '2023-09-03T13:10:08.337088',
+//     lastModifiedAt: '2023-09-04T22:45:10.208151',
+//   },
+// ];
 
 interface IRegisterPet {
   type: 'DOG' | 'CAT';
@@ -45,12 +51,19 @@ interface IRegisterPet {
 }
 
 const ReservationStepTwo = () => {
+  const accessToken = getCookieValue('access_token');
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const defaultProfileImg = 'imgs/DefaultUserProfile.jpg'; // Upload Image 사용
+  const [mypetItems, setPetItems] = useState([]); // 초기값 빈 배열 설정(반려동물 조회)
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCat, setIsCat] = useState(false);
+
+  console.log(mypetItems);
 
   const {
     register,
@@ -60,6 +73,10 @@ const ReservationStepTwo = () => {
 
   const handleBackClick = () => {
     navigate('/reservation');
+  };
+
+  const handleClickNext = () => {
+    console.log(petId);
   };
 
   const handleAddClick = () => {
@@ -75,14 +92,17 @@ const ReservationStepTwo = () => {
   };
 
   const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckedItems({ ...checkedItems, [e.target.name]: e.target.checked });
+    // setPetAdd action을 dispatch하는 함수
+    const { name, checked } = e.target;
+    const petId = name.replace('myCheckbox', ''); // name에서 'myCheckbox'를 제거하고 petId만 추출
   };
+
+  const { petId } = useSelector((state: RootState) => state.petadd); // 다음단계 넘어갈 시 현재 선택된 petId 가져오기
 
   const handleFormSubmit = handleSubmit(async (data: IRegisterPet) => {
     try {
       //FormData 객체 생성
       const formData = new FormData();
-
       // Form Field의 데이터를 formData 객체에 삽입
       Object.keys(data).forEach((key) => {
         const value = data[key as keyof IRegisterPet];
@@ -90,20 +110,15 @@ const ReservationStepTwo = () => {
           formData.append(key, value.toString());
         }
       });
-
       // 파일 데이터가 존재하는 경우, formData 객체에 삽입
       if (imageFile) {
         formData.append('photo', imageFile);
       }
-
       console.log(formData);
-
       // 토큰 설정 별도의 인증 로직 구현 필요
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-
       // axios를 이용하여, 백엔드로 데이터 전송
       await axios.post('http://localhost:8080/pets/', formData);
-
       alert('반려동물 등록이 완료되었습니다.');
       // 데이터 전송 후, 페이지 이동
       navigate('/reservation/step2');
@@ -112,6 +127,16 @@ const ReservationStepTwo = () => {
       console.log(error);
     }
   });
+
+  useEffect(() => {
+    try {
+      axios
+        .get(`${apiUrl}/pets`, { headers: { Authorization: `Bearer ${accessToken}` } })
+        .then((res) => setPetItems(res.data));
+    } catch (error) {
+      console.error('펫정보를 가져오지 못했습니다', error);
+    }
+  }, []);
 
   return (
     <MainContainer>
@@ -122,7 +147,7 @@ const ReservationStepTwo = () => {
       </StatusHeader>
 
       <ReservationContainer>
-        {MyPetItem.map((item) => (
+        {/* {mypetItems.map((item) => (
           <SelectPetContainer key={item.petId}>
             <SelectPetText>맡기시는 반려동물</SelectPetText>
 
@@ -139,8 +164,8 @@ const ReservationStepTwo = () => {
                   <SelectPetImg src={item.photo} alt="PetImg" />
                 </Label>
                 <SelectPetName>{item.name}</SelectPetName>
-              </ImgWrap>
-              <ButtonContainer>
+              </ImgWrap> */}
+        {/* <ButtonContainer>
                 <Button color="primary" onClick={handleAddClick}>
                   <img src="/imgs/PetAdd.svg" alt="Add Pet" />
                 </Button>
@@ -167,7 +192,7 @@ const ReservationStepTwo = () => {
                       fullWidth
                       {...register('name', { required: '이름을 작성해야 합니다.' })}
                     />
-                    {errors.name && <p>{errors.name.message}</p>}
+                    {errors.name && <p style={{ color: 'red', fontSize: '12px' }}>{errors.name.message}</p>}
                     <TextField
                       margin="dense"
                       id="species"
@@ -176,7 +201,7 @@ const ReservationStepTwo = () => {
                       fullWidth
                       {...register('species', { required: '품종을 작성해야 합니다.' })}
                     />
-                    {errors.species && <p>{errors.species.message}</p>}
+                    {errors.species && <p style={{ color: 'red', fontSize: '12px' }}>{errors.species.message}</p>}
                     <TextField
                       margin="dense"
                       id="weight"
@@ -185,7 +210,7 @@ const ReservationStepTwo = () => {
                       fullWidth
                       {...register('weight', { required: '몸무게를 작성해야 합니다.' })}
                     />
-                    {errors.weight && <p>{errors.weight.message}</p>}
+                    {errors.weight && <p style={{ color: 'red', fontSize: '12px' }}>{errors.weight.message}</p>}
                     <TextField
                       margin="dense"
                       id="age"
@@ -194,25 +219,43 @@ const ReservationStepTwo = () => {
                       fullWidth
                       {...register('age', { required: '나이를 작성해야 합니다.' })}
                     />
-                    {errors.age && <p>{errors.age.message}</p>}
+                    {errors.age && <p style={{ color: 'red', fontSize: '12px' }}>{errors.age.message}</p>}
                     <RegisterInputWrapper>
                       <InputLabelStyle htmlFor="neutering">중성화</InputLabelStyle>
                       <RadioWrapper>
-                        <input type="radio" value="true" {...register('neutering')} />
+                        <input
+                          type="radio"
+                          value="true"
+                          {...register('neutering', { required: '중성화 여부를 선택해야 합니다.' })}
+                        />
                         <RadioLabel htmlFor="male">했음</RadioLabel>
-                        <input type="radio" value="false" {...register('neutering')} />
+                        <input
+                          type="radio"
+                          value="false"
+                          {...register('neutering', { required: '중성화 여부를 선택해야 합니다.' })}
+                        />
                         <RadioLabel htmlFor="female">안했음</RadioLabel>
                       </RadioWrapper>
                     </RegisterInputWrapper>
+                    {errors.neutering && <p style={{ color: 'red', fontSize: '12px' }}>{errors.neutering.message}</p>}
                     <RegisterInputWrapper>
                       <InputLabelStyle htmlFor="male">성별</InputLabelStyle>
                       <RadioWrapper>
-                        <input type="radio" value="true" {...register('male')} />
+                        <input
+                          type="radio"
+                          value="true"
+                          {...register('male', { required: '성별을 선택해야 합니다.' })}
+                        />
                         <RadioLabel htmlFor="male">남자아이</RadioLabel>
-                        <input type="radio" value="false" {...register('male')} />
+                        <input
+                          type="radio"
+                          value="false"
+                          {...register('male', { required: '성별을 선택해야 합니다.' })}
+                        />
                         <RadioLabel htmlFor="female">여자아이</RadioLabel>
                       </RadioWrapper>
                     </RegisterInputWrapper>
+                    {errors.male && <p style={{ color: 'red', fontSize: '12px' }}>{errors.male.message}</p>}
                     <form onSubmit={handleFormSubmit}>
                       <Button variant="contained" color="primary" type="submit" fullWidth>
                         등록하기
@@ -223,7 +266,7 @@ const ReservationStepTwo = () => {
               </ButtonContainer>
             </SelectPetImgContainer>
           </SelectPetContainer>
-        ))}
+        ))} */}
 
         {/* <button onClick={() => setPetItems([...petItems, MyPetItem])}>Add Pet</button> */}
 
@@ -243,7 +286,7 @@ const ReservationStepTwo = () => {
         <StyledLinkButton
           text="다음단계"
           link="/reservation/step3"
-          /*onClick={handleClickNext}*/
+          onClick={handleClickNext}
           width="100%"
           height="48px"
           fontSize="16"
