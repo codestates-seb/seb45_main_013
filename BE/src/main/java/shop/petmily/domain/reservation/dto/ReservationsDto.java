@@ -28,7 +28,7 @@ public class ReservationsDto {
 
         private String address;
 
-        private String phone;
+        private String reservationPhone;
 
         private String reservationBody;
 
@@ -60,7 +60,7 @@ public class ReservationsDto {
 
         private String address;
 
-        private String phone;
+        private String reservationPhone;
 
         private String reservationBody;
 
@@ -84,23 +84,7 @@ public class ReservationsDto {
     public static class PetResponse {
         private Long petId;
 
-        private Pet.PetType type;
-
         private String name;
-
-        private Integer age;
-
-        private String species;
-
-        private Integer weight;
-
-        private Boolean male;
-
-        private Boolean neutering;
-
-        private String body;
-
-        private String photo;
     }
 }
 
