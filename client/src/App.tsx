@@ -27,6 +27,7 @@ import CreateJournal from '@pages/CreateJournal';
 import SitterSchedule from '@pages/SitterSchedule';
 import OAuthBranch from '@pages/OAuthBranch';
 import ViewJournal from '@pages/ViewJournal';
+import QnA from '@pages/QnA';
 
 const Container = styled.div`
   display: flex;
@@ -96,6 +97,7 @@ const App = () => {
               <Route path="mypage/register" element={<RegisterPet />} />
               <Route path="mypage/:petId/edit" element={<EditPet />}></Route>
               <Route path="search" element={<Search />} />
+              <Route path="qna" element={<QnA />} />
               <Route path="petsitters" element={<ViewPetsitters />}></Route>
               <Route path="cares/journal/:journalId" element={<ViewJournal />}></Route>
 
