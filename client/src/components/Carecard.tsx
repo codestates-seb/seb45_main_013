@@ -10,14 +10,38 @@ const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 const CareCard = ({ reservation }: any) => {
   const navigate = useNavigate();
+  const accessToken = getCookieValue('access_token');
+
   const { memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const [year, month, day] = reservation.reservationDay.split('-');
 
+  // 펫시터 예약 확정 (예약 신청 상태)
+  const handleSitterApproval = async () => {
+    try {
+      const response = await axios.patch(`${apiUrl}/reservations/${reservation.reservationId}/confirm`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // 펫시터 예약 취소 (예약 확정 상태)
+  const handleSitterCancel = async () => {
+    try {
+      const response = await axios.patch(`${apiUrl}/reservations/${reservation.reservationId}/petsittercancel`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // 고객이 신청한거 취소
   const handleClientCancel = async () => {
-    const accessToken = getCookieValue('access_token');
-
     try {
       const response = await axios.patch(
         `${apiUrl}/reservations/${reservation.reservationId}/membercancel`,
@@ -36,6 +60,7 @@ const CareCard = ({ reservation }: any) => {
       console.log(error);
     }
   };
+
   return (
     <CareCardContainer>
       <FirstLine>
@@ -78,12 +103,12 @@ const CareCard = ({ reservation }: any) => {
         <ButtonContainer>
           {petsitterBoolean && reservation.progress === 'RESERVATION_REQUEST' ? (
             <>
-              <ActiveButton>예약확정</ActiveButton>
+              <ActiveButton onClick={handleSitterApproval}>예약확정</ActiveButton>
             </>
           ) : petsitterBoolean && reservation.progress === 'RESERVATION_CONFIRMED' ? (
             <>
               <InActiveButton>예약확정</InActiveButton>
-              <ActiveButton>취소하기</ActiveButton>
+              <ActiveButton onClick={handleSitterCancel}>취소하기</ActiveButton>
             </>
           ) : petsitterBoolean && reservation.progress === 'RESERVATION_CANCELLED' ? (
             <>
@@ -111,7 +136,7 @@ const CareCard = ({ reservation }: any) => {
             </>
           ) : !petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
-              <ActiveButton>케어일지</ActiveButton>
+              <ActiveLink to={`/cares/${memberId}`}>케어일지</ActiveLink>
               <ActiveLink to={`/cares/${memberId}/${reservation.reservationId}/review`}>후기</ActiveLink>
             </>
           ) : null}

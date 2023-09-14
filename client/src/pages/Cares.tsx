@@ -13,11 +13,13 @@ const Cares = () => {
   const accessToken = getCookieValue('access_token');
 
   const [filter, setFilter] = useState('전체');
+  const [page, setPage] = useState(1);
   const { memberId: id } = useParams();
   const navigate = useNavigate();
 
   const { ref, inView } = useInView();
 
+  console.log(page);
   const filters = ['전체', '예정', '완료'];
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
@@ -34,10 +36,10 @@ const Cares = () => {
   }, []);
 
   useEffect(() => {
-    if (isLogin && id && memberId === +id) {
+    if (isLogin && id && memberId === +id && inView) {
       axios
         .get(
-          `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=1&size=10${
+          `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=${page}&size=10${
             filter === '예정' ? '&condition=expected' : filter === '완료' ? '&condition=finish' : ''
           }`,
           {
@@ -48,11 +50,13 @@ const Cares = () => {
         )
         .then((res) => {
           console.log(res);
+
           setReservations(res.data.reservations);
+          setPage((page) => page + 1);
         })
         .catch((error) => console.log(error));
     }
-  }, [accessToken, filter]);
+  }, [accessToken, filter, inView]);
 
   return (
     <MainContainer>
