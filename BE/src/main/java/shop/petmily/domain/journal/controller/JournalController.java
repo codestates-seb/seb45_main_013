@@ -37,8 +37,8 @@ public class JournalController {
 
     // 케어일지 등록
     @PostMapping
-    public ResponseEntity postJournal(@ModelAttribute JournalPostDto journalPostDto,
-                                      @LoginMemberId Long memberId){
+    public ResponseEntity<JournalResponseDto> postJournal(JournalPostDto journalPostDto,
+                                                          @LoginMemberId Long memberId){
         journalPostDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), journalPostDto.getFile());
         JournalResponseDto response = mapper.JournalToResponse(createdJournal);
@@ -48,9 +48,9 @@ public class JournalController {
 
     // 케어일지 수정
     @PatchMapping("/{journal-id}")
-    public ResponseEntity patchJournal(@PathVariable("journal-id") @Positive long journalId,
-                                       @ModelAttribute JournalPatchDto journalPatchDto,
-                                       @LoginMemberId Long memberId){
+    public ResponseEntity<JournalResponseDto> patchJournal(@PathVariable("journal-id") @Positive long journalId,
+                                                           JournalPatchDto journalPatchDto,
+                                                           @LoginMemberId Long memberId){
         journalPatchDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
         journalPatchDto.setJournalId(journalId);
         Journal journal = mapper.JournalPatchDtoToJournal(journalPatchDto);
@@ -60,8 +60,8 @@ public class JournalController {
 
     // 케어일지 1개 조회
     @GetMapping("/{journal-id}")
-    public ResponseEntity getJournal(@PathVariable("journal-id") @Positive long journalId,
-                                     @LoginMemberId Long memberId) {
+    public ResponseEntity<JournalResponseDto> getJournal(@PathVariable("journal-id") @Positive long journalId,
+                                                         @LoginMemberId Long memberId) {
         Journal journal = service.findJournal(journalId, memberId);
         JournalResponseDto response = mapper.JournalToResponse(journal);
 
@@ -70,9 +70,9 @@ public class JournalController {
 
     // 케어일지 전체조회 (멤버)
     @GetMapping
-    public ResponseEntity getJournals(@RequestParam("page") @Positive int page,
-                                      @RequestParam("size") @Positive int size,
-                                      @LoginMemberId Long memberId) {
+    public ResponseEntity<JournalMultiResponseDto> getJournals(@RequestParam("page") @Positive int page,
+                                                               @RequestParam("size") @Positive int size,
+                                                               @LoginMemberId Long memberId) {
         Page<Journal> journalPage = service.findMemberJournal(page, size, memberId);
         PageInfo pageInfo = new PageInfo(page, size, (int) journalPage.getTotalElements(), journalPage.getTotalPages());
 

@@ -40,8 +40,8 @@ public class ReviewController {
 
     // 후기 등록
     @PostMapping
-    public ResponseEntity postReview(@ModelAttribute ReviewPostDto reviewPostDto,
-                                     @LoginMemberId Long memberId)  {
+    public ResponseEntity<ReviewResponseDto> postReview(ReviewPostDto reviewPostDto,
+                                                        @LoginMemberId Long memberId)  {
         reviewPostDto.setMemberId(memberId);
         Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), reviewPostDto.getFile());
         ReviewResponseDto response = mapper.reviewToResponse(createdReview);
@@ -55,9 +55,9 @@ public class ReviewController {
 
     // 후기 수정
     @PatchMapping("/{review-id}")
-    public ResponseEntity patchReview(@PathVariable("review-id") @Positive long reviewId,
-                                      @ModelAttribute ReviewPatchDto reviewPatchDto,
-                                      @LoginMemberId Long memberId) throws IOException {
+    public ResponseEntity<ReviewResponseDto> patchReview(@PathVariable("review-id") @Positive long reviewId,
+                                                         ReviewPatchDto reviewPatchDto,
+                                                         @LoginMemberId Long memberId) throws IOException {
         reviewPatchDto.setMemberId(memberId);
         reviewPatchDto.setReviewId(reviewId);
         Review review = mapper.reviewPatchToReview(reviewPatchDto);
@@ -73,7 +73,7 @@ public class ReviewController {
 
     // 후기 1개 조회
     @GetMapping("/{review-id}")
-    public ResponseEntity getReview(@PathVariable("review-id") @Positive long reviewId) {
+    public ResponseEntity<ReviewResponseDto> getReview(@PathVariable("review-id") @Positive long reviewId) {
         Review review = service.findReview(reviewId);
         ReviewResponseDto response = mapper.reviewToResponse(review);
 
@@ -82,9 +82,9 @@ public class ReviewController {
 
     // 후기 전체 조회 (+펫시터별)
     @GetMapping
-    public ResponseEntity getReviews(@RequestParam("page") @Positive int page,
-                                     @RequestParam("size") @Positive int size,
-                                     @RequestParam(value = "petsitterId", required = false) Long petsitterId) {
+    public ResponseEntity<ReviewMultiResponseDto> getReviews(@RequestParam("page") @Positive int page,
+                                                             @RequestParam("size") @Positive int size,
+                                                             @RequestParam(value = "petsitterId", required = false) Long petsitterId) {
         Page<Review> reviewPage;
 
         reviewPage = service.findAllReviews(page, size, petsitterId);
