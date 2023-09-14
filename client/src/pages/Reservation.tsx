@@ -12,7 +12,15 @@ import { TextField } from '@mui/material';
 import { Modal, Sheet } from '@mui/joy';
 import DaumPostcode from 'react-daum-postcode';
 
-import LinkButton from 'components/buttons/LinkButton';
+import dayjs, { Dayjs } from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+
+import { getCookieValue } from 'hooks/getCookie';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setReservation } from 'store/reservationSlice';
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const ContactItem = [
   // 추후 UseEffect로 데이터 받아오기
@@ -23,29 +31,56 @@ const ContactItem = [
   },
 ];
 
+interface IFormInput {
+  address: string;
+  error: boolean;
+}
+
 const Reservation = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const accessToken = getCookieValue('access_token');
+  const now = new Date();
+
+  const nowDate = dayjs(now).format('YYYY-MM-DD');
+
+  const nowTime = dayjs(now).format('HH:mm:ss');
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reservationDay, setReservationDay] = useState<any>('');
+  const [reservationTimeStart, setReservationTimeStart] = useState<any>('');
+  const [reservationTimeEnd, setReservationTimeEnd] = useState('');
+
+  now.setMonth(now.getMonth() + 3);
+  const modifiedNow = now.toISOString().slice(0, 10);
 
   const [sido, setSido] = useState('');
   const [sigungu, setSigugu] = useState('');
   const [remainAddress, setRemainAddress] = useState('');
   const [zonecode, setZonecode] = useState('');
 
-  const onToggleModal = () => {
-    setIsModalOpen(true);
-  };
-
-  interface IFormInput {
-    error: boolean;
-    address: string;
-  }
-
   const {
     register,
     clearErrors,
+    handleSubmit,
     formState: { errors },
   } = useForm<IFormInput>();
+
+  const handleDateChange = (newDate: any) => {
+    setReservationDay(dayjs(newDate).format('YYYY-MM-DD'));
+  };
+
+  const handleStartTime = (newTime: any) => {
+    setReservationTimeStart(dayjs(newTime).format('HH:mm:ss'));
+  };
+
+  const handleEndTime = (newTime: any) => {
+    setReservationTimeEnd(dayjs(newTime).format('HH:mm:ss'));
+  };
+
+  const onToggleModal = () => {
+    setIsModalOpen(true);
+  };
 
   const handleComplete = (data: any) => {
     // 우편번호 저장
@@ -67,6 +102,21 @@ const Reservation = () => {
     navigate('/');
   };
 
+  const handleStartError = (newError: any) => {
+    console.log(newError);
+  };
+
+  const onSubmit = async (data: any) => {
+    const { address } = data;
+    if (reservationDay && reservationTimeStart && reservationTimeEnd && address) {
+      console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address });
+      dispatch(setReservation({ reservationDay, reservationTimeStart, reservationTimeEnd, address }));
+      navigate('/reservation/step2');
+    } else if (!reservationTimeStart || !reservationTimeEnd) {
+      alert('시간을 확인해주세요');
+    }
+  };
+
   return (
     <MainContainer>
       <StatusHeader>
@@ -75,11 +125,20 @@ const Reservation = () => {
         <PageNumberText>1/3</PageNumberText>
       </StatusHeader>
 
-      <ReservationContainer>
+      <ReservationContainer onSubmit={handleSubmit(onSubmit)}>
         <ScheduleText>{`언제 펫시터가 필요하신가요?`}</ScheduleText>
         <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthShort: `M` }}>
           <DemoContainer sx={{ paddingTop: 1 }} components={['DatePicker']}>
-            <DatePicker label="날짜를 입력해주세요" format="YYYY-MM-DD" />
+            <DatePicker
+              label="날짜를 입력해주세요"
+              format="YYYY-MM-DD"
+              value={reservationDay}
+              onChange={handleDateChange}
+              shouldDisableDate={(day) => {
+                dayjs.extend(isBetween);
+                return !dayjs(dayjs(day as Dayjs).format('YYYY-MM-DD')).isBetween(nowDate, modifiedNow, 'day', '[)');
+              }}
+            />
           </DemoContainer>
         </LocalizationProvider>
         <ScheduleText>{'방문시간'}</ScheduleText>
@@ -87,14 +146,37 @@ const Reservation = () => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['TimePicker']} sx={{ flex: 1, paddingTop: 1 }}>
               <StyledTimePicker>
-                <TimePicker label="Check In" sx={{ flex: 1 }} />
+                <TimePicker
+                  label="Check In"
+                  sx={{ flex: 1 }}
+                  minutesStep={6}
+                  skipDisabled={true}
+                  minTime={dayjs(new Date(0, 0, 0, 8))}
+                  maxTime={dayjs(new Date(0, 0, 0, 22))}
+                  ampm={false}
+                  shouldDisableTime={(value, view) => view === 'hours' && value.hour() > +nowTime.split(':')[0] + 2}
+                  onChange={handleStartTime}
+                  onError={handleStartError}
+                />
               </StyledTimePicker>
             </DemoContainer>
           </LocalizationProvider>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['TimePicker']} sx={{ flex: 1, paddingTop: 1 }}>
               <StyledTimePicker>
-                <TimePicker label="Check Out" sx={{ flex: 1 }} />
+                <TimePicker
+                  label="Check Out"
+                  sx={{ flex: 1 }}
+                  minutesStep={6}
+                  skipDisabled={true}
+                  minTime={dayjs(new Date(0, 0, 0, 8))}
+                  maxTime={dayjs(new Date(0, 0, 0, 22))}
+                  ampm={false}
+                  shouldDisableTime={(value, view) =>
+                    view === 'hours' && value.hour() < +reservationTimeStart.split(':')[0] + 1
+                  }
+                  onChange={handleEndTime}
+                />
               </StyledTimePicker>
             </DemoContainer>
           </LocalizationProvider>
@@ -122,30 +204,31 @@ const Reservation = () => {
             </Sheet>
           </Modal>
         )}
+        {/* <RequestContainer>
+          <ScheduleText>{'요청사항'}</ScheduleText>
+          <TextField
+            {...register('body', { required: true })}
+            id="outlined-basic"
+            label="예) 산책중에 아무거나 잘 삼켜서 주의해주셔야 해요."
+            variant="outlined"
+            error={errors.body?.type === 'required'}
+            fullWidth
+            multiline
+          />
+          {ContactItem.map((item) => (
+            <ContactContainer key={item.id}>
+              <ScheduleText>{'연락처'}</ScheduleText>
+              <TextContainer>
+                <ContactText>{`${item.name}, ${item.phoneNumber}`}</ContactText>
+                <ContactSubText>{'프로필 번호로 카카오 알림톡 전송'}</ContactSubText>
+              </TextContainer>
+            </ContactContainer>
+          ))}
+        </RequestContainer> */}
+        <ButtonContainer>
+          <StyledButton type="submit">다음단계</StyledButton>
+        </ButtonContainer>
       </ReservationContainer>
-
-      <RequestContainer>
-        <ScheduleText>{'요청사항'}</ScheduleText>
-        <TextField
-          id="outlined-basic"
-          label="예) 산책중에 아무거나 잘 삼켜서 주의해주셔야 해요."
-          variant="outlined"
-          fullWidth
-          multiline
-        />
-        {ContactItem.map((item) => (
-          <ContactContainer key={item.id}>
-            <ScheduleText>{'연락처'}</ScheduleText>
-            <TextContainer>
-              <ContactText>{`${item.name}, ${item.phoneNumber}`}</ContactText>
-              <ContactSubText>{'프로필 번호로 카카오 알림톡 전송'}</ContactSubText>
-            </TextContainer>
-          </ContactContainer>
-        ))}
-      </RequestContainer>
-      <LinkButtonContainer>
-        <StyledLinkButton link="/reservation/step2" text="다음단계" width="100%" height="48px" fontSize="16" />
-      </LinkButtonContainer>
     </MainContainer>
   );
 };
@@ -192,9 +275,9 @@ const PageNumberText = styled.div`
   font-weight: ${(props) => props.theme.fontWeights.light};
 `;
 
-const ReservationContainer = styled.div`
+const ReservationContainer = styled.form`
   padding-bottom: 16px;
-  border-bottom: 1px solid ${(props) => props.theme.textColors.primary};
+
   padding: 12px;
 `;
 
@@ -221,7 +304,6 @@ const RequestContainer = styled.div`
   margin: 8px 0;
   padding-bottom: 40px;
   border-bottom: 1px solid ${(props) => props.theme.textColors.primary};
-  padding: 12px;
 `;
 
 const ContactContainer = styled.div`
@@ -244,14 +326,27 @@ const ContactSubText = styled.div`
   color: ${(props) => props.theme.textColors.primary};
 `;
 
-const LinkButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   margin: 12px 24px 20px 24px;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const StyledLinkButton = styled(LinkButton)`
-  border-radius: 12px;
-  height: 36px;
+const StyledButton = styled.button`
+  border-radius: 8px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background-color: ${({ theme }) => theme.colors.mainBlue};
+  color: white;
+  ${({ theme }) => theme.fontSize.s16h24};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.subBlue};
+  }
+  &:active {
+    background-color: ${({ theme }) => theme.colors.darkBlue};
+    box-shadow: ${({ theme }) => theme.shadow.inset};
+  }
 `;

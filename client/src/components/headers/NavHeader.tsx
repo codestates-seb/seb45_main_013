@@ -11,6 +11,9 @@ import { deleteCookie } from 'hooks/deleteCookie';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const NavHeader = () => {
+  const accessToken = getCookieValue('access_token');
+  const refreshToken = getCookieValue('refresh_token');
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -67,9 +70,6 @@ const NavHeader = () => {
 
   /// 유저 정보 가져오기
   useEffect(() => {
-    const accessToken = getCookieValue('access_token');
-    const refreshToken = getCookieValue('refresh_token');
-
     if (accessToken) {
       axios
         .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
@@ -78,8 +78,9 @@ const NavHeader = () => {
           dispatch(setUser(res.data));
         })
         .catch((error) => {
-          console.log(error);
           dispatch(deleteUser());
+          deleteCookie('access_token');
+
           // access token 재발급
           if (error.response.data.status === 401) {
             const refreshToken = getCookieValue('refresh_token');
@@ -87,8 +88,8 @@ const NavHeader = () => {
             axios
               .post(`${apiUrl}/refreshToken`, {}, { headers: { Refresh: refreshToken } })
               .then((res) => {
-                console.log(res);
                 if (res.data.access_token && res.data.refresh_token) {
+                  console.log(res);
                   const expirationDate = new Date();
                   expirationDate.setDate(expirationDate.getDate() + 1);
 
@@ -104,7 +105,7 @@ const NavHeader = () => {
     } else if (!accessToken || !refreshToken) {
       dispatch(deleteUser());
     }
-  }, [isLogin]);
+  }, [isLogin, accessToken]);
 
   return (
     <Container>
