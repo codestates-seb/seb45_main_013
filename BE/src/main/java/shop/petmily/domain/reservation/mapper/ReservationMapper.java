@@ -82,7 +82,7 @@ public interface ReservationMapper {
         response.setReservationTimeStart(reservation.getReservationTimeStart());
         response.setReservationTimeEnd(reservation.getReservationTimeEnd());
         response.setAddress(reservation.getAddress());
-        response.setPhone(reservation.getPhone());
+        response.setReservationPhone(reservation.getPhone());
         response.setReservationBody(reservation.getBody());
         response.setProgress(reservation.getProgress());
 
@@ -96,15 +96,7 @@ public interface ReservationMapper {
                 .map(reservationPet -> {
                     ReservationsDto.PetResponse petResponseDto = new ReservationsDto.PetResponse();
                     petResponseDto.setPetId(reservationPet.getPet().getPetId());
-                    petResponseDto.setType(reservationPet.getPet().getType());
                     petResponseDto.setName(reservationPet.getPet().getName());
-                    petResponseDto.setAge(reservationPet.getPet().getAge());
-                    petResponseDto.setSpecies(reservationPet.getPet().getSpecies());
-                    petResponseDto.setWeight(reservationPet.getPet().getWeight());
-                    petResponseDto.setPhoto(reservationPet.getPet().getPhoto());
-                    petResponseDto.setBody(reservationPet.getPet().getBody());
-                    petResponseDto.setMale(reservationPet.getPet().getMale());
-                    petResponseDto.setNeutering(reservationPet.getPet().getNeutering());
                     return petResponseDto;
                 }).collect(Collectors.toList());
         response.setPets(pets);
@@ -120,7 +112,7 @@ public interface ReservationMapper {
         response.setReservationTimeStart(reservation.getReservationTimeStart());
         response.setReservationTimeEnd(reservation.getReservationTimeEnd());
         response.setAddress(reservation.getAddress());
-        response.setPhone(reservation.getPhone());
+        response.setReservationPhone(reservation.getPhone());
         response.setReservationBody(reservation.getBody());
         response.setProgress(reservation.getProgress());
 
@@ -134,15 +126,7 @@ public interface ReservationMapper {
                 .map(reservationPet -> {
                     ReservationsDto.PetResponse petResponseDto = new ReservationsDto.PetResponse();
                     petResponseDto.setPetId(reservationPet.getPet().getPetId());
-                    petResponseDto.setType(reservationPet.getPet().getType());
                     petResponseDto.setName(reservationPet.getPet().getName());
-                    petResponseDto.setAge(reservationPet.getPet().getAge());
-                    petResponseDto.setSpecies(reservationPet.getPet().getSpecies());
-                    petResponseDto.setWeight(reservationPet.getPet().getWeight());
-                    petResponseDto.setPhoto(reservationPet.getPet().getPhoto());
-                    petResponseDto.setBody(reservationPet.getPet().getBody());
-                    petResponseDto.setMale(reservationPet.getPet().getMale());
-                    petResponseDto.setNeutering(reservationPet.getPet().getNeutering());
                     return petResponseDto;
                 }).collect(Collectors.toList());
         response.setPets(pets);
