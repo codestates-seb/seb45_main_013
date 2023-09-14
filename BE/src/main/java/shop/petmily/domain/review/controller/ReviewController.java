@@ -40,7 +40,7 @@ public class ReviewController {
 
     // 후기 등록
     @PostMapping
-    public ResponseEntity<ReviewResponseDto> postReview(ReviewPostDto reviewPostDto,
+    public ResponseEntity<ReviewResponseDto> postReview( @ModelAttribute ReviewPostDto reviewPostDto,
                                                         @LoginMemberId Long memberId)  {
         reviewPostDto.setMemberId(memberId);
         Review createdReview = service.createReview(mapper.reviewPostToReview(reviewPostDto), reviewPostDto.getFile());
@@ -56,7 +56,7 @@ public class ReviewController {
     // 후기 수정
     @PatchMapping("/{review-id}")
     public ResponseEntity<ReviewResponseDto> patchReview(@PathVariable("review-id") @Positive long reviewId,
-                                                         ReviewPatchDto reviewPatchDto,
+                                                         @ModelAttribute ReviewPatchDto reviewPatchDto,
                                                          @LoginMemberId Long memberId) throws IOException {
         reviewPatchDto.setMemberId(memberId);
         reviewPatchDto.setReviewId(reviewId);

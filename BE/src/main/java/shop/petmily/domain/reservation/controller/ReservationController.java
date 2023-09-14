@@ -29,97 +29,71 @@ import java.util.stream.Collectors;
 public class ReservationController {
     private final ReservationMapper mapper;
     private final ReservationService service;
-    private final JournalMapper journalMapper;
-    private final ReviewMapper reviewMapper;
     private final ReservationQueryDsl reservationQueryDsl;
 
 
     public ReservationController(ReservationMapper mapper, ReservationService service,
-                                 JournalMapper journalMapper, ReviewMapper reviewMapper,
                                  ReservationQueryDsl reservationQueryDsl) {
         this.mapper = mapper;
         this.service = service;
-        this.journalMapper = journalMapper;
-        this.reviewMapper = reviewMapper;
         this.reservationQueryDsl = reservationQueryDsl;
     }
 
-    //예약가능 펫시터 list보여주기
+    //예약가능 펫시터 list 보여주기
     @PostMapping("/petsitters")
-    public ResponseEntity findPetsitter(@Valid  @RequestBody ReservationPostDto reservationPostDto,
-                                        @LoginMemberId Long memberId) {
+    public ResponseEntity<List<PossiblePetsitterDto.Response>> findPossiblePetsitters(@Valid @RequestBody PossiblePetsitterDto.Request requestBody,
+                                                                                      @LoginMemberId Long memberId) {
+        requestBody.setMemberId(memberId);
 
-        reservationPostDto.setMemberId(memberId);
-        Reservation reservation = mapper.reservationPostDtoToReservation(reservationPostDto);
+        Reservation reservation = mapper.possiblePetsitterDtoToReservation(requestBody);
 
-        List<Petsitter> petsitters = service.findReservationPossiblePetsitter(reservation);
+        List<PossiblePetsitterDto.Response> possiblePetsitters = service.findReservationPossiblePetsitter(reservation);
 
-        List<PossiblePetsitterResponseDto> petsitterResponse =
-                petsitters.stream()
-                        .map(petsitter -> mapper.petsitterToReservationPossiblePetsitterReseponseDto(petsitter))
-                        .collect(Collectors.toList());
-
-        return new ResponseEntity<>(petsitterResponse, HttpStatus.OK);
+        return new ResponseEntity<>(possiblePetsitters, HttpStatus.OK);
     }
 
     //예약정보 + 펫시터정보 등록하고 예약신청상태로 만들기
     @PostMapping
-    public ResponseEntity createResrvation(@Valid @RequestBody ReservationPostDto reservationPostDto,
-                                           @LoginMemberId Long memberId) {
-        reservationPostDto.setMemberId(memberId);
-        Reservation reservation = mapper.reservationPostDtoToReservation(reservationPostDto);
-        Reservation createdReservation = service.createReservation(reservation);
-        ReservationResponseDto response = mapper.reservationToReservationResponseDto(createdReservation);
+    public ResponseEntity<String> createReservation(@Valid @RequestBody ReservationPostDto.Request requestBody,
+                                                    @LoginMemberId Long memberId) {
+        requestBody.setMemberId(memberId);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        Reservation reservation = mapper.reservationPostDtoToReservation(requestBody);
+
+        service.createReservation(reservation);
+
+        return new ResponseEntity<>("Reservation Created", HttpStatus.CREATED);
     }
+
 
     // 예약 1개 조회
     @GetMapping("/{reservation-id}")
-    public ResponseEntity getReservation(@PathVariable("reservation-id") @Positive long reservationId) {
-        Reservation reservation = service.findReservation(reservationId);
-        ReservationResponseDto response = mapper.reservationToReservationResponseDto(reservation);
-
-        response.setJournal(
-                journalMapper.JournalToResponse(reservationQueryDsl.findJournalByReservation(reservation)));
-
-        response.setReview(
-                reviewMapper.reviewToResponse(reservationQueryDsl.findReviewByReservation(reservation)));
+    public ResponseEntity<ReservationDetailsDto.Response> getReservation(@PathVariable("reservation-id") @Positive long reservationId) {
+        ReservationDetailsDto.Response response = service.findReservation(reservationId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 예약 조회 (멤버)
     @GetMapping("/member")
-    public ResponseEntity getReservationsForMember(@RequestParam("page") @Positive int page,
-                                                   @RequestParam("size") @Positive int size,
-                                                   @RequestParam(value = "condition", required = false) String condition,
-                                                   @LoginMemberId Long memberId) {
+    public ResponseEntity<ReservationMultiDto.MemberResponse> getReservationsForMember(@RequestParam("page") @Positive int page,
+                                                                                @RequestParam("size") @Positive int size,
+                                                                                @RequestParam(value = "condition", required = false) String condition,
+                                                                                @LoginMemberId Long memberId) {
         Page<Reservation> reservationPage = service.findMemberReservations(page, size, memberId, condition);
         PageInfo pageInfo = new PageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
-        List<ReservationResponseDto> response =
-                reservations.stream()
-                        .map(reservation -> {
-                            ReservationResponseDto reservationResponseDto =
-                                    mapper.reservationToReservationResponseDto(reservation);
+        List<ReservationsDto.MemberResponse> responses =
+                reservations.stream().map(mapper::reservationToReservationMemberResponseDto).collect(Collectors.toList());
 
-                            reservationResponseDto.setJournal(
-                                    journalMapper.JournalToResponse(reservationQueryDsl.findJournalByReservation(reservation)));
-
-                            reservationResponseDto.setReview(
-                                    reviewMapper.reviewToResponse(reservationQueryDsl.findReviewByReservation(reservation)));
-
-                                    return reservationResponseDto;
-                                }).collect(Collectors.toList());
-
-        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
+        return new ResponseEntity<>(new ReservationMultiDto.MemberResponse(responses, pageInfo), HttpStatus.OK);
     }
+
 
     // 예약 조회 (펫시터)
     @GetMapping("/petsitter")
-    public ResponseEntity getReservationsForPetSitter(@RequestParam("page") @Positive int page,
+    public ResponseEntity<ReservationMultiDto.PetsitterResponse> getReservationsForPetSitter(@RequestParam("page") @Positive int page,
                                                       @RequestParam("size") @Positive int size,
                                                       @RequestParam(value = "condition", required = false) String condition,
                                                       @LoginMemberId Long memberId) {
@@ -127,27 +101,15 @@ public class ReservationController {
         PageInfo pageInfo = new PageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
-        List<ReservationResponseDto> response =
-                reservations.stream()
-                        .map(reservation -> {
-                            ReservationResponseDto reservationResponseDto =
-                                    mapper.reservationToReservationResponseDto(reservation);
+        List<ReservationsDto.PetsitterResponse> responses =
+                reservations.stream().map(mapper::reservationToReservationPetsitterResponseDto).collect(Collectors.toList());
 
-                            reservationResponseDto.setJournal(
-                                    journalMapper.JournalToResponse(reservationQueryDsl.findJournalByReservation(reservation)));
-
-                            reservationResponseDto.setReview(
-                                    reviewMapper.reviewToResponse(reservationQueryDsl.findReviewByReservation(reservation)));
-
-                            return reservationResponseDto;
-                        }).collect(Collectors.toList());
-
-        return new ResponseEntity<>(new ReservationMultiResponseDto(response, pageInfo), HttpStatus.OK);
+        return new ResponseEntity<>(new ReservationMultiDto.PetsitterResponse(responses, pageInfo), HttpStatus.OK);
     }
 
     //펫시터 오늘날짜 이후 취소아닌 예약일정 찾기
     @GetMapping("/schedule/{petsitter-id}")
-    public ResponseEntity getPetsitterSchedule(@PathVariable("petsitter-id") @Positive long petsitterId){
+    public ResponseEntity<List<PetsitterScheduledResponseDto>> getPetsitterSchedule(@PathVariable("petsitter-id") @Positive long petsitterId){
         List<PetsitterScheduledResponseDto> response = service.getPetsitterSchedule(petsitterId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
