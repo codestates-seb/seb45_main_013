@@ -4,9 +4,11 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import userReducer from './userSlice';
+import reservationReducer from './reservationSlice';
 
 const reducers = combineReducers({
   user: userReducer,
+  reservation: reservationReducer,
 });
 
 const persistConfig = {

@@ -13,12 +13,23 @@ import { yupResolver } from '@hookform/resolvers/yup';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const schema = yup.object().shape({
-  name: yup.string().required('이름은 필수입니다.'),
-  phone: yup.string().required('전화번호는 필수입니다.'),
+  name: yup
+    .string()
+    .min(2, '2자 이상이어야 합니다.')
+    .matches(/[가-힣]+/, '한글만 가능합니다.')
+    .required('이름은 필수입니다.'),
+  phone: yup
+    .string()
+    .matches(/^010[0-9]{8}$/, "010으로 시작해야 하며 '-'를 제외한 총 11자리 숫자여야 합니다.")
+    .required('전화번호는 필수입니다.'),
   address: yup.string().required('주소는 필수입니다.'),
   detailAddress: yup.string().required('상세주소는 필수입니다.'),
   email: yup.string().email('이메일 형식을 지켜주세요.').required('ID는 필수입니다.'),
-  nickName: yup.string().required('닉네임은 필수입니다.'),
+  nickName: yup
+    .string()
+    .min(4, '4자 이상부터 가능합니다.')
+    .matches(/^[^!@#$%^&*()_+{}[\]:;<>,.?~|]+$/, '특수문자가 없어야 합니다.')
+    .required('닉네임은 필수입니다.'),
   password: yup
     .string()
     .min(8, '비밀번호는 8자리 이상이어야 합니다.')
@@ -99,6 +110,12 @@ const Signup = () => {
       }
     } catch (error: any) {
       console.log(error);
+      if (error.response.data.status === 409) {
+        setError('email', { type: 'serverError', message: error.response.data.message });
+      }
+      // if (error.response.data.fieldErrors) {
+      //   const fieldErrors = error.response.data.fieldErrors;
+      // }
     }
     setIsSignupLoading(false);
   };
