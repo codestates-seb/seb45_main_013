@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-// import axios from 'axios';
+import axios from 'axios';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-// import DialogContentText from '@mui/material/DialogContentText';
+import DialogContentText from '@mui/material/DialogContentText';
 import TextField from '@mui/material/TextField';
 
 import LinkButton from '@components/buttons/LinkButton';
@@ -49,37 +49,17 @@ const ReservationStepTwo = () => {
   const defaultProfileImg = 'imgs/DefaultUserProfile.jpg'; // Upload Image 사용
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
-  // const [petItems, setPetItems] = useState<MyPetItem[]>(MyPetItem);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newPetData, setNewPetData] = useState({
-    //새로운 반려동물 데이터 등록
-    petId: '',
-    memberId: '',
-    type: '',
-    name: '',
-    age: '',
-    species: '',
-    weight: '',
-    photo: '',
-    body: '',
-    neutering: '',
-    gender: '',
-  });
   const [isCat, setIsCat] = useState(false);
-  const [gender, setGender] = useState(null);
 
-  const { register } = useForm<IRegisterPet>();
-
-  const handleImageFileChange = (file: File) => {
-    setImageFile(file);
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IRegisterPet>({ mode: 'onChange' });
 
   const handleBackClick = () => {
     navigate('/reservation');
-  };
-
-  const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckedItems({ ...checkedItems, [e.target.name]: e.target.checked });
   };
 
   const handleAddClick = () => {
@@ -90,25 +70,48 @@ const ReservationStepTwo = () => {
     setIsModalOpen(false);
   };
 
-  // const handleGenderCheck = (e: any) => {
-  //   setGender(e.target.value);
-  //   setNewPetData({ ...newPetData, gender: e.target.value });
-  // };
+  const handleImageFileChange = (file: File) => {
+    setImageFile(file);
+  };
 
-  const handleNewPetChange = (e: { target: { name: any; value: any } }) => {
-    setNewPetData({ ...newPetData, [e.target.name]: e.target.value });
+  const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedItems({ ...checkedItems, [e.target.name]: e.target.checked });
   };
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    //   e.preventDefault();
-    // try {
-    // const response = await axios.post('http://localhost:8080/pets/', newPetData);
-    // if(response.status === 200) {
-    // alert('등록 성공');
-    // handleModalClose();
-    // } catch (err) {
-    // alert('등록 실패');
-    // console.log(err);
-  };
+
+  const handleFormSubmit = handleSubmit(async (data: IRegisterPet) => {
+    try {
+      //FormData 객체 생성
+      const formData = new FormData();
+
+      // Form Field의 데이터를 formData 객체에 삽입
+      Object.keys(data).forEach((key) => {
+        const value = data[key as keyof IRegisterPet];
+        if (value !== undefined) {
+          formData.append(key, value.toString());
+        }
+      });
+
+      // 파일 데이터가 존재하는 경우, formData 객체에 삽입
+      if (imageFile) {
+        formData.append('photo', imageFile);
+      }
+
+      console.log(formData);
+
+      // 토큰 설정 별도의 인증 로직 구현 필요
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+
+      // axios를 이용하여, 백엔드로 데이터 전송
+      await axios.post('http://localhost:8080/pets/', formData);
+
+      alert('반려동물 등록이 완료되었습니다.');
+      // 데이터 전송 후, 페이지 이동
+      navigate('/reservation/step2');
+    } catch (error) {
+      alert('반려동물 등록에 실패하였습니다.');
+      console.log(error);
+    }
+  });
 
   return (
     <MainContainer>
@@ -144,7 +147,7 @@ const ReservationStepTwo = () => {
                 <Dialog open={isModalOpen} onClose={handleModalClose}>
                   <DialogTitle>반려동물 등록</DialogTitle>
                   <DialogContent>
-                    {/* <DialogContentText>반려동물 소개는 마이페이지에서 펫 수정을 통해 등록해주세요!</DialogContentText> */}
+                    <DialogContentText>반려동물 소개는 마이페이지에서 펫 수정을 통해 등록해주세요!</DialogContentText>
                     <UploadPetImgbox>
                       <UploadPetImg currentImageUrl={defaultProfileImg} setImageFile={handleImageFileChange} />
                     </UploadPetImgbox>
@@ -162,40 +165,36 @@ const ReservationStepTwo = () => {
                       label="반려동물 이름"
                       type="text"
                       fullWidth
-                      onChange={handleNewPetChange}
+                      {...register('name', { required: '이름을 작성해야 합니다.' })}
                     />
+                    {errors.name && <p>{errors.name.message}</p>}
                     <TextField
                       margin="dense"
                       id="species"
                       label="품종"
                       type="text"
                       fullWidth
-                      onChange={handleNewPetChange}
+                      {...register('species', { required: '품종을 작성해야 합니다.' })}
                     />
+                    {errors.species && <p>{errors.species.message}</p>}
                     <TextField
                       margin="dense"
                       id="weight"
                       label="몸무게"
                       type="text"
                       fullWidth
-                      onChange={handleNewPetChange}
+                      {...register('weight', { required: '몸무게를 작성해야 합니다.' })}
                     />
+                    {errors.weight && <p>{errors.weight.message}</p>}
                     <TextField
                       margin="dense"
                       id="age"
                       label="나이"
                       type="text"
                       fullWidth
-                      onChange={handleNewPetChange}
+                      {...register('age', { required: '나이를 작성해야 합니다.' })}
                     />
-                    <TextField
-                      margin="dense"
-                      id="body"
-                      label="나의 펫소개"
-                      type="text"
-                      fullWidth
-                      onChange={handleNewPetChange}
-                    />
+                    {errors.age && <p>{errors.age.message}</p>}
                     <RegisterInputWrapper>
                       <InputLabelStyle htmlFor="neutering">중성화</InputLabelStyle>
                       <RadioWrapper>
@@ -214,7 +213,7 @@ const ReservationStepTwo = () => {
                         <RadioLabel htmlFor="female">여자아이</RadioLabel>
                       </RadioWrapper>
                     </RegisterInputWrapper>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleFormSubmit}>
                       <Button variant="contained" color="primary" type="submit" fullWidth>
                         등록하기
                       </Button>
