@@ -79,7 +79,7 @@ public class JournalController {
         List<Journal> journals = journalPage.getContent();
         List<JournalResponseDto> response =
                 journals.stream()
-                        .map(journal -> mapper.JournalToResponse(journal))
+                        .map(mapper::JournalToResponse)
                         .collect(Collectors.toList());
 
         return new ResponseEntity<>(new JournalMultiResponseDto(response, pageInfo), HttpStatus.OK);

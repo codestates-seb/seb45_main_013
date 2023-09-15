@@ -19,7 +19,6 @@ import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.dto.PageInfo;
 
 import javax.validation.constraints.Positive;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,7 @@ public class ReviewController {
     @PatchMapping("/{review-id}")
     public ResponseEntity<ReviewResponseDto> patchReview(@PathVariable("review-id") @Positive long reviewId,
                                                          @ModelAttribute ReviewPatchDto reviewPatchDto,
-                                                         @LoginMemberId Long memberId) throws IOException {
+                                                         @LoginMemberId Long memberId) {
         reviewPatchDto.setMemberId(memberId);
         reviewPatchDto.setReviewId(reviewId);
         Review review = mapper.reviewPatchToReview(reviewPatchDto);
@@ -94,7 +93,7 @@ public class ReviewController {
         List<Review> reviews = reviewPage.getContent();
         List<ReviewResponseDto> response =
                 reviews.stream()
-                        .map(review -> mapper.reviewToResponse(review))
+                        .map(mapper::reviewToResponse)
                         .collect(Collectors.toList());
 
         return new ResponseEntity<>(new ReviewMultiResponseDto(response, pageInfo), HttpStatus.OK);
