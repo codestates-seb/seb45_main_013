@@ -45,7 +45,7 @@ public class PetController {
     //펫수정
     @PatchMapping(value = "/{pet_id}")
     public ResponseEntity<String> patchPet(@PathVariable ("pet_id") @Positive long petId,
-                                           PetPatchDto.Request requestBody,
+                                           @Valid PetPatchDto.Request requestBody,
                                            @LoginMemberId Long memberId){
         requestBody.setMemberId(memberId);
         requestBody.setPetId(petId);
