@@ -3,9 +3,12 @@ package shop.petmily.domain.pet.entity;
 import lombok.Getter;
 import lombok.Setter;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.reservation.entity.ReservationPet;
 import shop.petmily.global.audit.Auditable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -47,6 +50,9 @@ public class Pet extends Auditable {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.REMOVE)
+    private List<ReservationPet> reservationPets = new ArrayList<>();
 
     public enum PetType{
         DOG("강아지"),
