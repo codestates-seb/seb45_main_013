@@ -1,10 +1,6 @@
 package shop.petmily.domain.reservation.dto;
 
 import lombok.Getter;
-import lombok.Setter;
-import shop.petmily.domain.pet.dto.PetResponseDto;
-import shop.petmily.domain.pet.dto.ReservationPostPetDto;
-import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.global.utils.validation.ValidAddress;
 import shop.petmily.global.utils.validation.ValidLocalDate;
 import shop.petmily.global.utils.validation.ValidLocalTime;
@@ -13,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 

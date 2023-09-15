@@ -2,14 +2,11 @@ package shop.petmily.domain.reservation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import shop.petmily.global.utils.validation.ValidAddress;
 import shop.petmily.global.utils.validation.ValidLocalDate;
 import shop.petmily.global.utils.validation.ValidLocalTime;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

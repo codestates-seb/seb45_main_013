@@ -3,10 +3,10 @@ package shop.petmily.domain.reservation.mapper;
 import org.mapstruct.Mapper;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.pet.dto.PetResponseDto;
-import shop.petmily.domain.pet.dto.ReservationPostPetDto;
 import shop.petmily.domain.pet.entity.Pet;
-import shop.petmily.domain.reservation.dto.*;
+import shop.petmily.domain.reservation.dto.PossiblePetsitterDto;
+import shop.petmily.domain.reservation.dto.ReservationPostDto;
+import shop.petmily.domain.reservation.dto.ReservationsDto;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.entity.ReservationPet;
 

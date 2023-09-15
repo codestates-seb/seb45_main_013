@@ -30,15 +30,15 @@ public class PetService {
     }
 
     //펫생성
-    public Pet createPet(Pet pet, MultipartFile file){
+    public void createPet(Pet pet, MultipartFile file){
         if(file != null) pet.setPhoto(uploadService.saveFile(file));
         repository.save(pet);
 
-        return repository.save(pet);
+        repository.save(pet);
     }
 
     //펫수정
-    public Pet updatePet(Pet pet, MultipartFile file){
+    public void updatePet(Pet pet, MultipartFile file){
         Pet verifiedPet = verifiedPet(pet.getPetId());
         String beforeFileName = null;
 
@@ -64,18 +64,16 @@ public class PetService {
         if(verifiedPet.getPhoto() != null) beforeFileName = verifiedPet.getPhoto();
         if(file != null) verifiedPet.setPhoto(uploadService.saveFile(file));
 
-        Pet savedPet = repository.save(verifiedPet);
+        repository.save(verifiedPet);
 
         if(beforeFileName != null) uploadService.deleteFile(beforeFileName);
-
-        return savedPet;
     }
 
     //펫사진삭제
-    public Pet photoDelete(Long petId, Long requestMemberId){
+    public void photoDelete(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
-        String beforeFileName = null;
+        String beforeFileName;
 
         if(verifiedPet.getPhoto() != null) {
             beforeFileName = verifiedPet.getPhoto();
@@ -84,17 +82,15 @@ public class PetService {
         }
 
         verifiedPet.setPhoto(null);
-        Pet savedPet = repository.save(verifiedPet);
+        repository.save(verifiedPet);
 
         uploadService.deleteFile(beforeFileName);
 
-        return savedPet;
     }
 
     //펫1마리 정보 찾기
     public Pet findPet(Long petId){
-        Pet verifiedPet = verifiedPet(petId);
-        return  verifiedPet;
+        return verifiedPet(petId);
     }
 
     //특정 멤버 펫 전부 찾기
@@ -113,8 +109,7 @@ public class PetService {
     //펫 검증
     private Pet verifiedPet(Long petId) {
         Optional<Pet> optionalPet = repository.findById(petId);
-        Pet pet = optionalPet.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PET_NOT_EXIST));
-        return pet;
+        return optionalPet.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PET_NOT_EXIST));
     }
 
     //펫 주인 판별
