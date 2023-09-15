@@ -35,6 +35,7 @@ public enum ExceptionCode {
     ALREADY_NEUTERING(400, "중성화는 false > true 한번만 변경 가능합니다."),
     ALREADY_RESERVATION(400, "해당 펫시터는 선택하신 날짜,시간에 중복된 예약이 있습니다."),
     NOT_AVAILABLE_PETSITTER(400,"해당 예약정보로는 선택하신 펫시터가 불가능합니다."),
+    NOT_ACTIVE_PET(400, "비활성화된 펫입니다."),
 
 
     // 케어일지, 리뷰

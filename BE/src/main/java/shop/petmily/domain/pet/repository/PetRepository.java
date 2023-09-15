@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface PetRepository extends JpaRepository<Pet, Long> {
 
-    List<Pet> findByMember(Member member);
+    List<Pet> findByMemberAndActive(Member member, Boolean active);
 }

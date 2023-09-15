@@ -33,8 +33,6 @@ public class PetService {
     public void createPet(Pet pet, MultipartFile file){
         if(file != null) pet.setPhoto(uploadService.saveFile(file));
         repository.save(pet);
-
-        repository.save(pet);
     }
 
     //펫수정
@@ -42,6 +40,7 @@ public class PetService {
         Pet verifiedPet = verifiedPet(pet.getPetId());
         String beforeFileName = null;
 
+        petActiveCheck(verifiedPet);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), pet.getMember().getMemberId());
 
         Optional.ofNullable(pet.getAge())
@@ -72,8 +71,10 @@ public class PetService {
     //펫사진삭제
     public void photoDelete(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
-        verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
         String beforeFileName;
+
+        petActiveCheck(verifiedPet);
+        verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
 
         if(verifiedPet.getPhoto() != null) {
             beforeFileName = verifiedPet.getPhoto();
@@ -90,20 +91,26 @@ public class PetService {
 
     //펫1마리 정보 찾기
     public Pet findPet(Long petId){
-        return verifiedPet(petId);
+        Pet verifiedPet = verifiedPet(petId);
+        petActiveCheck(verifiedPet);
+        return verifiedPet;
     }
 
     //특정 멤버 펫 전부 찾기
     public List<Pet> findPets(Long memberId){
         Member member = memberService.findMember(memberId);
-        return  repository.findByMember(member);
+        return  repository.findByMemberAndActive(member, true);
     }
 
-    //펫삭제
-    public void deletePet(Long petId, Long requestMemberId){
+    //펫 삭제(비활성화)
+    public void disablePet(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
+
+        petActiveCheck(verifiedPet);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
-        repository.delete(verifiedPet);
+
+        verifiedPet.setActive(false);
+        repository.save(verifiedPet);
     }
 
     //펫 검증
@@ -115,5 +122,10 @@ public class PetService {
     //펫 주인 판별
     public void verifiedPetOwner(long originMemberId, Long requestMemberId) {
         if (originMemberId != requestMemberId) throw new BusinessLogicException(ExceptionCode.NOT_MY_PET);
+    }
+
+    //펫 활성화 검증
+    public void petActiveCheck(Pet pet){
+        if (!pet.getActive()) throw new BusinessLogicException(ExceptionCode.NOT_ACTIVE_PET);
     }
 }

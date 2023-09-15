@@ -47,6 +47,9 @@ public class Pet extends Auditable {
     @Column
     private Boolean neutering;
 
+    @Column
+    private Boolean active;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
