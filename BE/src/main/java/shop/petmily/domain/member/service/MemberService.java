@@ -194,8 +194,8 @@ public class MemberService {
     public Member photoDelete(long memberId) {
         Member findMember = findVerifiedMember(memberId);
 
-        findMember.setPhoto(null);
         uploadService.deleteFile(findMember.getPhoto());
+        findMember.setPhoto(null);
 
         return memberRepository.save(findMember);
     }

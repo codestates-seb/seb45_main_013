@@ -40,7 +40,7 @@ public class RefreshTokenController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @PostMapping("/petsitterToken") // member에서 petsitter로 토큰 변경
-    public ResponseEntity<MemberLoginDto.LoginResponse> requestPetsitterToken(@RequestHeader("Refresh") String requestHeader) {
+    public ResponseEntity requestPetsitterToken(@RequestHeader("Refresh") String requestHeader) {
         refreshTokenService.findRefreshToken(requestHeader).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
 
         Claims refreshClaims = jwtTokenizer.parseRefreshToken(requestHeader);
@@ -78,7 +78,7 @@ public class RefreshTokenController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @PostMapping // refreshToken으로 accessToken 재발급
-    public ResponseEntity<MemberLoginDto.LoginResponse> requestRefresh(@RequestHeader("Refresh") String requestHeader) {
+    public ResponseEntity requestRefresh(@RequestHeader("Refresh") String requestHeader) {
         refreshTokenService.findRefreshToken(requestHeader).orElseThrow(() -> new BusinessLogicException(ExceptionCode.NOT_FOUND_TOKEN));
 
         Claims refreshClaims = jwtTokenizer.parseRefreshToken(requestHeader);
