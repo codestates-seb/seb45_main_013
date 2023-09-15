@@ -13,6 +13,7 @@ import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.FavoriteRepository;
 import shop.petmily.domain.member.repository.MemberRepository;
 import shop.petmily.domain.member.repository.PetsitterRepository;
+import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
@@ -194,10 +195,23 @@ public class MemberService {
     public Member photoDelete(long memberId) {
         Member findMember = findVerifiedMember(memberId);
 
-        uploadService.deleteFile(findMember.getPhoto());
-        findMember.setPhoto(null);
+//        uploadService.deleteFile(findMember.getPhoto());
+////        findMember.setPhoto(null);
 
-        return memberRepository.save(findMember);
+        String beforeFileName = null;
+
+        if(findMember.getPhoto() != null) {
+            beforeFileName = findMember.getPhoto();
+        } else {
+            throw new BusinessLogicException(ExceptionCode.NO_PHOTO);
+        }
+
+        findMember.setPhoto(null);
+        Member saveMember = memberRepository.save(findMember);
+
+        uploadService.deleteFile(beforeFileName);
+
+        return saveMember;
     }
 }
 
