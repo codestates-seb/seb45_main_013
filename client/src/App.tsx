@@ -7,6 +7,8 @@ import Header from './components/headers/Header';
 import LoadingFallback from '@components/LoadingFallback';
 import NavHeader from '@components/headers/NavHeader';
 
+import { Helmet } from 'react-helmet-async';
+
 const Home = lazy(() => import('@pages/Home'));
 const Login = lazy(() => import('@pages/Login'));
 const Signup = lazy(() => import('@pages/Signup'));

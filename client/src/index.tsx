@@ -12,6 +12,8 @@ import { persistStore } from 'redux-persist';
 
 import { Analytics } from '@vercel/analytics/react';
 
+import { HelmetProvider } from 'react-helmet-async';
+
 const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
@@ -21,7 +23,9 @@ root.render(
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider theme={defaultTheme}>
           <GlobalStyle />
-          <App />
+          <HelmetProvider>
+            <App />
+          </HelmetProvider>
         </ThemeProvider>
       </PersistGate>
     </Provider>
