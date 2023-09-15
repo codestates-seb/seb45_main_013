@@ -5,6 +5,7 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 // 추후 UseEffect로 데이터 받아올 데이터 (내가 자주 이용하는 펫시터)
 const OftenPetsitterItem = [
@@ -74,6 +75,18 @@ const Home = () => {
 
   return (
     <HomeContainer>
+      <Helmet>
+        <title>Petmily - Home</title>
+        <meta name="description" content="펫시터 방문 돌봄 서비스, 우리는 펫밀리입니다." />
+        <link rel="canonical" href="https://petmily.shop" />
+        <meta property="og:title" content="Petmily - Home" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://petmily.shop" />
+        <meta property="og:description" content="펫시터를 찾으시나요? 지금 바로 만나보세요." />
+        <meta property="og:image" content="https://petmily.shop/imgs/Logo.svg" />
+        <meta property="og:image:secure_url" content="https://petmily.shop/imgs/Logo.svg" />
+        <meta property="og:image:type" content="image/svg+xml" />
+      </Helmet>
       <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
       <CustomLink to={'/search'}>펫시터 검색</CustomLink>
       <LinkContainer>
