@@ -11,7 +11,6 @@ import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
-import shop.petmily.domain.reservation.service.ReservationService;
 import shop.petmily.domain.reservation.service.ReservationUtils;
 import shop.petmily.domain.review.entity.Review;
 import shop.petmily.domain.review.repository.ReviewRepository;

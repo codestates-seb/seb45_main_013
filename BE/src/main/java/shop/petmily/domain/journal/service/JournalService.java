@@ -12,7 +12,6 @@ import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.journal.repository.JournalRepository;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
-import shop.petmily.domain.reservation.service.ReservationService;
 import shop.petmily.domain.reservation.service.ReservationUtils;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
@@ -101,20 +100,19 @@ public class JournalService {
     // 유효한 케어일지인지 확인
     private Journal findVerifiedJournal(long journalId) {
         Optional<Journal> optionalJournal = journalRepository.findById(journalId);
-        Journal journal = optionalJournal.orElseThrow(
+        return optionalJournal.orElseThrow(
                 () -> new BusinessLogicException(ExceptionCode.JOURNAL_NOT_EXIST)
         );
-        return journal;
     }
 
     // 접근자가 케어일지에 권한이 있는지 확인
     public void verifiedJournalOwner(long id, Journal verifiedJournal){
-        if ((id == verifiedJournal.getReservation().getPetsitter().getPetsitterId())
-                || (id == verifiedJournal.getMember().getMemberId())){
-        } else {
-            throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
+        if (id != verifiedJournal.getReservation().getPetsitter().getPetsitterId()
+                && (id != verifiedJournal.getMember().getMemberId())) {
+                    throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
     }
+
 //     케어일지 삭제(펫시터만)
 //    public void deleteJournal(long journalId, long petsitterId) {
 //        Journal findJournal = findVerifiedJournal(journalId);

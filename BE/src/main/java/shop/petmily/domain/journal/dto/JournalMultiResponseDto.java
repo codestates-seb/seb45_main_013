@@ -7,9 +7,9 @@ import java.util.List;
 
 @Getter
 public class JournalMultiResponseDto {
-    private List<JournalResponseDto> journals;
+    private final List<JournalResponseDto> journals;
 
-    private PageInfo pageInfo;
+    private final PageInfo pageInfo;
 
     public JournalMultiResponseDto(List<JournalResponseDto> journals, PageInfo pageInfo) {
         this.journals = journals;
