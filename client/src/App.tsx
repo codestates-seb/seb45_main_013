@@ -14,6 +14,7 @@ import ViewPetsitters from './pages/ViewPetsitters';
 import Reservation from './pages/Reservation';
 import ReservationStepTwo from '@pages/ReservationStepTwo';
 import ReservationStepThree from '@pages/ReservationStepThree';
+import ReservationStepFour from '@pages/ReservationStepFour';
 import PetsitterViewDetails from '@pages/PetsitterViewDetails';
 import Cares from './pages/Cares';
 import BackHeader from './components/headers/BackHeader';
@@ -98,6 +99,7 @@ const App = () => {
               <Route path="mypage/:petId/edit" element={<EditPet />}></Route>
               <Route path="search" element={<Search />} />
               <Route path="qna" element={<QnA />} />
+              <Route path="reservation/step4" element={<ReservationStepFour />}></Route>
               <Route path="petsitters" element={<ViewPetsitters />}></Route>
               <Route path="cares/journal/:journalId" element={<ViewJournal />}></Route>
 
