@@ -78,7 +78,10 @@ public class ReservationUtils {
                 .peek(reservationPet -> {
                     Long reservationPetId = reservationPet.getPet().getPetId();
                     Pet findedReservationPet = petService.findPet(reservationPetId);
+
+                    petService.petActiveCheck(findedReservationPet);
                     petService.verifiedPetOwner(findedReservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
+
                     reservationPet.setPet(findedReservationPet);
                 }).collect(Collectors.toList());
     }

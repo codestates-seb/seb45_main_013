@@ -49,5 +49,9 @@ public class PetPostDto {
         private Boolean neutering;
 
         private MultipartFile file;
+
+        private Boolean Active;
+
+        public void setActive(Boolean active) {Active = active;}
     }
 }

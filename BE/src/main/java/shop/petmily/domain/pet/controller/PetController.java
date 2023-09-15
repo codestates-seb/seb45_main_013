@@ -36,6 +36,7 @@ public class PetController {
     public ResponseEntity<String> postPet(@Valid PetPostDto.Request requestBody,
                                           @LoginMemberId Long memberId){
         requestBody.setMemberId(memberId);
+        requestBody.setActive(true);
 
         service.createPet(mapper.PetPostDtoToPet(requestBody), requestBody.getFile());
 
@@ -83,13 +84,13 @@ public class PetController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //펫삭제
-    @DeleteMapping("/{pet_id}")
+    //펫 삭제(비활성화)
+    @PatchMapping("/{pet_id}/disable")
     public ResponseEntity<String> deletePet(@PathVariable ("pet_id") @Positive long petId,
                                             @LoginMemberId Long memberId){
 
-        service.deletePet(petId, memberId);
+        service.disablePet(petId, memberId);
 
-        return new ResponseEntity<>("Delete Pet Success", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Disable Pet Success", HttpStatus.OK);
     }
 }
