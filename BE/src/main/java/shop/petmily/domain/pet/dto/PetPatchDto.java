@@ -1,11 +1,13 @@
 package shop.petmily.domain.pet.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 public class PetPatchDto {
 
     @Getter
+    @AllArgsConstructor
     public static class Request {
         private Long petId;
 
