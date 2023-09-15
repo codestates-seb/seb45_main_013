@@ -83,7 +83,7 @@ public class ReservationUtils {
                 }).collect(Collectors.toList());
     }
 
-    //예약으로 들어온 pet 타입 확인
+    //예약으로 들어온 펫 타입 확인
     public Petsitter.PossiblePetType verificationReservationPetType(List<ReservationPet> reservationPets) {
         boolean hasCat = reservationPets.stream()
                 .anyMatch(reservationPet -> reservationPet.getPet().getType() == Pet.PetType.CAT);

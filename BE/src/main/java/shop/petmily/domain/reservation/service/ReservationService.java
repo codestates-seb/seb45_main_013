@@ -10,7 +10,6 @@ import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.PetsitterQueryDsl;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
-import shop.petmily.domain.pet.service.PetService;
 import shop.petmily.domain.reservation.dto.PetsitterScheduleDto;
 import shop.petmily.domain.reservation.dto.PossiblePetsitterDto;
 import shop.petmily.domain.reservation.dto.ReservationDetailsDto;
@@ -31,7 +30,6 @@ import java.util.List;
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final MemberService memberService;
-    private final PetService petService;
     private final PetsitterService petsitterService;
     private final PetsitterQueryDsl petsitterQueryDsl;
     private final ReservationQueryDsl reservationQueryDsl;
@@ -39,14 +37,12 @@ public class ReservationService {
 
     public ReservationService(ReservationRepository reservationRepository,
                               MemberService memberService,
-                              PetService petService,
                               PetsitterService petsitterService,
                               PetsitterQueryDsl petsitterQueryDsl,
                               ReservationQueryDsl reservationQueryDsl,
                               ReservationUtils reservationUtils) {
         this.reservationRepository = reservationRepository;
         this.memberService = memberService;
-        this.petService = petService;
         this.petsitterService = petsitterService;
         this.petsitterQueryDsl = petsitterQueryDsl;
         this.reservationQueryDsl = reservationQueryDsl;

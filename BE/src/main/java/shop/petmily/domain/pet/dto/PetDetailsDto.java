@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.petmily.domain.pet.entity.Pet;
 
-public class ReservationPostPetDto {
+public class PetDetailsDto {
 
     @Getter
     @Setter
-    public static class Response{
+    public static class Response {
         private Long petId;
 
         private Long memberId;
