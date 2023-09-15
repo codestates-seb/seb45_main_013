@@ -11,7 +11,6 @@ import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,17 +45,17 @@ public class PetService {
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), pet.getMember().getMemberId());
 
         Optional.ofNullable(pet.getAge())
-                .ifPresent(age -> verifiedPet.setAge(age));
+                .ifPresent(verifiedPet::setAge);
         Optional.ofNullable(pet.getWeight())
-                .ifPresent(weight -> verifiedPet.setWeight(weight));
+                .ifPresent(verifiedPet::setWeight);
         Optional.ofNullable(pet.getName())
-                .ifPresent(name -> verifiedPet.setName(name));
+                .ifPresent(verifiedPet::setName);
         Optional.ofNullable(pet.getBody())
-                .ifPresent(body -> verifiedPet.setBody(body));
+                .ifPresent(verifiedPet::setBody);
         Optional.ofNullable(pet.getNeutering())
                 .ifPresent(neutering -> {
-                    if (verifiedPet.getNeutering() == false && neutering) {
-                        verifiedPet.setNeutering(neutering);
+                    if (!verifiedPet.getNeutering() && neutering) {
+                        verifiedPet.setNeutering(true);
                     } else {
                         throw new BusinessLogicException(ExceptionCode.ALREADY_NEUTERING);
                     }

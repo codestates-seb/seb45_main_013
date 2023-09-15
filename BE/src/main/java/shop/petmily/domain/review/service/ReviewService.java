@@ -12,6 +12,7 @@ import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.service.ReservationService;
+import shop.petmily.domain.reservation.service.ReservationUtils;
 import shop.petmily.domain.review.entity.Review;
 import shop.petmily.domain.review.repository.ReviewRepository;
 import shop.petmily.global.AWS.service.S3UploadService;
@@ -27,13 +28,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final ReservationService reservationService;
+    private final ReservationUtils reservationUtils;
     private final PetsitterService petsitterService;
     private final S3UploadService uploadService;
 
     // 후기 등록
     public Review createReview(Review review, List<MultipartFile> files){
-        Reservation reservation = reservationService.findVerifiedReservation(review.getReservation().getReservationId());
+        Reservation reservation = reservationUtils.verificationReservation(review.getReservation().getReservationId());
         review.setReservation(reservation);
 
         if (reviewRepository.existsByReservation(reservation)) {
