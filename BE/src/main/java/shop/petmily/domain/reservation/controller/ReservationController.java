@@ -6,14 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import shop.petmily.domain.journal.mapper.JournalMapper;
-import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.reservation.dto.*;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.mapper.ReservationMapper;
-import shop.petmily.domain.reservation.repository.ReservationQueryDsl;
 import shop.petmily.domain.reservation.service.ReservationService;
-import shop.petmily.domain.review.mapper.ReviewMapper;
 import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.dto.PageInfo;
 
@@ -29,14 +25,12 @@ import java.util.stream.Collectors;
 public class ReservationController {
     private final ReservationMapper mapper;
     private final ReservationService service;
-    private final ReservationQueryDsl reservationQueryDsl;
 
 
-    public ReservationController(ReservationMapper mapper, ReservationService service,
-                                 ReservationQueryDsl reservationQueryDsl) {
+    public ReservationController(ReservationMapper mapper,
+                                 ReservationService service) {
         this.mapper = mapper;
         this.service = service;
-        this.reservationQueryDsl = reservationQueryDsl;
     }
 
     //예약가능 펫시터 list 보여주기
@@ -107,38 +101,38 @@ public class ReservationController {
         return new ResponseEntity<>(new ReservationMultiDto.PetsitterResponse(responses, pageInfo), HttpStatus.OK);
     }
 
-    //펫시터 오늘날짜 이후 취소아닌 예약일정 찾기
+    //펫시터 오늘이후 스케쥴 조회
     @GetMapping("/schedule/{petsitter-id}")
-    public ResponseEntity<List<PetsitterScheduledResponseDto>> getPetsitterSchedule(@PathVariable("petsitter-id") @Positive long petsitterId){
-        List<PetsitterScheduledResponseDto> response = service.getPetsitterSchedule(petsitterId);
+    public ResponseEntity<List<PetsitterScheduleDto.Response>> getPetsitterSchedule(@PathVariable("petsitter-id") @Positive long petsitterId){
+        List<PetsitterScheduleDto.Response> response = service.getPetsitterSchedule(petsitterId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 예약 확정 (펫시터)
     @PatchMapping("/{reservation-id}/confirm")
-    public HttpStatus confirmReservation(@PathVariable("reservation-id") @Positive long reservationId,
+    public ResponseEntity<String> confirmReservation(@PathVariable("reservation-id") @Positive long reservationId,
                                          @LoginMemberId Long memberId) {
         service.confirmReservationStatus(reservationId, memberId);
 
-        return HttpStatus.OK;
+        return new ResponseEntity<>("Reservation Confirmed", HttpStatus.OK);
     }
 
     // 예약 취소 (펫시터)
     @PatchMapping("/{reservation-id}/petsittercancel")
-    public HttpStatus cancelReservationPetsitter(@PathVariable("reservation-id") @Positive long reservationId,
+    public ResponseEntity<String> cancelReservationPetsitter(@PathVariable("reservation-id") @Positive long reservationId,
                                                  @LoginMemberId Long memberId) {
         service.cancelReservationPetsitter(reservationId, memberId);
 
-        return HttpStatus.OK;
+        return new ResponseEntity<>("Reservation Canceled", HttpStatus.OK);
     }
 
     //예약 취소(멤버)
     @PatchMapping("/{reservation-id}/membercancel")
-    public HttpStatus cancelReservationMember(@PathVariable("reservation-id") @Positive long reservationId,
+    public ResponseEntity<String> cancelReservationMember(@PathVariable("reservation-id") @Positive long reservationId,
                                               @LoginMemberId Long memberId) {
         service.cancelReservationMember(reservationId, memberId);
 
-        return HttpStatus.OK;
+        return new ResponseEntity<>("Reservation Canceled", HttpStatus.OK);
     }
 }

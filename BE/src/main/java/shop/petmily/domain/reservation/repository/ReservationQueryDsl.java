@@ -4,7 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.reservation.dto.PetsitterScheduledResponseDto;
+import shop.petmily.domain.reservation.dto.PetsitterScheduleDto;
 import shop.petmily.domain.reservation.dto.ReservationDetailsDto;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
@@ -15,12 +15,10 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static shop.petmily.domain.journal.entity.QJournal.journal;
 import static shop.petmily.domain.member.entity.QMember.member;
 import static shop.petmily.domain.member.entity.QPetsitter.petsitter;
 import static shop.petmily.domain.pet.entity.QPet.pet;
 import static shop.petmily.domain.reservation.entity.QReservation.reservation;
-import static shop.petmily.domain.review.entity.QReview.review;
 
 @Repository
 public class ReservationQueryDsl {
@@ -115,9 +113,9 @@ public class ReservationQueryDsl {
                 .fetch();
     }
 
-    public List<PetsitterScheduledResponseDto> findPetsitterSchedule(Petsitter requestPetsitter) {
+    public List<PetsitterScheduleDto.Response> findPetsitterSchedule(Petsitter requestPetsitter) {
         return jpaQueryFactory
-                .select(Projections.constructor(PetsitterScheduledResponseDto.class,
+                .select(Projections.constructor(PetsitterScheduleDto.Response.class,
                         reservation.reservationId,
                         reservation.reservationDay,
                         reservation.reservationTimeStart,

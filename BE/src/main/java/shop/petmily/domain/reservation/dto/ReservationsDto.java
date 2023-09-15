@@ -1,10 +1,7 @@
 package shop.petmily.domain.reservation.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import shop.petmily.domain.pet.dto.PetResponseDto;
-import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.reservation.entity.Progress;
 
 import java.time.LocalDate;

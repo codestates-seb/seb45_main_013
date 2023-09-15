@@ -10,9 +10,9 @@ public class ReservationMultiDto {
 
     @Getter
     public static class MemberResponse {
-        private List<ReservationsDto.MemberResponse> reservations;
+        private final List<ReservationsDto.MemberResponse> reservations;
 
-        private PageInfo pageInfo;
+        private final PageInfo pageInfo;
 
         public MemberResponse(List<ReservationsDto.MemberResponse> reservations, PageInfo pageInfo) {
             this.reservations = reservations;
@@ -22,9 +22,9 @@ public class ReservationMultiDto {
 
     @Getter
     public static class PetsitterResponse {
-        private List<ReservationsDto.PetsitterResponse> reservations;
+        private final List<ReservationsDto.PetsitterResponse> reservations;
 
-        private PageInfo pageInfo;
+        private final PageInfo pageInfo;
 
         public PetsitterResponse(List<ReservationsDto.PetsitterResponse> reservations, PageInfo pageInfo) {
             this.reservations = reservations;

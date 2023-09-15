@@ -2,17 +2,11 @@ package shop.petmily.domain.reservation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import shop.petmily.domain.journal.dto.JournalResponseDto;
-import shop.petmily.domain.pet.dto.PetResponseDto;
-import shop.petmily.domain.pet.dto.ReservationPostPetDto;
 import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.reservation.entity.Progress;
-import shop.petmily.domain.review.Dto.ReviewResponseDto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -42,10 +36,6 @@ public class ReservationDetailsDto {
         private ReservationDetailsDto.PetsitterResponse petsitter;
 
         private List<ReservationDetailsDto.PetResponse> pets;
-
-//        private ReservationDetailsDto.JournalResponse journal;
-//
-//        private ReservationDetailsDto.ReviewResponse review;
 
         public Response(Long reservationId, LocalDate reservationDay, LocalTime reservationTimeStart,
                         LocalTime reservationTimeEnd, String address, String phone, String body,
@@ -113,23 +103,5 @@ public class ReservationDetailsDto {
         private String body;
 
         private String photo;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class JournalResponse {
-        private Long journalId;
-
-        private String body;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class ReviewResponse {
-        private Long reviewId;
-
-        private String body;
-
-        private Integer star;
     }
 }

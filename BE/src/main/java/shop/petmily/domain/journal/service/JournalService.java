@@ -13,6 +13,7 @@ import shop.petmily.domain.journal.repository.JournalRepository;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.service.ReservationService;
+import shop.petmily.domain.reservation.service.ReservationUtils;
 import shop.petmily.global.AWS.service.S3UploadService;
 import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
@@ -26,12 +27,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JournalService {
     private final JournalRepository journalRepository;
-    private final ReservationService reservationService;
+    private final ReservationUtils reservationUtils;
     private final S3UploadService uploadService;
 
     // 케어일지 등록
     public Journal createJournal(Journal journal, List<MultipartFile> files){
-        Reservation reservation = reservationService.findVerifiedReservation(journal.getReservation().getReservationId());
+        Reservation reservation = reservationUtils.verificationReservation(journal.getReservation().getReservationId());
         journal.setReservation(reservation);
         journal.setMember(reservation.getMember());
 

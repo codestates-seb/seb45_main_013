@@ -5,11 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
-import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 
-import java.util.Date;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -25,8 +23,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Page<Reservation> findByPetsitterAndProgressIn(Petsitter petsitter, List<Progress> progressList, PageRequest pageRequest);
 
     Page<Reservation> findByPetsitterAndProgressNotIn(Petsitter petsitter, List<Progress> progressList, PageRequest pageRequest);
-
-    List<Reservation> findByReservationDay(Date today);
 
     List<Reservation> findByPetsitter(Petsitter petsitter);
 }

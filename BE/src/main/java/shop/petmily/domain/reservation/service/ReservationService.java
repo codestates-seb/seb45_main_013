@@ -10,9 +10,8 @@ import shop.petmily.domain.member.entity.Petsitter;
 import shop.petmily.domain.member.repository.PetsitterQueryDsl;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
-import shop.petmily.domain.pet.entity.Pet;
 import shop.petmily.domain.pet.service.PetService;
-import shop.petmily.domain.reservation.dto.PetsitterScheduledResponseDto;
+import shop.petmily.domain.reservation.dto.PetsitterScheduleDto;
 import shop.petmily.domain.reservation.dto.PossiblePetsitterDto;
 import shop.petmily.domain.reservation.dto.ReservationDetailsDto;
 import shop.petmily.domain.reservation.entity.Progress;
@@ -24,13 +23,8 @@ import shop.petmily.global.exception.BusinessLogicException;
 import shop.petmily.global.exception.ExceptionCode;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.TextStyle;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Transactional
@@ -41,30 +35,33 @@ public class ReservationService {
     private final PetsitterService petsitterService;
     private final PetsitterQueryDsl petsitterQueryDsl;
     private final ReservationQueryDsl reservationQueryDsl;
+    private final ReservationUtils reservationUtils;
 
     public ReservationService(ReservationRepository reservationRepository,
                               MemberService memberService,
                               PetService petService,
                               PetsitterService petsitterService,
                               PetsitterQueryDsl petsitterQueryDsl,
-                              ReservationQueryDsl reservationQueryDsl) {
+                              ReservationQueryDsl reservationQueryDsl,
+                              ReservationUtils reservationUtils) {
         this.reservationRepository = reservationRepository;
         this.memberService = memberService;
         this.petService = petService;
         this.petsitterService = petsitterService;
         this.petsitterQueryDsl = petsitterQueryDsl;
         this.reservationQueryDsl = reservationQueryDsl;
+        this.reservationUtils = reservationUtils;
     }
 
     //예약정보로 예약이 가능한 펫시터를 찾는다
     public List<PossiblePetsitterDto.Response> findReservationPossiblePetsitter(Reservation reservation){
 
-        verificationReservationTime(reservation.getReservationTimeStart(), reservation.getReservationTimeEnd());
-        List<ReservationPet> verifiedReservationPets = verificationReservationPets(reservation);
+        reservationUtils.verificationReservationTime(reservation.getReservationTimeStart(), reservation.getReservationTimeEnd());
+        List<ReservationPet> verifiedReservationPets = reservationUtils.verificationReservationPets(reservation);
 
-        Petsitter.PossiblePetType reservationPetType = verificationReservationPetType(verifiedReservationPets);
-        String reservationWeekDay = getReservationWeekDay(reservation.getReservationDay());
-        String reservationLocation = extractionAddress(reservation.getAddress());
+        Petsitter.PossiblePetType reservationPetType = reservationUtils.verificationReservationPetType(verifiedReservationPets);
+        String reservationWeekDay = reservationUtils.getReservationWeekDay(reservation.getReservationDay());
+        String reservationLocation = reservationUtils.extractionAddress(reservation.getAddress());
 
         return petsitterQueryDsl.findPossiblePetsitters(reservationWeekDay, reservationPetType, reservationLocation,
         reservation.getReservationTimeStart(), reservation.getReservationTimeEnd(), reservation.getReservationDay());
@@ -73,17 +70,17 @@ public class ReservationService {
     //예약정보와 펫시터정보를 검증하고 예약을 생성한다.
     public void createReservation(Reservation reservation) {
 
-        verificationReservationTime(reservation.getReservationTimeStart(), reservation.getReservationTimeEnd());
+        reservationUtils.verificationReservationTime(reservation.getReservationTimeStart(), reservation.getReservationTimeEnd());
 
         Member findedMember = memberService.findMember(reservation.getMember().getMemberId());
         reservation.setMember(findedMember);
 
-        List<ReservationPet> verifiedReservationPet = verificationReservationPets(reservation);
+        List<ReservationPet> verifiedReservationPet = reservationUtils.verificationReservationPets(reservation);
         reservation.setReservationPets(verifiedReservationPet);
 
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(reservation.getPetsitter().getPetsitterId());
-        petsitterReservationCheck(petsitter, reservation);
-        petsitterPossibleCheck(petsitter, reservation);
+        reservationUtils.petsitterPossibleCheck(petsitter, reservation);
+        reservationUtils.petsitterScheduleCheck(petsitter, reservation);
 
         reservation.setPetsitter(petsitter);
         reservation.setProgress(Progress.RESERVATION_REQUEST);
@@ -93,7 +90,7 @@ public class ReservationService {
 
     //예약정보 1개찾기
     public ReservationDetailsDto.Response findReservation(Long reservationId) {
-        Reservation reservation = findVerifiedReservation(reservationId);
+        Reservation reservation = reservationUtils.verificationReservation(reservationId);
 
         ReservationDetailsDto.Response response = reservationQueryDsl.findReservationDetails(reservation);
         response.setMember(reservationQueryDsl.findReservationMember(reservation));
@@ -138,20 +135,20 @@ public class ReservationService {
         } else {
             throw new BusinessLogicException(ExceptionCode.WARNING);
         }
-
     }
 
-    //펫시터 예약정보만 조회
-    public List<PetsitterScheduledResponseDto> getPetsitterSchedule(long petsitterId) {
+    //펫시터 오늘이후 스케쥴 조회
+    public List<PetsitterScheduleDto.Response> getPetsitterSchedule(long petsitterId) {
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
         return reservationQueryDsl.findPetsitterSchedule(petsitter);
     }
 
     //예약 확정 (펫시터)
     public void confirmReservationStatus(Long reservationId, Long id) {
-        Reservation reservation = findVerifiedReservation(reservationId);
+        Reservation reservation = reservationUtils.verificationReservation(reservationId);
+
         Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
-        verifiedReservationOwnerPetSitter(petsitterId, reservation);
+        reservationUtils.verificationReservationOwnerPetSitter(petsitterId, reservation);
 
         if (reservation.getProgress() != Progress.RESERVATION_REQUEST) {
             throw new BusinessLogicException(ExceptionCode.NOT_STATUS_CONFIRM);
@@ -163,54 +160,33 @@ public class ReservationService {
 
     //예약 취소 (펫시터)
     public void cancelReservationPetsitter(Long reservationId, Long id) {
-        Reservation reservation = findVerifiedReservation(reservationId);
-        Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
+        Reservation reservation = reservationUtils.verificationReservation(reservationId);
 
-        verifiedReservationOwnerPetSitter(petsitterId, reservation);
+        Long petsitterId = memberService.findMember(id).getPetsitter().getPetsitterId();
+        reservationUtils.verificationReservationOwnerPetSitter(petsitterId, reservation);
 
         if (reservation.getProgress() == Progress.RESERVATION_CONFIRMED) {
             reservation.setProgress(Progress.RESERVATION_CANCELLED);
         } else {
             throw new BusinessLogicException(ExceptionCode.NOT_STATUS_CANCEL);
         }
+
         reservationRepository.save(reservation);
     }
 
     //예약취소(회원)
     public void cancelReservationMember(Long reservationId, Long id) {
-        Reservation reservation = findVerifiedReservation(reservationId);
+        Reservation reservation = reservationUtils.verificationReservation(reservationId);
 
-        verifiedReservationOwnerMember(id, reservation);
+        reservationUtils.verificationReservationOwnerMember(id, reservation);
 
         if (reservation.getProgress() == Progress.RESERVATION_REQUEST) {
             reservation.setProgress(Progress.RESERVATION_CANCELLED);
         } else {
             throw new BusinessLogicException(ExceptionCode.NOT_STATUS_CANCEL);
         }
+
         reservationRepository.save(reservation);
-    }
-
-    // 유효한 예약인지 확인
-    public Reservation findVerifiedReservation(Long reservationId) {
-        Optional<Reservation> optionalReservation = reservationRepository.findById(reservationId);
-
-        return optionalReservation.orElseThrow(() -> new BusinessLogicException(ExceptionCode.RESERVATION_NOT_EXIST));
-    }
-
-    // 예약에 해당하는 회원인지 확인
-    public void verifiedReservationOwnerMember(Long memberId, Reservation verifiedReservation){
-        if (!memberId.equals(verifiedReservation.getMember().getMemberId()))
-            throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
-    }
-
-    //     예약에 해당하는 펫시터인지 확인
-    public void verifiedReservationOwnerPetSitter(Long petSitterId, Reservation verifiedReservation) {
-        if (!petSitterId.equals(verifiedReservation.getPetsitter().getPetsitterId()))
-            throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
-    }
-
-    private String getReservationWeekDay(LocalDate reservationDate){
-        return reservationDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
     }
 
     // 0분, 30분마다 예약체크
@@ -224,69 +200,5 @@ public class ReservationService {
                     if(reservation.getProgress() == Progress.RESERVATION_CONFIRMED) reservation.setProgress(Progress.FINISH_CARING);
                     reservationRepository.save(reservation);
                 });
-    }
-
-    private void verificationReservationTime(LocalTime reservationTimeStart, LocalTime reservationTimeEnd) {
-        if (reservationTimeStart.isAfter(reservationTimeEnd)
-                ||(reservationTimeStart.equals(reservationTimeEnd))) {
-            throw new BusinessLogicException(ExceptionCode.TIME_REQUEST_NOT_ALLOWED);
-        }
-    }
-
-    private void petsitterReservationCheck(Petsitter petsitter, Reservation reservation){
-        if (petsitterQueryDsl.petsitterReservationCheck(petsitter, reservation.getReservationTimeStart(),
-                reservation.getReservationTimeEnd(), reservation.getReservationDay()))
-            throw new BusinessLogicException(ExceptionCode.ALREADY_RESERVATION);
-    }
-
-    private void petsitterPossibleCheck(Petsitter petsitter, Reservation reservation){
-        String reservationWeekDay = getReservationWeekDay(reservation.getReservationDay());
-        String reservationLocation = extractionAddress(reservation.getAddress());
-        Petsitter.PossiblePetType reservationPetType = verificationReservationPetType(reservation.getReservationPets());
-
-        if (petsitterQueryDsl.petsitterPossibleCheck(petsitter, reservationWeekDay, reservationPetType, reservationLocation,
-                reservation.getReservationTimeStart(), reservation.getReservationTimeEnd()))
-            throw new BusinessLogicException(ExceptionCode.NOT_AVAILABLE_PETSITTER);
-    }
-
-    private List<ReservationPet> verificationReservationPets(Reservation reservation){
-        return reservation.getReservationPets().stream()
-                .peek(reservationPet -> {
-                    Long reservationPetId = reservationPet.getPet().getPetId();
-                    Pet findedReservationPet = petService.findPet(reservationPetId);
-                    petService.verifiedPetOwner(findedReservationPet.getMember().getMemberId(), reservation.getMember().getMemberId());
-                    reservationPet.setPet(findedReservationPet);
-                }).collect(Collectors.toList());
-    }
-
-    //예약으로 들어온 pet 타입 확인
-    private Petsitter.PossiblePetType verificationReservationPetType(List<ReservationPet> reservationPets) {
-        boolean hasCat = reservationPets.stream()
-                .anyMatch(reservationPet -> reservationPet.getPet().getType() == Pet.PetType.CAT);
-
-        boolean hasDog = reservationPets.stream()
-                .anyMatch(reservationPet -> reservationPet.getPet().getType() == Pet.PetType.DOG);
-
-        if (hasCat && hasDog) {
-            return Petsitter.PossiblePetType.PET_ALL;
-        } else if (hasCat) {
-            return Petsitter.PossiblePetType.PET_CAT;
-        } else if (hasDog) {
-            return Petsitter.PossiblePetType.PET_DOG;
-        } else {
-            throw new BusinessLogicException(ExceptionCode.NOT_CAT_DOG);
-        }
-    }
-
-    //예약주소에서 시,군,구 만 추출
-    private String extractionAddress(String originAddress){
-        Pattern pattern = Pattern.compile("(서울|대전|대구|울산|부산|광주|세종특별자치시)\\s([가-힣]+[구군])?|([가-힣]+[시군])\\s([가-힣]+구)?");
-        Matcher matcher = pattern.matcher(originAddress);
-
-        if (matcher.find()) {
-            return matcher.group().trim();
-        }
-
-        throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_ADDRESS);
     }
 }
