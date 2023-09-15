@@ -7,6 +7,20 @@ import axios from 'axios';
 import CareCard from '@components/Carecard';
 import { getCookieValue } from 'hooks/getCookie';
 import { useInView } from 'react-intersection-observer';
+const filters = [
+  {
+    text: '최신순',
+    value: 'createdAt:desc',
+  },
+  {
+    text: '완료',
+    value: '&condition=expected',
+  },
+  {
+    text: '예정',
+    value: '&condition=expected',
+  },
+];
 
 const Cares = () => {
   const [filter, setFilter] = useState('전체');
@@ -16,38 +30,31 @@ const Cares = () => {
 
   const { ref, inView } = useInView();
 
-  const filters = ['전체', '예정', '완료'];
-
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
   const [reservations, setReservations] = useState<any[]>([]);
 
   console.log(reservations);
 
   const handleFilter = (e: any) => {
-    setFilter(e.target.innerText);
+    setFilter(e);
   };
-  useEffect(() => {
-    if (!isLogin || (id && memberId !== +id)) {
-      alert('권한이 없습니다.');
-      navigate('/');
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!isLogin || (id && memberId !== +id)) {
+  //     alert('권한이 없습니다.');
+  //     navigate('/');
+  //   }
+  // }, []);
 
   useEffect(() => {
     const accessToken = getCookieValue('access_token');
 
     if (isLogin && id && memberId === +id) {
       axios
-        .get(
-          `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=1&size=10${
-            filter === '예정' ? '&condition=expected' : filter === '완료' ? '&condition=finish' : ''
-          }`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+        .get(`${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=1&size=10${filter}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
-        )
+        })
         .then((res) => setReservations(res.data.reservations))
         .catch((error) => console.log(error));
     }
@@ -58,8 +65,8 @@ const Cares = () => {
       <CareContainer>
         <FilterContainer>
           {filters.map((el, index) => (
-            <FilterButtonStyle key={index} onClick={handleFilter} $filter={filter === el}>
-              {el}
+            <FilterButtonStyle key={index} onClick={() => handleFilter(el.value)} $filter={filter === el.text}>
+              {el.text}
             </FilterButtonStyle>
           ))}
         </FilterContainer>
@@ -97,7 +104,9 @@ const FilterContainer = styled.div`
 
 const FilterButtonStyle = styled.div<{ $filter: boolean | undefined }>`
   padding: 4px 8px;
-  border: ${({ theme, $filter }) => ($filter ? 'none' : `1px solid ${theme.colors.mainBlue}`)};
+  /* UI 왔다 갔다 */
+  border: ${({ theme, $filter }) =>
+    $filter ? '1px solid ${theme.colors.mainBlue}' : `1px solid ${theme.colors.mainBlue}`};
   border-radius: 4px;
   color: ${({ $filter }) => ($filter ? 'white' : 'black')};
   background-color: ${({ theme, $filter }) => ($filter ? theme.colors.mainBlue : 'white')};

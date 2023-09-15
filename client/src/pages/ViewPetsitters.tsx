@@ -143,22 +143,24 @@ const ViewPetsitters = () => {
           >
             {PetsitterItemChunks.map((chunk, idx) => (
               <RequestContainer key={idx}>
-                {chunk.map((item) => (
-                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
-                    <RequestPetsitterBox key={item.id}>
-                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                      <Petsitterbox>
-                        <Nameox>{item.name}</Nameox>
-                        <RatingReviewContainer>
-                          <RatingImg src={item.ratingImg} alt="ratingImg" />
-                          {item.rating}
-                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                          {item.review}
-                        </RatingReviewContainer>
-                      </Petsitterbox>
-                    </RequestPetsitterBox>
-                  </StyledLink>
-                ))}
+                {Array.isArray(chunk) &&
+                  chunk.length > 0 &&
+                  chunk.map((item) => (
+                    <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+                      <RequestPetsitterBox key={item.id}>
+                        <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
+                        <Petsitterbox>
+                          <Nameox>{item.name}</Nameox>
+                          <RatingReviewContainer>
+                            <RatingImg src={item.ratingImg} alt="ratingImg" />
+                            {item.rating}
+                            <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                            {item.review}
+                          </RatingReviewContainer>
+                        </Petsitterbox>
+                      </RequestPetsitterBox>
+                    </StyledLink>
+                  ))}
               </RequestContainer>
             ))}
           </CustomCarousel>

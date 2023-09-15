@@ -20,7 +20,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     isLogin: false,
-    memberId: '',
+    memberId: '1',
     petsitterId: '',
     name: '',
     phone: '',
@@ -33,7 +33,7 @@ export const userSlice = createSlice({
   },
   reducers: {
     login: (state) => {
-      state.isLogin = true;
+      state.isLogin = false;
     },
     setUser: (state, action) => {
       state.memberId = action.payload.memberId;

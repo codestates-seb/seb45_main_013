@@ -149,9 +149,10 @@ const Container = styled.header`
   justify-content: center;
   position: sticky;
   top: 0;
-  left: 0;
+  /* left: 0; */
   z-index: 100;
-  width: 100%;
+  /* width: 100%; */
+  /* padding-top: 16px; */
 `;
 
 const HeaderContatiner = styled.div`
@@ -159,15 +160,16 @@ const HeaderContatiner = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  height: 84px;
-  padding: 12px 12px 0;
+  /* height: 84px; */
+  /* padding: 12px 0px 12px 0; */
   background-color: white;
-  max-width: 600px;
+  /* max-width: 600px; */
   box-shadow: ${(props) => props.theme.shadow.onlyBottom};
 `;
 
 const TopHeader = styled.div`
   display: flex;
+  padding: 12px;
   justify-content: space-between;
 `;
 

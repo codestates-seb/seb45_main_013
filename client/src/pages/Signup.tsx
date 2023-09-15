@@ -77,8 +77,8 @@ const Signup = () => {
     const { name, phone, address, detailAddress, email, nickName, password, petsitterBoolean } = data;
 
     if (data.password !== data.passwordConfirm) {
-      setError('password', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
-      setError('passwordConfirm', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
+      // setError('password', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
+      // setError('passwordConfirm', { type: 'dismatch', message: '비밀번호가 서로 다릅니다.' });
       setIsSignupLoading(false);
       return;
     }

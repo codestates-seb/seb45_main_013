@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 
 import LinkButton from '@components/buttons/LinkButton';
 import UploadPetImg from '@components/UploadProfileImg';
+import { notice1 } from 'util/noticeText';
 
 const MyPetItem = [
   // 추후 useEffect로 데이터 받아올 데이터 (내 반려동물)
@@ -113,7 +114,9 @@ const ReservationStepTwo = () => {
   return (
     <MainContainer>
       <StatusHeader>
-        <BackImg src="/imgs/BackArrow.svg" onClick={handleBackClick} />
+        <a href="/reservation">
+          <BackImg src="/imgs/BackArrow.svg" onClick={handleBackClick} />
+        </a>
         <StatusTitleText>예약</StatusTitleText>
         <PageNumberText>2/3</PageNumberText>
       </StatusHeader>
@@ -230,7 +233,13 @@ const ReservationStepTwo = () => {
 
         <NoticeContainer>
           <NoticeTitleText>펫시터님께 미리 알려주세요!</NoticeTitleText>
-          <NoticeText>{noticeText()}</NoticeText>
+          {notice1.map((data) =>
+            data.isSpan ? (
+              <VerificationText dangerouslySetInnerHTML={{ __html: data.text }} key={data.text}></VerificationText>
+            ) : (
+              <VerificationText key={data.text}>{data.text}</VerificationText>
+            ),
+          )}
           <VerificationTitleText>필수 확인 사항</VerificationTitleText>
           <VerificationText>{verificationText}</VerificationText>
           <ImpossibleCaseTitleText>돌봄이 불가한 경우</ImpossibleCaseTitleText>
@@ -253,20 +262,6 @@ const ReservationStepTwo = () => {
     </MainContainer>
   );
 };
-const noticeText = () => (
-  <>
-    · 급식할 사료의 양
-    <br />· 식수 제공방법 &nbsp;&nbsp;&nbsp;&nbsp;<span>예) 정수기, 자동 급수 등</span>
-    <br />· 배변 처리 방법 &nbsp;&nbsp;&nbsp;&nbsp;<span>예) 변기, 일반 쓰레기 등</span>
-    <br />
-    · 강아지의 경우, 산책시 발 세척 방법
-    <br />
-    &nbsp;&nbsp;&nbsp;&nbsp;(30분 산책 시, 시간 관계상 물티슈 닦기만 가능)
-    <br />
-    · 고양이의 경우, 주로 숨어 있는 장소
-    <br />· 돌봄 시간에 고객님이 집에 계신 경우
-  </>
-);
 
 const verificationText = `돌봄 외 특수 서비스는 요청 불가\n 1. 목욕/미용 및 주사를 맞히는 의료 행위\n 2. 애견호텔, 동물병원 등의 픽업/드랍 서비스\n 3. 세탁/ 청소 및 쓰레기 배출 등 청소 유사 서비스\n 고객 본인 소유의 용품(장난감, 산책줄 등)의 파손 및 파손으로 인한 삼킴,\n 상처 등의 사고에 대해서는 펫시터 또는 당사에 책임을 물을 수 없음\n 위급 상황 발생시 보호자와 연락이 불가능한 경우, 반려 견의 건강/안전을\n 위해 담당 펫시터님의 인도로 동물병원으로 우선 이송될 수 있음\n 펫시터 부주의가 아닌, 반려동물의 돌발적 공격으로\n 인한 상해 발생시, 치료비가 보호자께 부과될 수 있음`;
 
@@ -352,11 +347,12 @@ const ButtonContainer = styled.div`
 
 const PetButtonContainer = styled.div`
   display: flex;
+  border: 1px solid red;
   /* flex-direction: column; */
   justify-content: center;
   height: 32px;
   border-radius: 8px;
-  overflow: hidden;
+  /* overflow: hidden; */
   width: 100%;
   margin: 16px 0 4px 0;
 `;
@@ -491,7 +487,6 @@ const NoticeTitleText = styled.div`
 `;
 
 const NoticeText = styled.div`
-  margin-top: 20px;
   ${(props) => props.theme.fontSize.s12h18};
   font-weight: ${(props) => props.theme.fontWeights.normal};
   line-height: 28px;
@@ -510,11 +505,14 @@ const VerificationTitleText = styled.div`
 `;
 
 const VerificationText = styled.div`
-  margin-top: 16px;
   ${(props) => props.theme.fontSize.s12h18};
   font-weight: ${(props) => props.theme.fontWeights.normal};
   line-height: 28px;
   white-space: pre-line;
+
+  span {
+    color: red;
+  }
 `;
 
 const ImpossibleCaseTitleText = styled.div`

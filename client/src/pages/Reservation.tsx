@@ -36,6 +36,7 @@ const Reservation = () => {
     setIsModalOpen(true);
   };
 
+  console.log(remainAddress);
   interface IFormInput {
     error: boolean;
     address: string;
@@ -166,16 +167,6 @@ const StatusHeader = styled.div`
   min-height: 48px;
   gap: 120px;
   position: relative;
-
-  /* &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -2px; //컨테이너 하단에 위치하도록 설정
-    width: 120px; // 밑줄의 길이 설정
-    height: 2px; // 밑줄의 두께 설정
-    background-color: ${(props) => props.theme.colors.mainBlue};
-  } */
 `;
 
 const BackImg = styled.img`

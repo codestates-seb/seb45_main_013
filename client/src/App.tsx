@@ -41,6 +41,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   max-width: 600px;
   width: 100%;
+  padding-bottom: 32px;
   height: 100%;
   background-color: white;
 `;

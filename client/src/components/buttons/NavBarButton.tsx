@@ -35,6 +35,8 @@ const NavBarButtonStyle = styled.button<{ isActive: boolean }>`
   flex-shrink: 0;
   padding: 8px;
   border: none;
+  /* width: 100%; */
+  flex: 1;
   background-color: white;
   font-weight: ${({ theme, isActive }) => (isActive ? theme.fontWeights.extrabold : theme.fontWeights.bold)};
   color: ${({ theme, isActive }) => (isActive ? 'black' : theme.textColors.gray30)};
