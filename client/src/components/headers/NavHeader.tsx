@@ -25,7 +25,7 @@ const NavHeader = () => {
   const NavItem = [
     { text: '홈', link: '/' },
     { text: '예약하기', link: '/reservation' },
-    { text: '예약현황', link: `/cares/${memberId}` },
+    { text: '예약현황', link: `/cares/detail` },
     { text: '이용후기', link: '/reviews' },
   ];
 
@@ -70,7 +70,7 @@ const NavHeader = () => {
 
   /// 유저 정보 가져오기
   useEffect(() => {
-    if (accessToken) {
+    if (accessToken || refreshToken) {
       axios
         .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
         .then((res) => {
@@ -78,31 +78,40 @@ const NavHeader = () => {
           dispatch(setUser(res.data));
         })
         .catch((error) => {
-          dispatch(deleteUser());
-          deleteCookie('access_token');
-
           // access token 재발급
-          if (error.response.data.status === 401) {
+          dispatch(deleteUser());
+          if (error.response.data.status === 401 || error.response.data.status === 500) {
             const refreshToken = getCookieValue('refresh_token');
 
             axios
               .post(`${apiUrl}/refreshToken`, {}, { headers: { Refresh: refreshToken } })
               .then((res) => {
-                if (res.data.access_token && res.data.refresh_token) {
-                  console.log(res);
-                  const expirationDate = new Date();
-                  expirationDate.setDate(expirationDate.getDate() + 1);
+                console.log(res);
+                if (res.data.accessToken && res.data.refreshToken) {
+                  document.cookie = `access_token=${res.data.accessToken}; path=/;`;
+                  document.cookie = `refresh_token=${res.data.refreshToken};  path=/;`;
 
-                  document.cookie = `access_token=${res.data.access_token}; path=/;`;
-                  document.cookie = `access_token=${
-                    res.data.refresh_token
-                  }; expires=${expirationDate.toUTCString()}; path=/;`;
+                  dispatch(login());
+                  // axios
+                  //   .get(`${apiUrl}/member/my-page`, {
+                  //     headers: { Authorization: `Bearer ${res.data.accessToken}` },
+                  //   })
+                  //   .then((res) => {
+                  //     dispatch(login());
+                  //     dispatch(setUser(res.data));
+                  //   })
+                  //   .catch((error) => {
+                  //     console.log(error);
+                  //   });
                 }
               })
-              .catch((error) => console.log(error));
+              .catch((error) => {
+                alert('로그인이 만료되었습니다. Nav');
+                dispatch(deleteUser());
+              });
           }
         });
-    } else if (!accessToken || !refreshToken) {
+    } else if (!accessToken && !refreshToken) {
       dispatch(deleteUser());
     }
   }, [isLogin, accessToken]);

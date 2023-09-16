@@ -23,6 +23,11 @@ const GlobalStyle = createGlobalStyle`
         text-decoration: none;
     }
 
+    button {
+        border:none;
+        background-color: transparent;
+    }
+
 `;
 
 export default GlobalStyle;

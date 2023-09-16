@@ -136,7 +136,7 @@ const ReservationStepTwo = () => {
     } catch (error) {
       console.error('펫정보를 가져오지 못했습니다', error);
     }
-  }, []);
+  }, [accessToken]);
 
   return (
     <MainContainer>
@@ -164,8 +164,8 @@ const ReservationStepTwo = () => {
                   <SelectPetImg src={item.photo} alt="PetImg" />
                 </Label>
                 <SelectPetName>{item.name}</SelectPetName>
-              </ImgWrap> */}
-        {/* <ButtonContainer>
+              </ImgWrap>
+              <ButtonContainer>
                 <Button color="primary" onClick={handleAddClick}>
                   <img src="/imgs/PetAdd.svg" alt="Add Pet" />
                 </Button>
