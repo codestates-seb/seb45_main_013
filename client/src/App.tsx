@@ -1,13 +1,12 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 
 import BackHeader from '@components/headers/BackHeader';
 import Header from './components/headers/Header';
 import LoadingFallback from '@components/LoadingFallback';
 import NavHeader from '@components/headers/NavHeader';
-
-import { Helmet } from 'react-helmet-async';
 
 const Home = lazy(() => import('@pages/Home'));
 const Login = lazy(() => import('@pages/Login'));

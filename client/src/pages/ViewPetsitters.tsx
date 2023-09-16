@@ -1,9 +1,10 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Divider } from '@mui/material';
+import { Divider, Drawer, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import { FormatListBulleted } from '@mui/icons-material';
 
 const PetsittersItem = [
   // 추후 DB에서 받아올 예정
@@ -15,6 +16,7 @@ const PetsittersItem = [
     profileImg: '/imgs/PetsitterPhoto.svg',
     ratingImg: '/imgs/Star.svg',
     reviewImg: '/imgs/ReviewIcon.svg',
+    possibleTime: '09:00 - 18:00',
   },
   {
     id: 2,
@@ -24,6 +26,7 @@ const PetsittersItem = [
     profileImg: '/imgs/PetsitterPhoto.svg',
     ratingImg: '/imgs/Star.svg',
     reviewImg: '/imgs/ReviewIcon.svg',
+    possibleTime: '09:00 - 18:00',
   },
   {
     id: 3,
@@ -33,6 +36,7 @@ const PetsittersItem = [
     profileImg: '/imgs/PetsitterPhoto.svg',
     ratingImg: '/imgs/Star.svg',
     reviewImg: '/imgs/ReviewIcon.svg',
+    possibleTime: '09:00 - 18:00',
   },
   {
     id: 4,
@@ -42,10 +46,11 @@ const PetsittersItem = [
     profileImg: '/imgs/PetsitterPhoto.svg',
     ratingImg: '/imgs/Star.svg',
     reviewImg: '/imgs/ReviewIcon.svg',
+    possibleTime: '09:00 - 18:00',
   },
 ];
 
-const NewPetsitterItem = [
+const HotPetsitterItem = [
   // 추후 DB에서 받아올 예정
   {
     id: 1,
@@ -86,6 +91,59 @@ const chunkArray = (myArray: any[], chunk_size: number) => {
 const PetsitterItemChunks = chunkArray(PetsittersItem, 3);
 
 const ViewPetsitters = () => {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filterType, setFilterType] = useState('전체 펫시터'); // 필터 타입 상태 관리
+
+  const handleFilterOpen = () => {
+    setIsFilterOpen(true);
+  };
+
+  const handleFilterClose = () => {
+    setIsFilterOpen(false);
+  };
+
+  const handleFilterButtonClick = (filterText: string) => {
+    setFilterType(filterText);
+    setIsFilterOpen(false);
+  };
+
+  const getTitleText = () => {
+    switch (filterType) {
+      case '전체 펫시터':
+        return '전체 펫시터';
+      case '내가 찜한 펫시터':
+        return '내가 찜한 펫시터';
+      case '새로 온 펫시터':
+        return '새로 온 펫시터';
+      case '리뷰가 많은 펫시터':
+        return '리뷰가 많은 펫시터';
+      default:
+        return '펫시터 보기';
+    }
+  };
+
+  const filteredPetsitters = () => {
+    // DB에서 받기 전 임시 필터링
+    if (!filterType) {
+      return PetsittersItem;
+    }
+
+    switch (filterType) {
+      case '내가 찜한 펫시터':
+        return PetsittersItem.filter((item) => item.id === 1);
+        break;
+      case '새로 온 펫시터':
+        return PetsittersItem.filter((item) => item.id === 2);
+        break;
+      case '리뷰가 많은 펫시터':
+        return PetsittersItem.filter((item) => item.id === 3);
+        break;
+      default:
+        return PetsittersItem;
+    }
+  };
+  const filteredPetSitters = filteredPetsitters();
+
   return (
     <MainContainer>
       <StatusHeader>
@@ -104,7 +162,7 @@ const ViewPetsitters = () => {
           useKeyboardArrows={false}
           showIndicators={false}
         >
-          {NewPetsitterItem.map((item) => (
+          {HotPetsitterItem.map((item) => (
             <HotWrap key={item.id}>
               <TitleContainer>
                 <OnelineWrap>
@@ -128,110 +186,62 @@ const ViewPetsitters = () => {
         </StyledCarousel>
       </HotIntroContainer>
 
-      <PetsitterContainer>
-        <RequestPetsitterContainer>
-          <RequestPetsitterText>{`내가 찜한 펫시터`}</RequestPetsitterText>
-          <CustomCarousel
-            showThumbs={false}
-            showStatus={false}
-            autoPlay={false}
-            emulateTouch={true}
-            stopOnHover={true}
-            infiniteLoop={true}
-            showArrows={false}
-            useKeyboardArrows={false}
-          >
-            {PetsitterItemChunks.map((chunk, idx) => (
-              <RequestContainer key={idx}>
-                {chunk.map((item) => (
-                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
-                    <RequestPetsitterBox key={item.id}>
-                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                      <Petsitterbox>
-                        <Nameox>{item.name}</Nameox>
-                        <RatingReviewContainer>
-                          <RatingImg src={item.ratingImg} alt="ratingImg" />
-                          {item.rating}
-                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                          {item.review}
-                        </RatingReviewContainer>
-                      </Petsitterbox>
-                    </RequestPetsitterBox>
-                  </StyledLink>
-                ))}
-              </RequestContainer>
-            ))}
-          </CustomCarousel>
-        </RequestPetsitterContainer>
-        <RequestPetsitterContainer>
-          <RequestPetsitterText>{`새로 온 펫시터`}</RequestPetsitterText>
-          <CustomCarousel
-            showThumbs={false}
-            showStatus={false}
-            autoPlay={false}
-            emulateTouch={true}
-            stopOnHover={true}
-            infiniteLoop={true}
-            showArrows={false}
-            useKeyboardArrows={false}
-          >
-            {PetsitterItemChunks.map((chunk, idx) => (
-              <RequestContainer key={idx}>
-                {chunk.map((item) => (
-                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
-                    <RequestPetsitterBox key={item.id}>
-                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                      <Petsitterbox>
-                        <Nameox>{item.name}</Nameox>
-                        <RatingReviewContainer>
-                          <RatingImg src={item.ratingImg} alt="ratingImg" />
-                          {item.rating}
-                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                          {item.review}
-                        </RatingReviewContainer>
-                      </Petsitterbox>
-                    </RequestPetsitterBox>
-                  </StyledLink>
-                ))}
-              </RequestContainer>
-            ))}
-          </CustomCarousel>
-        </RequestPetsitterContainer>
-        <RequestPetsitterContainer>
-          <RequestPetsitterText>{`리뷰가 많은 펫시터`}</RequestPetsitterText>
-          <CustomCarousel
-            showThumbs={false}
-            showStatus={false}
-            autoPlay={false}
-            emulateTouch={true}
-            stopOnHover={true}
-            infiniteLoop={true}
-            showArrows={false}
-            useKeyboardArrows={false}
-          >
-            {PetsitterItemChunks.map((chunk, idx) => (
-              <RequestContainer key={idx}>
-                {chunk.map((item) => (
-                  <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
-                    <RequestPetsitterBox key={item.id}>
-                      <ProfileImg src={item.profileImg} alt="RequestPetsitterImg" />
-                      <Petsitterbox>
-                        <Nameox>{item.name}</Nameox>
-                        <RatingReviewContainer>
-                          <RatingImg src={item.ratingImg} alt="ratingImg" />
-                          {item.rating}
-                          <ReviewImg src={item.reviewImg} alt="reviewImg" />
-                          {item.review}
-                        </RatingReviewContainer>
-                      </Petsitterbox>
-                    </RequestPetsitterBox>
-                  </StyledLink>
-                ))}
-              </RequestContainer>
-            ))}
-          </CustomCarousel>
-        </RequestPetsitterContainer>
-      </PetsitterContainer>
+      <FilterContainer>
+        <TitleBox>
+          <TitleWrap>
+            <TitleText>{getTitleText()}</TitleText>
+            <ItemCountbox>{filteredPetSitters.length}</ItemCountbox>
+          </TitleWrap>
+          <FilterIcon src="/icons/FilterIcon.svg" alt="FilterIcon" onClick={handleFilterOpen} />
+        </TitleBox>
+
+        {filteredPetsitters().map((item) => (
+          <FilterBodyBox key={item.id}>
+            <PetsitterContainer key={item.id}>
+              <PetsitterImg src="/imgs/PetsitterPhoto.svg" alt="PetsitterPhoto" />
+              <PetsitterBody>
+                <PetsitterWrap>
+                  <NameText>{item.name}</NameText>
+                  <Possiblebox>예약가능</Possiblebox>
+                </PetsitterWrap>
+                <TimeWrap>
+                  <TimgImg src="/icons/TimeIcon.svg" alt="TimeIcon" />
+                  <TimeText>{item.possibleTime}</TimeText>
+                </TimeWrap>
+                <RatingReviewContainer>
+                  <RatingImg src={item.ratingImg} alt="ratingImg" />
+                  {item.rating}
+                  <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                  {item.review}
+                </RatingReviewContainer>
+              </PetsitterBody>
+              <ContainerArrow src="/icons/PetsitterContainerArrow.svg" alt="ArrowIcon" />
+            </PetsitterContainer>
+          </FilterBodyBox>
+        ))}
+      </FilterContainer>
+
+      <FilterDrawer anchor="bottom" open={isFilterOpen} onClose={handleFilterClose}>
+        <List>
+          <ListSubheader sx={{ fontSize: '20px', display: 'flex', alignItems: 'center', color: 'primary.main' }}>
+            <FormatListBulleted sx={{ mr: 2 }} />
+            <span>필터</span>
+          </ListSubheader>
+          <Divider />
+          <ListItem button onClick={() => handleFilterButtonClick('전체 펫시터')}>
+            <ListItemText primary="전체" sx={{ ml: 5 }} />
+          </ListItem>
+          <ListItem button onClick={() => handleFilterButtonClick('내가 찜한 펫시터')}>
+            <ListItemText primary="내가 찜한 펫시터" sx={{ ml: 5 }} />
+          </ListItem>
+          <ListItem button onClick={() => handleFilterButtonClick('새로 온 펫시터')}>
+            <ListItemText primary="새로 온 펫시터" sx={{ ml: 5 }} />
+          </ListItem>
+          <ListItem button onClick={() => handleFilterButtonClick('리뷰가 많은 펫시터')}>
+            <ListItemText primary="리뷰가 많은 펫시터" sx={{ ml: 5 }} />
+          </ListItem>
+        </List>
+      </FilterDrawer>
     </MainContainer>
   );
 };
@@ -348,64 +358,6 @@ const HotPetsitterReview = styled.div`
   flex-wrap: wrap;
 `;
 
-const PetsitterContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 18px;
-  padding: 12px;
-`;
-
-const RequestPetsitterContainer = styled.div`
-  margin-bottom: 20px;
-  padding: 12px;
-  border-radius: 8px;
-  background-color: ${(props) => props.theme.colors.white};
-  box-shadow: ${(props) => props.theme.shadow.dp01};
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const RequestContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin: 14px 0;
-`;
-
-const RequestPetsitterText = styled.h2`
-  margin: 8px 0 4px;
-  ${(props) => props.theme.fontSize.s16h24};
-  font-weight: ${(props) => props.theme.fontWeights.extrabold};
-  white-space: pre-line;
-`;
-
-const RequestPetsitterBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const ProfileImg = styled.img`
-  width: 79px;
-  height: 77px;
-  margin-bottom: 4px;
-  border-radius: 79px;
-`;
-
-const Petsitterbox = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-right: 8px;
-  text-align: center;
-`;
-
-const Nameox = styled.div`
-  ${(props) => props.theme.fontSize.s16h24};
-  font-family: 'Noto Sans KR';
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-`;
-
 const RatingReviewContainer = styled.div`
   display: flex;
   align-items: center;
@@ -414,13 +366,13 @@ const RatingReviewContainer = styled.div`
 
 const RatingImg = styled.img`
   width: 14px;
-  margin-right: 4px;
+  margin-right: 6px;
 `;
 
 const ReviewImg = styled.img`
   width: 14px;
-  margin-right: 4px;
-  margin-left: 4px;
+  margin-right: 6px;
+  margin-left: 16px;
   padding-top: 2px;
 `;
 
@@ -434,21 +386,120 @@ const StyledCarousel = styled(Carousel)`
   }
 `;
 
-const CustomCarousel = styled(Carousel)`
-  .carousel-slider {
-    overflow: visible;
-  }
-
-  .control-dots {
-    top: 130px !important;
-  }
-
-  .dot {
-    background: #279eff !important;
-  }
+const FilterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
+const TitleBox = styled.div`
+  display: flex;
+  position: relative;
+  margin-bottom: 36px;
+`;
+
+const TitleWrap = styled.div`
+  display: flex;
+  position: absolute;
+  left: 40px;
+`;
+
+const TitleText = styled.div`
+  font-size: ${(props) => props.theme.fontSize.s20h30};
+  font-weight: ${(props) => props.theme.fontWeights.extrabold};
+`;
+
+const ItemCountbox = styled.div`
+  background-color: ${(props) => props.theme.colors.mainBlue};
+  color: ${(props) => props.theme.colors.white};
+  font-size: 14px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin: 5px 0 5px 8px;
+`;
+
+const FilterIcon = styled.img`
+  position: absolute;
+  top: 6px;
+  right: 40px;
+  cursor: pointer;
+`;
+
+const FilterBodyBox = styled.div``;
+
+const PetsitterContainer = styled.a`
+  display: flex;
+  margin: 12px;
+  padding: 12px;
+  background-color: ${(props) => props.theme.colors.white};
+  border-radius: 8px;
+  box-shadow: ${(props) => props.theme.shadow.dp01};
+  position: relative;
+  cursor: pointer;
+`;
+
+const PetsitterImg = styled.img``;
+
+const PetsitterBody = styled.div`
+  margin-left: 36px;
+`;
+
+const PetsitterWrap = styled.div`
+  display: flex;
+  margin-top: -4px;
+`;
+
+const NameText = styled.div`
+  font-size: ${(props) => props.theme.fontSize.s20h30};
+  font-weight: ${(props) => props.theme.fontWeights.extrabold};
+  margin-right: 12px;
+`;
+
+const Possiblebox = styled.div`
+  font-size: 12px;
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  color: ${(props) => props.theme.colors.white};
+  background-color: ${(props) => props.theme.colors.mainBlue};
+  padding: 2px 8px;
+  margin: 6px 0 6px 0;
+  line-height: 16px;
+  border-radius: 8px;
+`;
+
+const TimeWrap = styled.div`
+  display: flex;
+  margin-top: -2px;
+  margin-bottom: 8px;
+`;
+
+const TimgImg = styled.img`
+  margin-top: 5px;
+  margin-right: 16px;
+  width: 12px;
+  height: 12px;
+`;
+
+const TimeText = styled.div`
+  font-size: ${(props) => props.theme.fontSize.s14h21};
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  color: ${(props) => props.theme.textColors.gray50};
+`;
+
+const ContainerArrow = styled.img`
+  position: absolute;
+  top: 43%;
+  right: 10%;
+  width: 6px;
+  height: 12px;
+`;
+
+const FilterDrawer = styled(Drawer)`
+  .MuiDrawer-paper {
+    height: 36%;
+    max-height: 100%;
+    background-color: ${(props) => props.theme.colors.white};
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    overflow: hidden;
+  }
 `;

@@ -268,8 +268,6 @@ const ReservationStepTwo = () => {
           </SelectPetContainer>
         ))} */}
 
-        {/* <button onClick={() => setPetItems([...petItems, MyPetItem])}>Add Pet</button> */}
-
         <NoticeContainer>
           <NoticeTitleText>펫시터님께 미리 알려주세요!</NoticeTitleText>
           <NoticeText>{noticeText()}</NoticeText>
