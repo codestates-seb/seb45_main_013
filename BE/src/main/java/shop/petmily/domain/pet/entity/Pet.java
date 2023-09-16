@@ -33,7 +33,7 @@ public class Pet extends Auditable {
     private String species;
 
     @Column(nullable = false)
-    private Integer weight;
+    private Double weight;
 
     @Column(length = 1000)
     private String photo;
