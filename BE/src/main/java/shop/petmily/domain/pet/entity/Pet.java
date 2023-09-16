@@ -54,9 +54,6 @@ public class Pet extends Auditable {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.REMOVE)
-    private List<ReservationPet> reservationPets = new ArrayList<>();
-
     public enum PetType{
         DOG("강아지"),
         CAT("고양이");
