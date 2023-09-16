@@ -1,9 +1,11 @@
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { TextField, Divider, Checkbox } from '@mui/material';
+import { TextField, Divider, Checkbox, Dialog, DialogTitle, DialogContent, DialogContentText } from '@mui/material';
+import { notice, verificationNotice, impossibleNotice1, impossibleNotice2 } from 'util/noticeText';
 
 const PetsitterItem = [
   // 펫시터 정보 DB 받아올 예정
@@ -39,7 +41,7 @@ const PetItem = [
     photo: '/imgs/PetImg.svg',
   },
   {
-    petId: 28,
+    petId: 29,
     memberId: 34,
     name: '두부',
     age: 4,
@@ -80,6 +82,27 @@ const groupedPetItems: PetItem[][] = PetItem.reduce((resultArray: PetItem[][], i
 }, []);
 
 const ReservationStepFour = () => {
+  const [isChecked, setIsChecked] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmEnabled, setIsConfirmEnabled] = useState(false); //예약하기 버튼 활성화 상태
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleConFirmModal = () => {
+    setIsModalOpen(false);
+    setIsChecked(true);
+    setIsConfirmEnabled(true);
+  };
+
+  const handleCheckBoxChange = (e: any) => {
+    setIsChecked(e.target.checked);
+  };
   interface IFormInput {
     body: string;
   }
@@ -192,10 +215,57 @@ const ReservationStepFour = () => {
           <ConfirmText>안내사항을 모두 확인하였습니다</ConfirmText>
           <WarningText>미숙지시 일부 서비스에 제한이 있을 수 있습니다</WarningText>
         </Textbox>
-        <Checkbox sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }} />
+        <Checkbox
+          sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+          checked={isChecked}
+          onChange={handleCheckBoxChange}
+          onClick={handleModalOpen}
+        />
+        <Dialog open={isModalOpen} onClose={handleModalClose}>
+          <DialogTitle>{'안내사항'}</DialogTitle>
+          <StyledDialogContent>
+            <DialogContentText sx={{ color: 'black', fontWeight: 'bold' }}>
+              펫시터님께 미리 알려주세요!
+            </DialogContentText>
+            {notice.map((data) =>
+              data.isSpan ? (
+                <VerificationText dangerouslySetInnerHTML={{ __html: data.text }} key={data.text}></VerificationText>
+              ) : (
+                <VerificationText key={data.text}>{data.text}</VerificationText>
+              ),
+            )}
+            <DialogContentText sx={{ color: 'red', fontWeight: 'bold', mt: 2 }}>필수 확인 사항</DialogContentText>
+            {verificationNotice.map((data) =>
+              data.isSpan ? (
+                <VerificationText dangerouslySetInnerHTML={{ __html: data.text }} key={data.text}></VerificationText>
+              ) : (
+                <VerificationText key={data.text}>{data.text}</VerificationText>
+              ),
+            )}
+            <DialogContentText sx={{ color: 'red', fontWeight: 'bold', mt: 2 }}>돌봄이 불가한 경우</DialogContentText>
+            {impossibleNotice1.map((data) =>
+              data.isSpan ? (
+                <VerificationText dangerouslySetInnerHTML={{ __html: data.text }} key={data.text}></VerificationText>
+              ) : (
+                <VerificationText key={data.text}>{data.text}</VerificationText>
+              ),
+            )}
+            <DialogContentText sx={{ color: 'red', fontWeight: 'bold', mt: 2 }}>산책이 불가한 경우</DialogContentText>
+            {impossibleNotice2.map((data) =>
+              data.isSpan ? (
+                <VerificationText dangerouslySetInnerHTML={{ __html: data.text }} key={data.text}></VerificationText>
+              ) : (
+                <VerificationText key={data.text}>{data.text}</VerificationText>
+              ),
+            )}
+            <StyledButton onClick={handleConFirmModal}>확인했습니다</StyledButton>
+          </StyledDialogContent>
+        </Dialog>
       </ConfirmContainer>
       <ButtonContainer>
-        <StyledButton type="submit">예약하기</StyledButton>
+        <StyledButton type="submit" disabled={!isChecked || !isConfirmEnabled}>
+          예약하기
+        </StyledButton>
       </ButtonContainer>
     </MainContainer>
   );
@@ -499,7 +569,7 @@ const ScheduleText = styled.h2`
 const StyledTextField = styled(TextField)`
   .MuiInputLabel-root {
     font-size: 14px;
-    margin-top: 4px;
+    margin-top: 3px;
     color: #d9d9d9;
   }
 `;
@@ -561,4 +631,27 @@ const StyledButton = styled.button`
   background-color: ${({ theme }) => theme.colors.mainBlue};
   color: white;
   ${({ theme }) => theme.fontSize.s16h24};
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const VerificationText = styled.div`
+  margin-top: 16px;
+  margin-bottom: 36px;
+  ${(props) => props.theme.fontSize.s12h18};
+  font-weight: ${(props) => props.theme.fontWeights.normal};
+  line-height: 1;
+  white-space: pre-line;
+
+  span {
+    color: ${(props) => props.theme.textColors.primary};
+  }
+`;
+
+const StyledDialogContent = styled(DialogContent)`
+  max-height: 100%;
+  overflow-y: auto;
 `;
