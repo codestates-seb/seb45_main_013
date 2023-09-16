@@ -4,31 +4,46 @@ import {
   PageTitle,
   RegisterInputWrapper,
   InputContainer,
+  RadioWrapper,
+  RadioLabel,
   InputLabelStyle,
-  InputStyle,
 } from './RegisterPet';
 import UploadProfileImg from '../components/UploadProfileImg';
 import Button from '@mui/material/Button';
-import Textarea from '@mui/joy/Textarea';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 import { useState, useEffect } from 'react';
 import { getCookieValue } from 'hooks/getCookie';
 import { useForm } from 'react-hook-form';
-import { StyledButton } from './EditUserProfile';
+import { StyledButton, ErrorMsg, StyledTextField, InfoText } from './EditUserProfile';
+import { TextField } from '@mui/material';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-// 이름, 나이, 몸무게, 바디, 중성화 수정 가능
+//  중성화 추가
 
-interface IEditPet {
-  name: string;
-  age: string;
-  species: string;
-  weight: string;
-  body: string;
-  male: boolean;
-  neutering: boolean;
-  photo: string;
-}
+const schema = yup.object().shape({
+  name: yup.string().max(50, '이름은 최대 50자를 초과할 수 없습니다.').required('이 항목은 필수입니다.'),
+  age: yup
+    .number()
+    .min(1, '나이는 1살 이상이어야 합니다.')
+    .max(100, '나이는 100살 이하이어야 합니다.')
+    .required('이 항목은 필수입니다.')
+    .typeError('나이는 숫자만 입력해 주세요.'),
+  species: yup.string(),
+  weight: yup
+    .number()
+    .min(1, '몸무게는 1kg 이상이어야 합니다.')
+    .max(100, '몸무게는 100kg 이하이어야 합니다.')
+    .required('이 항목은 필수입니다.')
+    .typeError('몸무게는 숫자만 입력해 주세요.'),
+  body: yup.string().max(1000, '소개는 최대 1000자를 초과할 수 없습니다.'),
+  male: yup.boolean(),
+  neutering: yup.boolean(),
+  photo: yup.string(),
+});
+
+type IEditPet = yup.InferType<typeof schema>;
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -39,16 +54,34 @@ const EditPet = () => {
   const { petId } = useParams();
   console.log(petId);
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const [pet, setPet] = useState<IEditPet>({
     name: '',
-    age: '',
+    age: 0,
     species: '',
-    weight: '',
+    weight: 0,
     body: '',
     male: false,
     neutering: false,
     photo: '',
   });
+
+  const { register, setValue, clearErrors, handleSubmit, formState } = useForm<IEditPet>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      name: pet.name,
+      age: pet.age,
+      species: pet.species,
+      weight: pet.weight,
+      body: pet.body,
+      male: pet.male,
+      neutering: pet.neutering,
+      photo: pet.photo,
+    },
+  });
+
+  const { errors } = formState;
 
   useEffect(() => {
     const token = getCookieValue('access_token');
@@ -61,7 +94,11 @@ const EditPet = () => {
         });
         if (response.data) {
           setPet(response.data);
+          setIsLoaded(true);
           console.log(response.data);
+          for (const key in response.data) {
+            setValue(key as keyof IEditPet, response.data[key]);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -76,8 +113,6 @@ const EditPet = () => {
     setImageFile(file);
   };
 
-  const { register, handleSubmit } = useForm<IEditPet>();
-
   const onSubmit = async (data: IEditPet) => {
     const token = getCookieValue('access_token');
 
@@ -91,15 +126,15 @@ const EditPet = () => {
       formData.append('name', data.name);
     }
     if (data.weight !== undefined && data.weight !== pet.weight) {
-      formData.append('weight', data.weight);
+      formData.append('weight', data.weight.toString());
     }
     if (data.age !== undefined && data.age !== pet.age) {
-      formData.append('weight', data.age);
+      formData.append('weight', data.age.toString());
     }
     if (data.body !== undefined) {
       formData.append('body', data.body);
     }
-    if (data.neutering === true) {
+    if (data.neutering === true && pet.neutering === false) {
       formData.append('neutering', 'true');
     }
 
@@ -133,13 +168,16 @@ const EditPet = () => {
 
   const deletePet = async () => {
     const token = getCookieValue('access_token');
+    const isConfirmed = window.confirm('정말 펫을 삭제하시겠습니까? (펫을 삭제하면, 예약에서 해당 펫이 제외됩니다.)');
+    if (!isConfirmed) return;
+    console.log(token);
     try {
       const response = await axios.delete(`${apiUrl}/pets/${petId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.data === 'NO_CONTENT') {
+      {
         alert('펫이 삭제되었습니다');
         navigate('/mypage');
       }
@@ -162,61 +200,98 @@ const EditPet = () => {
       <BtnContainer>
         <StyledButton onClick={deletePet}>삭제</StyledButton>
       </BtnContainer>
-      <MainContainer>
-        <UploadProfileImg
-          petId={petId}
-          currentImageUrl={pet.photo}
-          setImageFile={handleImageFileChange}
-          defaultProfileImg="/imgs/PetProfile.png"
-        />
-        <InputContainer onSubmit={handleSubmit(onSubmit)}>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="name">이름</InputLabelStyle>
-            <InputStyle type="text" defaultValue={pet.name} {...register('name')} />
-          </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="species">품종</InputLabelStyle>
-            <Info> {pet.species}</Info>
-          </RegisterInputWrapper>
+      {isLoaded && (
+        <MainContainer>
+          <UploadProfileImg
+            petId={petId}
+            currentImageUrl={pet.photo}
+            setImageFile={handleImageFileChange}
+            defaultProfileImg="/imgs/PetProfile.png"
+          />
+          <InfoText>프로필 사진 선택</InfoText>
 
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="male">성별</InputLabelStyle>
-            <Info>{pet.male ? '남자아이' : '여자아이'}</Info>
-          </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="weight">몸무게 (kg)</InputLabelStyle>
-            <InputStyle type="text" defaultValue={pet.weight} {...register('weight')} />
-          </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="age">나이</InputLabelStyle>
-            <InputStyle type="text" defaultValue={pet.age} {...register('age')} />
-          </RegisterInputWrapper>
-          <RegisterInputWrapper>
-            <InputLabelStyle htmlFor="body">나의 펫소개</InputLabelStyle>
-            <Textarea
-              placeholder="우리 냥이는 박스를 좋아해요"
-              minRows={3}
-              sx={{
-                width: '60%',
-                borderColor: '#A6A6A6',
-                borderRadius: '8px',
-                fontSize: 14,
-              }}
-              defaultValue={pet.body}
-              {...register('body')}
-            />
-          </RegisterInputWrapper>
-          <Button type="submit" variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
-            수정하기
-          </Button>
-        </InputContainer>
-      </MainContainer>
+          <InputContainer onSubmit={handleSubmit(onSubmit)}>
+            <RegisterInputWrapper>
+              <InputLabelStyle htmlFor="name">이름</InputLabelStyle>
+              <InputWrapper>
+                <TextField type="text" defaultValue={pet.name} {...register('name')} />
+                {errors.name && <ErrorMsg>{errors.name.message}</ErrorMsg>}
+              </InputWrapper>
+            </RegisterInputWrapper>
+
+            <RegisterInputWrapper>
+              <InputLabelStyle htmlFor="species">품종</InputLabelStyle>
+              <Info> {pet.species}</Info>
+            </RegisterInputWrapper>
+
+            <RegisterInputWrapper>
+              <InputLabelStyle htmlFor="male">성별</InputLabelStyle>
+              <Info>{pet.male ? '남자아이' : '여자아이'}</Info>
+            </RegisterInputWrapper>
+
+            {!pet.neutering && (
+              <RegisterInputWrapper>
+                <InputLabelStyle htmlFor="neutering">중성화</InputLabelStyle>
+                <InputWrapper>
+                  <RadioWrapper>
+                    <input id="neuteringTrue" type="radio" value="true" {...register('neutering')} />
+                    <RadioLabel htmlFor="neuteringTrue">했음</RadioLabel>
+                  </RadioWrapper>
+                </InputWrapper>
+              </RegisterInputWrapper>
+            )}
+
+            <RegisterInputWrapper>
+              <InputLabelStyle htmlFor="weight">몸무게 (kg)</InputLabelStyle>
+              <InputWrapper>
+                <TextField type="text" defaultValue={pet.weight} {...register('weight')} />
+                {errors.weight && <ErrorMsg>{errors.weight.message}</ErrorMsg>}
+              </InputWrapper>
+            </RegisterInputWrapper>
+
+            <RegisterInputWrapper>
+              <InputLabelStyle htmlFor="age">나이</InputLabelStyle>
+              <InputWrapper>
+                <TextField type="text" defaultValue={pet.age} {...register('age')} />
+                {errors.age && <ErrorMsg>{errors.age.message}</ErrorMsg>}
+              </InputWrapper>
+            </RegisterInputWrapper>
+
+            <RegisterInputWrapper>
+              <InputLabelStyle htmlFor="body">나의 펫소개</InputLabelStyle>
+              <InputWrapper>
+                <TextField
+                  id="outlined-multiline-flexible"
+                  multiline
+                  minRows={3}
+                  sx={{
+                    width: '100%',
+                    fontSize: 14,
+                  }}
+                  defaultValue={pet.body}
+                  {...register('body')}
+                />
+                {errors.body && <ErrorMsg>{errors.body.message}</ErrorMsg>}
+              </InputWrapper>
+            </RegisterInputWrapper>
+            <Button type="submit" variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
+              수정하기
+            </Button>
+          </InputContainer>
+        </MainContainer>
+      )}
     </>
   );
 };
 
 const Info = styled.div`
   ${(props) => props.theme.fontSize.s14h21};
+  width: 60%;
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 60%;
 `;
 

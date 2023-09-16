@@ -1,50 +1,85 @@
 import styled from 'styled-components';
-import {
-  MainContainer,
-  PageTitle,
-  RegisterInputWrapper,
-  InputContainer,
-  InputLabelStyle,
-  InputStyle,
-} from './RegisterPet';
+import { MainContainer, PageTitle, RegisterInputWrapper, InputContainer, InputLabelStyle } from './RegisterPet';
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import Textarea from '@mui/joy/Textarea';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getCookieValue } from 'hooks/getCookie';
 import { useForm } from 'react-hook-form';
 import axios, { AxiosError } from 'axios';
 import UploadProfileImg from '../components/UploadProfileImg';
 import { useState } from 'react';
-import { IUser } from 'store/userSlice';
+import { IUser, deleteUser } from 'store/userSlice';
 import { deleteCookie } from 'hooks/deleteCookie';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { TextField } from '@mui/material';
+import DaumPostcode from 'react-daum-postcode';
+import { Modal, Sheet } from '@mui/joy';
 
-// 보호자, 펫시터 같이
 // 버튼 수정
-// 주소 API 사용하기
-// 로그아웃, 회원탈퇴
 
-interface IEditUser {
-  nickName?: string;
-  phone?: string;
-  address?: string;
-  body?: string;
-}
+const schema = yup.object().shape({
+  nickName: yup
+    .string()
+    .min(4, '닉네임은 4자 이상이어야 합니다.')
+    .matches(/^[a-zA-Z0-9\uac00-\ud7a3]+$/, '닉네임에는 한국어, 영어, 숫자만 허용됩니다.')
+    .defined(),
+  phone: yup
+    .string()
+    .defined()
+    .matches(/^010\d{8}$/, '연락처는 010으로 시작하는 11자리 숫자여야 합니다.'),
+  address: yup.string().defined(),
+  body: yup.string().defined(),
+});
+
+type IEditUser = yup.InferType<typeof schema>;
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const EditUserProfile = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { name, memberId, phone, address, email, nickName, body, photo } = useSelector((state: IUser) => state.user);
 
+  // 프로필 사진 변경
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleImageFileChange = (file: File) => {
     setImageFile(file);
   };
 
-  const { register, handleSubmit } = useForm<IEditUser>();
+  const { register, clearErrors, handleSubmit, formState } = useForm<IEditUser>({
+    resolver: yupResolver(schema),
+  });
+
+  const { errors } = formState;
+
+  // 주소 API
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const onToggleModal = () => {
+    setIsModalOpen(true);
+  };
+  const [sido, setSido] = useState('');
+  const [sigungu, setSigugu] = useState('');
+  const [remainAddress, setRemainAddress] = useState('');
+  const [zonecode, setZonecode] = useState('');
+
+  const handleComplete = (data: any) => {
+    // 우편번호 저장
+    setZonecode(data.zonecode);
+    // 시.도 저장
+    setSido(data.sido);
+    // 구.군 저장
+    setSigugu(data.sigungu.length > 3 ? data.sigungu.split('').splice(0, 3).join('') : data.sigungu);
+    // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
+    const splitAddress = data.address.split(' ').splice(2).join(' ');
+    if (data) {
+      clearErrors('address');
+    }
+    setRemainAddress(splitAddress);
+    setIsModalOpen(false);
+  };
 
   const onSubmit = async (data: IEditUser) => {
     const token = getCookieValue('access_token');
@@ -98,6 +133,8 @@ const EditUserProfile = () => {
 
   const handleLogout = () => {
     deleteCookie('access_token');
+    deleteCookie('refresh_token');
+    dispatch(deleteUser());
     alert('로그아웃되었습니다.');
     navigate('/');
   };
@@ -137,35 +174,66 @@ const EditUserProfile = () => {
           setImageFile={handleImageFileChange}
           defaultProfileImg="/imgs/DefaultUserProfile.jpg"
         />
+        <InfoText>프로필 사진 선택</InfoText>
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="username">이름</InputLabelStyle>
             <Info>{name}</Info>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="email">이메일</InputLabelStyle>
             <Info>{email}</Info>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="nickName">닉네임</InputLabelStyle>
-            <InputStyle type="text" defaultValue={nickName} {...register('nickName')} />
+            <InputWrapper>
+              <TextField type="text" defaultValue={nickName} {...register('nickName')} />
+              {errors.nickName && <ErrorMsg>{errors.nickName.message}</ErrorMsg>}
+            </InputWrapper>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="phone">연락처</InputLabelStyle>
-            <InputStyle type="text" defaultValue={phone} {...register('phone')} />
+            <InputWrapper>
+              <TextField type="text" defaultValue={phone} {...register('phone')} />
+              {errors.phone && <ErrorMsg>{errors.phone.message}</ErrorMsg>}
+            </InputWrapper>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="address">주소</InputLabelStyle>
-            <InputStyle type="text" defaultValue={address} {...register('address')} />
+            <StyledTextField
+              type="text"
+              defaultValue={address}
+              value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : address}
+              onClick={onToggleModal}
+              onKeyDown={onToggleModal}
+              {...register('address')}
+            />
+
+            {isModalOpen && (
+              <Modal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Sheet sx={{ width: '360px;' }}>
+                  <DaumPostcode onComplete={handleComplete} />
+                </Sheet>
+              </Modal>
+            )}
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="body">나의 소개</InputLabelStyle>
-            <Textarea
+            <TextField
+              id="outlined-multiline-flexible"
+              multiline
               minRows={3}
               sx={{
                 width: '60%',
-                borderColor: '#A6A6A6',
-                borderRadius: '8px',
                 fontSize: 14,
               }}
               defaultValue={body}
@@ -187,8 +255,15 @@ const EditUserProfile = () => {
 };
 
 const Info = styled.div`
-  ${(props) => props.theme.fontSize.s14h21};
+  ${(props) => props.theme.fontSize.s16h24};
   width: 60%;
+`;
+
+export const InfoText = styled.div`
+  ${(props) => props.theme.fontSize.s16h24};
+  font-weight: 800;
+  margin-top: 20px;
+  color: #2792ff;
 `;
 
 export const LinkContainer = styled.div`
@@ -207,6 +282,25 @@ export const StyledButton = styled.button`
   &:hover {
     color: ${(props) => props.theme.colors.mainBlue};
   }
+`;
+
+// RegisterPet 같이 사용할 수 있게 수정
+export const StyledTextField = styled(TextField)`
+  ${(props) => props.theme.fontSize.s14h21}
+  width: 60%;
+`;
+
+export const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+`;
+
+export const ErrorMsg = styled.div`
+  color: red;
+  display: bolck;
+  margin-top: 5px;
+  ${(props) => props.theme.fontSize.s14h21}
 `;
 
 export default EditUserProfile;
