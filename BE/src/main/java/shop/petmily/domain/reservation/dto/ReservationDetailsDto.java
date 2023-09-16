@@ -94,7 +94,7 @@ public class ReservationDetailsDto {
 
         private String species;
 
-        private Integer weight;
+        private Double weight;
 
         private Boolean male;
 
