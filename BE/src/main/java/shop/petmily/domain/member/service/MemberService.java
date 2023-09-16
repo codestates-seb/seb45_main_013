@@ -94,6 +94,16 @@ public class MemberService {
         return memberRepository.save(findMember);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+    public Member disableMember(Member member) {
+        Member findMember = findVerifiedMember(member.getMemberId());
+
+        findMember.setStatus(Member.MemberStatus.MEMBER_QUIT);
+        findMember.setPhone(null);
+
+        return memberRepository.save(findMember);
+    }
+
     @Transactional(readOnly = true)
     public Member findMember(long memberId) {
         return findVerifiedMember(memberId);
@@ -102,6 +112,11 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findMember(String email) {
         return memberRepository.findByEmail(email).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+    }
+
+    @Transactional
+    public Member findMember(String email, String name) {
+        return memberRepository.findByEmailAndName(email, name);
     }
 
     @Transactional(readOnly = true)

@@ -19,6 +19,7 @@ import shop.petmily.domain.member.mapper.PetsitterMapper;
 import shop.petmily.domain.member.service.FavoriteService;
 import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.member.service.PetsitterService;
+import shop.petmily.domain.refreshToken.service.RefreshTokenService;
 import shop.petmily.global.argu.LoginMemberId;
 import shop.petmily.global.dto.PageResponseDto;
 import shop.petmily.global.dto.SingleResponseDto;
@@ -39,6 +40,7 @@ public class MemberController {
     private final static String MEMBER_DEFAULT_URL = "/members";
     private final MemberService memberService;
     private final PetsitterService petsitterService;
+    private final RefreshTokenService refreshTokenService;
     private final MemberMapper memberMapper;
     private final PetsitterMapper petsitterMapper;
     private final FavoriteService favoriteService;
@@ -121,11 +123,23 @@ public class MemberController {
     }
 
     // 회원정보 삭제
-    @DeleteMapping("/{member-id}")
+//    @DeleteMapping("/{member-id}")
+//    public ResponseEntity deleteMember(@PathVariable("member-id") @Positive long memberId, @LoginMemberId Long loginMemberId) {
+//        Member findMember = memberService.findMember(memberId);
+//        memberService.verifyAuthority(findMember, loginMemberId);
+//        memberService.removeMember(findMember.getMemberId());
+//        return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
+//    }
+
+    // 회원정보 삭제
+    @PatchMapping("/{member-id}/disable")
     public ResponseEntity deleteMember(@PathVariable("member-id") @Positive long memberId, @LoginMemberId Long loginMemberId) {
         Member findMember = memberService.findMember(memberId);
         memberService.verifyAuthority(findMember, loginMemberId);
-        memberService.removeMember(findMember.getMemberId());
+
+        memberService.disableMember(findMember);
+        refreshTokenService.deleteRefreshToken(findMember);
+
         return new ResponseEntity<>(new SingleResponseDto<>("success delete member"), HttpStatus.OK);
     }
 

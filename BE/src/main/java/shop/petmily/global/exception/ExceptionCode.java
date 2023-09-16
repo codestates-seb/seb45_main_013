@@ -16,6 +16,7 @@ public enum ExceptionCode {
     LOGIN_FAIL(400, "이메일 또는 비밀번호가 일치하지 않습니다."),
     INVALID_MEMBER_STATUS(400, "잘못된 회원 상태입니다."),
     NOT_ALLOW_MEMBER(401, "올바른 회원이 아닙니다."),
+    QUIT_MEMBER_STATUS(400, "탈퇴한 회원입니다."),
 
     // 토큰
     NOT_FOUND_TOKEN(400, "Headers에 토큰 형식의 값 찾을 수 없습니다."),

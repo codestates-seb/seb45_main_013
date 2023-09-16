@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import shop.petmily.domain.member.dto.MemberLoginDto;
 import shop.petmily.domain.member.entity.Member;
+import shop.petmily.domain.member.service.MemberService;
 import shop.petmily.domain.refreshToken.entity.RefreshToken;
 import shop.petmily.domain.refreshToken.service.RefreshTokenService;
 import shop.petmily.global.exception.ExceptionCode;
@@ -39,6 +40,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
+    private final MemberService memberService;
 
     // 인증 시도
     @SneakyThrows
@@ -70,8 +72,41 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return null;
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-        return authenticationManager.authenticate(authenticationToken);
+//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+//        return authenticationManager.authenticate(authenticationToken);
+
+        Member findMember = memberService.findMember(loginDto.getEmail());
+
+//        if (findMember != null && findMember.getStatus() == Member.MemberStatus.MEMBER_ACTIVE) {
+//            // 로그인 성공
+//            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+//            return authenticationManager.authenticate(authenticationToken);
+//        } else {
+//            // 탈퇴 상태거나 멤버가 존재하지 않음
+//            ErrorResponse statusErrorResponse = ErrorResponse.of(ExceptionCode.QUIT_MEMBER_STATUS);
+//            errorResponses.add(statusErrorResponse);
+//            Gson gson = new Gson();
+//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//            response.setStatus(HttpStatus.BAD_REQUEST.value());
+//            response.getWriter().write(gson.toJson(errorResponses));
+//            return null;
+//        }
+
+        if (findMember.getStatus() == Member.MemberStatus.MEMBER_QUIT) {
+            // 탈퇴 상태이면 로그인 실패
+            ErrorResponse statusErrorResponse = ErrorResponse.of(ExceptionCode.QUIT_MEMBER_STATUS);
+            errorResponses.add(statusErrorResponse);
+
+            Gson gson = new Gson();
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.getWriter().write(gson.toJson(errorResponses));
+            return null;
+        } else {
+            // 로그인 성공
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+            return authenticationManager.authenticate(authenticationToken);
+        }
     }
 
     // 인증 성공시
