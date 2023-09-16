@@ -21,7 +21,7 @@ public class PetDetailsDto {
 
         private String species;
 
-        private Integer weight;
+        private Double weight;
 
         private String photo;
 

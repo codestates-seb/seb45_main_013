@@ -34,7 +34,7 @@ public class PetPatchDto {
 
         @Min(value = 1, message = "몸무게는 1 이상이어야 합니다.")
         @Max(value = 100, message = "몸무게는 100 이하여야 합니다.")
-        private Integer weight;
+        private Double weight;
 
         @Size(max = 1000, message = "소개는 1000자 이하여야 합니다.")
         private String body;
