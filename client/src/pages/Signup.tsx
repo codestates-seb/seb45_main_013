@@ -104,7 +104,7 @@ const Signup = () => {
         password,
         petsitterBoolean,
       });
-      if (data.status === 201) {
+      if (data.data === 'success create member') {
         alert('가입을 축하합니다.');
         navigate('/login');
       }

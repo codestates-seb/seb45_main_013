@@ -1,47 +1,72 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IUser } from 'store/userSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CareCard from '@components/Carecard';
 import { getCookieValue } from 'hooks/getCookie';
 import { useInView } from 'react-intersection-observer';
+import jwt_decode from 'jwt-decode';
+
+const apiUrl = process.env.REACT_APP_API_URL;
+
+const filters = [
+  { text: '최신순', value: '' },
+  { text: '예정', value: `&condition=expected` },
+  { text: '완료', value: `&condition=finish` },
+];
 
 const Cares = () => {
-  const apiUrl = process.env.REACT_APP_API_URL;
   const accessToken = getCookieValue('access_token');
 
-  const [filter, setFilter] = useState('전체');
+  const [filter, setFilter] = useState('최신순');
   const [page, setPage] = useState(1);
-  const { memberId: id } = useParams();
+  const [isEnd, setEnd] = useState(false);
+
   const navigate = useNavigate();
 
   const { ref, inView } = useInView();
 
-  console.log(page);
-  const filters = ['전체', '예정', '완료'];
-
-  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
+  const { isLogin, memberId, email, petsitterBoolean } = useSelector((state: IUser) => state.user);
   const [reservations, setReservations] = useState<any[]>([]);
 
   const handleFilter = (e: any) => {
-    setFilter(e.target.innerText);
+    setFilter(e);
+    setReservations([]);
+    setEnd(false);
+    setPage(1);
   };
   useEffect(() => {
-    if (!isLogin || (id && memberId !== +id)) {
+    if (!isLogin || !accessToken) {
       alert('권한이 없습니다.');
       navigate('/');
     }
+    if (accessToken) {
+      const decoded: any = jwt_decode(accessToken);
+      if (decoded && decoded.id && memberId !== decoded.id && email !== decoded.email) {
+        alert('권한이 없습니다.');
+        navigate('/');
+      }
+    }
   }, []);
 
+  // console.log('isEnd:', isEnd);
+  // console.log('Loading... 이 보이나요?: ', inView);
+  // console.log(reservations);
+
   useEffect(() => {
-    if (isLogin && id && memberId === +id && inView) {
+    if (isLogin && inView) {
       axios
         .get(
-          `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=${page}&size=10${
-            filter === '예정' ? '&condition=expected' : filter === '완료' ? '&condition=finish' : ''
-          }`,
+          `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=${page}&size=10${filters
+            .map((filterItem) => {
+              if (filter === filterItem.text) {
+                return filterItem.value;
+              }
+              return '';
+            })
+            .join('')}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -51,10 +76,17 @@ const Cares = () => {
         .then((res) => {
           console.log(res);
 
-          setReservations(res.data.reservations);
+          setReservations((prev) => [...prev, ...res.data.reservations]);
           setPage((page) => page + 1);
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          if (error) {
+            setEnd(true);
+          }
+          if (error.response.data.status === 401) {
+          }
+        });
     }
   }, [accessToken, filter, inView]);
 
@@ -63,8 +95,8 @@ const Cares = () => {
       <CareContainer>
         <FilterContainer>
           {filters.map((el, index) => (
-            <FilterButtonStyle key={index} onClick={handleFilter} $filter={filter === el}>
-              {el}
+            <FilterButtonStyle key={index} onClick={() => handleFilter(el.text)} $filter={filter === el.text}>
+              {el.text}
             </FilterButtonStyle>
           ))}
         </FilterContainer>
@@ -74,7 +106,7 @@ const Cares = () => {
           ) : (
             <div>등록된 예약이 없습니다.</div>
           )}
-          <div ref={ref}>Loading...</div>
+          {!isEnd && <div ref={ref}>Loading...</div>}
         </CareCardContainer>
       </CareContainer>
     </MainContainer>

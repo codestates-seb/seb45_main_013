@@ -53,24 +53,6 @@ const RealtimeReviewItem = [
 
 const Home = () => {
   const navigate = useNavigate();
-  const { search } = useLocation();
-  useEffect(() => {
-    if (search) {
-      console.log(search);
-      const accessToken = search.split('=')[1].split('&')[0];
-      const refreshToken = search.split('=')[2];
-      console.log('accessToken', accessToken);
-      console.log('refreshToken', refreshToken);
-
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 1);
-
-      document.cookie = `access_token=${accessToken}; path=/;`;
-      document.cookie = `refresh_token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/;`;
-
-      navigate('/');
-    }
-  }, []);
 
   return (
     <HomeContainer>

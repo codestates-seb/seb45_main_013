@@ -15,12 +15,7 @@ const NavBarButton = ({ children, link }: NavBarButtonProps) => {
   const { isLogin } = useSelector((state: IUser) => state.user);
 
   const handleClick = (e: any) => {
-    const ClickedLink = e.target.innerText;
-    if (!isLogin && (ClickedLink === '예약하기' || ClickedLink === '예약현황')) {
-      alert('로그인 후 이용가능합니다.');
-    } else {
-      navigate(link);
-    }
+    navigate(link);
   };
 
   return (
@@ -35,6 +30,7 @@ const NavBarButtonStyle = styled.button<{ isActive: boolean }>`
   flex-shrink: 0;
   padding: 8px;
   border: none;
+  flex: 1;
   background-color: white;
   font-weight: ${({ theme, isActive }) => (isActive ? theme.fontWeights.extrabold : theme.fontWeights.bold)};
   color: ${({ theme, isActive }) => (isActive ? 'black' : theme.textColors.gray30)};

@@ -19,6 +19,6 @@ export default BackHeader;
 const Container = styled.header`
   width: 100%;
   height: 64px;
-  padding: 20px;
+  padding: 12px;
   background-color: white;
 `;

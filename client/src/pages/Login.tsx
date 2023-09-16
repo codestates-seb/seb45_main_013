@@ -40,12 +40,9 @@ const Login = () => {
     try {
       const { data, status } = await axios.post(`${apiUrl}/auth/login`, { email, password });
 
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 1);
-
       if (status === 200) {
         document.cookie = `access_token=${data.accessToken}; path=/;`;
-        document.cookie = `refresh_token=${data.refreshToken}; expires=${expirationDate.toUTCString()}; path=/;`;
+        document.cookie = `refresh_token=${data.refreshToken};  path=/;`;
 
         dispatch(login());
         navigate('/');

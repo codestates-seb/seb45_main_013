@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -27,9 +27,7 @@ const OAuthBranch = () => {
       );
       if (response.status === 200) {
         document.cookie = `access_token=${response.data.accessToken}; path=/;`;
-        document.cookie = `refresh_token=${
-          response.data.refreshToken
-        }; expires=${expirationDate.toUTCString()}; path=/;`;
+        document.cookie = `refresh_token=${response.data.refreshToken}; path=/;`;
 
         alert('회원가입이 완료되었습니다!');
         navigate('/');
@@ -50,9 +48,9 @@ const OAuthBranch = () => {
       const refreshToken = search.split('=')[2];
 
       document.cookie = `access_token=${accessToken}; path=/;`;
-      document.cookie = `refresh_token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/;`;
+      document.cookie = `refresh_token=${refreshToken};  path=/;`;
 
-      navigate('/signup/branch');
+      navigate('/signup/branch', { replace: true });
     }
   }, []);
 
