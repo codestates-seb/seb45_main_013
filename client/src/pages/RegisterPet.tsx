@@ -9,6 +9,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getCookieValue } from 'hooks/getCookie';
 import axios, { AxiosError } from 'axios';
+import { InfoText } from './EditUserProfile';
 
 // 버튼 수정
 // 라디오 간격
@@ -17,17 +18,30 @@ import axios, { AxiosError } from 'axios';
 const schema = yup.object().shape({
   type: yup.string().oneOf(['DOG', 'CAT'], '강아지인가요 고양이인가요?').required('이 항목은 필수입니다.'),
   name: yup.string().max(50, '이름은 최대 50자를 초과할 수 없습니다.').required('이 항목은 필수입니다.'),
-  age: yup.number().required('이 항목은 필수입니다.').typeError('나이는 숫자만 입력해 주세요.'),
-  species: yup.string().required('이 항목은 필수입니다.'),
-  weight: yup.number().required('이 항목은 필수입니다.').typeError('몸무게는 숫자만 입력해 주세요.'),
+  age: yup
+    .number()
+    .min(1, '나이는 1살 이상이어야 합니다.')
+    .max(100, '나이는 100살 이하이어야 합니다.')
+    .required('이 항목은 필수입니다.')
+    .typeError('나이는 숫자만 입력해 주세요.'),
+  species: yup.string().max(50, '품종은 최대 50자를 초과할 수 없습니다.').required('이 항목은 필수입니다.'),
+  weight: yup
+    .number()
+    .min(1, '몸무게는 1kg 이상이어야 합니다.')
+    .max(100, '몸무게는 100kg 이하이어야 합니다.')
+    .required('이 항목은 필수입니다.')
+    .typeError('몸무게는 숫자만 입력해 주세요.'),
   male: yup.string().oneOf(['true', 'false'], '성별을 선택해주세요.').required('이 항목은 필수입니다.'),
   neutering: yup.string().oneOf(['true', 'false'], '중성화 여부를 선택해주세요.').required('이 항목은 필수입니다.'),
-  body: yup.string().max(100, '소개는 최대 100자를 초과할 수 없습니다.'),
+  body: yup.string().max(1000, '소개는 최대 1000자를 초과할 수 없습니다.'),
 });
 
 type IRegisterPet = yup.InferType<typeof schema>;
 
 const apiUrl = process.env.REACT_APP_API_URL;
+
+const defaultDogProfile = '/imgs/PetProfile.png';
+const defaultCatProfile = '/imgs/CatProfile.png';
 
 const RegisterPet = () => {
   const navigate = useNavigate();
@@ -43,7 +57,6 @@ const RegisterPet = () => {
 
   const [type, setType] = useState<'DOG' | 'CAT' | null>('DOG');
 
-  const defaultProfileImg = '/imgs/PetProfile.png';
   const [imageFile, setImageFile] = useState<File | null>(null);
   const handleImageFileChange = (file: File) => {
     setImageFile(file);
@@ -102,11 +115,13 @@ const RegisterPet = () => {
 
       <MainContainer>
         <UploadProfileImg
-          currentImageUrl={imageFile ? URL.createObjectURL(imageFile) : defaultProfileImg}
+          currentImageUrl={
+            imageFile ? URL.createObjectURL(imageFile) : type === 'DOG' ? defaultDogProfile : defaultCatProfile
+          }
           setImageFile={handleImageFileChange}
-          defaultProfileImg="/imgs/PetProfile.png"
+          defaultProfileImg={type === 'DOG' ? defaultDogProfile : defaultCatProfile}
         />
-
+        <InfoText>프로필 사진 선택</InfoText>
         <InputContainer onSubmit={handleSubmit(onSubmit)}>
           <ButtonContainer>
             <PetButton
@@ -133,6 +148,7 @@ const RegisterPet = () => {
           </ButtonContainer>
           {errors.type && <ErrorMsg>{errors.type.message}</ErrorMsg>}
           <InputStyle type="hidden" {...register('type')} />
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="name">이름</InputLabelStyle>
             <InputWrapper>
@@ -148,31 +164,44 @@ const RegisterPet = () => {
               {errors.name && <ErrorMsg>{errors.name.message}</ErrorMsg>}
             </InputWrapper>
           </RegisterInputWrapper>
+
           {/* 수정하기 */}
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="male">성별</InputLabelStyle>
             <InputWrapper>
-              <RadioWrapper>
-                <input id="maleTrue" type="radio" value="true" {...register('male')} />
-                <RadioLabel htmlFor="maleTrue">남자아이</RadioLabel>
-                <input id="maleFalse" type="radio" value="false" {...register('male')} />
-                <RadioLabel htmlFor="maleFalse">여자아이</RadioLabel>
-              </RadioWrapper>
+              <RadioContainer>
+                <RadioWrapper>
+                  <input id="maleTrue" type="radio" value="true" {...register('male')} />
+                  <RadioLabel htmlFor="maleTrue">남자아이</RadioLabel>
+                </RadioWrapper>
+                <RadioWrapper>
+                  <input id="maleFalse" type="radio" value="false" {...register('male')} />
+                  <RadioLabel htmlFor="maleFalse">여자아이</RadioLabel>
+                </RadioWrapper>
+              </RadioContainer>
               {errors.male && <ErrorMsg>{errors.male.message}</ErrorMsg>}
             </InputWrapper>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="neutering">중성화</InputLabelStyle>
             <InputWrapper>
-              <RadioWrapper>
-                <input id="neuteringTrue" type="radio" value="true" {...register('neutering')} />
-                <RadioLabel htmlFor="neuteringTrue">했음</RadioLabel>
-                <input id="neuteringFalse" type="radio" value="false" {...register('neutering')} />
-                <RadioLabel htmlFor="neuteringFalse">안했음</RadioLabel>
-              </RadioWrapper>
+              <RadioContainer>
+                <RadioWrapper>
+                  <input id="neuteringTrue" type="radio" value="true" {...register('neutering')} />
+                  <RadioLabel htmlFor="neuteringTrue">했음</RadioLabel>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                  <input id="neuteringFalse" type="radio" value="false" {...register('neutering')} />
+                  <RadioLabel htmlFor="neuteringFalse">안했음</RadioLabel>
+                </RadioWrapper>
+              </RadioContainer>
+
               {errors.neutering && <ErrorMsg>{errors.neutering.message}</ErrorMsg>}
             </InputWrapper>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="species">품종</InputLabelStyle>
             <InputWrapper>
@@ -188,6 +217,7 @@ const RegisterPet = () => {
               {errors.species && <ErrorMsg>{errors.species.message}</ErrorMsg>}
             </InputWrapper>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="weight">나이</InputLabelStyle>
             <InputWrapper>
@@ -203,6 +233,7 @@ const RegisterPet = () => {
               {errors.age && <ErrorMsg>{errors.age.message}</ErrorMsg>}
             </InputWrapper>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="weight">몸무게 (kg)</InputLabelStyle>
             <InputWrapper>
@@ -218,6 +249,7 @@ const RegisterPet = () => {
               {errors.weight && <ErrorMsg>{errors.weight.message}</ErrorMsg>}
             </InputWrapper>
           </RegisterInputWrapper>
+
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="body">나의 펫소개</InputLabelStyle>
             <InputWrapper>
@@ -235,6 +267,7 @@ const RegisterPet = () => {
               {errors.body && <ErrorMsg>{errors.body.message}</ErrorMsg>}
             </InputWrapper>
           </RegisterInputWrapper>
+
           <Button type="submit" variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
             등록하기
           </Button>
@@ -319,7 +352,7 @@ export const InputWrapper = styled.div`
 
 export const RadioLabel = styled.label`
   ${(props) => props.theme.fontSize.s14h21};
-  margin-left: -3px;
+  margin-left: 8px;
   color: ${({ theme }) => theme.textColors.gray60};
   input:checked + & {
     color: #279eff;
@@ -328,11 +361,16 @@ export const RadioLabel = styled.label`
 
 export const RadioWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  width: 50%;
+`;
+
+const RadioContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
   width: 80%;
 `;
 
-const ErrorMsg = styled.div`
+export const ErrorMsg = styled.div`
   color: red;
   display: bolck;
   margin-top: 5px;
