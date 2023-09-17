@@ -77,9 +77,7 @@ public class PetsitterQueryDsl {
                         reservation.progress.ne(Progress.RESERVATION_CANCELLED)
                 ).fetchFirst();
 
-        if (findedReservation == null) return false;
-
-        return true;
+        return findedReservation != null;
     }
 
     public boolean petsitterPossibleCheck(Petsitter requestPetsitter,
@@ -99,8 +97,6 @@ public class PetsitterQueryDsl {
                         petsitter.possibleTimeEnd.goe(reservationTimeEnd)
                 ).fetchOne();
 
-        if (findedPetsitter == null) return true;
-
-        return false;
+        return findedPetsitter == null;
     }
 }

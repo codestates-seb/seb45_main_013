@@ -86,7 +86,7 @@ public class PetController {
 
     //펫 삭제(비활성화)
     @PatchMapping("/{pet_id}/disable")
-    public ResponseEntity<String> deletePet(@PathVariable ("pet_id") @Positive long petId,
+    public ResponseEntity<String> disablePet(@PathVariable ("pet_id") @Positive long petId,
                                             @LoginMemberId Long memberId){
 
         service.disablePet(petId, memberId);
