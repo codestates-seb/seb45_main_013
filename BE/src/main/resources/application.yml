@@ -39,6 +39,10 @@ spring:
             scope:
               - email
               - profile
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 cloud:
   aws:
