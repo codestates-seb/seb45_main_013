@@ -92,6 +92,8 @@ public class ReservationService {
         response.setMember(reservationQueryDsl.findReservationMember(reservation));
         response.setPetsitter(reservationQueryDsl.findReservationPetsitter(reservation));
         response.setPets(reservationQueryDsl.findReservationPets(reservation));
+        response.setReviewId(reservationQueryDsl.findReviewId(reservation));
+        response.setJournalId(reservationQueryDsl.findJournalId(reservation));
 
         return response;
     }
