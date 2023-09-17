@@ -54,8 +54,8 @@ public class ReservationUtils {
             throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
     }
 
-    //펫시터의 예약이 중복되지 않는지 확인
-    public void petsitterScheduleCheck(Petsitter petsitter, Reservation reservation){
+    //해당 예약이 가능한 펫시터인지 확인
+    public void petsitterPossibleCheck(Petsitter petsitter, Reservation reservation){
         String reservationWeekDay = getReservationWeekDay(reservation.getReservationDay());
         String reservationLocation = extractionAddress(reservation.getAddress());
         Petsitter.PossiblePetType reservationPetType = verificationReservationPetType(reservation.getReservationPets());
@@ -65,8 +65,8 @@ public class ReservationUtils {
             throw new BusinessLogicException(ExceptionCode.NOT_AVAILABLE_PETSITTER);
     }
 
-    //해당 예약이 가능한 펫시터인지 확인
-    public void petsitterPossibleCheck(Petsitter petsitter, Reservation reservation){
+    //펫시터의 예약이 중복되지 않는지 확인
+    public void petsitterScheduleCheck(Petsitter petsitter, Reservation reservation){
         if (petsitterQueryDsl.petsitterReservationCheck(petsitter, reservation.getReservationTimeStart(),
                 reservation.getReservationTimeEnd(), reservation.getReservationDay()))
             throw new BusinessLogicException(ExceptionCode.ALREADY_RESERVATION);

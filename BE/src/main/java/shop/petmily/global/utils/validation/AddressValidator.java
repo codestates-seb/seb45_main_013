@@ -24,7 +24,6 @@ public class AddressValidator implements ConstraintValidator<ValidAddress, Strin
         }
         if(Pattern.matches(BIGCITY_ADDRESS_PATTERN, address)) return true;
         if(Pattern.matches(MIDDLE_CITY_ADDRESS_PATTERN, address)) return false;
-        if(Pattern.matches(SMALLCITY_ADDRESS_PATTERN, address)) return true;
-        return false;
+        return Pattern.matches(SMALLCITY_ADDRESS_PATTERN, address);
     }
 }

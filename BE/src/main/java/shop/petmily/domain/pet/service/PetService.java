@@ -105,7 +105,6 @@ public class PetService {
     //펫 삭제(비활성화)
     public void disablePet(Long petId, Long requestMemberId){
         Pet verifiedPet = verifiedPet(petId);
-
         petActiveCheck(verifiedPet);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
 
