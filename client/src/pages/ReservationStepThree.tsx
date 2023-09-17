@@ -38,6 +38,7 @@ const PetItem = [
     name: '코코',
     age: 13,
     species: '푸들',
+    male: true,
     photo: '/imgs/PetImg.svg',
   },
   {
@@ -46,6 +47,7 @@ const PetItem = [
     name: '두부',
     age: 4,
     species: '보스턴 테리어',
+    male: false,
     photo: '/imgs/PetImg.svg',
   },
 ];
@@ -65,21 +67,9 @@ type PetItem = {
   name: string;
   age: number;
   species: string;
+  male: boolean;
   photo: string;
 };
-
-const groupedPetItems: PetItem[][] = PetItem.reduce((resultArray: PetItem[][], item, index) => {
-  // 두마리씩 묶어서 배열에 넣어서 보여주기 위함
-  const chunkIndex = Math.floor(index / 2);
-
-  if (!resultArray[chunkIndex]) {
-    resultArray[chunkIndex] = [];
-  }
-
-  resultArray[chunkIndex].push(item);
-
-  return resultArray;
-}, []);
 
 const ReservationStepFour = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -143,18 +133,16 @@ const ReservationStepFour = () => {
         ))}
 
         <ReservationResult>
-          <AddressWrap>
+          <TitleWrap>
             <AddressTitle>주소</AddressTitle>
-            <Address>{ReservationItem[0].address}</Address>
-          </AddressWrap>
-          <DayWrap>
             <ReservationDayTitle>예약 날짜</ReservationDayTitle>
-            <ReservationDay>{ReservationItem[0].reservationDay}</ReservationDay>
-          </DayWrap>
-          <TimeWrap>
             <ReservationTimeTitle>예약 시간</ReservationTimeTitle>
+          </TitleWrap>
+          <ContentWrap>
+            <Address>{ReservationItem[0].address}</Address>
+            <ReservationDay>{ReservationItem[0].reservationDay}</ReservationDay>
             <ReservationTime>{`${ReservationItem[0].reservationTimeStart} ~ ${ReservationItem[0].reservationTimeEnd}`}</ReservationTime>
-          </TimeWrap>
+          </ContentWrap>
         </ReservationResult>
 
         <PetCard>
@@ -169,20 +157,19 @@ const ReservationStepFour = () => {
             showArrows={false}
             useKeyboardArrows={false}
           >
-            {groupedPetItems.map((group, index) => (
-              <DividerContainer key={`group-${index}`}>
-                {group.map((item) => (
-                  <PetWrap key={item.petId}>
-                    <PetImg src={item.photo} alt="PetImg" />
-                    <PetInfo>
-                      <PetName>{item.name}</PetName>
-                      <WrapText>
-                        <PetSpecies>{`${item.species} /`}</PetSpecies>
-                        <PetAge>{`${item.age}살`}</PetAge>
-                      </WrapText>
-                    </PetInfo>
-                  </PetWrap>
-                ))}
+            {PetItem.map((item) => (
+              <DividerContainer key={item.petId}>
+                <PetWrap>
+                  <PetImg src={item.photo} alt="PetImg" />
+                  <PetInfo>
+                    <PetName>{item.name}</PetName>
+                    <WrapText>
+                      <PetSpecies>{`${item.species} /`}</PetSpecies>
+                      <PetAge>{`${item.age}살`}</PetAge>
+                    </WrapText>
+                  </PetInfo>
+                  <MaleIcon isMale={item.male} />
+                </PetWrap>
               </DividerContainer>
             ))}
           </CustomCarousel>
@@ -398,7 +385,7 @@ const ReviewCount = styled.h4`
 const DividerContainer = styled.div`
   display: flex;
   padding: 0 40px;
-  margin-top: -20px;
+  margin-top: -14px;
 `;
 
 const PetsitterLocation = styled.h4`
@@ -409,61 +396,56 @@ const PetsitterLocation = styled.h4`
 
 const ReservationResult = styled.div`
   display: flex;
-  flex-direction: column;
+  padding: 24px 0 24px 0;
   border-radius: 8px;
   align-items: center;
+  justify-content: center;
   background-color: ${(props) => props.theme.colors.white};
   box-shadow: ${(props) => props.theme.shadow.dp01};
+`;
+
+const TitleWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const ContentWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 `;
 
 const AddressTitle = styled.h3`
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.bold};
   color: #595959;
+  white-space: nowrap;
 `;
 
 const Address = styled.div`
   ${(props) => props.theme.fontSize.s16h24};
-`;
-
-const AddressWrap = styled.div`
-  display: flex;
-  margin: 36px 0 12px 0;
-  align-items: center;
-  flex-direction: space-between;
-  gap: 12px;
-`;
-
-const DayWrap = styled.div`
-  display: flex;
-  margin: 0 0 12px 0;
-  align-items: center;
-  flex-direction: space-between;
-  gap: 12px;
+  white-space: normal;
+  text-align: center;
 `;
 
 const ReservationDayTitle = styled.h3`
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.bold};
   color: #595959;
+  white-space: nowrap;
 `;
 
 const ReservationDay = styled.div`
   ${(props) => props.theme.fontSize.s16h24};
 `;
 
-const TimeWrap = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 0 0 36px 0;
-  flex-direction: space-between;
-  gap: 12px;
-`;
-
 const ReservationTimeTitle = styled.h3`
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: ${(props) => props.theme.fontWeights.bold};
   color: #595959;
+  white-space: nowrap;
 `;
 
 const ReservationTime = styled.div`
@@ -492,12 +474,13 @@ const PetWrap = styled.div`
   flex-direction: row;
   margin-top: 12px;
   margin-right: 80px;
+  margin-bottom: 40px;
   justify-content: space-between;
 `;
 
 const PetImg = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   margin: 8px 16px 0 0;
 `;
@@ -506,6 +489,16 @@ const PetInfo = styled.div`
   display: flex;
   flex-direction: column;
   white-space: nowrap;
+  margin-top: 8px;
+`;
+
+const MaleIcon = styled.img<{ isMale: boolean }>`
+  position: absolute;
+  top: 4%;
+  right: 60%;
+  width: 20px;
+  height: 20px;
+  content: url(${(props) => (props.isMale ? '/icons/PetMaleIcon.svg' : '/icons/PetFemaleIcon.svg')});
 `;
 
 const PetName = styled.h3`
@@ -541,7 +534,7 @@ const CustomCarousel = styled(Carousel)`
   }
 
   .control-dots {
-    top: 100px !important;
+    top: 80px !important;
   }
 
   .dot {
@@ -601,19 +594,22 @@ const ConfirmContainer = styled.div`
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 20px;
   background-color: ${(props) => props.theme.colors.white};
+  justify-content: center;
 `;
 
-const Textbox = styled.div``;
+const Textbox = styled.div`
+  margin-right: 8px;
+`;
 
 const ConfirmText = styled.div`
   ${(props) => props.theme.fontSize.s16h24}
-  margin: 16px 0 4px 36px;
+  margin: 16px 0 4px 0;
 `;
 
 const WarningText = styled.div`
   ${(props) => props.theme.fontSize.s12h18}
   color: ${(props) => props.theme.textColors.primary};
-  margin: 0 0 16px 36px;
+  margin: 0 0 16px 0;
 `;
 
 const ButtonContainer = styled.div`
