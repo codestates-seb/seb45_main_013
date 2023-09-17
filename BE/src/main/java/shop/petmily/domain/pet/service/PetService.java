@@ -37,9 +37,9 @@ public class PetService {
 
     //펫수정
     public void updatePet(Pet pet, MultipartFile file){
-        Pet verifiedPet = verifiedPet(pet.getPetId());
         String beforeFileName = null;
 
+        Pet verifiedPet = verifiedPet(pet.getPetId());
         petActiveCheck(verifiedPet);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), pet.getMember().getMemberId());
 
@@ -70,9 +70,9 @@ public class PetService {
 
     //펫사진삭제
     public void photoDelete(Long petId, Long requestMemberId){
-        Pet verifiedPet = verifiedPet(petId);
         String beforeFileName;
 
+        Pet verifiedPet = verifiedPet(petId);
         petActiveCheck(verifiedPet);
         verifiedPetOwner(verifiedPet.getMember().getMemberId(), requestMemberId);
 
