@@ -32,11 +32,11 @@ public enum ExceptionCode {
     BEFORE_CONFIRMED(400, "유효하지 않은 예약입니다"),
     ALREADY_RESERVATION(400, "해당 펫시터는 선택하신 날짜,시간에 중복된 예약이 있습니다."),
     NOT_AVAILABLE_PETSITTER(400,"해당 예약정보로는 선택하신 펫시터가 불가능합니다."),
+    NOT_CAT_DOG(400, "올바른 반려동물 타입이 아닙니다."),
 
-    //펫
+    //펫,
     PET_NOT_EXIST(404,"존재하지 않는 펫 입니다."),
     NOT_MY_PET(400, "올바른 보호자와 반려동물이 아닙니다." ),
-    NOT_CAT_DOG(400, "올바른 반려동물 타입이 아닙니다."),
     ALREADY_NEUTERING(400, "중성화는 false > true 한번만 변경 가능합니다."),
     NOT_ACTIVE_PET(400, "요청에 비활성화된 반려동물이 포함되어 있습니다."),
 
