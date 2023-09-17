@@ -188,7 +188,7 @@ const Reservation = () => {
     if (reservationDay && reservationTimeStart && reservationTimeEnd && address) {
       console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address });
       dispatch(setReservation({ reservationDay, reservationTimeStart, reservationTimeEnd, address }));
-      navigate('/reservation');
+      navigate('/reservation/step2');
     } else if (!reservationTimeStart || !reservationTimeEnd) {
       alert('시간을 확인해주세요');
     }
@@ -207,7 +207,7 @@ const Reservation = () => {
       <StatusHeader>
         <BackImg src="/imgs/BackArrow.svg" onClick={handleBackClick} />
         <StatusTitleText>예약</StatusTitleText>
-        <PageNumberText>1/3</PageNumberText>
+        <PageNumberText>1/2</PageNumberText>
       </StatusHeader>
       <ReservationContainer onSubmit={handleSubmit(onSubmit)}>
         <Container>

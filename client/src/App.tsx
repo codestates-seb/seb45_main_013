@@ -86,7 +86,6 @@ const App = () => {
                 <Route path="mypage" element={<Mypage />} />
                 <Route path="reservation" element={<Reservation />} />
                 <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>
-                <Route path="reservation/step3" element={<ReservationStepThree />}></Route>
                 <Route path="cares/detail" element={<Cares />} />
                 <Route path="cares/:memberId/:reservationId/review" element={<CreateReview />} />
                 <Route path="cares/:memberId/:reservationId/journal" element={<CreateJournal />} />
@@ -101,6 +100,7 @@ const App = () => {
                 <Route path="search" element={<Search />} />
                 <Route path="qna" element={<QnA />} />
                 <Route path="petsitters" element={<ViewPetsitters />}></Route>
+                <Route path="reservation/step3" element={<ReservationStepThree />}></Route>
                 <Route path="cares/journal/:journalId" element={<ViewJournal />}></Route>
                 <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
                 <Route path="petsitters/:memberId/schedule" element={<SitterSchedule />}></Route>

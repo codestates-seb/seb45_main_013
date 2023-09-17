@@ -135,7 +135,7 @@ const SitterSchedule = () => {
       updatedPossibleLocation[emptyAddressIndex] = address;
       setPossibleLocation(updatedPossibleLocation);
 
-      setValue(`possibleLocation[${emptyAddressIndex}]`, address);
+      // setValue(`possibleLocation[${emptyAddressIndex}]`, address);
     }
   };
 
