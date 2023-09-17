@@ -9,6 +9,7 @@ import shop.petmily.domain.reservation.dto.ReservationDetailsDto;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.entity.ReservationPet;
+import shop.petmily.domain.review.entity.QReview;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,6 +20,8 @@ import static shop.petmily.domain.member.entity.QMember.member;
 import static shop.petmily.domain.member.entity.QPetsitter.petsitter;
 import static shop.petmily.domain.pet.entity.QPet.pet;
 import static shop.petmily.domain.reservation.entity.QReservation.reservation;
+import static shop.petmily.domain.review.entity.QReview.review;
+import static shop.petmily.domain.journal.entity.QJournal.journal;
 
 @Repository
 public class ReservationQueryDsl {
@@ -93,6 +96,24 @@ public class ReservationQueryDsl {
                                 .map(ReservationPet::getPet)
                                 .collect(Collectors.toList()))
                 ).fetch();
+    }
+
+    public Long findReviewId(Reservation requestReservation){
+        return jpaQueryFactory
+                .select(review.reviewId)
+                .from(review)
+                .where(
+                        review.reservation.eq(requestReservation)
+                ).fetchOne();
+    }
+
+    public Long findJournalId(Reservation requestReservation){
+        return jpaQueryFactory
+                .select(journal.journalId)
+                .from(journal)
+                .where(
+                        journal.reservation.eq(requestReservation)
+                ).fetchOne();
     }
 
     public List<Reservation> findReservationsByDateTime(){

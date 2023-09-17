@@ -37,6 +37,10 @@ public class ReservationDetailsDto {
 
         private List<ReservationDetailsDto.PetResponse> pets;
 
+        private Long reviewId;
+
+        private Long journalId;
+
         public Response(Long reservationId, LocalDate reservationDay, LocalTime reservationTimeStart,
                         LocalTime reservationTimeEnd, String address, String phone, String body,
                         Progress progress) {
