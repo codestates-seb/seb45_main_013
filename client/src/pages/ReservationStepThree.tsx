@@ -221,7 +221,7 @@ const ReservationStepFour = () => {
                 <VerificationText key={data.text}>{data.text}</VerificationText>
               ),
             )}
-            <DialogContentText sx={{ color: 'red', fontWeight: 'bold', mt: 2 }}>필수 확인 사항</DialogContentText>
+            <DialogContentText sx={{ color: 'red', fontWeight: 'bold', mt: 2 }}> 필수 확인 사항</DialogContentText>
             {verificationNotice.map((data) =>
               data.isSpan ? (
                 <VerificationText dangerouslySetInnerHTML={{ __html: data.text }} key={data.text}></VerificationText>
