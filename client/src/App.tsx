@@ -86,9 +86,9 @@ const App = () => {
                 <Route path="mypage" element={<Mypage />} />
                 <Route path="reservation" element={<Reservation />} />
                 <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>
-                <Route path="cares/detail" element={<Cares />} />
-                <Route path="cares/:memberId/:reservationId/review" element={<CreateReview />} />
-                <Route path="cares/:memberId/:reservationId/journal" element={<CreateJournal />} />
+                <Route path="cares" element={<Cares />} />
+                <Route path="cares/:reservationId/review" element={<CreateReview />} />
+                <Route path="cares/:reservationId/journal" element={<CreateJournal />} />
               </Route>
               <Route path="/" element={<BackHeaderLayout />}>
                 <Route path="login" element={<Login />} />

@@ -25,7 +25,7 @@ const NavHeader = () => {
   const NavItem = [
     { text: '홈', link: '/' },
     { text: '예약하기', link: '/reservation' },
-    { text: '예약현황', link: `/cares/detail` },
+    { text: '예약현황', link: `/cares` },
     { text: '이용후기', link: '/reviews' },
   ];
 
@@ -79,35 +79,37 @@ const NavHeader = () => {
         })
         .catch((error) => {
           // access token 재발급
-          dispatch(deleteUser());
           if (error.response.data.status === 401 || error.response.data.status === 500) {
             const refreshToken = getCookieValue('refresh_token');
 
             axios
               .post(`${apiUrl}/refreshToken`, {}, { headers: { Refresh: refreshToken } })
               .then((res) => {
-                console.log(res);
                 if (res.data.accessToken && res.data.refreshToken) {
-                  document.cookie = `access_token=${res.data.accessToken}; path=/;`;
-                  document.cookie = `refresh_token=${res.data.refreshToken};  path=/;`;
+                  const expirationDate = new Date();
+                  expirationDate.setDate(expirationDate.getDate() + 1);
 
-                  dispatch(login());
-                  // axios
-                  //   .get(`${apiUrl}/member/my-page`, {
-                  //     headers: { Authorization: `Bearer ${res.data.accessToken}` },
-                  //   })
-                  //   .then((res) => {
-                  //     dispatch(login());
-                  //     dispatch(setUser(res.data));
-                  //   })
-                  //   .catch((error) => {
-                  //     console.log(error);
-                  //   });
+                  document.cookie = `access_token=${res.data.accessToken}; path=/;`;
+                  document.cookie = `refresh_token=${res.data.refreshToken};  path=/; expires={expirationDate.UTCString()};`;
+
+                  axios
+                    .get(`${apiUrl}/members/my-page`, {
+                      headers: { Authorization: `Bearer ${res.data.accessToken}` },
+                    })
+                    .then((res) => {
+                      dispatch(login());
+                      dispatch(setUser(res.data));
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
                 }
               })
               .catch((error) => {
-                alert('로그인이 만료되었습니다. Nav');
+                alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
                 dispatch(deleteUser());
+                deleteCookie('access_token');
+                deleteCookie('refresh_token');
               });
           }
         });
