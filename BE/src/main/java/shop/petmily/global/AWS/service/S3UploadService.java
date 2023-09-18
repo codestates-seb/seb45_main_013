@@ -31,16 +31,15 @@ public class S3UploadService {
     public String saveFile(MultipartFile originalIMG) {
         checkIMG(originalIMG);
 
-        String uniqueFileName = UUID.randomUUID() + "_" + originalIMG.getOriginalFilename();
-
         try {
+            String uniqueFileName = UUID.randomUUID() + "_" + originalIMG.getOriginalFilename();
             File resizeIMG = resizeIMG(originalIMG);
 
             amazonS3.putObject(new PutObjectRequest(bucket, uniqueFileName, resizeIMG).withCannedAcl(CannedAccessControlList.PublicRead));
-            String savePath = amazonS3.getUrl(bucket, uniqueFileName).toString();
 
             resizeIMG.delete();
-            return savePath.replace(bucket, "bucketUrl");
+
+            return amazonS3.getUrl(bucket, uniqueFileName).toString().replace(bucket, "bucketUrl");
         } catch (SdkClientException | IOException e) {
             throw new BusinessLogicException(ExceptionCode.FILE_UPLOAD_FAILED);
         }
@@ -52,7 +51,7 @@ public class S3UploadService {
     }
 
     private void checkIMG(MultipartFile multipartFile) {
-        if (!Objects.requireNonNull(multipartFile.getContentType()).contains("image"))
+        if (!multipartFile.getContentType().contains("image"))
             throw new BusinessLogicException(ExceptionCode.NO_IMG);
     }
 
