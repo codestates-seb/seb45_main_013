@@ -8,6 +8,7 @@ import CareCard from '@components/Carecard';
 import { getCookieValue } from 'hooks/getCookie';
 import { useInView } from 'react-intersection-observer';
 import jwt_decode from 'jwt-decode';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -54,38 +55,60 @@ const Cares = () => {
     }
   }, []);
 
-  // console.log('isEnd:', isEnd);
-  // console.log('Loading... 이 보이나요?: ', inView);
-  // console.log(reservations);
-
+  // 예약 불러오기 (access token 재발급 완료)
   useEffect(() => {
     if (isLogin && inView) {
-      axios
-        .get(
-          `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=${page}&size=10${filters
-            .map((filterItem) => {
-              if (filter === filterItem.text) {
-                return filterItem.value;
-              }
-              return '';
-            })
-            .join('')}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
+      const getCares = async () => {
+        try {
+          const response = await axios.get(
+            `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=${page}&size=10${filters
+              .map((filterItem) => {
+                if (filter === filterItem.text) {
+                  return filterItem.value;
+                }
+                return '';
+              })
+              .join('')}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
             },
-          },
-        )
-        .then((res) => {
-          setReservations((prev) => [...prev, ...res.data.reservations]);
+          );
+          setReservations((prev) => [...prev, ...response.data.reservations]);
           setPage((page) => page + 1);
-        })
-        .catch((error) => {
-          console.log(error);
+        } catch (error: any) {
           if (error) {
             setEnd(true);
           }
-        });
+          if (error.response.status === 401) {
+            try {
+              const newAccessToken = await refreshAccessToken();
+              const response = await axios.get(
+                `${apiUrl}/reservations/${petsitterBoolean ? 'petsitter' : 'member'}?page=${page}&size=10${filters
+                  .map((filterItem) => {
+                    if (filter === filterItem.text) {
+                      return filterItem.value;
+                    }
+                    return '';
+                  })
+                  .join('')}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${newAccessToken}`,
+                  },
+                },
+              );
+              setReservations((prev) => [...prev, ...response.data.reservations]);
+              setPage((page) => page + 1);
+            } catch (error) {
+              // 에러 설정 해야함 (access token이 재발급 되지 않는 상황)
+              console.log(error);
+            }
+          }
+        }
+      };
+      getCares();
     }
   }, [accessToken, filter, inView]);
 

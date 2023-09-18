@@ -37,13 +37,16 @@ import { getCookieValue } from 'hooks/getCookie';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { addPets, setReservation } from 'store/reservationSlice';
-import { IUser } from 'store/userSlice';
+import { IUser, deleteUser } from 'store/userSlice';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
+import { deleteCookie } from 'hooks/deleteCookie';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 interface IFormInput {
   address: string;
+  detailAddress: string;
   error: boolean;
 }
 
@@ -86,7 +89,6 @@ const Reservation = () => {
 
   const [pets, setPets] = useState([]);
 
-  console.log(pets);
   /// Time
   now.setMonth(now.getMonth() + 3);
   const modifiedNow = now.toISOString().slice(0, 10);
@@ -152,7 +154,11 @@ const Reservation = () => {
     if (checkedPets.includes(petId)) {
       setCheckedPets(checkedPets.filter((id) => id !== petId));
     } else {
-      setCheckedPets([...checkedPets, petId]);
+      if (checkedPets.length < 3) {
+        setCheckedPets([...checkedPets, petId]);
+      } else {
+        alert('최대 3마리까지만 선택할 수 있습니다.');
+      }
     }
   };
 
@@ -192,7 +198,7 @@ const Reservation = () => {
     }
   };
 
-  // 펫등록 submit
+  // 펫등록 submit (access token 재발급 설정 완료)
   const handlePetSubmit = async () => {
     const accessToken = getCookieValue('access_token');
 
@@ -219,22 +225,61 @@ const Reservation = () => {
       console.log(response);
       if (response.status === 201) {
         alert('펫 등록되었습니다.');
-        setIsModalOpen(false);
+        setIsPetModalOpen(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const newAccessToken = await refreshAccessToken();
+          if (newAccessToken) {
+            const response = await axios.post(`${apiUrl}/pets`, formData, {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+                'Content-Type': 'multipart/form-data',
+              },
+            });
+            if (response.status === 201) {
+              alert('펫 등록되었습니다.');
+              setIsPetModalOpen(false);
+            }
+          }
+        } catch (error) {
+          // 에러 설정 해야함 (access token이 재발급 되지 않는 상황)
+          console.log(error);
+        }
+      }
     }
   };
 
+  // 예약 정보 리덕스로 저장
   const onSubmit = async (data: any) => {
-    const { address } = data;
-    if (reservationDay && reservationTimeStart && reservationTimeEnd && address) {
-      console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address });
-      dispatch(setReservation({ reservationDay, reservationTimeStart, reservationTimeEnd, address }));
+    const { address, detailAddress } = data;
+
+    if (!reservationTimeStart || !reservationTimeEnd) {
+      alert('시간을 확인해주세요.');
+    } else if (checkedPets.length === 0) {
+      alert('맡기실 반려동물을 선택해주세요.');
+    } else if (
+      reservationDay &&
+      reservationTimeStart &&
+      reservationTimeEnd &&
+      address &&
+      detailAddress &&
+      checkedPets.length > 0
+    ) {
+      // console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address, detailAddress, checkedPets });
+      dispatch(
+        setReservation({
+          reservationDay,
+          reservationTimeStart,
+          reservationTimeEnd,
+          address: `${address} ${detailAddress}`,
+          pets: checkedPets,
+        }),
+      );
       dispatch(addPets(pets));
       navigate('/reservation/step2');
-    } else if (!reservationTimeStart || !reservationTimeEnd) {
-      alert('시간을 확인해주세요');
     }
   };
 
@@ -245,17 +290,41 @@ const Reservation = () => {
     }
   });
 
+  // 펫 정보 가져오기 (accessToken 재발급 설정 완료)
   useEffect(() => {
-    const accessToken = getCookieValue('access_token');
-    if (isLogin && accessToken) {
-      try {
-        axios
-          .get(`${apiUrl}/pets`, { headers: { Authorization: `Bearer ${accessToken}` } })
-          .then((res) => setPets(res.data));
-      } catch (error: any) {
-        console.log(error);
+    const getPets = async () => {
+      const accessToken = getCookieValue('access_token');
+      if (isLogin && accessToken) {
+        try {
+          const response = await axios.get(`${apiUrl}/pets`, { headers: { Authorization: `Bearer ${accessToken}` } });
+          setPets(response.data);
+        } catch (error: any) {
+          console.error(error);
+          if (error.response && error.response.status === 401) {
+            try {
+              const newAccessToken = await refreshAccessToken();
+              if (newAccessToken) {
+                // Access Token을 성공적으로 갱신했으므로 다시 요청을 보냅니다.
+                const response = await axios.get(`${apiUrl}/pets`, {
+                  headers: { Authorization: `Bearer ${newAccessToken}` },
+                });
+                setPets(response.data);
+              }
+            } catch (refreshError) {
+              console.error(refreshError);
+              // Refresh Token을 사용하여 새로운 Access Token을 얻는 동안 오류가 발생했을 때 처리
+
+              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              dispatch(deleteUser());
+              deleteCookie('access_token');
+              deleteCookie('refresh_token');
+            }
+          }
+        }
       }
-    }
+    };
+
+    getPets();
   }, [isModalOpen]);
 
   return (
@@ -328,9 +397,7 @@ const Reservation = () => {
         <Container>
           <ScheduleText>어디로 방문할까요?</ScheduleText>
           <TextField
-            id="outlined-basic"
             label="주소를 입력해주세요"
-            variant="outlined"
             fullWidth
             value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
             {...register('address', { required: true })}
@@ -338,6 +405,7 @@ const Reservation = () => {
             onClick={onToggleModal}
             onKeyDown={onToggleModal}
           />
+          <TextField label="상세주소를 입력해주세요" fullWidth {...register('detailAddress', { required: true })} />
           {isModalOpen && (
             <Modal
               open={isModalOpen}
