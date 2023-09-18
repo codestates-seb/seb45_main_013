@@ -50,6 +50,12 @@ public class PossiblePetsitterDto {
 
         private String photo;
 
+        private String possibleDay;
+
+        private LocalTime possibleTimeStart;
+
+        private LocalTime possibleTimeEnd;
+
         private double star;
 
         private Integer reviewCount;
