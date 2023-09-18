@@ -38,7 +38,10 @@ const Cares = () => {
     setPage(1);
   };
   useEffect(() => {
-    if (!isLogin || !accessToken) {
+    if (!isLogin) {
+      alert('로그인을 해주세요.');
+      navigate('/');
+    } else if (!accessToken) {
       alert('권한이 없습니다.');
       navigate('/');
     }
@@ -74,8 +77,6 @@ const Cares = () => {
           },
         )
         .then((res) => {
-          console.log(res);
-
           setReservations((prev) => [...prev, ...res.data.reservations]);
           setPage((page) => page + 1);
         })
@@ -83,8 +84,6 @@ const Cares = () => {
           console.log(error);
           if (error) {
             setEnd(true);
-          }
-          if (error.response.data.status === 401) {
           }
         });
     }
@@ -104,9 +103,11 @@ const Cares = () => {
           {Array.isArray(reservations) && reservations.length > 0 ? (
             reservations.map((reservation) => <CareCard key={reservation.reservationId} reservation={reservation} />)
           ) : (
-            <div>등록된 예약이 없습니다.</div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div>등록된 예약이 없습니다.</div>
+            </div>
           )}
-          {!isEnd && <div ref={ref}>Loading...</div>}
+          {!isEnd || reservations.length === 0 ? <div ref={ref}>Loading...</div> : null}
         </CareCardContainer>
       </CareContainer>
     </MainContainer>

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -9,18 +10,17 @@ import styled, { keyframes } from 'styled-components';
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
-const accessToken = getCookieValue('access_token');
-
 const CreateJournal = () => {
   const navigate = useNavigate();
-  const { _, reservationId } = useParams();
+  const { reservationId } = useParams();
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
-  const [reservation, setReservation] = useState<any>();
-  const [journal, setJournal] = useState<any>(null);
+
+  const [reservation, setReservation] = useState<any>({});
+  const [journal, setJournal] = useState<any>();
   const [journalImages, setJournalImages] = useState([]);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -59,6 +59,7 @@ const CreateJournal = () => {
 
   // 일지 등록
   const handleSubmit = async () => {
+    const accessToken = getCookieValue('access_token');
     setIsRegisterLoading(true);
 
     const formData = new FormData();
@@ -87,6 +88,7 @@ const CreateJournal = () => {
 
   // 일지 수정
   const handleEditSubmit = async () => {
+    const accessToken = getCookieValue('access_token');
     setIsRegisterLoading(true);
 
     const formData = new FormData();
@@ -109,7 +111,7 @@ const CreateJournal = () => {
       });
       if (response.status === 200) {
         alert('일지가 수정되었습니다.');
-        navigate(`/cares/${memberId}`);
+        navigate(-1);
       }
     } catch (error) {
       console.log(error);
@@ -118,7 +120,7 @@ const CreateJournal = () => {
     setIsRegisterLoading(false);
   };
 
-  // 예약 조회
+  // 해당 예약 1개 조회
   useEffect(() => {
     if (!isLogin || !petsitterBoolean) {
       alert('권한이 없습니다.');
@@ -128,24 +130,23 @@ const CreateJournal = () => {
         axios.get(`${apiUrl}/reservations/${reservationId}`).then((res) => {
           setReservation(res.data);
 
-          const journal = res.data.journal;
-          const photos = res.data.journal?.photos;
+          // const photos = res.data.journal?.photos;
 
-          if (journal) {
-            setJournal(journal);
-            setJournalText(journal.body);
+          // if (journal) {
+          //   setJournal(journal);
+          //   setJournalText(journal.body);
 
-            if (photos) {
-              const modifiedJournalImages = photos.map((photoUrl: any) => {
-                if (photoUrl.includes('https://bucketUrl')) {
-                  return photoUrl.replace('https://bucketUrl', bucketUrl);
-                }
-                return '';
-              });
+          //   if (photos) {
+          //     const modifiedJournalImages = photos.map((photoUrl: any) => {
+          //       if (photoUrl.includes('https://bucketUrl')) {
+          //         return photoUrl.replace('https://bucketUrl', bucketUrl);
+          //       }
+          //       return '';
+          //     });
 
-              setJournalImages(modifiedJournalImages);
-            }
-          }
+          //     setJournalImages(modifiedJournalImages);
+          //   }
+          // }
         });
       } catch (error: any) {
         console.log(error);
@@ -157,6 +158,63 @@ const CreateJournal = () => {
     }
   }, []);
 
+  // const accessToken = getCookieValue('access_token');
+  // if (reservation.journalId) {
+  //   try {
+  //     axios
+  //       .get(`${apiUrl}/journals/${reservation.journalId}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       })
+  //       .then((res) => setJournal(res.data));
+  //   } catch (error) {
+  //     console.log(error);
+  //     refreshAccessToken();
+  //     if (accessToken) {
+  //       try {
+  //         const newAccessToken = await refreshAccessToken();
+  //       } catch (error) {}
+  //     }
+  //   }
+  // }
+  useEffect(() => {
+    const fetchData = async () => {
+      const accessToken = getCookieValue('access_token');
+      if (reservation.journalId) {
+        try {
+          const response = await axios.get(`${apiUrl}/journals/${reservation.journalId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setJournal(response.data);
+        } catch (error) {
+          console.error(error);
+          try {
+            const newAccessToken = await refreshAccessToken();
+            if (newAccessToken) {
+              const response = await axios.get(`${apiUrl}/journals/${reservation.journalId}`, {
+                headers: {
+                  Authorization: `Bearer ${newAccessToken}`,
+                },
+              });
+              setJournal(response.data);
+            }
+          } catch (refreshError) {
+            console.error(refreshError);
+            // Handle refresh error
+          }
+        }
+      }
+    };
+
+    fetchData();
+  }, [reservation]);
+
+  // console.log(reservation);
+  console.log(journal);
+
   return (
     <MainContainer>
       <TitleReservationContainer>
@@ -164,17 +222,17 @@ const CreateJournal = () => {
         <ReservationContainer>
           <FirstLine>
             <InfoContainer>
-              {reservation?.photo ? (
-                <ImgPhoto src={reservation.photo.replace(/https:\/\/bucketUrl/g, `${bucketUrl}`)} alt="client" />
+              {reservation.petsitter?.photo ? (
+                <Photo src={reservation?.petsitter?.photo.replace('https://bucketUrl', bucketUrl)} alt="client" />
               ) : (
-                <EmptyImgDiv />
+                <DefaultImg src="/imgs/User.svg" alt="default img" />
               )}
               <ClientInfo>
                 <div>예약번호: {reservation?.reservationId}</div>
-                <div>{reservation?.name} 고객님</div>
+                <div>{reservation?.member?.name} 고객님</div>
               </ClientInfo>
             </InfoContainer>
-            <div>나비 백구</div>
+            <PetName>{reservation?.pets?.map((pet: any) => <div key={pet.petId}>{pet.name}</div>)}</PetName>
           </FirstLine>
           <SecondLine>
             <div>{reservation?.address}</div>
@@ -271,13 +329,13 @@ const ReservationContainer = styled.div`
   box-shadow: ${(props) => props.theme.shadow.dp02};
 `;
 
-const ImgPhoto = styled.img`
+const Photo = styled.img`
   width: 60px;
   height: 60px;
   border-radius: 50%;
 `;
 
-const EmptyImgDiv = styled.div`
+const DefaultImg = styled.img`
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -291,6 +349,11 @@ const FirstLine = styled.div`
 `;
 
 const InfoContainer = styled.div`
+  display: flex;
+  gap: 4px;
+`;
+
+const PetName = styled.div`
   display: flex;
   gap: 4px;
 `;

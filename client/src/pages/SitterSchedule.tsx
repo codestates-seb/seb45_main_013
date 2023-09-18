@@ -146,6 +146,20 @@ const SitterSchedule = () => {
     setSelectedAddress(data.address);
     setPossibleLocation([address]);
     setIsModalOpen(false);
+
+    const emptyAddressIndex = addressValues.findIndex((address) => !address);
+
+    if (emptyAddressIndex !== -1) {
+      const updatedAddressValues = [...addressValues];
+      updatedAddressValues[emptyAddressIndex] = data.address;
+      setAddressValues(updatedAddressValues);
+
+      const updatedPossibleLocation = [...possibleLocation];
+      updatedPossibleLocation[emptyAddressIndex] = address;
+      setPossibleLocation(updatedPossibleLocation);
+
+      // setValue(`possibleLocation[${emptyAddressIndex}]`, address);
+    }
   };
 
   const onSubmit = async (data: IEditSchedule) => {

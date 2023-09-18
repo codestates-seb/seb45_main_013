@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
+import { SyntheticEvent } from 'react';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
@@ -15,6 +16,10 @@ const CareCard = ({ reservation }: any) => {
   const { memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   const [year, month, day] = reservation.reservationDay.split('-');
+
+  const onErrorImg = (e: SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = '/imgs/DefaultUser.svg';
+  };
 
   // 펫시터 예약 확정 (예약 신청 상태)
   const handleSitterApproval = async () => {
@@ -93,10 +98,14 @@ const CareCard = ({ reservation }: any) => {
             </Wrapper>
           </PlaceTimeWrapper>
         </div>
-        {reservation.photo ? (
-          <Photo src={reservation.photo.replace(/https:\/\/bucketUrl/g, `${bucketUrl}`)} alt="img" />
+        {reservation.petsitterPhoto ? (
+          <Photo
+            src={reservation.petsitterPhoto.replace('https://bucketUrl', bucketUrl)}
+            alt="petsitter photo"
+            onError={onErrorImg}
+          />
         ) : (
-          <EmptyImgDiv />
+          <DefaultImg src="/imgs/User.svg" alt="default img" />
         )}
       </FirstLine>
       <SecondLine>
@@ -116,9 +125,7 @@ const CareCard = ({ reservation }: any) => {
             </>
           ) : petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
-              <ActiveLink to={`/cares/${reservation.petsitterId}/${reservation.reservationId}/journal`}>
-                케어일지
-              </ActiveLink>
+              <ActiveLink to={`/cares/${reservation.reservationId}/journal`}>케어일지</ActiveLink>
             </>
           ) : null}
           {!petsitterBoolean && reservation.progress == 'RESERVATION_REQUEST' ? (
@@ -137,7 +144,7 @@ const CareCard = ({ reservation }: any) => {
           ) : !petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
               <ActiveLink to={`/cares/${memberId}`}>케어일지</ActiveLink>
-              <ActiveLink to={`/cares/${memberId}/${reservation.reservationId}/review`}>후기</ActiveLink>
+              <ActiveLink to={`/cares/${reservation.reservationId}/review`}>후기</ActiveLink>
             </>
           ) : null}
         </ButtonContainer>
@@ -169,7 +176,7 @@ const Photo = styled.img`
   border-radius: 50%;
 `;
 
-const EmptyImgDiv = styled.div`
+const DefaultImg = styled.img`
   width: 60px;
   height: 60px;
   border-radius: 50%;
