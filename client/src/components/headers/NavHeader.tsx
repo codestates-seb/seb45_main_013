@@ -7,6 +7,7 @@ import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
 import { IUser, deleteUser, login, setUser } from 'store/userSlice';
 import { deleteCookie } from 'hooks/deleteCookie';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -71,48 +72,38 @@ const NavHeader = () => {
   /// 유저 정보 가져오기
   useEffect(() => {
     if (accessToken || refreshToken) {
-      axios
-        .get(`${apiUrl}/members/my-page`, { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then((res) => {
+      const getUser = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/my-page`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
           dispatch(login());
-          dispatch(setUser(res.data));
-        })
-        .catch((error) => {
-          // access token 재발급
-          if (error.response.data.status === 401 || error.response.data.status === 500) {
-            const refreshToken = getCookieValue('refresh_token');
-
-            axios
-              .post(`${apiUrl}/refreshToken`, {}, { headers: { Refresh: refreshToken } })
-              .then((res) => {
-                if (res.data.accessToken && res.data.refreshToken) {
-                  const expirationDate = new Date();
-                  expirationDate.setDate(expirationDate.getDate() + 1);
-
-                  document.cookie = `access_token=${res.data.accessToken}; path=/;`;
-                  document.cookie = `refresh_token=${res.data.refreshToken};  path=/; expires={expirationDate.UTCString()};`;
-
-                  axios
-                    .get(`${apiUrl}/members/my-page`, {
-                      headers: { Authorization: `Bearer ${res.data.accessToken}` },
-                    })
-                    .then((res) => {
-                      dispatch(login());
-                      dispatch(setUser(res.data));
-                    })
-                    .catch((error) => {
-                      console.log(error);
-                    });
+          dispatch(setUser(response.data));
+        } catch (error: any) {
+          if (error.response && error.response.data.status === 401) {
+            try {
+              const newAccessToken = await refreshAccessToken();
+              if (newAccessToken) {
+                const response = await axios.get(`${apiUrl}/members/my-page`, {
+                  headers: { Authorization: `Bearer ${newAccessToken}` },
+                });
+                if (response) {
+                  dispatch(login());
+                  dispatch(setUser(response.data));
                 }
-              })
-              .catch((error) => {
-                alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
-                dispatch(deleteUser());
-                deleteCookie('access_token');
-                deleteCookie('refresh_token');
-              });
+              }
+            } catch (refreshError) {
+              console.error(refreshError);
+              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              dispatch(deleteUser());
+              deleteCookie('access_token');
+              deleteCookie('refresh_token');
+            }
           }
-        });
+        }
+      };
+
+      getUser();
     } else if (!accessToken && !refreshToken) {
       dispatch(deleteUser());
     }

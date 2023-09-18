@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
 import { SyntheticEvent } from 'react';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
@@ -27,7 +28,9 @@ const CareCard = ({ reservation }: any) => {
       const response = await axios.patch(`${apiUrl}/reservations/${reservation.reservationId}/confirm`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      console.log(response);
+      if (response) {
+        alert('예약이 확정되었습니다.');
+      }
     } catch (error) {
       console.log(error);
     }
@@ -39,13 +42,28 @@ const CareCard = ({ reservation }: any) => {
       const response = await axios.patch(`${apiUrl}/reservations/${reservation.reservationId}/petsittercancel`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      console.log(response);
-    } catch (error) {
+      if (response.status === 200) {
+        alert('예약이 취소되었습니다.');
+        navigate('/cares');
+      }
+    } catch (error: any) {
       console.log(error);
+      if (error.response.status === 404) {
+        alert(error.response.data.message);
+      }
+      if (error.status === 401) {
+        try {
+          const newAccessToken = await refreshAccessToken();
+          if (newAccessToken) {
+            const response = await axios.patch(`${apiUrl}/reservations/${reservation.reservationId}/petsittercancel`);
+            console.log(response);
+          }
+        } catch (error) {}
+      }
     }
   };
 
-  // 고객이 신청한거 취소
+  // 고객이 신청한거 취소 (access token 재발급 완료)
   const handleClientCancel = async () => {
     try {
       const response = await axios.patch(
@@ -56,13 +74,32 @@ const CareCard = ({ reservation }: any) => {
         },
       );
 
-      console.log(response);
       if (response.status === 200) {
         alert('예약이 취소 되었습니다.');
-        navigate(`cares/${memberId}`);
+        navigate('/cares');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error.status === 401) {
+        try {
+          const newAccessToken = await refreshAccessToken();
+          if (newAccessToken) {
+            const response = await axios.patch(
+              `${apiUrl}/reservations/${reservation.reservationId}/membercancel`,
+              {},
+              {
+                headers: { Authorization: `Bearer ${newAccessToken}` },
+              },
+            );
+            if (response) {
+              alert('예약이 취소 되었습니다.');
+              navigate('/cares');
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
   };
 
