@@ -8,7 +8,7 @@ import {
   RadioLabel,
   InputLabelStyle,
 } from './RegisterPet';
-import UploadProfileImg from '../components/UploadProfileImg';
+import UploadProfileImg from '../../components/UploadProfileImg';
 import Button from '@mui/material/Button';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';

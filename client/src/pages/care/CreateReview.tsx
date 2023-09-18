@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, useRef, useEffect } from 'react';
-import HoverRating from '../components/HoverRating';
+import HoverRating from '../../components/HoverRating';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';

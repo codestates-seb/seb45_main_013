@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCookieValue } from 'hooks/getCookie';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import UploadProfileImg from '../components/UploadProfileImg';
+import UploadProfileImg from '../../components/UploadProfileImg';
 import { useState } from 'react';
 import { IUser, deleteUser } from 'store/userSlice';
 import { deleteCookie } from 'hooks/deleteCookie';

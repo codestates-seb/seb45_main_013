@@ -110,7 +110,7 @@ const SitterSchedule = () => {
     setValue('possibleDay', trimmedValue);
   };
 
-  //   시간 설정
+  // 시간 설정
   const [possibleStartTime, setPossibleStartTime] = useState<Dayjs | null>(null);
   const [possibleEndTime, setPossibleEndTime] = useState<Dayjs | null>(null);
 
@@ -146,30 +146,9 @@ const SitterSchedule = () => {
     setSelectedAddress(data.address);
     setPossibleLocation([address]);
     setIsModalOpen(false);
-
-    const emptyAddressIndex = addressValues.findIndex((address) => !address);
-
-    if (emptyAddressIndex !== -1) {
-      const updatedAddressValues = [...addressValues];
-      updatedAddressValues[emptyAddressIndex] = data.address;
-      setAddressValues(updatedAddressValues);
-
-      const updatedPossibleLocation = [...possibleLocation];
-      updatedPossibleLocation[emptyAddressIndex] = address;
-      setPossibleLocation(updatedPossibleLocation);
-
-      // setValue(`possibleLocation[${emptyAddressIndex}]`, address);
-    }
   };
 
   const onSubmit = async (data: IEditSchedule) => {
-    const orderedDays = ['월', '화', '수', '목', '금'];
-    const reorderedDays = orderedDays.filter((day) => selectedDays.includes(day)).join('');
-    if (reorderedDays) {
-      data.possibleDay = reorderedDays;
-    } else {
-      data.possibleDay = '';
-    }
     if (data.possibleDay && data.possibleDay.startsWith(',' || ' ')) {
       data.possibleDay = data.possibleDay.substring(1);
     }
@@ -427,8 +406,8 @@ const RadioWrapper = styled.div`
     margin-right: 8px;
   }
   /* &:last-child {
-    margin-right: 16px;
-  } */
+margin-right: 16px;
+} */
 `;
 
 const CheckboxWrapper = styled.div`
