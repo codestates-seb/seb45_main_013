@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { PageTitle, InputContainer, InputLabelStyle, RadioLabel } from './RegisterPet';
+import { PageTitle, InputLabelStyle, RadioLabel } from './RegisterPet';
 import Box from '@mui/joy/Box';
 import Checkbox from '@mui/joy/Checkbox';
 import List from '@mui/joy/List';
@@ -10,14 +10,12 @@ import { TimePicker } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { getCookieValue } from 'hooks/getCookie';
 import { IUser } from 'store/userSlice';
 import dayjs, { Dayjs } from 'dayjs';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import DaumPostcode from 'react-daum-postcode';
 import { Modal, Sheet } from '@mui/joy';
 import { TextField } from '@mui/material';
@@ -34,7 +32,20 @@ interface IEditSchedule {
   possibleLocation?: string[];
 }
 
+type InfoType = {
+  petsitterId: number;
+  possiblePetType: string;
+  possibleLocation: string;
+  possibleDay: string;
+  possibleTimeStart: string;
+  possibleTimeEnd: string;
+  star: number;
+  reviewCount: number;
+  monthTotalReservation: number | null;
+} | null;
+
 const apiUrl = process.env.REACT_APP_API_URL;
+const token = getCookieValue('access_token');
 
 const daysOfWeek = ['월', '화', '수', '목', '금'];
 
@@ -45,12 +56,46 @@ const SitterSchedule = () => {
 
   const { register, handleSubmit, setValue } = useForm<IEditSchedule>();
 
-  const [addressValues, setAddressValues] = useState<string[]>(['']);
+  // 등록 일정 조회
+  const [previousAddress, setPreviousAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPetData = async () => {
+      console.log(token);
+      try {
+        const response = await axios.get(`${apiUrl}/members/petsitters`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data) {
+          const data = response.data;
+          console.log(data);
+          // 케어 가능한 펫
+          setValue('possiblePetType', data.possiblePetType || '');
+          // 케어 가능 요일
+          const possibleDays = data.possibleDay ? data.possibleDay.split('') : [];
+          setSelectedDays(possibleDays);
+          // 케어 가능 시간
+          const startTime = data.possibleTimeStart ? dayjs(data.possibleTimeStart, 'HH:mm') : null;
+          const endTime = data.possibleTimeEnd ? dayjs(data.possibleTimeEnd, 'HH:mm') : null;
+          setPossibleStartTime(startTime);
+          setPossibleEndTime(endTime);
+          // 케어 가능 지역
+          setPossibleLocation([data.possibleLocation || previousAddress]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPetData();
+  }, []);
 
   // 근무 가능 요일
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
-  const handleDayChange = (day: string, event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const day = event.target.value;
     let newSelectedDays;
     if (event.target.checked) {
       newSelectedDays = [...selectedDays, day];
@@ -59,12 +104,15 @@ const SitterSchedule = () => {
     }
     setSelectedDays(newSelectedDays);
 
-    const availableValue = newSelectedDays.join('');
-    setValue('possibleDay', availableValue);
+    const availableValues = newSelectedDays.join('');
+    const trimmedValue = availableValues.trim();
+
+    setValue('possibleDay', trimmedValue);
   };
 
   //   시간 설정
   const [possibleStartTime, setPossibleStartTime] = useState<Dayjs | null>(null);
+  const [possibleEndTime, setPossibleEndTime] = useState<Dayjs | null>(null);
 
   const handleTimeChange = (key: keyof IEditSchedule, dayjsObj: Dayjs | null) => {
     if (!dayjsObj) return;
@@ -80,68 +128,41 @@ const SitterSchedule = () => {
     setValue(key, timeString);
   };
 
-  // 주소
-  const [possibleLocation, setPossibleLocation] = useState<string[]>([]);
-
-  const handleAddressChange = (newAddress: string, index: number) => {
-    const updatedAddressValues = [...addressValues];
-    updatedAddressValues[index] = newAddress;
-    setAddressValues(updatedAddressValues);
-  };
-
-  const [addAdress, setAddAddress] = useState([{ id: 1 }]);
-  const [buttonIndex, setButtonIndex] = useState<number>(0);
-  const handleAddAddress = () => {
-    if (addAdress.length >= 3) {
-      return;
-    }
-
-    const newAddress = { id: Date.now() };
-    setAddAddress([...addAdress, newAddress]);
-    setAddressValues([...addressValues, '']);
-
-    setButtonIndex(addAdress.length);
-  };
-
   // 시군구
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sido, setSido] = useState('');
   const [sigungu, setSigugu] = useState('');
-  const [remainAddress, setRemainAddress] = useState('');
-  const [zonecode, setZonecode] = useState('');
   const [selectedAddress, setSelectedAddress] = useState('');
 
-  const handleComplete = (data: { zonecode: string; sido: string; sigungu: string; address: string }) => {
-    // 우편번호 저장
-    setZonecode(data.zonecode);
+  // 주소
+  const [possibleLocation, setPossibleLocation] = useState<string[]>([]);
+
+  const handleComplete = (data: { sido: string; sigungu: string; address: string }) => {
     // 시.도 저장
     setSido(data.sido);
     // 구.군 저장
     setSigugu(data.sigungu); // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
     const address = `${data.sido} ${data.sigungu}`;
-    setRemainAddress(address);
-
     setSelectedAddress(data.address);
+    setPossibleLocation([address]);
     setIsModalOpen(false);
-
-    const emptyAddressIndex = addressValues.findIndex((address) => !address);
-
-    if (emptyAddressIndex !== -1) {
-      const updatedAddressValues = [...addressValues];
-      updatedAddressValues[emptyAddressIndex] = data.address;
-      setAddressValues(updatedAddressValues);
-
-      const updatedPossibleLocation = [...possibleLocation];
-      updatedPossibleLocation[emptyAddressIndex] = address;
-      setPossibleLocation(updatedPossibleLocation);
-
-      setValue(`possibleLocation[${emptyAddressIndex}]`, address);
-    }
   };
 
   const onSubmit = async (data: IEditSchedule) => {
+    const orderedDays = ['월', '화', '수', '목', '금'];
+    const reorderedDays = orderedDays.filter((day) => selectedDays.includes(day)).join('');
+    if (reorderedDays) {
+      data.possibleDay = reorderedDays;
+    } else {
+      data.possibleDay = '';
+    }
+    if (data.possibleDay && data.possibleDay.startsWith(',' || ' ')) {
+      data.possibleDay = data.possibleDay.substring(1);
+    }
+    data.possibleTimeStart = possibleStartTime?.format('HH:mm') || '';
+    data.possibleTimeEnd = possibleEndTime?.format('HH:mm') || '';
+    data.possibleLocation = possibleLocation;
     console.log(data);
-    const token = getCookieValue('access_token');
     try {
       const response = await axios.patch(`${apiUrl}/members/petsitters/${memberId}`, data, {
         headers: {
@@ -213,7 +234,9 @@ const SitterSchedule = () => {
                         disableIcon
                         variant="soft"
                         label={day}
-                        onChange={(e) => handleDayChange(day, e)}
+                        value={day}
+                        checked={selectedDays.includes(day)}
+                        onChange={(e) => handleDayChange(e)}
                         sx={{
                           '& label': {
                             fontSize: 14,
@@ -260,6 +283,7 @@ const SitterSchedule = () => {
                       height: '40px',
                     },
                   }}
+                  value={possibleStartTime}
                   onChange={(dayjsObj) => handleTimeChange('possibleTimeStart', dayjsObj)}
                 />
                 <Text>~</Text>
@@ -289,6 +313,7 @@ const SitterSchedule = () => {
                       height: '40px',
                     },
                   }}
+                  value={possibleEndTime}
                   onChange={(dayjsObj) => handleTimeChange('possibleTimeEnd', dayjsObj)}
                 />
               </TimePickerWrapper>
@@ -297,56 +322,35 @@ const SitterSchedule = () => {
 
           <RegisterInputWrapper>
             <InputLabelStyle htmlFor="possibleLocation">케어 가능한 지역은 어디인가요?</InputLabelStyle>
-            {addAdress.map((address, index: number) => (
-              <AddressWrapper key={address.id}>
-                <TextField
-                  id={`address-${index}`}
-                  placeholder="주소"
-                  variant="outlined"
-                  value={addressValues[index] || ''}
-                  sx={{
-                    width: '90%',
-                    borderColor: '#A6A6A6',
-                    borderRadius: '8px',
-                    fontSize: 14,
-                    '& .MuiInputBase-root': {
-                      height: '40px',
-                    },
-                  }}
-                  onKeyDown={() => {
-                    setIsModalOpen(true);
-                    setButtonIndex(index);
-                  }}
-                  onClick={() => {
-                    setIsModalOpen(true);
-                    setButtonIndex(index);
-                  }}
-                  onChange={(e) => handleAddressChange(e.target.value, index)}
-                />
-                {isModalOpen && (
-                  <Modal
-                    open={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    <Sheet sx={{ width: '360px' }}>
-                      <DaumPostcode onComplete={handleComplete} />
-                    </Sheet>
-                  </Modal>
-                )}
-                {buttonIndex === index && addAdress.length < 3 && (
-                  <FunctionButton type="button" onClick={handleAddAddress}>
-                    <PlusIcon />
-                  </FunctionButton>
-                )}
-                {/* 지우기 버튼 수정하기 */}
-                {buttonIndex === index && addAdress.length < 3 && (
-                  <FunctionButton type="button">
-                    <DeleteIcon />
-                  </FunctionButton>
-                )}
-              </AddressWrapper>
-            ))}
+            <TextField
+              id="possibleLocation"
+              placeholder="주소"
+              variant="outlined"
+              value={possibleLocation || previousAddress}
+              sx={{
+                width: '100%',
+                mt: '12px',
+                borderColor: '#A6A6A6',
+                borderRadius: '8px',
+                fontSize: 14,
+                '& .MuiInputBase-root': {
+                  height: '40px',
+                },
+              }}
+              onClick={() => setIsModalOpen(true)}
+              onKeyDown={() => setIsModalOpen(true)}
+            />
+            {isModalOpen && (
+              <Modal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Sheet sx={{ width: '360px' }}>
+                  <DaumPostcode onComplete={handleComplete} />
+                </Sheet>
+              </Modal>
+            )}
           </RegisterInputWrapper>
 
           <Button type="submit" variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
@@ -375,6 +379,15 @@ const MainContainer = styled.main`
   width: 100%;
   height: 100%;
   padding: 0px 60px;
+`;
+
+const InputContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 24px;
+  margin-top: 36px;
 `;
 
 const RegisterInputWrapper = styled.div`
@@ -422,37 +435,5 @@ const TimePickerWrapper = styled.div`
 `;
 
 const Text = styled.div``;
-
-const FunctionButton = styled.button`
-  width: 18px;
-  height: 18px;
-  border: none;
-  cursor: pointer;
-  background-color: none;
-`;
-
-const AddressWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-`;
-
-const PlusIcon = styled(AddCircleOutlineIcon)`
-  color: gray;
-  margin: 0;
-  &:hover {
-    color: #279eff;
-  }
-`;
-
-const DeleteIcon = styled(HighlightOffIcon)`
-  color: gray;
-  margin: 0;
-  &:hover {
-    color: #279eff;
-  }
-`;
 
 export default SitterSchedule;

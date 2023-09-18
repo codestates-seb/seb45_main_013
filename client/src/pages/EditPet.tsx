@@ -11,7 +11,7 @@ import {
 import UploadProfileImg from '../components/UploadProfileImg';
 import Button from '@mui/material/Button';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { getCookieValue } from 'hooks/getCookie';
 import { useForm } from 'react-hook-form';
@@ -20,12 +20,14 @@ import { TextField } from '@mui/material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-//  중성화 추가
+//  중성화 수정 (등록할 떄 중성화 하지 않은 펫만 가능)
+//  펫 삭제 확인
 
 const schema = yup.object().shape({
   name: yup.string().max(50, '이름은 최대 50자를 초과할 수 없습니다.').required('이 항목은 필수입니다.'),
   age: yup
     .number()
+    .integer('나이는 정수로 입력해 주세요.')
     .min(1, '나이는 1살 이상이어야 합니다.')
     .max(100, '나이는 100살 이하이어야 합니다.')
     .required('이 항목은 필수입니다.')
@@ -154,15 +156,7 @@ const EditPet = () => {
         navigate('/mypage');
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response) {
-          console.error(error.response.data);
-        } else {
-          console.error('AxiosError caught (no response):', error.message);
-        }
-      } else {
-        console.error('Non-Axios error caught:', error);
-      }
+      console.log(error);
     }
   };
 
@@ -170,26 +164,24 @@ const EditPet = () => {
     const token = getCookieValue('access_token');
     const isConfirmed = window.confirm('정말 펫을 삭제하시겠습니까? (펫을 삭제하면, 예약에서 해당 펫이 제외됩니다.)');
     if (!isConfirmed) return;
-    console.log(token);
-    try {
-      const response = await axios.delete(`${apiUrl}/pets/${petId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      {
-        alert('펫이 삭제되었습니다');
-        navigate('/mypage');
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response) {
-          console.error(error.response.data);
-        } else {
-          console.error('AxiosError caught (no response):', error.message);
+    else {
+      console.log(token);
+      try {
+        const response = await axios.patch(
+          `${apiUrl}/pets/${petId}/disable`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        if (response.data === 'Disable Pet Success') {
+          alert('펫이 삭제되었습니다');
+          navigate('/mypage');
         }
-      } else {
-        console.error('Non-Axios error caught:', error);
+      } catch (error) {
+        console.log(error);
       }
     }
   };

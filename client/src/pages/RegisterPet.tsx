@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getCookieValue } from 'hooks/getCookie';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { InfoText } from './EditUserProfile';
 
 // 버튼 수정
@@ -20,6 +20,7 @@ const schema = yup.object().shape({
   name: yup.string().max(50, '이름은 최대 50자를 초과할 수 없습니다.').required('이 항목은 필수입니다.'),
   age: yup
     .number()
+    .integer('나이는 정수로 입력해 주세요.')
     .min(1, '나이는 1살 이상이어야 합니다.')
     .max(100, '나이는 100살 이하이어야 합니다.')
     .required('이 항목은 필수입니다.')
@@ -97,15 +98,7 @@ const RegisterPet = () => {
         navigate('/mypage');
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response) {
-          console.error(error.response.data);
-        } else {
-          console.error('AxiosError caught (no response):', error.message);
-        }
-      } else {
-        console.error('Non-Axios error caught:', error);
-      }
+      console.log(error);
     }
   };
 
