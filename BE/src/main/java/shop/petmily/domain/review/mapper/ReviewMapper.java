@@ -26,13 +26,15 @@ public interface ReviewMapper {
         ReviewResponseDto response = new ReviewResponseDto();
         response.setReviewId(review.getReviewId());
         response.setMemberId(review.getReservation().getMember().getMemberId());
+        response.setMemberNickName(review.getMember().getNickName());
+        response.setMemberPhoto(review.getMember().getPhoto());
         response.setReservationId(review.getReservation().getReservationId());
         response.setPetsitterId(review.getPetsitter().getPetsitterId());
 
         response.setCreatedAt(review.getCreatedAt());
         response.setLastModifiedAt(review.getLastModifiedAt());
         response.setBody(review.getBody());
-        response.setPhotos(new ArrayList<>(review.getPhotos()));
+        response.setReviewPhotos(new ArrayList<>(review.getPhotos()));
         response.setStar(review.getStar());
         response.setPetsitterName(review.getReservation().getPetsitter().getMember().getName());
         response.setPetsitterPhoto(review.getReservation().getPetsitter().getMember().getPhoto());
