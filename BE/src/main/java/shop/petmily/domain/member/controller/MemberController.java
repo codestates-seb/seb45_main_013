@@ -103,6 +103,15 @@ public class MemberController {
         return new ResponseEntity<>(petsitterPossibleResoponseDto, HttpStatus.OK);
     }
 
+    // 펫시터 1명 조회
+    @GetMapping("/petsitters/{petsitter-id}")
+    public ResponseEntity getPetsitter(@PathVariable("petsitter-id") @Positive long petstiterId) {
+        Petsitter findPetsitter = petsitterService.findVerifiedPetsitter(petstiterId);
+        Member findMember = memberService.findMember(findPetsitter.getMember().getMemberId());
+        PetsitterGetResponseDto petsitterGetResponseDto = petsitterService.mapToPetsitterGetResponseDto(findMember);
+        return new ResponseEntity<>(petsitterGetResponseDto, HttpStatus.OK);
+    }
+
     // 펫시터 검색 및 필터링 조회 (이름, 별점, 리뷰수)
     @GetMapping("/search")
     @JsonManagedReference

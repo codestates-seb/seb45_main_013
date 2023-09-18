@@ -25,6 +25,7 @@ public class PetsitterPossibleResoponseDto {
     private Long todayReservationCount;
     private Long confirmedReservationCount;
     private Long requestReservationCount;
+    private String body;
 //    private Long cancelledReservationCount;
 //    private Long finishCaringReservationCount;
 }
