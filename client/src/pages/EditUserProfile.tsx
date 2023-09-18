@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieValue } from 'hooks/getCookie';
 import { useForm } from 'react-hook-form';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import UploadProfileImg from '../components/UploadProfileImg';
 import { useState } from 'react';
 import { IUser, deleteUser } from 'store/userSlice';
@@ -119,15 +119,7 @@ const EditUserProfile = () => {
         navigate('/mypage');
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response) {
-          console.error(error.response.data);
-        } else {
-          console.error('AxiosError caught (no response):', error.message);
-        }
-      } else {
-        console.error('Non-Axios error caught:', error);
-      }
+      console.log(error);
     }
   };
 
@@ -141,27 +133,28 @@ const EditUserProfile = () => {
 
   const deleteAccount = async () => {
     const token = getCookieValue('access_token');
+    const isConfirmed = window.confirm('정말 탈퇴하시겠습니까?');
+    if (!isConfirmed) return;
+    console.log(token);
     try {
-      const response = await axios.delete(`${apiUrl}/members/${memberId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+      const response = await axios.patch(
+        `${apiUrl}/members/${memberId}/disable`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       if (response.data.data === 'success delete member') {
         alert('계정이 삭제되었습니다');
+        deleteCookie('access_token');
+        deleteCookie('refresh_token');
+        dispatch(deleteUser());
         navigate('/');
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response) {
-          console.error(error.response.data);
-        } else {
-          console.error('AxiosError caught (no response):', error.message);
-        }
-      } else {
-        console.error('Non-Axios error caught:', error);
-      }
+      console.log(error);
     }
   };
 

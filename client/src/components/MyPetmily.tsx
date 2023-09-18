@@ -4,11 +4,7 @@ import { Link } from 'react-router-dom';
 import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import AspectRatio from '@mui/joy/AspectRatio';
-import Card from '@mui/joy/Card';
-import CardContent from '@mui/joy/CardContent';
-import CardOverflow from '@mui/joy/CardOverflow';
-import Divider from '@mui/joy/Divider';
+
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 // 펫 이미지 없을 때 디폴트 이미지 수정
@@ -55,44 +51,36 @@ const MyPetmily = () => {
       <CardsContainer>
         {petmily.length > 0 ? (
           petmily.map((pet) => (
-            <Card key={pet.petId} variant="outlined" sx={{ width: '80%', mb: '32px' }}>
-              <CardOverflow>
-                <AspectRatio ratio="2">
-                  {pet.photo ? (
-                    <img src={pet.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="pet" />
-                  ) : pet.type === 'CAT' ? (
-                    <img src="imgs/CatProfile.png" alt="Cat" />
-                  ) : (
-                    <img src="imgs//PetProfile.png" alt="Dog" />
-                  )}
-                </AspectRatio>
-                {/* <Link to={`/mypage/${pet.petId}/edit`}>
-                  <PetsButton>
-                    <img src="imgs/Edit.svg" alt="EditPets" />
-                  </PetsButton>
-                </Link> */}
-              </CardOverflow>
-
-              <CardContent sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <PetInfo>
-                  {pet.name} [{pet.species}]
-                </PetInfo>
-                <PetInfo>{pet.male ? '남자아이' : '여자아이'}</PetInfo>
-              </CardContent>
-
-              <CardOverflow variant="soft">
-                <Divider inset="context" />
-
-                <CardContent orientation="horizontal">
-                  <PetInfo>
-                    {pet.age}살 / {pet.weight}kg
-                  </PetInfo>
-                  <Link to={`/mypage/${pet.petId}/edit`}>
-                    <Button>수정하기</Button>
-                  </Link>
-                </CardContent>
-              </CardOverflow>
-            </Card>
+            <PetmilyCard key={pet.petId}>
+              <ImageContainer>
+                {pet.photo ? (
+                  <PetPhoto src={pet.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="pet" />
+                ) : pet.type === 'CAT' ? (
+                  <PetPhoto src="imgs/CatProfile.png" alt="Cat" />
+                ) : (
+                  <PetPhoto src="imgs//PetProfile.png" alt="Dog" />
+                )}
+              </ImageContainer>
+              <PetInfoContainer>
+                <Line>
+                  <PetName>{pet.name}</PetName>
+                  <PetInfo>{pet.species}</PetInfo>
+                </Line>
+                <Line>
+                  <PetInfo>{pet.male ? '남자아이' : '여자아이'}</PetInfo>
+                  <PetInfo>{pet.neutering && '중성화'}</PetInfo>
+                </Line>
+                <Line>
+                  <PetInfo> {pet.age}살 </PetInfo>
+                  <PetInfo>{pet.weight}kg</PetInfo>
+                </Line>
+              </PetInfoContainer>
+              <ButtonContainer>
+                <Link to={`/mypage/${pet.petId}/edit`}>
+                  <Button>수정하기</Button>
+                </Link>
+              </ButtonContainer>
+            </PetmilyCard>
           ))
         ) : (
           <NoPetsContainer>
@@ -117,16 +105,48 @@ const PetmilyContainer = styled.div`
   margin-top: 60px;
 `;
 
+const ImageContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+`;
+
+const PetPhoto = styled.img`
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+`;
+
 const TextContainer = styled.div`
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
 `;
 
+const PetInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Line = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+`;
+
 const Text = styled.div`
   font-weight: 900;
   font-size: 18px;
+`;
+
+const PetName = styled.div`
+  font-weight: 900;
+  font-size: 18px;
+  display: inline-block;
 `;
 
 const CardsContainer = styled.div`
@@ -151,10 +171,11 @@ export const PetmilyCard = styled.div`
   width: 100%;
   padding: 12px;
   border-radius: 4px;
+  margin-bottom: 20px;
   box-shadow: 0 2px 10px 0 #cdcdcd;
 `;
 
-const PetInfo = styled.div`
+const PetInfo = styled.span`
   margin-top: 4px;
   color: ${(props) => props.theme.textColors.gray00};
   font-weight: ${(props) => props.theme.fontWeights.bold};
@@ -181,4 +202,9 @@ const PlusIcon = styled(AddCircleOutlineIcon)`
   }
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+`;
 export default MyPetmily;

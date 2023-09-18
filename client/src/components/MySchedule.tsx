@@ -7,11 +7,12 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { IUser } from 'store/userSlice';
 import { PetmilyCard } from './MyPetmily';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import PetsIcon from '@mui/icons-material/Pets';
 
 // 디자인 수정
-//  이미지 사용
-// useEffect 수정 && 멤버 아이디로 일정 등록(수정) 페이지 => API
-// 일정 등록 -> 나누기st apiUrl = process.env.REACT_APP_API_URL;
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const token = getCookieValue('access_token');
@@ -49,7 +50,7 @@ const MySchedule = () => {
           setInfo(response.data);
         }
       } catch (error) {
-        console.error('Failed to fetch petsitter data:', error);
+        console.error(error);
       }
     };
     fetchPetData();
@@ -104,39 +105,62 @@ const MySchedule = () => {
       {info && info.possibleDay ? (
         <PetmilyCard>
           <ContentContainer>
-            <Info>
-              {/* <Icon src="/imgs/Paw.svg" alt="possiblePets" /> */}
-              <InfoText>케어 가능 동물 : {getPetTypeDisplayText(info.possiblePetType)}</InfoText>
-            </Info>
+            <InfoWrapper>
+              <Paw />
+              <Info>
+                <InfoText>케어 가능 동물 </InfoText>
+                <UserText>{getPetTypeDisplayText(info.possiblePetType)}</UserText>
+              </Info>
+            </InfoWrapper>
 
-            <Info>
-              {/* <Icon src="/imgs/Time.svg" alt="time" /> */}
-              <InfoText>
-                케어 가능 시간 : {getFullDays(info.possibleDay)}
-                {info.possibleTimeStart.slice(0, -3)} ~ {info.possibleTimeEnd.slice(0, -3)}
-              </InfoText>
-            </Info>
+            <InfoWrapper>
+              <Location />
+              <Info>
+                <InfoText>케어 가능 지역 </InfoText>
+                <UserText>{info.possibleLocation}</UserText>
+              </Info>
+            </InfoWrapper>
 
-            <Info>
-              {/* <Icon src="/imgs/Location.svg" alt="location" /> */}
-              <InfoText>케어 가능 지역: {info.possibleLocation}</InfoText>
-            </Info>
+            <InfoWrapper>
+              <Calendar />
+              <Info>
+                <InfoText>케어 가능 요일 </InfoText>
+                <UserText>{getFullDays(info.possibleDay)}</UserText>
+              </Info>
+            </InfoWrapper>
+
+            <InfoWrapper>
+              <Time />
+              <Info>
+                <InfoText>케어 가능 시간 </InfoText>
+                <UserText>
+                  {info.possibleTimeStart.slice(0, -3)} ~ {info.possibleTimeEnd.slice(0, -3)}
+                </UserText>
+              </Info>
+            </InfoWrapper>
+          </ContentContainer>
+          <ButtonContainer>
             <Link to={`/petsitters/${memberId}/schedule`}>
               <Button variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
                 나의 일정 관리
               </Button>
             </Link>
-          </ContentContainer>
+          </ButtonContainer>
         </PetmilyCard>
       ) : (
         <ContentContainer>
-          <InfoText>등록된 일정이 없습니다.</InfoText>
-          <InfoText>활동 가능한 일정을 등록하시면, 더 많은 펫밀리를 만날 수 있어요!</InfoText>
-          <Link to={`/petsitters/${memberId}/schedule`}>
-            <Button variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
-              등록하러 가기
-            </Button>
-          </Link>
+          <NoContentContaier>
+            <Image src="/imgs/NoSchedule.png" alt="No schedule" />
+            <InfoText>등록된 일정이 없습니다.</InfoText>
+            <InfoText>활동 가능한 일정을 등록하시면, 더 많은 펫밀리를 만날 수 있어요!</InfoText>
+          </NoContentContaier>
+          <ButtonContainer>
+            <Link to={`/petsitters/${memberId}/schedule`}>
+              <Button variant="contained" sx={{ backgroundColor: '#279eff', mt: 5 }}>
+                등록하러 가기
+              </Button>
+            </Link>
+          </ButtonContainer>
         </ContentContainer>
       )}
     </Container>
@@ -153,27 +177,72 @@ const Text = styled.div`
   ${(props) => props.theme.fontSize.s18h27};
 `;
 
+const InfoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+`;
+
+const Paw = styled(PetsIcon)`
+  color: #279eff;
+  margin: 20px;
+`;
+
+const Time = styled(AccessTimeIcon)`
+  color: #279eff;
+  margin: 20px;
+`;
+
+const Location = styled(PersonPinIcon)`
+  color: #279eff;
+  margin: 20px;
+`;
+
+const Calendar = styled(EventAvailableIcon)`
+  color: #279eff;
+  margin: 20px;
+`;
+
+const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const InfoText = styled.div`
+  ${(props) => props.theme.fontSize.s16h24};
+  color: #acacac;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const UserText = styled.div`
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: 600;
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
 `;
 
 const ContentContainer = styled.div`
+  padding: 0px20px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const NoContentContaier = styled.div`
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-// const Icon = styled.img`
-//   margin-right: 12px;
-// `;
-
-const Info = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+`;
+
+const Image = styled.img`
+  width: 120px;
+  margin-bottom: 20px;
 `;
 export default MySchedule;
