@@ -18,6 +18,7 @@ import {
   TextField,
   Button,
   Dialog,
+  Box,
 } from '@mui/material';
 import { styled as styledMui } from '@mui/material/styles';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -34,8 +35,9 @@ import isBetween from 'dayjs/plugin/isBetween';
 
 import { getCookieValue } from 'hooks/getCookie';
 
-import { useDispatch } from 'react-redux';
-import { setReservation } from 'store/reservationSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addPets, setReservation } from 'store/reservationSlice';
+import { IUser } from 'store/userSlice';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
@@ -48,19 +50,19 @@ interface IFormInput {
 const Reservation = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const accessToken = getCookieValue('access_token');
 
+  // time 설정
   const now = new Date();
-
   const nowDate = dayjs(now).format('YYYY-MM-DD');
-
   const nowTime = dayjs(now).format('HH:mm:ss');
 
+  // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPetModalOpen, setIsPetModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // submit state
+  const { isLogin } = useSelector((state: IUser) => state.user);
   const [reservationDay, setReservationDay] = useState<any>('');
   const [reservationTimeStart, setReservationTimeStart] = useState<any>('');
   const [reservationTimeEnd, setReservationTimeEnd] = useState('');
@@ -68,7 +70,7 @@ const Reservation = () => {
 
   // Modal 동물 등록
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [isCat, setIsCat] = useState(false);
+  const [isCat, setIsCat] = useState('DOG');
   const [name, setName] = useState('');
   const [species, setSpecies] = useState('');
   const [weight, setWeight] = useState('');
@@ -76,12 +78,15 @@ const Reservation = () => {
   const [isMale, setIsMale] = useState('');
   const [isNeutering, setIsNeutering] = useState('');
 
-  console.log('고양인가요?: ', isCat);
-  console.log('성별이 뭔가요?: ', isMale);
-  console.log('중성화했나요?: ', isNeutering);
+  // 펫등록 에러
+  const [isNameError, setIsNameError] = useState(false);
+  const [isSpeciesError, setIsSpeciesError] = useState(false);
+  const [isWeightError, setIsWeightError] = useState(false);
+  const [isAgeError, setIsAgeError] = useState(false);
 
   const [pets, setPets] = useState([]);
 
+  console.log(pets);
   /// Time
   now.setMonth(now.getMonth() + 3);
   const modifiedNow = now.toISOString().slice(0, 10);
@@ -151,6 +156,7 @@ const Reservation = () => {
     }
   };
 
+  // 펫등록 모달 handler
   const handleGenderChange = (e: ChangeEvent<HTMLInputElement>) => {
     setIsMale(e.target.value);
   };
@@ -178,8 +184,45 @@ const Reservation = () => {
     }
   };
 
-  const handlePetSubmit = (e: any) => {
-    if (!name && !species && !weight && !age && !isMale && !isNeutering) {
+  const checkDisable = () => {
+    if (!name || !species || !weight || !age || !isMale || !isNeutering) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  // 펫등록 submit
+  const handlePetSubmit = async () => {
+    const accessToken = getCookieValue('access_token');
+
+    const formData = new FormData();
+
+    formData.append('type', isCat);
+    formData.append('name', name);
+    formData.append('age', age);
+    formData.append('species', species);
+    formData.append('weight', weight);
+    formData.append('male', isMale);
+    formData.append('neutering', isNeutering);
+    if (imageFile) {
+      formData.append('file', imageFile);
+    }
+
+    try {
+      const response = await axios.post(`${apiUrl}/pets`, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response);
+      if (response.status === 201) {
+        alert('펫 등록되었습니다.');
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -188,19 +231,32 @@ const Reservation = () => {
     if (reservationDay && reservationTimeStart && reservationTimeEnd && address) {
       console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address });
       dispatch(setReservation({ reservationDay, reservationTimeStart, reservationTimeEnd, address }));
-      navigate('/reservation');
+      dispatch(addPets(pets));
+      navigate('/reservation/step2');
     } else if (!reservationTimeStart || !reservationTimeEnd) {
       alert('시간을 확인해주세요');
     }
   };
 
   useEffect(() => {
-    try {
-      axios
-        .get(`${apiUrl}/pets`, { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then((res) => setPets(res.data));
-    } catch (error: any) {}
-  }, []);
+    if (!isLogin) {
+      alert('로그인을 해주세요.');
+      navigate('/');
+    }
+  });
+
+  useEffect(() => {
+    const accessToken = getCookieValue('access_token');
+    if (isLogin && accessToken) {
+      try {
+        axios
+          .get(`${apiUrl}/pets`, { headers: { Authorization: `Bearer ${accessToken}` } })
+          .then((res) => setPets(res.data));
+      } catch (error: any) {
+        console.log(error);
+      }
+    }
+  }, [isModalOpen]);
 
   return (
     <MainContainer>
@@ -352,17 +408,81 @@ const Reservation = () => {
                     />
                   </ButtonContainer>
                   <ButtonGroup>
-                    <PetButton onClick={() => setIsCat(false)} value={`${!isCat}`}>
+                    <PetButton onClick={() => setIsCat('DOG')} value={isCat === 'DOG' ? 'true' : 'false'}>
                       <img src="/icons/DogIcon.svg" alt="dogIcon" />
                     </PetButton>
-                    <PetButton onClick={() => setIsCat(true)} value={`${isCat}`}>
+                    <PetButton onClick={() => setIsCat('CAT')} value={isCat === 'CAT' ? 'true' : 'false'}>
                       <img src="/icons/CatIcon.svg" alt="catIcon" />
                     </PetButton>
                   </ButtonGroup>
-                  <TextField id="name" label="반려동물 이름" type="text" size="small" margin="dense"></TextField>
-                  <TextField id="species" label="품종" size="small" margin="dense"></TextField>
-                  <TextField id="weight" label="몸무게" size="small" margin="dense"></TextField>
-                  <TextField id="age" label="나이" size="small" margin="dense"></TextField>
+                  <TextField
+                    id="name"
+                    label="반려동물 이름"
+                    type="text"
+                    size="small"
+                    margin="dense"
+                    onChange={(e) => {
+                      if (e.target.value.length > 10) {
+                        setIsNameError(true);
+                      } else {
+                        setIsNameError(false);
+                      }
+                      setName(e.target.value);
+                    }}
+                    error={isNameError}
+                    helperText={isNameError && '10자 이하여야 합니다.'}
+                  ></TextField>
+                  <TextField
+                    id="species"
+                    label="품종"
+                    type="text"
+                    size="small"
+                    margin="dense"
+                    onChange={(e) => {
+                      if (e.target.value.length > 10) {
+                        setIsSpeciesError(true);
+                      } else {
+                        setIsSpeciesError(false);
+                      }
+                      setSpecies(e.target.value);
+                    }}
+                    error={isSpeciesError}
+                    helperText={isSpeciesError && '10자 이하여야 합니다.'}
+                  ></TextField>
+                  <TextField
+                    id="weight"
+                    label="몸무게"
+                    type="number"
+                    size="small"
+                    margin="dense"
+                    inputProps={{ max: 50, min: 0, step: '0.01' }}
+                    onChange={(e) => {
+                      if (+e.target.value > 50 || +e.target.value < 0) {
+                        setIsWeightError(true);
+                      } else {
+                        setIsWeightError(false);
+                      }
+                      setWeight(e.target.value);
+                    }}
+                    error={isWeightError}
+                    helperText={isWeightError ? '몸무게는 0kg이상 50kg 이하여야 합니다.' : undefined}
+                  ></TextField>
+                  <TextField
+                    id="age"
+                    type="number"
+                    label="나이"
+                    size="small"
+                    margin="dense"
+                    inputProps={{ max: '20', min: '0' }}
+                    onChange={(e) => {
+                      if (e.target.value.length > 20) {
+                        setIsAgeError(true);
+                      }
+                      setAge(e.target.value);
+                    }}
+                    error={isAgeError}
+                    helperText={isAgeError && '나이는 20살 이하여야 합니다.'}
+                  ></TextField>
                   <FormControl
                     sx={{
                       display: 'flex',
@@ -381,7 +501,7 @@ const Reservation = () => {
                       onChange={handleGenderChange}
                     >
                       <FormControlLabel
-                        value="male"
+                        value={true}
                         control={<Radio />}
                         label={<img src="/icons/MaleIcon.svg" alt="male" />}
                         labelPlacement="start"
@@ -391,7 +511,7 @@ const Reservation = () => {
                         }}
                       />
                       <FormControlLabel
-                        value="female"
+                        value={false}
                         control={<Radio />}
                         label={<img src="/icons/FemaleIcon.svg" alt="female" />}
                         labelPlacement="start"
@@ -420,7 +540,7 @@ const Reservation = () => {
                       onChange={handleNeuteringChange}
                     >
                       <FormControlLabel
-                        value="yes"
+                        value={true}
                         control={<Radio />}
                         label="했음"
                         labelPlacement="start"
@@ -430,7 +550,7 @@ const Reservation = () => {
                         }}
                       />
                       <FormControlLabel
-                        value="no"
+                        value={false}
                         control={<Radio />}
                         label="안했음"
                         labelPlacement="start"
@@ -452,6 +572,7 @@ const Reservation = () => {
                       ':active': { backgroundColor: '#096DBE', boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset' },
                     }}
                     onClick={handlePetSubmit}
+                    disabled={checkDisable()}
                   >
                     펫 등록하기
                   </Button>
@@ -664,7 +785,7 @@ const PetButton = styledMui(Button)(({ value }) => ({
 //   border: none;
 //   background-color: ${(props) => (props.iscat ? props.theme.textColors.gray50 : props.theme.colors.mainBlue)};
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;

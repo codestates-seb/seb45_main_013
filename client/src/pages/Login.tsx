@@ -52,6 +52,10 @@ const Login = () => {
       if (error.response.data.message === '이메일 또는 비밀번호가 일치하지 않습니다.') {
         alert(error.response.data.message);
       }
+
+      if (error.response.data.messgae === '탈퇴한 회원입니다.') {
+        alert(error.response.data.message);
+      }
     }
     setIsLoginLoading(false);
   };

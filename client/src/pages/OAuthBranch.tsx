@@ -50,6 +50,16 @@ const OAuthBranch = () => {
       document.cookie = `access_token=${accessToken}; path=/;`;
       document.cookie = `refresh_token=${refreshToken};  path=/;`;
 
+      if (accessToken) {
+        axios
+          .get(`${apiUrl}/members/my-page`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          .then((res) => console.log(res));
+      }
+
       navigate('/signup/branch', { replace: true });
     }
   }, []);
