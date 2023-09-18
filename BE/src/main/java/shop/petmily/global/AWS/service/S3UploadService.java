@@ -66,7 +66,8 @@ public class S3UploadService {
             BufferedImage originalImage = ImageIO.read(file);
             int originWidth = originalImage.getWidth();
             int originHeight = originalImage.getHeight();
-            if (originWidth < 500) return new File(multipartFile.getOriginalFilename());
+
+            if (originWidth < 500) return file;
 
             double ratio = (double) originHeight / (double) originWidth;
             int height = (int) Math.round(500 * ratio);
