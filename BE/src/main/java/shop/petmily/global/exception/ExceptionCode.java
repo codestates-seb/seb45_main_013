@@ -55,7 +55,9 @@ public enum ExceptionCode {
     WARNING(400, "잘못된 접근입니다."),
     NOT_ALLOW_ADDRESS(400,"올바른 주소가 아닙니다."),
     FILE_UPLOAD_FAILED(500, "업로드에 실패했습니다."),
-    NO_PHOTO(404, "기존 사진이 없습니다.")
+    FILE_RESIZE_FAILED(500, "파일 리사이즈에 실패했습니다."),
+    NO_PHOTO(404, "기존 사진이 없습니다."),
+    NO_IMG(400, "이미지 파일만 업로드 가능합니다.")
     ;
 
     @Getter
