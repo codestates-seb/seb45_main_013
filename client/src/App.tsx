@@ -11,6 +11,7 @@ import NavHeader from '@components/headers/NavHeader';
 const Home = lazy(() => import('@pages/main/Home'));
 const Login = lazy(() => import('@pages/login/Login'));
 const Signup = lazy(() => import('@pages/login/Signup'));
+const Reviews = lazy(() => import('@pages/main/Reviews'));
 const Mypage = lazy(() => import('@pages/mypage/Mypage'));
 const EditUserProfile = lazy(() => import('@pages/mypage/EditUserProfile'));
 const ViewPetsitters = lazy(() => import('@pages/reservation/ViewPetsitters'));
@@ -83,6 +84,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<AddNavHeaderLayout />}>
                 <Route path="" element={<Home />} />
+                <Route path="/reviews" element={<Reviews />} />
                 <Route path="mypage" element={<Mypage />} />
                 <Route path="reservation" element={<Reservation />} />
                 <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>

@@ -152,6 +152,7 @@ const SitterSchedule = () => {
     if (data.possibleDay && data.possibleDay.startsWith(',' || ' ')) {
       data.possibleDay = data.possibleDay.substring(1);
     }
+
     data.possibleTimeStart = possibleStartTime?.format('HH:mm') || '';
     data.possibleTimeEnd = possibleEndTime?.format('HH:mm') || '';
     data.possibleLocation = possibleLocation;
@@ -319,7 +320,7 @@ const SitterSchedule = () => {
               id="possibleLocation"
               placeholder="주소"
               variant="outlined"
-              value={possibleLocation || previousAddress}
+              value={possibleLocation.join(', ') || previousAddress}
               sx={{
                 width: '100%',
                 mt: '12px',

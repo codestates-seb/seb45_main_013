@@ -20,18 +20,18 @@ const schema = yup.object().shape({
   name: yup.string().max(50, '이름은 최대 50자를 초과할 수 없습니다.').required('이 항목은 필수입니다.'),
   age: yup
     .number()
+    .required('이 항목은 필수입니다.')
+    .typeError('이 항목은 필수입니다.(정수만 가능)')
     .integer('나이는 정수로 입력해 주세요.')
     .min(1, '나이는 1살 이상이어야 합니다.')
-    .max(100, '나이는 100살 이하이어야 합니다.')
-    .required('이 항목은 필수입니다.')
-    .typeError('나이는 숫자만 입력해 주세요.'),
+    .max(100, '나이는 100살 이하이어야 합니다.'),
   species: yup.string().max(50, '품종은 최대 50자를 초과할 수 없습니다.').required('이 항목은 필수입니다.'),
   weight: yup
     .number()
+    .typeError('몸무게는 숫자만 입력해 주세요.')
     .min(1, '몸무게는 1kg 이상이어야 합니다.')
     .max(100, '몸무게는 100kg 이하이어야 합니다.')
-    .required('이 항목은 필수입니다.')
-    .typeError('몸무게는 숫자만 입력해 주세요.'),
+    .required('이 항목은 필수입니다.'),
   male: yup.string().oneOf(['true', 'false'], '성별을 선택해주세요.').required('이 항목은 필수입니다.'),
   neutering: yup.string().oneOf(['true', 'false'], '중성화 여부를 선택해주세요.').required('이 항목은 필수입니다.'),
   body: yup.string().max(1000, '소개는 최대 1000자를 초과할 수 없습니다.'),
