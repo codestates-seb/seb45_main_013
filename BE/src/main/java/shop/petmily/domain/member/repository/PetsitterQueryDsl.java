@@ -39,6 +39,9 @@ public class PetsitterQueryDsl {
                         petsitter.member.name,
                         petsitter.member.nickName,
                         petsitter.member.photo,
+                        petsitter.possibleDay,
+                        petsitter.possibleTimeStart,
+                        petsitter.possibleTimeEnd,
                         petsitter.star,
                         petsitter.reviewCount))
                 .from(petsitter)
