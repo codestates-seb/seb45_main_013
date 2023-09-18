@@ -263,7 +263,7 @@ const Reservation = () => {
       <StatusHeader>
         <BackImg src="/imgs/BackArrow.svg" onClick={handleBackClick} />
         <StatusTitleText>예약</StatusTitleText>
-        <PageNumberText>1/3</PageNumberText>
+        <PageNumberText>1/2</PageNumberText>
       </StatusHeader>
       <ReservationContainer onSubmit={handleSubmit(onSubmit)}>
         <Container>

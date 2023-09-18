@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
 
@@ -66,6 +67,7 @@ const convertTo12Hour = (time: string) => {
 };
 
 const PetsitterViewDetails = () => {
+  const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState(NavItem[0].link);
   const [selectedDates, setSelectedDates] = useState<dayjs.Dayjs | null>(null);
@@ -78,6 +80,10 @@ const PetsitterViewDetails = () => {
 
   const handleBookmarkClick = () => {
     setIsBookmarked(!isBookmarked);
+  };
+
+  const handleOnSubmitButtonClick = () => {
+    navigate('/reservation/step3');
   };
 
   return (
@@ -156,7 +162,15 @@ const PetsitterViewDetails = () => {
               </ConfirmationSection>
             )}
           </ViewDetailsContainer>
-          <CustomLinkBtn>예약 하기</CustomLinkBtn>
+          <ButtonContainer>
+            <StyledSubmitButton
+              type="submit"
+              disabled={!selectedDates || selectedTimes.length === 0}
+              onClick={handleOnSubmitButtonClick}
+            >
+              다음단계
+            </StyledSubmitButton>
+          </ButtonContainer>
         </MainContainer>
       ))}
     </>
@@ -235,7 +249,7 @@ const Introbox = styled.div`
 
 const PetsitterIntroText = styled.div`
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4; // 3줄로 보여주는 것으로 제한
   -webkit-box-orient: vertical;
   overflow: hidden;
   overflow-y: auto;
@@ -320,16 +334,6 @@ const ViewDetailsContainer = styled.div`
   overflow: visible;
 `;
 
-const CustomLinkBtn = styled.button`
-  border-radius: 8px;
-  margin: 12px 12px 12px 12px;
-  padding: 12px;
-  color: white;
-  text-align: center;
-  margin-top: 16px;
-  background-color: ${({ theme }) => theme.colors.mainBlue};
-`;
-
 const NavBarButton = styled.button<{ isActive: boolean }>`
   width: 100%;
   flex: 1;
@@ -379,3 +383,33 @@ const ConfirmationTime = styled.div`
 `;
 
 const StyledCancelButton = styled(Button)``;
+
+const ButtonContainer = styled.div`
+  margin: 0 24px 20px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const StyledSubmitButton = styled.button`
+  border-radius: 8px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background-color: ${({ theme }) => theme.colors.mainBlue};
+  color: white;
+  ${({ theme }) => theme.fontSize.s16h24};
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.subBlue};
+  }
+  &:active {
+    background-color: ${({ theme }) => theme.colors.darkBlue};
+    box-shadow: ${({ theme }) => theme.shadow.inset};
+  }
+`;
