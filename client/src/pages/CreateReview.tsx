@@ -6,33 +6,34 @@ import { useSelector } from 'react-redux';
 import { IUser } from 'store/userSlice';
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
+import jwt_decode from 'jwt-decode';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
-const accessToken = getCookieValue('access_token');
-
 const CreateReview = () => {
   const navigate = useNavigate();
-  const { memberId: careMemberId, reservationId: careReservationId } = useParams();
+  const { reservationId: careReservationId } = useParams();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
-  const [reservation, setReservation] = useState<any>();
-  const [review, setReview] = useState<any>();
+  const [reservation, setReservation] = useState<any>({});
+  const [review, setReview] = useState<any>({});
   const [reviewImages, setReviewImages] = useState([]);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [star, setStar] = useState<number | null>(review?.star || 5);
   const [reviewText, setReviewText] = useState('');
 
-  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
+  const { isLogin, memberId, email, petsitterBoolean } = useSelector((state: IUser) => state.user);
 
   let year, month, day;
   if (reservation && reservation.reservationDay) {
     [year, month, day] = reservation.reservationDay.split('-');
   }
+  // console.log(reservation);
+  console.log(review);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -62,6 +63,7 @@ const CreateReview = () => {
 
   // 리뷰 등록
   const handleSubmit = async () => {
+    const accessToken = getCookieValue('access_token');
     setIsRegisterLoading(true);
 
     const formData = new FormData();
@@ -82,7 +84,7 @@ const CreateReview = () => {
 
       if (response.status === 200) {
         alert('리뷰가 등록되었습니다.');
-        navigate(`/cares/${memberId}`);
+        navigate(-1);
       }
     } catch (error: any) {
       console.log(error);
@@ -97,6 +99,7 @@ const CreateReview = () => {
 
   // 리뷰 수정
   const handleEditSubmit = async () => {
+    const accessToken = getCookieValue('access_token');
     setIsRegisterLoading(true);
 
     const formData = new FormData();
@@ -123,7 +126,7 @@ const CreateReview = () => {
 
       if (response.status === 200) {
         alert('리뷰가 수정되었습니다.');
-        navigate(`/cares/${memberId}/`);
+        navigate(-1);
       }
     } catch (error) {
       console.log(error);
@@ -132,41 +135,77 @@ const CreateReview = () => {
     setIsRegisterLoading(false);
   };
 
-  // 예약 조회
+  // 해당 예약 1개 조회
   useEffect(() => {
-    if (!isLogin || petsitterBoolean || !careMemberId || !careReservationId || memberId !== +careMemberId) {
+    const accessToken = getCookieValue('access_token');
+
+    if (!isLogin || petsitterBoolean || !careReservationId) {
       alert('권한이 없습니다.');
       navigate('/');
-    } else {
+    }
+    if (accessToken) {
+      const decoded: any = jwt_decode(accessToken);
+
+      if (decoded.id !== memberId && email !== decoded.email) {
+        alert('권한이 없습니다.');
+        navigate('/');
+      } else {
+        try {
+          axios.get(`${apiUrl}/reservations/${careReservationId}`).then((res) => {
+            setReservation(res.data);
+
+            // const photos = res?.data?.review?.photos;
+
+            // if (review) {
+            //   setReview(review);
+            //   setReviewText(review.body);
+            //   setStar(review.star);
+
+            //   if (photos) {
+            //     const modifiedReviewImages = photos.map((photoUrl: any) => {
+            //       if (photoUrl.includes('https://bucketUrl')) {
+            //         return photoUrl.replace('https://bucketUrl', bucketUrl);
+            //       }
+            //       return '';
+            //     });
+
+            //     setReviewImages(modifiedReviewImages);
+            //   }
+            // }
+          });
+        } catch (error: any) {
+          console.log(error);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (reservation.reviewId) {
       try {
-        axios.get(`${apiUrl}/reservations/${careReservationId}`).then((res) => {
-          setReservation(res.data);
+        axios.get(`${apiUrl}/reviews/${reservation.reviewId}`).then((res) => {
+          if (res.status === 200) {
+            console.log(res.data);
+            setReview(res.data);
+            setReviewText(res.data.body);
+            setStar(res.data.star);
 
-          const review = res.data.review;
-          const photos = res.data.review.photos;
-
-          if (review) {
-            setReview(review);
-            setReviewText(review.body);
-            setStar(review.star);
-
+            const photos = res.data.photos;
             if (photos) {
               const modifiedReviewImages = photos.map((photoUrl: any) => {
                 if (photoUrl.includes('https://bucketUrl')) {
                   return photoUrl.replace('https://bucketUrl', bucketUrl);
                 }
-                return '';
               });
-
               setReviewImages(modifiedReviewImages);
             }
           }
         });
-      } catch (error: any) {
+      } catch (error) {
         console.log(error);
       }
     }
-  }, []);
+  }, [reservation]);
 
   return (
     <MainContainer>
@@ -176,13 +215,13 @@ const CreateReview = () => {
           <FirstLine>
             <Info>
               {reservation?.photo ? (
-                <Photo src={reservation.photo.replace(/https:\/\/bucketUrl/g, `${bucketUrl}`)} alt="petsiiter" />
+                <Photo src={reservation.member.photo.replace('https://bucketUrl', bucketUrl)} alt="petsitter" />
               ) : (
-                <EmptyImgDiv />
+                <DefaultImg src="/imgs/User.svg" alt="default img" />
               )}
               <PetSitterInfo>
                 <div>예약번호: {reservation?.reservationId}</div>
-                <div>{reservation?.petsitterName} 펫시터님</div>
+                <div>{reservation.petsitter && reservation?.petsitter.name} 펫시터님</div>
               </PetSitterInfo>
             </Info>
             <PetName>{reservation?.pets?.map((pet: any) => <div key={pet.petId}>{pet.name}</div>)}</PetName>
@@ -236,7 +275,7 @@ const CreateReview = () => {
         </ImgPreview>
       </ImgContainer>
       <TextContainer>
-        <TextTitle>리뷰</TextTitle>
+        <TextTitle>후기 내용</TextTitle>
         <TextArea
           placeholder="케어는 어떠셨나요?"
           defaultValue={review?.body && review.body}
@@ -290,7 +329,7 @@ const Photo = styled.img`
   border-radius: 50%;
 `;
 
-const EmptyImgDiv = styled.div`
+const DefaultImg = styled.img`
   width: 60px;
   height: 60px;
   border-radius: 50%;
