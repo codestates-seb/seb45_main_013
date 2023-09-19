@@ -131,7 +131,7 @@ const ReservationStepTwo = () => {
         </TitleBox>
 
         {filteredPetsitters().map((item) => (
-          <StyledLink to={`/petsitters/:${item.id}`} key={item.id}>
+          <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
             <FilterBodyBox key={item.id}>
               <PetsitterContainer>
                 <PetsitterImg src="/imgs/PetsitterPhoto.svg" alt="PetsitterPhoto" />
