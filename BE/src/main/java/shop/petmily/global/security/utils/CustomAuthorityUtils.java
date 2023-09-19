@@ -17,9 +17,11 @@ public class CustomAuthorityUtils {
     private final List<GrantedAuthority> ADMIN_ROLES = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_MEMBER", "ROLE_PETSITTER");
     private final List<GrantedAuthority> MEMBER_ROLES = AuthorityUtils.createAuthorityList("ROLE_MEMBER");
     private final List<GrantedAuthority> PETSITTER_ROLES = AuthorityUtils.createAuthorityList("ROLE_PETSITTER");
+    private final List<GrantedAuthority> GUEST_ROLES = AuthorityUtils.createAuthorityList("ROLE_GUEST");
     private final List<String> ADMIN_ROLES_STRING = List.of("ADMIN", "MEMBER", "PETSITTER");
     private final List<String> MEMBER_ROLES_STRING = List.of("MEMBER");
     private final List<String> PETSITTER_ROLES_STRING = List.of("PETSITTER");
+    private final List<String> GUEST_ROLES_STRING = List.of("GUEST");
 
     public List<GrantedAuthority> createAuthorities(List<String> roles) {
         return roles.stream()
@@ -28,20 +30,38 @@ public class CustomAuthorityUtils {
     }
 
     public List<String> createRoles(Member member) {
-        if (member.isPetsitterBoolean()) {
-            return PETSITTER_ROLES_STRING;
-        } else if (member.isPetsitterBoolean() == false) {
+        if (member.getPetsitterBoolean() != null) {
+            if (member.getPetsitterBoolean()) {
+                return PETSITTER_ROLES_STRING;
+            } else {
+                return MEMBER_ROLES_STRING;
+            }
+        } else {
+            return GUEST_ROLES_STRING;
+        }
+    }
+
+    public List<String> createMemberRoles(Member member) {
+        if (member.getPetsitterBoolean() == null) {
             return MEMBER_ROLES_STRING;
         } else {
-            return ADMIN_ROLES_STRING;
+            return GUEST_ROLES_STRING;
+        }
+    }
+
+    public List<String> createPetsitterRoles(Member member) {
+        if (member.getPetsitterBoolean() == null) {
+            return PETSITTER_ROLES_STRING;
+        } else {
+            return GUEST_ROLES_STRING;
         }
     }
 
     public List<String> chageRoles(Member member) {
 
-        if (member.isPetsitterBoolean()) {
+        if (member.getPetsitterBoolean()) {
             return MEMBER_ROLES_STRING;
-        } else if (member.isPetsitterBoolean() == false) {
+        } else if (member.getPetsitterBoolean() == false) {
             return PETSITTER_ROLES_STRING;
         } else {
             return ADMIN_ROLES_STRING;

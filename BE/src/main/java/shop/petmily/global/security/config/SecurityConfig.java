@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .antMatchers(HttpMethod.POST, "/members/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/members/search").permitAll()
                         .antMatchers(HttpMethod.GET, "/members/petsitters/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/members/**").hasAnyRole("MEMBER", "PETSITTER")
+                        .antMatchers(HttpMethod.GET, "/members/**").hasAnyRole("MEMBER", "PETSITTER", "GUEST")
                         .antMatchers(HttpMethod.PATCH, "/members/petsitters/**").hasRole("PETSITTER")
                         .antMatchers(HttpMethod.PATCH, "/members/**").hasAnyRole("MEMBER", "PETSITTER")
                         .antMatchers(HttpMethod.DELETE, "/members/**").hasAnyRole("MEMBER", "PETSITTER")

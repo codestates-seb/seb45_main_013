@@ -46,7 +46,7 @@ public class MemberService {
         List<String> roles = customAuthorityUtils.createRoles(member);
         member.setRoles(roles);
         Member saveMember = memberRepository.save(member);
-        if (member.isPetsitterBoolean()) {
+        if (member.getPetsitterBoolean() != null && member.getPetsitterBoolean()) {
             Petsitter petsitter = new Petsitter(saveMember);
             petsitterService.addPetsitterProfile(petsitter);
         }
@@ -88,7 +88,7 @@ public class MemberService {
 
         Optional.ofNullable(member.getRoles())
                 .ifPresent(roles -> findMember.setRoles(roles));
-        Optional.ofNullable(member.isPetsitterBoolean())
+        Optional.ofNullable(member.getPetsitterBoolean())
                 .ifPresent(petsitterBoolean -> findMember.setPetsitterBoolean(petsitterBoolean));
 
         return memberRepository.save(findMember);
@@ -129,7 +129,7 @@ public class MemberService {
     @Transactional
     public void removeMember(long memberId) {
         Member findMember = findVerifiedMember(memberId);
-        if (findMember.isPetsitterBoolean()) {
+        if (findMember.getPetsitterBoolean()) {
             Petsitter findPetsitter = petsitterService.findPetsitter(findMember);
             petsitterRepository.delete(findPetsitter);
         }
@@ -195,7 +195,7 @@ public class MemberService {
                 .address(member.getAddress())
                 .photo(member.getPhoto())
                 .body(member.getBody())
-                .petsitterBoolean(member.isPetsitterBoolean())
+                .petsitterBoolean(member.getPetsitterBoolean())
                 .build();
     }
 
