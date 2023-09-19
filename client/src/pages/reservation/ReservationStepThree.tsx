@@ -7,6 +7,10 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { TextField, Divider, Checkbox, Dialog, DialogTitle, DialogContent, DialogContentText } from '@mui/material';
 import { notice, verificationNotice, impossibleNotice1, impossibleNotice2 } from 'util/noticeText';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { IReservation, addBody } from 'store/reservationSlice';
+import { IUser } from 'store/userSlice';
+
 const PetsitterItem = [
   // 펫시터 정보 DB 받아올 예정
   {
@@ -16,18 +20,6 @@ const PetsitterItem = [
     rating: 4.9,
     review: 10,
     photo: '/imgs/PetsitterPhoto.svg',
-  },
-];
-
-const ReservationItem = [
-  {
-    reservationDay: '2023-09-08',
-    reservationTimeStart: '09:00:00',
-    reservationTimeEnd: '12:00:00',
-    address: '12345 서울 강남구 테해란로 강남빌딩 1',
-    phone: '22',
-    petId: [29, 30],
-    petsitterId: 1,
   },
 ];
 
@@ -49,15 +41,6 @@ const PetItem = [
     species: '보스턴 테리어',
     male: false,
     photo: '/imgs/PetImg.svg',
-  },
-];
-
-const ContactItem = [
-  // 추후 UseEffect로 데이터 받아오기
-  {
-    id: 1,
-    name: '김코딩',
-    phoneNumber: '010-5938-2300',
   },
 ];
 
@@ -102,16 +85,40 @@ const ReservationStepFour = () => {
     formState: { errors },
   } = useForm<IFormInput>();
 
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, detailAddress, body, pets } = useSelector(
+    (state: IReservation) => state.reservation,
+  );
+  const { name, nickName, phone } = useSelector((state: IUser) => state.user);
+  const dispatch = useDispatch();
+
+  console.log(reservationDay);
+  console.log(reservationTimeStart);
+  console.log(reservationTimeEnd);
+  console.log(address);
+  console.log(detailAddress);
+  console.log(body);
+  console.log(pets);
+  console.log(phone);
+
+  // 폰번호 자르기
+  const phoneNum = `010-${phone.substring(3, 7)}-${phone.substring(7)}`;
+  console.log(phoneNum);
+
   return (
     <MainContainer>
       <Header>
         <HeaderTitle>예약확인</HeaderTitle>
       </Header>
+
       <CheckContainer>
         <CheckTitle>
-          <CheckTitleText>{`문단속님\n예약내역을 확인해주세요`}</CheckTitleText>
+          <CheckTItleTextWrapper>
+            <CheckTitleText>{nickName}님</CheckTitleText>
+            <CheckTitleText>{`예약내역을 확인해주세요`}</CheckTitleText>
+          </CheckTItleTextWrapper>
           <CheckTitleIcon src="/imgs/ReservationCheckList.svg" alt="CheckListIcon" />
         </CheckTitle>
+
         {PetsitterItem.map((item) => (
           <PetsitterCard key={item.id}>
             <CardWrap>
@@ -139,9 +146,9 @@ const ReservationStepFour = () => {
             <ReservationTimeTitle>예약 시간</ReservationTimeTitle>
           </TitleWrap>
           <ContentWrap>
-            <Address>{ReservationItem[0].address}</Address>
-            <ReservationDay>{ReservationItem[0].reservationDay}</ReservationDay>
-            <ReservationTime>{`${ReservationItem[0].reservationTimeStart} ~ ${ReservationItem[0].reservationTimeEnd}`}</ReservationTime>
+            <Address>{address}</Address>
+            <ReservationDay>{reservationDay}</ReservationDay>
+            <ReservationTime>{`${reservationTimeStart} ~ ${reservationTimeEnd}`}</ReservationTime>
           </ContentWrap>
         </ReservationResult>
 
@@ -185,16 +192,18 @@ const ReservationStepFour = () => {
             error={errors.body?.type === 'required'}
             fullWidth
             multiline
+            onChange={(e) => {
+              dispatch(addBody({ body: e.target.value }));
+            }}
           />
-          {ContactItem.map((item) => (
-            <ContactContainer key={item.id}>
-              <ScheduleText>{'연락처'}</ScheduleText>
-              <TextContainer>
-                <ContactText>{`${item.name}, ${item.phoneNumber}`}</ContactText>
-                <ContactSubText>{'프로필 번호로 카카오 알림톡 전송'}</ContactSubText>
-              </TextContainer>
-            </ContactContainer>
-          ))}
+
+          <ContactContainer>
+            <ScheduleText>{'연락처'}</ScheduleText>
+            <TextContainer>
+              <ContactText>{`${name}, ${phoneNum}`}</ContactText>
+              <ContactSubText>{'프로필 번호로 카카오 알림톡 전송'}</ContactSubText>
+            </TextContainer>
+          </ContactContainer>
         </RequestContainer>
       </CheckContainer>
       <ConfirmContainer>
@@ -287,7 +296,12 @@ const CheckContainer = styled.div`
 
 const CheckTitle = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+`;
+
+const CheckTItleTextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const CheckTitleText = styled.h1`
