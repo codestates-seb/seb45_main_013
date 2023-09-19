@@ -93,8 +93,14 @@ const MySchedule = () => {
     }
   };
 
-  const getFullDays = (days: string) => {
-    return [...days].map(getFullDayName).join(' , ');
+  // const getFullDays = (days: string) => {
+  //   return [...days].map(getFullDayName).join(' , ');
+  // };
+
+  const sortDaysInOrder = (days: string) => {
+    const desiredOrder = ['월', '화', '수', '목', '금'];
+    const sortedDays = desiredOrder.filter((day) => days.includes(day));
+    return sortedDays.join(', ');
   };
 
   return (
@@ -117,7 +123,7 @@ const MySchedule = () => {
               <Location />
               <Info>
                 <InfoText>케어 가능 지역 </InfoText>
-                <UserText>{info.possibleLocation}</UserText>
+                <UserText>{info.possibleLocation.replace(/[[\]]/g, '')}</UserText>
               </Info>
             </InfoWrapper>
 
@@ -125,7 +131,7 @@ const MySchedule = () => {
               <Calendar />
               <Info>
                 <InfoText>케어 가능 요일 </InfoText>
-                <UserText>{getFullDays(info.possibleDay)}</UserText>
+                <UserText>{sortDaysInOrder(info.possibleDay)}</UserText>
               </Info>
             </InfoWrapper>
 

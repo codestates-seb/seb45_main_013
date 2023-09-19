@@ -4,9 +4,6 @@ import axios from 'axios';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
-import { Start } from '@mui/icons-material';
-import { getCookieValue } from 'hooks/getCookie';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
@@ -35,6 +32,7 @@ type Page = {
 };
 
 //   <Rating name="half-rating-read" defaultValue={2.5} precision={0.5} readOnly />
+const userDefaultImage = '/imgs/DefaultUser.svg';
 
 const Reviews = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -78,8 +76,13 @@ const Reviews = () => {
                 <ReviewContainer>
                   <Review>
                     <ImageContainer>
-                      <UserProfile bgImage={review.memberPhoto.replace(/https:\/\/bucketUrl/g, BucketUrl)} />
+                      {review.memberPhoto ? (
+                        <UserProfile bgImage={review.memberPhoto.replace(/https:\/\/bucketUrl/g, BucketUrl)} />
+                      ) : (
+                        <UserProfile bgImage={userDefaultImage} />
+                      )}
                     </ImageContainer>
+
                     <ReviewInfo>
                       <First>
                         <NickName>{review.memberNickName}</NickName>
@@ -87,7 +90,7 @@ const Reviews = () => {
                           <StyledRating name="half-rating-read" defaultValue={review.star} precision={0.5} readOnly />
                         </Star>
                       </First>
-                      <When>{formatDate(review.createdAt)}</When>{' '}
+                      <When>{formatDate(review.createdAt)}</When>
                     </ReviewInfo>
                   </Review>
                   <CarouselContainer>
@@ -95,7 +98,9 @@ const Reviews = () => {
                       {review.reviewPhotos && review.reviewPhotos.length > 0
                         ? review.reviewPhotos.map((photo, photoIndex) => (
                             <div key={photoIndex}>
-                              <img src={photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="Review Photos" />
+                              {photo && (
+                                <img src={photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="Review Photos" />
+                              )}
                             </div>
                           ))
                         : [

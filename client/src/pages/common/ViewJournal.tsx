@@ -12,7 +12,7 @@ const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 // 강아지, 펫시터, 저널 디폴트 사진
-const petDefaultImage = '/imgs/PetProfile.png';
+
 const userDefaultImage = '/imgs/DefaultUser.svg';
 const journalDefaultImage = '/imgs/Petmily.png';
 
@@ -84,10 +84,38 @@ const ViewJournal = () => {
     fetchJournal();
   }, []);
 
+  // 이름 지우기
   return (
-    <JournalContainer>
+    <>
       {journal && (
-        <>
+        <Journal>
+          <Head>
+            {journal.petPhotos && journal.petPhotos.length > 0 ? (
+              <Profile>
+                {journal.petPhotos.map((photo, index) => (
+                  <PetImage
+                    key={index}
+                    src={photo ? photo.replace(/https:\/\/bucketUrl/g, BucketUrl) : '/imgs/PetProfile.png'}
+                    alt={`Pet ${index + 1}`}
+                  />
+                ))}
+                <Name>이름 {AndNames(journal.petNames)}</Name>
+              </Profile>
+            ) : (
+              <Profile>
+                <PetImage
+                  src={
+                    journal.petPhotos[0]
+                      ? journal.petPhotos[0].replace(/https:\/\/bucketUrl/g, BucketUrl)
+                      : '/imgs/PetProfile.png'
+                  }
+                  alt="pet profile"
+                />
+                <Name>이름 {AndNames(journal.petNames)}</Name>
+              </Profile>
+            )}
+            <Date>{journal.createdAt}</Date>
+          </Head>
           <StyledCarousel>
             {journal.photos && journal.photos.length > 0
               ? journal.photos.map((photo, index) => (
@@ -96,82 +124,65 @@ const ViewJournal = () => {
                       src={photo ? photo.replace(/https:\/\/bucketUrl/g, BucketUrl) : journalDefaultImage}
                       alt="journal photo"
                     />
-                    <PetInfoWrapper>
-                      <StyledAvatarGroup sx={{}}>
-                        {journal.petPhotos && journal.petPhotos.length > 0 && (
-                          <PetAvatar
-                            src={
-                              journal.petPhotos[0]
-                                ? journal.petPhotos[0].replace(/https:\/\/bucketUrl/g, BucketUrl)
-                                : petDefaultImage
-                            }
-                            alt="pet profile"
-                          />
-                        )}
-                        {showAll &&
-                          journal.petPhotos
-                            .slice(1)
-                            .map((photo, index) => (
-                              <PetAvatar
-                                key={index}
-                                src={photo ? photo.replace(/https:\/\/bucketUrl/g, BucketUrl) : petDefaultImage}
-                                alt="pet profile"
-                              />
-                            ))}
-                        {!showAll && journal.petPhotos && journal.petPhotos.length >= 2 && (
-                          <MoreButton onClick={toggleAvatar}>
-                            <PlusIcon />
-                          </MoreButton>
-                        )}
-                      </StyledAvatarGroup>
-                      <ProfileLabel>{AndNames(journal.petNames)}</ProfileLabel>
-                    </PetInfoWrapper>
                   </ImgWrapper>
                 ))
               : [
                   <ImgWrapper key="default">
                     <JournalImg src={journalDefaultImage} alt="default journal" isDefault={true} />
-                    <PetAvatar src={petDefaultImage} alt="default pet profile" />
-                    <ProfileLabel>{AndNames(journal.petNames)}</ProfileLabel>
                   </ImgWrapper>,
                 ]}
           </StyledCarousel>
-
-          <SitterAvatar />
-          <Name>{journal.petsitterName}</Name>
-          <Contents>{journal.body}</Contents>
-        </>
+          <JournalContent>
+            <Profile>
+              <SitterImage
+                src={journal.petsitterPhoto.replace(/https:\/\/bucketUrl/g, BucketUrl)}
+                alt="petsitter image"
+              />
+              <Name>{journal.petsitterName} 펫시터님</Name>
+            </Profile>
+            <Content>{journal.body}</Content>
+          </JournalContent>
+        </Journal>
       )}
-    </JournalContainer>
+    </>
   );
 };
 
-const JournalContainer = styled.div`
-  /* position: relative; */
+const Journal = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
 `;
 
-const PetInfoWrapper = styled.div`
+const Head = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const Profile = styled.div`
   display: flex;
   align-items: center;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
 `;
 
-const PetAvatar = styled(Avatar)`
-  width: 60px !important;
-  height: 60px !important;
-  z-index: 2;
+const PetImage = styled.img`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 8px;
 `;
 
-const ProfileLabel = styled.div`
-  color: white;
-  font-weight: 700;
-  display: inline-block;
-  margin-left: 10px;
-  white-space: nowrap;
+const Name = styled.div`
+  font-size: 18px;
+  font-weight: 800;
+`;
+
+const Date = styled.div`
+  font-size: 18px;
+  font-weight: 800;
+  color: #959595;
 `;
 
 const StyledCarousel = styled(Carousel)`
@@ -180,27 +191,7 @@ const StyledCarousel = styled(Carousel)`
     height: 500px;
     overflow: visible !important;
   }
-`;
-
-const MoreButton = styled.button`
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: lightgray;
-  margin-left: 5px;
-  border: none;
-  cursor: pointer;
-`;
-
-const PlusIcon = styled(AddIcon)`
-  color: white;
-`;
-
-const StyledAvatarGroup = styled(AvatarGroup)`
-  & .MuiAvatar-root:not(:last-child) {
-    margin-right: -20px;
-    z-index: 1;
-  }
+  margin-bottom: 20px;
 `;
 
 const ImgWrapper = styled.div`
@@ -217,23 +208,23 @@ const JournalImg = styled.img<JournalImgProps>`
   object-fit: cover;
 `;
 
-const SitterAvatar = styled(Avatar)`
-  width: 90px !important;
-  height: 90px !important;
-  background-color: gray;
-  position: absolute;
-  top: -45px;
-  left: 20px;
+const JournalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
-const Name = styled.div`
-  ${(props) => props.theme.fontSize.s16h24}
-  margin-top: -36px;
-  margin-left: 20px;
+const SitterImage = styled.img`
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin-right: 8px;
 `;
 
-const Contents = styled.div`
-  margin: 20px;
+const Content = styled.div`
+  margin-top: 20px;
+  display: flex;
+  width: 100%;
+  line-height: 1.5;
 `;
-
 export default ViewJournal;
