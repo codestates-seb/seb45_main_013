@@ -36,19 +36,19 @@ import isBetween from 'dayjs/plugin/isBetween';
 import { getCookieValue } from 'hooks/getCookie';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { addPets, setReservation } from 'store/reservationSlice';
+import { setReservation } from 'store/reservationSlice';
 import { IUser, deleteUser } from 'store/userSlice';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { deleteCookie } from 'hooks/deleteCookie';
-
-const apiUrl = process.env.REACT_APP_API_URL;
-const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 interface IFormInput {
   address: string;
   detailAddress: string;
   error: boolean;
 }
+
+const apiUrl = process.env.REACT_APP_API_URL;
+const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 const Reservation = () => {
   const navigate = useNavigate();
@@ -278,7 +278,7 @@ const Reservation = () => {
           pets: checkedPets,
         }),
       );
-      dispatch(addPets(pets));
+
       navigate('/reservation/step2');
     }
   };
@@ -366,7 +366,18 @@ const Reservation = () => {
                     minTime={dayjs(new Date(0, 0, 0, 8))}
                     maxTime={dayjs(new Date(0, 0, 0, 22))}
                     ampm={false}
-                    shouldDisableTime={(value, view) => view === 'hours' && value.hour() < +nowTime.split(':')[0] + 2}
+                    shouldDisableTime={(value, view) => {
+                      const currentTime = dayjs();
+                      if (!currentTime.isSame(dayjs(reservationDay), 'date')) {
+                        return false;
+                      }
+                      if (view === 'hours') {
+                        if (value.hour() < currentTime.hour() + 2) {
+                          return true;
+                        }
+                      }
+                      return false;
+                    }}
                     onChange={handleStartTime}
                     onError={handleStartError}
                   />
@@ -427,19 +438,17 @@ const Reservation = () => {
                 return (
                   <SelectPetCard key={pet.petId}>
                     <PetImgLabel>
-                      <PetImg
-                        src={
-                          pet.photo ? (
-                            pet.photo.replace('https://bucketUrl', bucketUrl)
-                          ) : (
-                            <div style={{ width: '80px', height: '80px', backgroundColor: 'gray' }}>
-                              사진을 등록해 주세요
-                            </div>
-                          )
-                        }
-                        onError={onErrorImg}
-                        alt="펫 사진"
-                      />
+                      <Box style={{ width: '80px', height: '80px', position: 'relative', overflow: 'hidden' }}>
+                        {pet.photo ? (
+                          <PetImg
+                            src={pet.photo && pet.photo.replace('https://bucketUrl', bucketUrl)}
+                            onError={onErrorImg}
+                            alt="펫 사진"
+                          />
+                        ) : (
+                          <PetImg src="/imgs/PetProfile.png" alt="default pet"></PetImg>
+                        )}
+                      </Box>
                       <CheckBoxInput
                         type="checkbox"
                         id={pet.petId}
@@ -787,8 +796,7 @@ const CheckBoxInput = styled.input`
     border-radius: 50%; /* Make the checkmark a circle */
 
     position: absolute;
-    top: 50%;
-    left: 50%;
+
     transform: translate(-50%, -50%);
     transition:
       width 0.3s ease,
@@ -805,8 +813,10 @@ const CheckBoxInput = styled.input`
 const PetImg = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center; /* 이미지를 가운데 정렬하기 위해 필요 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const AddPetImg = styled.img`
