@@ -554,6 +554,7 @@ const MainContainer = styled.div`
 const HeaderTitle = styled.div`
   font-size: 28px;
   font-weight: 700;
+  margin-top: -16px;
 `;
 
 const FirstFAQ = styled.div`

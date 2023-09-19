@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import axios from 'axios';
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -11,6 +12,8 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Button from '@mui/material/Button';
 import dayjs from 'dayjs';
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const timeSlots = [
   // 시간표
@@ -75,12 +78,19 @@ interface PossibleReservationTimeProps {
   setSelectedTimes: Dispatch<SetStateAction<string[]>>;
 }
 
+interface Schedule {
+  date: string;
+  time: string[];
+}
+
 const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
   selectedDate,
   setSelectedDate,
   selectedTimes,
   setSelectedTimes,
 }) => {
+  const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+
   const handleTimeSelect = (time: string) => {
     if (selectedTimes.includes(time)) {
       setSelectedTimes(selectedTimes.filter((t) => t !== time));
@@ -90,6 +100,24 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
       }
     }
   };
+
+  useEffect(() => {
+    const fetchBookedTimes = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/reservations/schedule/{petsitterId}`);
+        const schedulesOnSelectedDate = response.data.find(
+          (schedule: Schedule) => schedule.date === selectedDate?.format('YYYY-MM-DD'),
+        );
+
+        if (schedulesOnSelectedDate) setBookedTimes(schedulesOnSelectedDate.time);
+        else setBookedTimes([]);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (selectedDate) fetchBookedTimes();
+  }, [selectedDate]);
 
   return (
     <MainContainer>
@@ -115,9 +143,10 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
               <StyledButtonGroup color="primary" aria-label="outlined primary button group">
                 {amTimeSlots.map((time) => {
                   const isDisabled =
-                    selectedDate &&
-                    selectedDate.isSame(currentDate, 'day') &&
-                    parseInt(time.split(':')[0]) <= currentDate.hour();
+                    (selectedDate &&
+                      selectedDate.isSame(currentDate, 'day') &&
+                      parseInt(time.split(':')[0]) <= currentDate.hour()) ||
+                    bookedTimes.includes(time);
                   return (
                     <Button
                       key={time}
@@ -136,9 +165,10 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
               <StyledButtonGroup color="primary" aria-label="outlined primary button group">
                 {pmTimeSlots.map((time) => {
                   const isDisabled =
-                    selectedDate &&
-                    selectedDate.isSame(currentDate, 'day') &&
-                    parseInt(time.split(':')[0]) <= currentDate.hour();
+                    (selectedDate &&
+                      selectedDate.isSame(currentDate, 'day') &&
+                      parseInt(time.split(':')[0]) <= currentDate.hour()) ||
+                    bookedTimes.includes(time);
                   return (
                     <Button
                       key={time}
@@ -168,9 +198,10 @@ const MainContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledButtonGroup = styled(Button)`
+const StyledButtonGroup = styled.div`
   flex-wrap: wrap;
   margin-bottom: 16px;
+  text-align: center;
 
   & .MuiButton-root {
     width: calc((100% - (3 * 8px)) / 4);
