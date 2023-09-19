@@ -49,7 +49,7 @@ const PetsittersItem = [
   },
 ];
 
-const ReservationStepThree = () => {
+const ReservationStepTwo = () => {
   const navigate = useNavigate();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterType, setFilterType] = useState('요청한 예약 날짜에 맞는 펫시터'); // 필터 타입 상태 관리
@@ -186,7 +186,7 @@ const ReservationStepThree = () => {
   );
 };
 
-export default ReservationStepThree;
+export default ReservationStepTwo;
 
 const MainContainer = styled.div`
   display: flex;

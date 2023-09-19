@@ -71,7 +71,7 @@ type PetItem = {
   photo: string;
 };
 
-const ReservationStepFour = () => {
+const ReservationStepThree = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmEnabled, setIsConfirmEnabled] = useState(false); //예약하기 버튼 활성화 상태
@@ -258,7 +258,7 @@ const ReservationStepFour = () => {
   );
 };
 
-export default ReservationStepFour;
+export default ReservationStepThree;
 
 const MainContainer = styled.div`
   display: flex;

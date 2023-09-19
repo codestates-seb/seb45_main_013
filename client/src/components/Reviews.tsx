@@ -1,10 +1,15 @@
 import styled from 'styled-components';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Rating from '@mui/material/Rating';
 
-// 추후 UseEffect로 데이터 받아올 데이터 (이용 후기)
+// const apiUrl = process.env.REACT_APP_API_URL;
+// const bucketUrl = process.env.REACT_APP_BUCKET_URL;
+
+//추후 UseEffect로 데이터 받아올 데이터 (이용 후기)
 const ReviewsItem = [
   {
     id: 1,
@@ -36,6 +41,22 @@ const ReviewsItem = [
 ];
 
 const Reviews = () => {
+  const [reviews, setReviews] = useState<any[]>([]);
+
+  // useEffect(() => {
+  //   const fetchReviews = async () => {
+  //     try {
+  //       const response = await axios.get(`${apiUrl}/reviews?page=1&size=10&petsitterId=${petsitterId}`);
+  //       setReviews(response.data.content);
+  //       console.log(response);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   fetchReviews();
+  // }, [petsitterId];
+
   return (
     <MainContainer>
       <TitleContainer>
