@@ -57,7 +57,12 @@ const OAuthBranch = () => {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          .then((res) => console.log(res));
+          .then((res) => {
+            console.log(res);
+            if (res.data.petsitterBoolean || res.data.pesitterId) {
+              navigate('/', { replace: true });
+            }
+          });
       }
 
       navigate('/signup/branch', { replace: true });
