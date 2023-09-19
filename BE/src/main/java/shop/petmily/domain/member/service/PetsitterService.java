@@ -91,7 +91,7 @@ public class PetsitterService {
                 .petsitterId(petsitter.getPetsitterId())
                 .possiblePetType(petsitter.getPossiblePetType())
                 .possibleDay(petsitter.getPossibleDay())
-                .possibleLocation(petsitter.getPossibleLocation().toString())
+                .possibleLocation(petsitter.getPossibleLocation())
                 .possibleTimeStart(petsitter.getPossibleTimeStart())
                 .possibleTimeEnd(petsitter.getPossibleTimeEnd())
                 .star(petsitter.getStar())
