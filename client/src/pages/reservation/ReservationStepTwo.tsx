@@ -1,20 +1,23 @@
 import styled from 'styled-components';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { Box, Divider, Drawer, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { FormatListBulleted } from '@mui/icons-material';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { IReservation } from 'store/reservationSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { IReservation, deleteReservation } from 'store/reservationSlice';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { getCookieValue } from 'hooks/getCookie';
 import PetsitterCard from '@components/PetsitterCard';
+import { deleteUser } from 'store/userSlice';
+import { deleteCookie } from 'hooks/deleteCookie';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const ReservationStepTwo = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId } = useSelector(
     (state: IReservation) => state.reservation,
@@ -42,68 +45,117 @@ const ReservationStepTwo = () => {
     setIsFilterOpen(false);
   };
 
-  const getTitleText = () => {
-    switch (filterType) {
-      case '전체 펫시터':
-        return '전체 펫시터';
-      case '요청한 예약 날짜에 맞는 펫시터':
-        return '요청한 예약 날짜에 맞는 펫시터';
-      case '내가 찜한 펫시터':
-        return '내가 찜한 펫시터';
-      case '새로 온 펫시터':
-        return '새로 온 펫시터';
-      case '리뷰가 많은 펫시터':
-        return '리뷰가 많은 펫시터';
-      default:
-        return '펫시터 보기';
-    }
-  };
-
   useEffect(() => {
-    const getProperPetsitters = async () => {
-      const accessToken = getCookieValue('access_token');
-      try {
-        const response = await axios.post(
-          `${apiUrl}/reservations/petsitters`,
-          {
-            reservationDay,
-            reservationTimeStart,
-            reservationTimeEnd,
-            address,
-            petId,
-          },
-          { headers: { Authorization: `Bearer ${accessToken}` } },
-        );
-        if (response.status === 200) {
-          setProperPetsitters(response.data);
-        }
-      } catch (error: any) {
-        console.log(error);
-        if (error.response.status === 401) {
-          try {
-            const newAccessToken = await refreshAccessToken();
-            if (newAccessToken) {
-              const response = await axios.post(
-                `${apiUrl}/reservations/petsitters`,
-                {
-                  reservationDay,
-                  reservationTimeStart,
-                  reservationTimeEnd,
-                  address,
-                  petId,
-                },
-                { headers: { Authorization: `Bearer ${newAccessToken}` } },
-              );
-              setProperPetsitters(response.data);
+    if (filterType === '요청한 예약 날짜에 맞는 펫시터') {
+      const getProperPetsitters = async () => {
+        const accessToken = getCookieValue('access_token');
+        try {
+          const response = await axios.post(
+            `${apiUrl}/reservations/petsitters`,
+            {
+              reservationDay,
+              reservationTimeStart,
+              reservationTimeEnd,
+              address,
+              petId,
+            },
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          );
+          if (response.status === 200) {
+            setProperPetsitters(response.data);
+          }
+        } catch (error: any) {
+          console.log(error);
+          if (error.response.status === 401) {
+            try {
+              const newAccessToken = await refreshAccessToken();
+              if (newAccessToken) {
+                const response = await axios.post(
+                  `${apiUrl}/reservations/petsitters`,
+                  {
+                    reservationDay,
+                    reservationTimeStart,
+                    reservationTimeEnd,
+                    address,
+                    petId,
+                  },
+                  { headers: { Authorization: `Bearer ${newAccessToken}` } },
+                );
+                setProperPetsitters(response.data);
+              }
+            } catch (error) {
+              console.log(error);
             }
-          } catch (error) {
-            console.log(error);
           }
         }
-      }
-    };
-    getProperPetsitters();
-  }, []);
+      };
+      getProperPetsitters();
+    } else if (filterType === '내가 찜한 펫시터') {
+      const getFavoritePetsitters = async () => {
+        const accessToken = getCookieValue('access_token');
+        try {
+          const response = await axios.get(`${apiUrl}/members/favorite`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          setProperPetsitters(response.data);
+        } catch (error: any) {
+          if (error.response.status === 401) {
+            try {
+              const newAccessToken = await refreshAccessToken();
+              if (newAccessToken) {
+                const response = await axios.get(`${apiUrl}/members/favorite`, {
+                  headers: { Authorization: `Bearer ${newAccessToken}` },
+                });
+                setProperPetsitters(response.data);
+              }
+            } catch (refreshError) {
+              console.log(refreshError);
+              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              dispatch(deleteUser());
+              dispatch(deleteReservation());
+              deleteCookie('access_token');
+              deleteCookie('refresh_token');
+            }
+          }
+          setProperPetsitters([]);
+        }
+      };
+      getFavoritePetsitters();
+    } else if (filterType === '새로 온 펫시터') {
+      const getNewPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search`);
+          setProperPetsitters(response.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getNewPetsitters();
+    } else if (filterType === '별점이 높은 펫시터') {
+      const getHighPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search?star=0`);
+          setProperPetsitters(response.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getHighPetsitters();
+    } else if (filterType === '리뷰가 많은 펫시터') {
+      const getManyReviewsPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search?reveiwCount=0`);
+          setProperPetsitters(response.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getManyReviewsPetsitters();
+    }
+  }, [filterType]);
+
+  console.log(filterType);
+  console.log(properPetsitters);
 
   return (
     <MainContainer id="steptwo-main">
@@ -116,7 +168,7 @@ const ReservationStepTwo = () => {
       <FilterContainer>
         <TitleBox>
           <TitleWrap>
-            <TitleText>{getTitleText()}</TitleText>
+            <TitleText>{filterType}</TitleText>
             <ItemCountbox>{properPetsitters.length}</ItemCountbox>
           </TitleWrap>
           <FilterIcon src="/icons/FilterIcon.svg" alt="FilterIcon" onClick={handleFilterOpen} />
@@ -141,20 +193,21 @@ const ReservationStepTwo = () => {
             <span>필터</span>
           </ListSubheader>
           <Divider />
-          <ListItem button onClick={() => handleFilterButtonClick('전체 펫시터')}>
-            <ListItemText primary="전체" sx={{ ml: 5 }} />
-          </ListItem>
-          <ListItem button onClick={() => handleFilterButtonClick('요청한 예약 날짜에 맞는 펫시터')}>
+
+          <ListItem onClick={() => handleFilterButtonClick('요청한 예약 날짜에 맞는 펫시터')}>
             <ListItemText primary="요청한 예약 날짜에 맞는 펫시터" sx={{ ml: 5 }} />
           </ListItem>
-          <ListItem button onClick={() => handleFilterButtonClick('내가 찜한 펫시터')}>
+          <ListItem onClick={() => handleFilterButtonClick('내가 찜한 펫시터')}>
             <ListItemText primary="내가 찜한 펫시터" sx={{ ml: 5 }} />
           </ListItem>
-          <ListItem button onClick={() => handleFilterButtonClick('새로 온 펫시터')}>
-            <ListItemText primary="새로 온 펫시터" sx={{ ml: 5 }} />
+          <ListItem onClick={() => handleFilterButtonClick('별점이 높은 펫시터')}>
+            <ListItemText primary="별점이 높은 펫시터" sx={{ ml: 5 }} />
           </ListItem>
-          <ListItem button onClick={() => handleFilterButtonClick('리뷰가 많은 펫시터')}>
+          <ListItem onClick={() => handleFilterButtonClick('리뷰가 많은 펫시터')}>
             <ListItemText primary="리뷰가 많은 펫시터" sx={{ ml: 5 }} />
+          </ListItem>
+          <ListItem onClick={() => handleFilterButtonClick('새로 온 펫시터')}>
+            <ListItemText primary="새로 온 펫시터" sx={{ ml: 5 }} />
           </ListItem>
         </List>
       </Drawer>

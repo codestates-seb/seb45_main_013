@@ -24,6 +24,9 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + 1);
+
   const [isLoginLoading, setIsLoginLoading] = useState(false);
 
   const {
@@ -42,7 +45,7 @@ const Login = () => {
 
       if (status === 200) {
         document.cookie = `access_token=${data.accessToken}; path=/;`;
-        document.cookie = `refresh_token=${data.refreshToken};  path=/;`;
+        document.cookie = `refresh_token=${data.refreshToken};  path=/; expires=${expirationDate.toUTCString()};`;
 
         dispatch(login());
         navigate('/');

@@ -24,8 +24,6 @@ const PetsitterCard = ({ petsitter }: PetsitterProps) => {
     (state: IReservation) => state.reservation,
   );
 
-  console.log(petsitter);
-
   const startTime = petsitter.possibleTimeStart.split(':')[0] + ':' + petsitter.possibleTimeStart.split(':')[1];
   const endTime = petsitter.possibleTimeEnd.split(':')[0] + ':' + petsitter.possibleTimeStart.split(':')[1];
 
