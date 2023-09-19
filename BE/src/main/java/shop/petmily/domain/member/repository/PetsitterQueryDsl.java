@@ -46,7 +46,7 @@ public class PetsitterQueryDsl {
                         petsitter.reviewCount))
                 .from(petsitter)
                 .where(
-//                        petsitter.possibleDay.like(possibleDay),
+                        petsitter.possibleDay.contains(possibleDay),
                         petsitter.possiblePetType.eq(possiblePetType).or(petsitter.possiblePetType.eq(Petsitter.PossiblePetType.PET_ALL)),
                         petsitter.possibleLocation.any().eq(possibleLocation),
                         petsitter.possibleTimeStart.loe(reservationTimeStart),
