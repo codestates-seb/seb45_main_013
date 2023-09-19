@@ -1,6 +1,12 @@
 import styled from 'styled-components';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+
+import { getCookieValue } from 'hooks/getCookie';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
+import { useSelector } from 'react-redux';
+import { IUser } from 'store/userSlice';
 
 import Button from '@mui/material/Button';
 
@@ -8,21 +14,12 @@ import Reviews from '@components/Reviews';
 import PossibleReservationTime from '@components/PossibleReservationTime';
 import dayjs from 'dayjs';
 
-const PetsitterDetailsItem = [
-  // 추후에 UseEffect로 데이터 받아올 데이터
-  {
-    id: 1,
-    name: '리나',
-    describe:
-      '안녕하세요! 리나입니다. 펫시터를 시작한지 3년이 되었어요. 동물병원에서 근무하면서 반려견 케어하는 일을 도맡아서 진행하여 응급처치 해야할 상황에 잘 대처 할 수 있습니다 믿고 맡겨주시는 만큼 보답드리겠습니다. 잘 부탁드리고 편하게 문의 주세요! 감사합니다:)',
-    rating: `5.0`,
-    review: `1,630`,
-    profileImg: '/imgs/PetsitterViewDetailsImg.svg',
-    ratingImg: '/imgs/Star.svg',
-    reviewImg: '/imgs/ReviewIcon.svg',
-    location: '서울시 강남구',
-  },
-];
+const apiUrl = process.env.REACT_APP_API_URL;
+const bucketUrl = process.env.REACT_APP_BUCKET_URL;
+
+const onErrorImg = (e: any) => {
+  e.target.src = '/imgs/PetProfile.png';
+};
 
 const NavItem = [
   {
@@ -73,107 +70,164 @@ const PetsitterViewDetails = () => {
   const [selectedDates, setSelectedDates] = useState<dayjs.Dayjs | null>(null);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
+  const [petsitterData, setPetsitterData] = useState<any>({});
+  const { petsitterId } = useParams();
+
+  const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
+
   const handleResetReservationClick = () => {
     setSelectedDates(null);
     setSelectedTimes([]);
   };
 
-  const handleBookmarkClick = () => {
-    setIsBookmarked(!isBookmarked);
+  const handleBookmarkClick = async () => {
+    const accessToken = getCookieValue('access_token');
+    if (isLogin) {
+      try {
+        const response = await axios.patch(
+          `${apiUrl}/members/favorite?petsitterId=${petsitterId}`,
+          {}, //추가적인 데이터 없음
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        setIsBookmarked(response.data.isBookmarked);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        const newAccessToken = await refreshAccessToken();
+        if (newAccessToken) {
+          const response = await axios.patch(
+            `${apiUrl}/members/favorite?petsitterId=${petsitterId}`,
+            {}, //추가적인 데이터 없음
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            },
+          );
+          setIsBookmarked(response.data.isBookmarked);
+        }
+      } catch (refreshError) {
+        console.error(refreshError);
+      }
+    }
   };
 
   const handleOnSubmitButtonClick = () => {
     navigate('/reservation/step3');
   };
 
-  return (
-    <>
-      {PetsitterDetailsItem.map((item) => (
-        <MainContainer key={item.id}>
-          <ImgContainer>
-            <img src={item.profileImg} alt="펫시터 사진" />
-          </ImgContainer>
-          <CareablePetContainer>
-            <CareablePet>
-              <img src="/icons/DogIcon.svg" alt="dogIcon" />
-              <img src="/icons/CatIcon.svg" alt="catIcon" />
-            </CareablePet>
-          </CareablePetContainer>
-          <PetsitterTextContainer>
-            <LogoImg src="/imgs/Logo.svg" alt="Logo" />
-            <PetsitterName>{item.name}</PetsitterName>
-          </PetsitterTextContainer>
-          <Introbox>
-            <PetsitterIntroText>{item.describe}</PetsitterIntroText>
-          </Introbox>
-          <CareerContainer>
-            <CareerText>{careerone()}</CareerText>
-            <CareerText>{careertwo()}</CareerText>
-          </CareerContainer>
-          <BookmarkContainer>
-            <RatingImg src={item.ratingImg} alt="ratingImg" />
-            {item.rating}
-            <MiddleLineImg src="/imgs/MiddleLine.svg" alt="middleLine" />
-            <StyledButton variant="text" onClick={handleBookmarkClick}>
-              <BookmarkIcon
-                src={isBookmarked ? '/icons/Bookmark.svg' : '/imgs/BeforeBookmark.svg'}
-                alt="bookmarkIcon"
-              />
-              찜하기
-            </StyledButton>
-          </BookmarkContainer>
+  useEffect(() => {
+    const fetchPetsitterData = async () => {
+      if (petsitterId) {
+        try {
+          const response = await axios.get(`${apiUrl}/members/petsitters/${petsitterId}`);
+          setPetsitterData(response.data);
+        } catch (error) {
+          console.error('데이터가 정상적으로 들어오지 못합니다');
+        }
+      }
+    };
 
-          <ViewDetailsContainer>
-            <TabButtonsContainer>
-              {NavItem.map((nav) => (
-                <NavBarButton key={nav.text} isActive={activeTab === nav.link} onClick={() => setActiveTab(nav.link)}>
-                  {nav.text}
-                </NavBarButton>
-              ))}
-            </TabButtonsContainer>
-            <TabContentContainer>
-              {activeTab === '/possibleReservationTime' && (
-                <PossibleReservationTime
-                  selectedDate={selectedDates}
-                  setSelectedDate={setSelectedDates}
-                  selectedTimes={selectedTimes}
-                  setSelectedTimes={setSelectedTimes}
-                />
-              )}
-              {activeTab === '/reviews' && <Reviews />}
-            </TabContentContainer>
-            {selectedDates && selectedTimes && (
-              <ConfirmationSection>
-                <ConfirmationText>예약확인</ConfirmationText>
-                <ConfirmationDate>
-                  예약 날짜: {selectedDates ? selectedDates.format('YYYY-MM-DD') : '날짜를 선택하세요'}
-                </ConfirmationDate>
-                {selectedTimes.length > 0 && (
-                  <>
-                    <ConfirmationTime>예약 시작 시간: {convertTo12Hour(selectedTimes[0])}</ConfirmationTime>
-                    <ConfirmationTime>
-                      예약 종료 시간: {convertTo12Hour(selectedTimes[selectedTimes.length - 1])}
-                    </ConfirmationTime>
-                  </>
-                )}
-                <StyledCancelButton variant="outlined" color="error" onClick={handleResetReservationClick}>
-                  취소
-                </StyledCancelButton>
-              </ConfirmationSection>
+    fetchPetsitterData();
+  }, [petsitterId]);
+
+  console.log(petsitterData);
+
+  return (
+    <MainContainer>
+      <ImgContainer>
+        {petsitterData?.photo ? (
+          <img src={petsitterData?.photo.replace('https://bucketUrl', bucketUrl)} alt="펫시터 사진" />
+        ) : (
+          <DefaultImg src="/imgs/User.svg" alt="default img" />
+        )}
+      </ImgContainer>
+      <CareablePetContainer>
+        <CareablePet>
+          {(petsitterData.possiblePetType === 'PET_ALL' || petsitterData.possiblePetType === 'PET_DOG') && (
+            <img src="/icons/DogIcon.svg" alt="dogIcon" />
+          )}
+          {(petsitterData.possiblePetType === 'PET_ALL' || petsitterData.possiblePetType === 'PET_CAT') && (
+            <img src="/icons/CatIcon.svg" alt="catIcon" />
+          )}
+        </CareablePet>
+      </CareablePetContainer>
+      <PetsitterTextContainer>
+        <LogoImg src="/imgs/Logo.svg" alt="Logo" />
+        <PetsitterName>{petsitterData.name}</PetsitterName>
+      </PetsitterTextContainer>
+      <Introbox>
+        <PetsitterIntroText>{petsitterData.body}</PetsitterIntroText>
+      </Introbox>
+      <CareerContainer>
+        <CareerText>{careerone()}</CareerText>
+        <CareerText>{careertwo()}</CareerText>
+      </CareerContainer>
+      <BookmarkContainer>
+        <RatingImg src="/imgs/Star.svg" alt="ratingImg" />
+        {petsitterData.star}
+        <MiddleLineImg src="/imgs/MiddleLine.svg" alt="middleLine" />
+        <StyledButton variant="text" onClick={handleBookmarkClick}>
+          <BookmarkIcon src={isBookmarked ? '/icons/Bookmark.svg' : '/imgs/BeforeBookmark.svg'} alt="bookmarkIcon" />
+          찜하기
+        </StyledButton>
+      </BookmarkContainer>
+
+      <ViewDetailsContainer>
+        <TabButtonsContainer>
+          {NavItem.map((nav) => (
+            <NavBarButton key={nav.text} isActive={activeTab === nav.link} onClick={() => setActiveTab(nav.link)}>
+              {nav.text}
+            </NavBarButton>
+          ))}
+        </TabButtonsContainer>
+        <TabContentContainer>
+          {activeTab === '/possibleReservationTime' && (
+            <PossibleReservationTime
+              selectedDate={selectedDates}
+              setSelectedDate={setSelectedDates}
+              selectedTimes={selectedTimes}
+              setSelectedTimes={setSelectedTimes}
+            />
+          )}
+          {activeTab === '/reviews' && <Reviews />}
+        </TabContentContainer>
+        {selectedDates && selectedTimes && (
+          <ConfirmationSection>
+            <ConfirmationText>예약확인</ConfirmationText>
+            <ConfirmationDate>
+              예약 날짜: {selectedDates ? selectedDates.format('YYYY-MM-DD') : '날짜를 선택하세요'}
+            </ConfirmationDate>
+            {selectedTimes.length > 0 && (
+              <>
+                <ConfirmationTime>예약 시작 시간: {convertTo12Hour(selectedTimes[0])}</ConfirmationTime>
+                <ConfirmationTime>
+                  예약 종료 시간: {convertTo12Hour(selectedTimes[selectedTimes.length - 1])}
+                </ConfirmationTime>
+              </>
             )}
-          </ViewDetailsContainer>
-          <ButtonContainer>
-            <StyledSubmitButton
-              type="submit"
-              disabled={!selectedDates || selectedTimes.length === 0}
-              onClick={handleOnSubmitButtonClick}
-            >
-              다음단계
-            </StyledSubmitButton>
-          </ButtonContainer>
-        </MainContainer>
-      ))}
-    </>
+            <StyledCancelButton variant="outlined" color="error" onClick={handleResetReservationClick}>
+              취소
+            </StyledCancelButton>
+          </ConfirmationSection>
+        )}
+      </ViewDetailsContainer>
+      <ButtonContainer>
+        <StyledSubmitButton
+          type="submit"
+          disabled={!selectedDates || selectedTimes.length === 0}
+          onClick={handleOnSubmitButtonClick}
+        >
+          다음단계
+        </StyledSubmitButton>
+      </ButtonContainer>
+    </MainContainer>
   );
 };
 
@@ -412,4 +466,11 @@ const StyledSubmitButton = styled.button`
     background-color: ${({ theme }) => theme.colors.darkBlue};
     box-shadow: ${({ theme }) => theme.shadow.inset};
   }
+`;
+
+const DefaultImg = styled.img`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: ${(props) => props.theme.textColors.primary};
 `;

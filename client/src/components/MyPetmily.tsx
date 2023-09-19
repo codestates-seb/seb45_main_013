@@ -64,20 +64,33 @@ const MyPetmily = () => {
               <PetInfoContainer>
                 <Line>
                   <PetName>{pet.name}</PetName>
+                </Line>
+                <Line>
+                  <PetInfo>
+                    {pet.male ? '남아' : '여아'}, {pet.age}살
+                  </PetInfo>
+                </Line>
+                <Line>
                   <PetInfo>{pet.species}</PetInfo>
                 </Line>
-                <Line>
-                  <PetInfo>{pet.male ? '남자아이' : '여자아이'}</PetInfo>
-                  <PetInfo>{pet.neutering && '중성화'}</PetInfo>
-                </Line>
-                <Line>
-                  <PetInfo> {pet.age}살 </PetInfo>
-                  <PetInfo>{pet.weight}kg</PetInfo>
-                </Line>
+                <AdditionalInfo>
+                  <Line>
+                    <Item>중성화</Item>
+                    <Info>{pet.neutering ? 'O' : 'X'}</Info>
+                  </Line>
+                  <Line>
+                    <Item>몸무게</Item>
+                    <Info>{pet.weight}kg</Info>
+                  </Line>
+                  <Line>
+                    <Item>펫 소개</Item>
+                    <Info>{pet.body ? pet.body : '펫 소개를 작성해주세요!'}</Info>
+                  </Line>
+                </AdditionalInfo>
               </PetInfoContainer>
               <ButtonContainer>
                 <Link to={`/mypage/${pet.petId}/edit`}>
-                  <Button>수정하기</Button>
+                  <Button sx={{ color: '#279eff', mt: 5 }}>수정하기</Button>
                 </Link>
               </ButtonContainer>
             </PetmilyCard>
@@ -128,19 +141,27 @@ const TextContainer = styled.div`
 
 const PetInfoContainer = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: column;
   align-items: center;
 `;
 
 const Line = styled.div`
   display: flex;
-  justify-content: space-between;
+  margin-top: 8px;
+  align-items: center;
   width: 50%;
 `;
 
 const Text = styled.div`
   font-weight: 900;
   font-size: 18px;
+`;
+
+const Item = styled.div`
+  font-weight: 900;
+  font-size: 16px;
+  color: #279eff;
 `;
 
 const PetName = styled.div`
@@ -177,7 +198,13 @@ export const PetmilyCard = styled.div`
 
 const PetInfo = styled.span`
   margin-top: 4px;
-  color: ${(props) => props.theme.textColors.gray00};
+  color: #a1a1a1;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
+  ${(props) => props.theme.fontSize.s16h24};
+`;
+
+const Info = styled.span`
+  margin-left: 20px;
   font-weight: ${(props) => props.theme.fontWeights.bold};
   ${(props) => props.theme.fontSize.s16h24};
 `;
@@ -206,5 +233,13 @@ const ButtonContainer = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-end;
+`;
+
+const AdditionalInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 10px;
+  align-items: center;
 `;
 export default MyPetmily;

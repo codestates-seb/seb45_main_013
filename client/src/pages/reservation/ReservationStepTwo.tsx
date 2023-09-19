@@ -13,7 +13,7 @@ import PetsitterCard from '@components/PetsitterCard';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const ReservationStepThree = () => {
+const ReservationStepTwo = () => {
   const navigate = useNavigate();
 
   const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId } = useSelector(
@@ -162,7 +162,7 @@ const ReservationStepThree = () => {
   );
 };
 
-export default ReservationStepThree;
+export default ReservationStepTwo;
 
 const MainContainer = styled.div`
   display: flex;

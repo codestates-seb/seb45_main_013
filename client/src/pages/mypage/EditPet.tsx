@@ -71,16 +71,6 @@ const EditPet = () => {
 
   const { register, setValue, clearErrors, handleSubmit, formState } = useForm<IEditPet>({
     resolver: yupResolver(schema),
-    defaultValues: {
-      name: pet.name,
-      age: pet.age,
-      species: pet.species,
-      weight: pet.weight,
-      body: pet.body,
-      male: pet.male,
-      neutering: pet.neutering,
-      photo: pet.photo,
-    },
   });
 
   const { errors } = formState;
@@ -98,9 +88,13 @@ const EditPet = () => {
           setPet(response.data);
           setIsLoaded(true);
           console.log(response.data);
-          for (const key in response.data) {
-            setValue(key as keyof IEditPet, response.data[key]);
-          }
+          setValue('name', response.data.name);
+          setValue('species', response.data.species);
+          setValue('weight', response.data.weight);
+          setValue('age', response.data.age);
+          setValue('body', response.data.body);
+          setValue('male', response.data.male);
+          setValue('neutering', response.data.neutering);
         }
       } catch (error) {
         console.error(error);
@@ -116,9 +110,8 @@ const EditPet = () => {
   };
 
   const onSubmit = async (data: IEditPet) => {
+    console.log(data);
     const token = getCookieValue('access_token');
-
-    console.log(JSON.stringify(data));
 
     const formData = new FormData();
     if (imageFile) {
@@ -131,7 +124,7 @@ const EditPet = () => {
       formData.append('weight', data.weight.toString());
     }
     if (data.age !== undefined && data.age !== pet.age) {
-      formData.append('weight', data.age.toString());
+      formData.append('age', data.age.toString());
     }
     if (data.body !== undefined) {
       formData.append('body', data.body);
@@ -152,7 +145,7 @@ const EditPet = () => {
         },
       });
       if (response.data) {
-        alert('수정이 완료되었습니다');
+        alert('수정이 완료되었습니다.');
         navigate('/mypage');
       }
     } catch (error) {
@@ -162,7 +155,7 @@ const EditPet = () => {
 
   const deletePet = async () => {
     const token = getCookieValue('access_token');
-    const isConfirmed = window.confirm('정말 펫을 삭제하시겠습니까? (펫을 삭제하면, 예약에서 해당 펫이 제외됩니다.)');
+    const isConfirmed = window.confirm('정말 펫을 삭제하시겠습니까?');
     if (!isConfirmed) return;
     else {
       console.log(token);
@@ -177,7 +170,7 @@ const EditPet = () => {
           },
         );
         if (response.data === 'Disable Pet Success') {
-          alert('펫이 삭제되었습니다');
+          alert('펫이 삭제되었습니다.');
           navigate('/mypage');
         }
       } catch (error) {

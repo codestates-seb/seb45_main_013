@@ -118,7 +118,7 @@ const Home = () => {
               <RealtimeBox>
                 <OnelineWrap>
                   <RealtimeLocation>{item.location}</RealtimeLocation>
-                  <Rating name="read-only" value={Number(item.rating)} size="small" readOnly />
+                  <StyledRating name="read-only" value={Number(item.rating)} size="small" readOnly />
                 </OnelineWrap>
                 <RealtimeDescription>
                   {item.describe.length > 20
@@ -332,4 +332,12 @@ const CustomCarousel = styled(Carousel)`
   }
 `;
 
+const StyledRating = styled(Rating)`
+  & .MuiRating-iconFilled {
+    color: #279eff;
+  }
+  & .MuiRating-iconHover {
+    color: #1d8ce7;
+  }
+`;
 export default Home;

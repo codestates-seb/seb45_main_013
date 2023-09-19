@@ -320,7 +320,7 @@ const SitterSchedule = () => {
               id="possibleLocation"
               placeholder="주소"
               variant="outlined"
-              value={possibleLocation.join(', ') || previousAddress}
+              value={possibleLocation.join(', ').replace(/[[\]]/g, '') || previousAddress}
               sx={{
                 width: '100%',
                 mt: '12px',
