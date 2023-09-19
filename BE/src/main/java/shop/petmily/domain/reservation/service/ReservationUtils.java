@@ -115,7 +115,7 @@ public class ReservationUtils {
 
     //예약주소에서 시,군,구 만 추출
     public String extractionAddress(String originAddress){
-        Pattern pattern = Pattern.compile("(서울|대전|대구|울산|부산|광주|세종특별자치시)\\s([가-힣]+[구군])?|([가-힣]+[시군])\\s([가-힣]+구)?");
+        Pattern pattern = Pattern.compile("(서울|대전|대구|울산|부산|광주|서귀포)\\s([가-힣]+[구군])?|([가-힣]+[시군])\\s([가-힣]+구)?");
         Matcher matcher = pattern.matcher(originAddress);
 
         if (matcher.find()) {

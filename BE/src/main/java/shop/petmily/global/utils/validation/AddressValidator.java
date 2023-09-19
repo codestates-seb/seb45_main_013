@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class AddressValidator implements ConstraintValidator<ValidAddress, String> {
     private final static String BIGCITY_ADDRESS_PATTERN =
-            ".*((서울|대전|대구|울산|부산|광주)\\s([가-힣]+[구군])|([가-힣]+[시군])\\s([가-힣]+[구])).*";
+            ".*((서울|대전|대구|울산|부산|광주)\\s([가-힣]+[구군])|([가-힣]+[시군])\\s([가-힣]+[구])|(서귀포)).*";
 
     private final static String MIDDLE_CITY_ADDRESS_PATTERN =
             ".*(수원시|성남시|안양시|용인시|고양시|안산시|전주시|청주시|천안시|포항시|창원시).*";
