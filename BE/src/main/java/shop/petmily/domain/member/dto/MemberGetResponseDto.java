@@ -18,5 +18,5 @@ public class MemberGetResponseDto {
     private String address;
     private String photo;
     private String body;
-    private boolean petsitterBoolean;
+    private Boolean petsitterBoolean;
 }

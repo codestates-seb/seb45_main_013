@@ -35,8 +35,8 @@ public class Member extends Auditable {
     @Column(length = 255, nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private boolean petsitterBoolean;
+    @Column
+    private Boolean petsitterBoolean;
 
     @Column(length = 255)
     private String name;
@@ -84,7 +84,7 @@ public class Member extends Auditable {
         this.roles = new ArrayList<>(roles);
     }
 
-    public void setPetsitterBoolean(boolean petsitterBoolean) {
+    public void setPetsitterBoolean(Boolean petsitterBoolean) {
         this.petsitterBoolean = petsitterBoolean;
     }
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)

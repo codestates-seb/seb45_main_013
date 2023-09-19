@@ -32,5 +32,5 @@ public class MemberPostRequestDto {
 
     private String address;
 
-    private boolean petsitterBoolean;
+    private Boolean petsitterBoolean;
 }

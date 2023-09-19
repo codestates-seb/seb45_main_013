@@ -38,14 +38,87 @@ public class RefreshTokenController {
     private final CustomAuthorityUtils customAuthorityUtils;
 
 
+//    @ResponseStatus(value = HttpStatus.OK)
+//    @PostMapping("/petsitterToken") // member에서 petsitter로 토큰 변경
+//    public ResponseEntity requestPetsitterToken(@RequestHeader("Refresh") String requestHeader) {
+//        refreshTokenService.findRefreshToken(requestHeader).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
+//
+//        Claims refreshClaims = jwtTokenizer.parseRefreshToken(requestHeader);
+//        Member member = memberService.findMember(refreshClaims.get("sub").toString());
+//        member.setRoles(customAuthorityUtils.chageRoles(member));
+//        member.setPetsitterBoolean(true);
+//
+//        Petsitter petsitter = new Petsitter(member);
+//        petsitterService.addPetsitterProfile(petsitter);
+//
+//        memberService.updatePetsitterBoolean(member);
+//
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put("email", member.getEmail());
+//        claims.put("roles", member.getRoles());
+//        claims.put("id", member.getMemberId());
+//
+//        String subject = member.getEmail();
+//        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
+//        String base64EncodedSecretKey = jwtTokenizer.base64EncodedSecretKey(jwtTokenizer.getSecretKey());
+//
+//        String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Authorization", "Bearer" + accessToken);
+//
+//        MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
+//                .accessToken(accessToken)
+//                .refreshToken(requestHeader)
+//                .memberId(member.getMemberId())
+//                .build();
+//
+//        return ResponseEntity.ok().headers(headers).body(loginResponse);
+//    }
+
     @ResponseStatus(value = HttpStatus.OK)
-    @PostMapping("/petsitterToken") // member에서 petsitter로 토큰 변경
+    @PostMapping("/memberToken") // guest에서 member로 토큰 변경
+    public ResponseEntity requestMemberToken(@RequestHeader("Refresh") String requestHeader) {
+        refreshTokenService.findRefreshToken(requestHeader).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
+
+        Claims refreshClaims = jwtTokenizer.parseRefreshToken(requestHeader);
+        Member member = memberService.findMember(refreshClaims.get("sub").toString());
+        member.setRoles(customAuthorityUtils.createMemberRoles(member));
+        member.setPetsitterBoolean(false);
+
+        memberService.updatePetsitterBoolean(member);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", member.getEmail());
+        claims.put("roles", member.getRoles());
+        claims.put("id", member.getMemberId());
+
+        String subject = member.getEmail();
+        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
+        String base64EncodedSecretKey = jwtTokenizer.base64EncodedSecretKey(jwtTokenizer.getSecretKey());
+
+        String accessToken = jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer" + accessToken);
+
+        MemberLoginDto.LoginResponse loginResponse = MemberLoginDto.LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(requestHeader)
+                .memberId(member.getMemberId())
+                .build();
+
+        return ResponseEntity.ok().headers(headers).body(loginResponse);
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @PostMapping("/petsitterToken") // guest에서 petsitter로 토큰 변경
     public ResponseEntity requestPetsitterToken(@RequestHeader("Refresh") String requestHeader) {
         refreshTokenService.findRefreshToken(requestHeader).orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_TOKEN));
 
         Claims refreshClaims = jwtTokenizer.parseRefreshToken(requestHeader);
         Member member = memberService.findMember(refreshClaims.get("sub").toString());
-        member.setRoles(customAuthorityUtils.chageRoles(member));
+        member.setRoles(customAuthorityUtils.createPetsitterRoles(member));
         member.setPetsitterBoolean(true);
 
         Petsitter petsitter = new Petsitter(member);

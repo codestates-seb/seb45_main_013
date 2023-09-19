@@ -46,6 +46,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         member.setName(nickName);
         member.setNickName(nickName);
         member.setEmail(email);
+        member.setPetsitterBoolean(null);
         member.setPassword("google_OAuth2");
         Member saveMember = saveMember(member);
 
@@ -110,9 +111,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 .scheme("http")
 //                .host("petmily.shop")
                 .host("localhost")
-                .port(3000)
-                .path("/signup/branch")
-//                .path("/receive-token.html")
+//                .port(3000)
+//                .path("/signup/branch")
+                .path("/receive-token.html")
                 .queryParams(queryParams)
                 .build()
                 .toUri();
