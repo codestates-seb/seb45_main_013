@@ -101,7 +101,7 @@ const PetsitterViewDetails = () => {
             },
           },
         );
-
+        console.log(response.data.data);
         setIsBookmarked(response.data.data);
       } catch (error) {
         console.error(error);
@@ -139,7 +139,7 @@ const PetsitterViewDetails = () => {
 
     navigate('/reservation/step3');
   };
-
+  //펫시터 데이터 가져오기
   useEffect(() => {
     const fetchPetsitterData = async () => {
       if (petsitterId) {
@@ -154,6 +154,30 @@ const PetsitterViewDetails = () => {
 
     fetchPetsitterData();
   }, [petsitterId]);
+  //해당 펫시터가 찜한 펫시터인지 확인
+  useEffect(() => {
+    const fetchBookmarkStatus = async () => {
+      const accessToken = getCookieValue('access_token');
+      if (isLogin) {
+        try {
+          const response = await axios.get(`${apiUrl}/members/favoriteTrue?petsitterId=${petsitterId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          console.log(response.data);
+          setIsBookmarked(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        // 로그인이 되어있지 않은 경우에 대한 처리
+        // ...
+      }
+    };
+
+    fetchBookmarkStatus();
+  }, [isLogin, petsitterId]);
 
   return (
     <MainContainer>
