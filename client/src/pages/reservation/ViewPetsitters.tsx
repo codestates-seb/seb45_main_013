@@ -32,10 +32,6 @@ const ViewPetsitters = () => {
   const [filterType, setFilterType] = useState('전체 펫시터'); // 필터 타입 상태 관리
   const [properPetsitters, setProperPetsitters] = useState<Petsitter[]>([]);
 
-  // const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId } = useSelector(
-  //   (state: IReservation) => state.reservation,
-  // );
-
   const onErrorImg = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = '/imgs/DefaultUser.svg';
   };
@@ -52,18 +48,6 @@ const ViewPetsitters = () => {
     setFilterType(filterText);
     setIsFilterOpen(false);
   };
-
-  // const formattedStartTime = (petsitter: Petsitters) =>
-  //   new Date(petsitter.possibleTimeStart).toLocaleTimeString([], {
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //   });
-
-  // const formattedEndTime = (petsitter: Petsitters) =>
-  //   new Date(petsitter.possibleTimeEnd).toLocaleTimeString([], {
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //   });
 
   useEffect(() => {
     if (filterType === '전체 펫시터') {
@@ -183,7 +167,7 @@ const ViewPetsitters = () => {
                     : petsitter.body}
                 </HotPetsitterReview>
                 <Divider />
-                <NewPetsitterLocation>{petsitter.possibleLocation}</NewPetsitterLocation>
+                <NewPetsitterLocation>{petsitter.possibleLocation[0]}</NewPetsitterLocation>
               </HotFaceBox>
             </HotWrap>
           ))}
@@ -282,6 +266,7 @@ const HotWrap = styled.div`
   position: relative;
   margin-bottom: 8px;
   border-radius: 8px;
+  cursor: pointer;
 `;
 
 const TitleContainer = styled.div`
