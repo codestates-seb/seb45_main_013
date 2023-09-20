@@ -97,12 +97,12 @@ const SearchContainer = styled.div`
   justify-content: flex-start;
   overflow: auto;
   height: 100%;
-  background-color: #fefdff;
   padding: 12px;
+  background-color: #fefdff;
 `;
 
 const SearchHeader = styled.div`
-  margin: 40px 40px 0 40px;
+  margin: 40px 40px 0;
 `;
 
 const SearchTitleText = styled.div`

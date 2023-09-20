@@ -154,9 +154,9 @@ const Journal = styled.div`
 
 const Head = styled.div`
   display: flex;
-  width: 100%;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   margin-bottom: 20px;
 `;
 
@@ -168,27 +168,29 @@ const Profile = styled.div`
 const PetImage = styled.img`
   width: 60px;
   height: 60px;
-  border-radius: 50%;
   margin-right: 8px;
+  border-radius: 50%;
 `;
 
 const Name = styled.div`
-  font-size: 18px;
   font-weight: 800;
+  font-size: 18px;
 `;
 
 const Date = styled.div`
-  font-size: 18px;
-  font-weight: 800;
   color: #959595;
+  font-weight: 800;
+  font-size: 18px;
 `;
 
 const StyledCarousel = styled(Carousel)`
   height: 500px;
+
   .carousel .slider-wrapper.axis-horizontal .slider .slide {
-    height: 500px;
     overflow: visible !important;
+    height: 500px;
   }
+
   margin-bottom: 20px;
 `;
 
@@ -215,14 +217,14 @@ const JournalContent = styled.div`
 const SitterImage = styled.img`
   width: 90px;
   height: 90px;
-  border-radius: 50%;
   margin-right: 8px;
+  border-radius: 50%;
 `;
 
 const Content = styled.div`
-  margin-top: 20px;
   display: flex;
   width: 100%;
+  margin-top: 20px;
   line-height: 1.5;
 `;
 export default ViewJournal;

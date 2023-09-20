@@ -163,7 +163,7 @@ const Reservation = () => {
       }
     }
     if (checkedPets.includes(pet)) {
-      setCheckedPetId(checkedPets.filter((pet) => pet.petId !== pet.petId));
+      setCheckedPets(checkedPets.filter((checkedPet) => checkedPet.petId !== pet.petId));
     } else {
       if (checkedPets.length < 3) {
         setCheckedPets([...checkedPets, pet]);

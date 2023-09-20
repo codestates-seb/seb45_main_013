@@ -263,18 +263,18 @@ const OftenPetsitterbox = styled.div`
   margin-left: 24px;
 `;
 const ImageContainer = styled.div`
+  overflow: hidden;
+  position: relative;
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  position: relative;
-  overflow: hidden;
   flex-shrink: 0;
 `;
 
 const RemainContainer = styled.div`
   padding: 8px;
-
   flex-grow: 1;
+
   /* overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -299,30 +299,30 @@ const StyledRating = styledMui(Rating)({
 });
 
 const ReviewText = styled.div`
-  text-align: left;
+  display: box;
+  overflow: hidden;
   padding-top: 12px;
   padding-bottom: 36px;
-  display: -webkit-box;
+  text-align: left;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  overflow: hidden;
 `;
 
 const ProfileImg = styled.img`
-  width: 100%;
-  height: 100%;
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 100%;
+  height: 100%;
   transform: translate(-50%, -50%);
 `;
 
 const MemberPhotoImage = styled.img`
-  width: 100%;
-  height: 100%;
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 100%;
+  height: 100%;
   transform: translate(-50%, -50%);
 `;
 

@@ -435,6 +435,7 @@ const ImgSelectWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+
   > div {
     ${({ theme }) => theme.fontSize.s12h18}
   }

@@ -218,9 +218,9 @@ export default PossibleReservationTime;
 
 const MainContainer = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   margin: 12px;
-  flex-direction: column;
 `;
 
 const StyledButtonGroup = styled.div`
@@ -230,8 +230,8 @@ const StyledButtonGroup = styled.div`
 
   & .MuiButton-root {
     width: calc((100% - (3 * 8px)) / 4);
-    text-align: center;
     margin: 0 8px 16px 0;
+    text-align: center;
   }
 
   &:last-of-type {

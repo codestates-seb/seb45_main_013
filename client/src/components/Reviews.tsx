@@ -99,8 +99,8 @@ const TitleContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: ${(props) => props.theme.fontSize.s20h30};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
+  font-size: ${(props) => props.theme.fontSize.s20h30};
 `;
 
 const ReviewsCount = styled.div`
@@ -118,15 +118,15 @@ const ReviewsWrap = styled.div`
 const ReviewsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: 12px;
   justify-content: space-between;
+  margin-top: 12px;
 `;
 
 const StyledImg = styled.img`
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   margin: 6px 12px 0 0;
+  border-radius: 50%;
 `;
 
 const InformationContainer = styled.div`
@@ -142,13 +142,13 @@ const Name = styled.div`
 `;
 
 const PetInformation = styled.div`
-  font-size: ${(props) => props.theme.fontSize.s12h18};
-  font-weight: ${(props) => props.theme.fontWeights.light};
   color: ${(props) => props.theme.textColors.gray40};
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  font-size: ${(props) => props.theme.fontSize.s12h18};
 `;
 
 const Description = styled.div`
-  margin: 12px 0 24px 0;
+  margin: 12px 0 24px;
 `;
 
 const CustomCarousel = styled(Carousel)`
@@ -169,6 +169,7 @@ const StyledRating = styled(Rating)`
   & .MuiRating-iconFilled {
     color: #279eff;
   }
+
   & .MuiRating-iconHover {
     color: #1d8ce7;
   }

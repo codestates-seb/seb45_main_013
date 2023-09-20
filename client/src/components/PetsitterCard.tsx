@@ -24,8 +24,8 @@ const PetsitterCard = ({ petsitter }: PetsitterProps) => {
     (state: IReservation) => state.reservation,
   );
 
-  const startTime = petsitter?.possibleTimeStart.split(':')[0] + ':' + petsitter?.possibleTimeStart.split(':')[1];
-  const endTime = petsitter?.possibleTimeEnd.split(':')[0] + ':' + petsitter?.possibleTimeStart.split(':')[1];
+  const startTime = petsitter?.possibleTimeStart?.split(':')[0] + ':' + petsitter?.possibleTimeStart?.split(':')[1];
+  const endTime = petsitter?.possibleTimeEnd?.split(':')[0] + ':' + petsitter?.possibleTimeStart?.split(':')[1];
 
   return (
     <StyledLink to={`/petsitters/${petsitter.petsitterId}`} key={petsitter.petsitterId}>
@@ -73,29 +73,29 @@ const FilterBodyBox = styled.div``;
 
 const PetsitterContainer = styled.div`
   display: flex;
+  position: relative;
   margin: 12px;
   padding: 12px;
-  background-color: ${(props) => props.theme.colors.white};
   border-radius: 8px;
+  background-color: ${(props) => props.theme.colors.white};
   box-shadow: ${(props) => props.theme.shadow.dp01};
-  position: relative;
   cursor: pointer;
 `;
 
 const ImageContainer = styled.div`
+  overflow: hidden;
+  position: relative;
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  position: relative;
-  overflow: hidden;
 `;
 
 const PetsitterImg = styled.img`
-  width: 100%;
-  height: 100%;
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 100%;
+  height: 100%;
   transform: translate(-50%, -50%);
 `;
 
@@ -110,20 +110,20 @@ const PetsitterWrap = styled.div`
 `;
 
 const NameText = styled.div`
-  font-size: ${(props) => props.theme.fontSize.s20h30};
-  font-weight: ${(props) => props.theme.fontWeights.extrabold};
   margin-right: 12px;
+  font-weight: ${(props) => props.theme.fontWeights.extrabold};
+  font-size: ${(props) => props.theme.fontSize.s20h30};
 `;
 
 const Possiblebox = styled.div`
-  font-size: 12px;
-  font-weight: ${(props) => props.theme.fontWeights.light};
-  color: ${(props) => props.theme.colors.white};
-  background-color: ${(props) => props.theme.colors.mainBlue};
+  margin: 6px 0;
   padding: 2px 8px;
-  margin: 6px 0 6px 0;
-  line-height: 16px;
   border-radius: 8px;
+  color: ${(props) => props.theme.colors.white};
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  font-size: 12px;
+  line-height: 16px;
+  background-color: ${(props) => props.theme.colors.mainBlue};
 `;
 
 const TimeWrap = styled.div`
@@ -133,16 +133,16 @@ const TimeWrap = styled.div`
 `;
 
 const TimgImg = styled.img`
-  margin-top: 5px;
-  margin-right: 16px;
   width: 12px;
   height: 12px;
+  margin-top: 5px;
+  margin-right: 16px;
 `;
 
 const TimeText = styled.div`
-  font-size: ${(props) => props.theme.fontSize.s14h21};
-  font-weight: ${(props) => props.theme.fontWeights.light};
   color: ${(props) => props.theme.textColors.gray50};
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  font-size: ${(props) => props.theme.fontSize.s14h21};
 `;
 
 const ContainerArrow = styled.img`

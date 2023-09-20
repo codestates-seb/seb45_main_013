@@ -118,37 +118,37 @@ const PetmilyContainer = styled.div`
 
 const ImageContainer = styled.div`
   display: flex;
-  width: 100%;
   justify-content: center;
+  width: 100%;
 `;
 
 const PetPhoto = styled.img`
   width: 160px;
   height: 160px;
-  border-radius: 50%;
   margin-bottom: 20px;
+  border-radius: 50%;
 `;
 
 const TextContainer = styled.div`
   display: flex;
-  width: 100%;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   margin-bottom: 30px;
 `;
 
 const PetInfoContainer = styled.div`
   display: flex;
-  width: 100%;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 `;
 
 const Line = styled.div`
   display: flex;
-  margin-top: 8px;
   align-items: center;
   width: 50%;
+  margin-top: 8px;
 `;
 
 const Text = styled.div`
@@ -157,15 +157,15 @@ const Text = styled.div`
 `;
 
 const Item = styled.div`
+  color: #279eff;
   font-weight: 900;
   font-size: 16px;
-  color: #279eff;
 `;
 
 const PetName = styled.div`
+  display: inline-block;
   font-weight: 900;
   font-size: 18px;
-  display: inline-block;
 `;
 
 const CardsContainer = styled.div`
@@ -188,9 +188,9 @@ export const PetmilyCard = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-bottom: 20px;
   padding: 12px;
   border-radius: 4px;
-  margin-bottom: 20px;
   box-shadow: 0 2px 10px 0 #cdcdcd;
 `;
 
@@ -220,8 +220,9 @@ const NoPetsContainer = styled.div`
 `;
 
 const PlusIcon = styled(AddCircleOutlineIcon)`
-  color: gray;
   margin: 0;
+  color: gray;
+
   &:hover {
     color: #279eff;
   }
@@ -229,15 +230,15 @@ const PlusIcon = styled(AddCircleOutlineIcon)`
 
 const ButtonContainer = styled.div`
   display: flex;
-  width: 100%;
   justify-content: flex-end;
+  width: 100%;
 `;
 
 const AdditionalInfo = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   margin-top: 10px;
-  align-items: center;
 `;
 export default MyPetmily;

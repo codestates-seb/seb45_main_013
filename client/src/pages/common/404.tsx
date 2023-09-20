@@ -50,8 +50,8 @@ const Container = styled.div`
 
 const IconContainer = styled.div`
   display: flex;
-  width: 100%;
   justify-content: flex-end;
+  width: 100%;
 `;
 
 const Icon = styled.img`
@@ -64,14 +64,14 @@ const Image = styled.img`
 `;
 
 const Info = styled.div`
-  font-size: 20px;
-  font-weight: 800;
   color: #949494;
+  font-weight: 800;
+  font-size: 20px;
 `;
 
 const Logo = styled.img`
-  margin-top: 36px;
   width: 100px;
+  margin-top: 36px;
   margin-bottom: 36px;
 `;
 

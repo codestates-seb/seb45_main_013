@@ -112,11 +112,11 @@ export default OAuthBranch;
 
 const MainContainer = styled.main`
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 40px;
-  height: 100%;
+  justify-content: center;
   width: 100%;
+  height: 100%;
+  padding: 40px;
 `;
 
 const ImgContainer = styled.div`
@@ -163,6 +163,7 @@ const ImageButton = styled.button`
 
   &:hover {
     transform: scale(1.01);
+
     & > div {
       color: ${({ theme }) => theme.colors.mainBlue};
       transition: all 0.2s linear;

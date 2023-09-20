@@ -200,15 +200,15 @@ const LoginNavModal = styled.nav`
   align-items: center;
   justify-content: center;
   position: absolute;
-  gap: 12px;
   top: 24px;
   right: 24px;
+  z-index: 999;
   width: 100px;
   height: 80px;
   border-radius: 8px;
   background-color: white;
+  gap: 12px;
   box-shadow: ${(props) => props.theme.shadow.dp03};
-  z-index: 999;
 `;
 
 const MypageLink = styled(Link)`

@@ -340,6 +340,7 @@ export const RadioLabel = styled.label`
   ${(props) => props.theme.fontSize.s14h21};
   margin-left: 8px;
   color: ${({ theme }) => theme.textColors.gray60};
+
   input:checked + & {
     color: #279eff;
   }

@@ -194,23 +194,23 @@ const InfoWrapper = styled.div`
 `;
 
 const Paw = styled(PetsIcon)`
-  color: #279eff;
   margin: 20px;
+  color: #279eff;
 `;
 
 const Time = styled(AccessTimeIcon)`
-  color: #279eff;
   margin: 20px;
+  color: #279eff;
 `;
 
 const Location = styled(PersonPinIcon)`
-  color: #279eff;
   margin: 20px;
+  color: #279eff;
 `;
 
 const Calendar = styled(EventAvailableIcon)`
-  color: #279eff;
   margin: 20px;
+  color: #279eff;
 `;
 
 const Info = styled.div`
@@ -234,16 +234,16 @@ const UserText = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  padding: 0px20px;
   display: flex;
   flex-direction: column;
+  padding: 0px20px;
 `;
 
 const NoContentContaier = styled.div`
-  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 20px;
 `;
 
 const ButtonContainer = styled.div`

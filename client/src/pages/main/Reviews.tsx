@@ -120,15 +120,15 @@ const Reviews = () => {
 };
 
 const ReviewPage = styled.div`
-  margin-top: 36px;
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-top: 36px;
 `;
 
 const Title = styled.div`
-  font-size: 18px;
   font-weight: 900;
+  font-size: 18px;
 `;
 
 const Reviewwrapper = styled.div`
@@ -139,8 +139,8 @@ const Reviewwrapper = styled.div`
 const ReviewContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 72px;
   width: 100%;
+  margin-top: 72px;
 `;
 
 const Review = styled.div`
@@ -160,11 +160,11 @@ const ImageContainer = styled.div`
 
 const UserProfile = styled.div<{ bgImage: string }>`
   display: inline-block;
+  overflow: hidden !important;
   width: 60px;
   height: 60px;
   margin-right: 20px;
   border-radius: 50% !important;
-  overflow: hidden !important;
   background-image: url(${(props) => props.bgImage});
   background-size: cover;
   background-position: center;
@@ -183,23 +183,24 @@ const StyledRating = styled(Rating)`
 
 const NickName = styled.div`
   display: inline-block;
-  font-size: 16px;
   font-weight: 800;
+  font-size: 16px;
 `;
 
 const When = styled.div`
-  font-size: 14px;
   color: #8d8d8d;
+  font-size: 14px;
 `;
 
 const First = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const CarouselContainer = styled.div`
   display: flex;
+
   /* justify-content: center; */
   width: 100%;
 `;
@@ -209,9 +210,10 @@ const StyledCarousel = styled(Carousel)`
   height: auto;
 
   .carousel .slider-wrapper.axis-horizontal .slider .slide {
-    height: auto;
     overflow: visible !important;
-    Allow parts of the image to overflow img {
+    height: auto;
+
+    allow parts of the image to overflow img {
       width: 100%;
       height: auto;
       object-fit: cover;
@@ -222,8 +224,8 @@ const StyledCarousel = styled(Carousel)`
 
 const BodyContainer = styled.div`
   display: flex;
-  line-height: 1.5;
   margin-top: 20px;
+  line-height: 1.5;
 `;
 
 const StyledImage = styled.img`

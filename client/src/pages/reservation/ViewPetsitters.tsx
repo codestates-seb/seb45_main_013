@@ -276,13 +276,13 @@ const MainContainer = styled.div`
 
 const StatusHeader = styled.div`
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  background-color: ${(props) => props.theme.textColors.secondary};
+  justify-content: space-around;
+  position: relative;
   margin-top: -74px;
+  background-color: ${(props) => props.theme.textColors.secondary};
   min-height: 64px;
   gap: 120px;
-  position: relative;
 `;
 
 const StatusTitleText = styled.div`
@@ -298,31 +298,31 @@ const HotPetsitterText = styled.h2`
 `;
 
 const HotIntroContainer = styled.div`
-  margin: 12px 12px 0 12px;
+  margin: 12px 12px 0;
   box-shadow: ${(props) => props.theme.shadow.dp01};
   border-radius: 8px;
 `;
 
 const HotWrap = styled.div`
   position: relative;
-  border-radius: 8px;
   margin-bottom: 8px;
+  border-radius: 8px;
 `;
 
 const TitleContainer = styled.div`
   display: flex;
   position: relative;
-  background-color: ${(props) => props.theme.colors.mainBlue};
-  border-radius: 8px 8px 0 0;
   padding: 12px 0 12px 32px;
+  border-radius: 8px 8px 0 0;
+  background-color: ${(props) => props.theme.colors.mainBlue};
 `;
 
 const DobleQuotationImg = styled.img`
+  position: absolute;
+  left: -40%;
   width: 20px;
   height: 13px;
   margin-top: 18px;
-  position: absolute;
-  left: -40%;
 `;
 
 const TitleName = styled.div`
@@ -339,18 +339,18 @@ const PetsitterText = styled.div`
 `;
 
 const HotPetsitterImg = styled.img`
-  width: 60px !important;
-  height: 60px;
   position: absolute;
   top: 18px;
   right: 14%;
+  width: 60px !important;
+  height: 60px;
 `;
 
 const HotFaceBox = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 8px 40px 14px 40px;
+  padding: 8px 40px 14px;
 `;
 
 const OnelineWrap = styled.div`
@@ -358,10 +358,10 @@ const OnelineWrap = styled.div`
 `;
 
 const NewPetsitterLocation = styled.div`
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  white-space: nowrap;
   margin-top: 14px;
+  font-weight: ${(props) => props.theme.fontWeights.bold};
   text-align: left;
+  white-space: nowrap;
 `;
 
 const HotPetsitterReview = styled.div`
@@ -424,17 +424,17 @@ const TitleWrap = styled.div`
 `;
 
 const TitleText = styled.div`
-  font-size: ${(props) => props.theme.fontSize.s20h30};
   font-weight: ${(props) => props.theme.fontWeights.extrabold};
+  font-size: ${(props) => props.theme.fontSize.s20h30};
 `;
 
 const ItemCountbox = styled.div`
-  background-color: ${(props) => props.theme.colors.mainBlue};
-  color: ${(props) => props.theme.colors.white};
-  font-size: 14px;
+  margin: 5px 0 5px 8px;
   padding: 2px 5px;
   border-radius: 4px;
-  margin: 5px 0 5px 8px;
+  color: ${(props) => props.theme.colors.white};
+  font-size: 14px;
+  background-color: ${(props) => props.theme.colors.mainBlue};
 `;
 
 const FilterIcon = styled.img`
@@ -448,12 +448,12 @@ const FilterBodyBox = styled.div``;
 
 const PetsitterContainer = styled.a`
   display: flex;
+  position: relative;
   margin: 12px;
   padding: 12px;
-  background-color: ${(props) => props.theme.colors.white};
   border-radius: 8px;
+  background-color: ${(props) => props.theme.colors.white};
   box-shadow: ${(props) => props.theme.shadow.dp01};
-  position: relative;
   cursor: pointer;
 `;
 
@@ -469,20 +469,20 @@ const PetsitterWrap = styled.div`
 `;
 
 const NameText = styled.div`
-  font-size: ${(props) => props.theme.fontSize.s20h30};
-  font-weight: ${(props) => props.theme.fontWeights.extrabold};
   margin-right: 12px;
+  font-weight: ${(props) => props.theme.fontWeights.extrabold};
+  font-size: ${(props) => props.theme.fontSize.s20h30};
 `;
 
 const Possiblebox = styled.div`
-  font-size: 12px;
-  font-weight: ${(props) => props.theme.fontWeights.light};
-  color: ${(props) => props.theme.colors.white};
-  background-color: ${(props) => props.theme.colors.mainBlue};
+  margin: 6px 0;
   padding: 2px 8px;
-  margin: 6px 0 6px 0;
-  line-height: 16px;
   border-radius: 8px;
+  color: ${(props) => props.theme.colors.white};
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  font-size: 12px;
+  line-height: 16px;
+  background-color: ${(props) => props.theme.colors.mainBlue};
 `;
 
 const TimeWrap = styled.div`
@@ -492,16 +492,16 @@ const TimeWrap = styled.div`
 `;
 
 const TimgImg = styled.img`
-  margin-top: 5px;
-  margin-right: 16px;
   width: 12px;
   height: 12px;
+  margin-top: 5px;
+  margin-right: 16px;
 `;
 
 const TimeText = styled.div`
-  font-size: ${(props) => props.theme.fontSize.s14h21};
-  font-weight: ${(props) => props.theme.fontWeights.light};
   color: ${(props) => props.theme.textColors.gray50};
+  font-weight: ${(props) => props.theme.fontWeights.light};
+  font-size: ${(props) => props.theme.fontSize.s14h21};
 `;
 
 const ContainerArrow = styled.img`
@@ -514,11 +514,11 @@ const ContainerArrow = styled.img`
 
 const FilterDrawer = styled(Drawer)`
   .MuiDrawer-paper {
+    overflow: hidden;
     height: 36%;
-    max-height: 100%;
     background-color: ${(props) => props.theme.colors.white};
+    max-height: 100%;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    overflow: hidden;
   }
 `;

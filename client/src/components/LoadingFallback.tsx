@@ -10,13 +10,12 @@ export default LoadingFallback;
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100%;
 `;
 
 const Loader = styled(PulseLoader)`
   display: flex;
-
   color: ${({ theme }) => theme.colors.mainBlue};
 `;
