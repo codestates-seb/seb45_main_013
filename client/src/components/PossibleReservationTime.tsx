@@ -79,11 +79,6 @@ interface PossibleReservationTimeProps {
   setSelectedTimes: Dispatch<SetStateAction<string[]>>;
 }
 
-interface Schedule {
-  date: string;
-  time: string[];
-}
-
 const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
   selectedDate,
   setSelectedDate,
