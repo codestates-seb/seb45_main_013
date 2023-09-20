@@ -372,7 +372,12 @@ const Reservation = () => {
                 onChange={handleDateChange}
                 shouldDisableDate={(day) => {
                   dayjs.extend(isBetween);
-                  return !dayjs(dayjs(day as Dayjs).format('YYYY-MM-DD')).isBetween(nowDate, modifiedNow, 'day', '[)');
+                  const dayOfWeek = dayjs(day as Dayjs).day();
+                  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 토요일, 일요일 선택 금지
+                  return (
+                    !dayjs(dayjs(day as Dayjs).format('YYYY-MM-DD')).isBetween(nowDate, modifiedNow, 'day', '[)') ||
+                    isWeekend
+                  );
                 }}
               />
             </DemoContainer>
