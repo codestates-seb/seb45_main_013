@@ -94,14 +94,9 @@ const Reservation = () => {
   now.setMonth(now.getMonth() + 3);
   const modifiedNow = now.toISOString().slice(0, 10);
 
-  // Address
-  const [sido, setSido] = useState('');
-  const [sigungu, setSigungu] = useState('');
-  const [remainAddress, setRemainAddress] = useState('');
-  const [zonecode, setZonecode] = useState('');
-
   const {
     register,
+    setValue,
     clearErrors,
     handleSubmit,
     formState: { errors },
@@ -126,19 +121,19 @@ const Reservation = () => {
 
   // Address handler
   const handleComplete = (data: any) => {
-    // 우편번호 저장
-    setZonecode(data.zonecode);
-    // 시.도 저장
-    setSido(data.sido);
-    // 구.군 저장
-    setSigungu(data.sigungu);
+    // 우편번호 data.zonecode
+    // 시.도 data.sido
+    // 구.군 data.sigungu
     // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
     const splitAddress = data.address.split(' ').splice(2).join(' ');
+
     if (data) {
       clearErrors('address');
     }
-
-    setRemainAddress(splitAddress);
+    setValue(
+      'address',
+      data.zonecode + ' ' + data.sido + ' ' + data.sigungu + ' ' + data.address.split(' ').splice(2).join(' '),
+    );
     setIsModalOpen(false);
   };
 
@@ -171,16 +166,6 @@ const Reservation = () => {
         alert('최대 3마리까지만 선택할 수 있습니다.');
       }
     }
-
-    // if (checkedPets.includes(petId)) {
-    //   setCheckedPets(checkedPets.filter((id) => id !== petId));
-    // } else {
-    //   if (checkedPets.length < 3) {
-    //     setCheckedPets([...checkedPets, petId]);
-    //   } else {
-    //     alert('최대 3마리까지만 선택할 수 있습니다.');
-    //   }
-    // }
   };
 
   // 펫등록 모달 handler
@@ -339,7 +324,7 @@ const Reservation = () => {
               console.error(refreshError);
               // Refresh Token을 사용하여 새로운 Access Token을 얻는 동안 오류가 발생했을 때 처리
 
-              alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
+              alert('로그인 세션이 만료되었습니다. 다시 로그인해 주시기 바랍니다.');
               dispatch(deleteUser());
               dispatch(deleteReservation());
               deleteCookie('access_token');
@@ -439,9 +424,9 @@ const Reservation = () => {
         <Container>
           <ScheduleText>어디로 방문할까요?</ScheduleText>
           <TextField
-            label="주소를 입력해주세요"
+            id="outlined-basic"
+            placeholder="주소를 입력해주세요"
             fullWidth
-            value={zonecode ? `${zonecode} ${sido} ${sigungu} ${remainAddress}` : ''}
             {...register('address', { required: true })}
             error={errors.address?.type === 'required'}
             onClick={onToggleModal}
@@ -505,7 +490,13 @@ const Reservation = () => {
                   <ButtonContainer>
                     <Button onClick={handleImageClick} sx={{ backgroundColor: 'transparent', overflow: 'hidden' }}>
                       <img
-                        src={imageFile ? URL.createObjectURL(imageFile) : '/imgs/PetProfile.png'}
+                        src={
+                          imageFile
+                            ? URL.createObjectURL(imageFile)
+                            : isCat === 'DOG'
+                            ? '/imgs/PetProfile.png'
+                            : '/imgs/CatProfile.png'
+                        }
                         alt="미리보기"
                         width="100px"
                         style={{ borderRadius: '50%' }}
