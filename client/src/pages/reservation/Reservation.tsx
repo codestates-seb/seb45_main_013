@@ -319,7 +319,7 @@ const Reservation = () => {
               console.error(refreshError);
               // Refresh Token을 사용하여 새로운 Access Token을 얻는 동안 오류가 발생했을 때 처리
 
-              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
               dispatch(deleteUser());
               dispatch(deleteReservation());
               deleteCookie('access_token');
@@ -331,7 +331,7 @@ const Reservation = () => {
     };
 
     getPets();
-  }, [isModalOpen]);
+  }, [isPetModalOpen]);
 
   return (
     <MainContainer>
@@ -443,18 +443,7 @@ const Reservation = () => {
               pets.map((pet: any) => {
                 return (
                   <SelectPetCard key={pet.petId}>
-                    <PetImgLabel>
-                      <Box style={{ width: '80px', height: '80px', position: 'relative', overflow: 'hidden' }}>
-                        {pet.photo ? (
-                          <PetImg
-                            src={pet.photo && pet.photo.replace('https://bucketUrl', bucketUrl)}
-                            onError={onErrorImg}
-                            alt="펫 사진"
-                          />
-                        ) : (
-                          <PetImg src="/imgs/PetProfile.png" alt="default pet"></PetImg>
-                        )}
-                      </Box>
+                    <div>
                       <CheckBoxInput
                         type="checkbox"
                         id={pet.petId}
@@ -462,7 +451,22 @@ const Reservation = () => {
                         checked={checkedPets.includes(pet.petId)}
                         onChange={() => handlePetCheck(pet.petId)}
                       />
-                    </PetImgLabel>
+                      <PetImgLabel htmlFor={pet.petId} checked={checkedPets.includes(pet.petId)}>
+                        <PetImg
+                          src={
+                            pet.photo ? (
+                              pet.photo.replace('https://bucketUrl', bucketUrl)
+                            ) : (
+                              <div style={{ width: '80px', height: '80px', backgroundColor: 'gray' }}>
+                                사진을 등록해 주세요
+                              </div>
+                            )
+                          }
+                          onError={onErrorImg}
+                          alt="펫 사진"
+                        />
+                      </PetImgLabel>
+                    </div>
                     <SelectPetName>{pet.name}</SelectPetName>
                   </SelectPetCard>
                 );
@@ -770,11 +774,35 @@ const SelectPetCard = styled.div`
   cursor: pointer;
 `;
 
-const PetImgLabel = styled.label`
+const PetImgLabel = styled.label<{ checked?: boolean }>`
   width: 80px;
   height: 80px;
   border-radius: 50%;
   overflow: hidden;
+  position: relative;
+  cursor: pointer;
+
+  &:before {
+    content: '✓';
+    z-index: 2;
+    position: absolute;
+    top: -60px;
+    right: 4px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: ${(props) => props.theme.colors.mainBlue};
+    color: white;
+    text-align: center;
+    line-height: 24px;
+
+    // 체크 상태에 따라 보이거나 숨기거나
+    opacity: ${({ checked }) => (checked ? '1' : '0')};
+    transform: ${({ checked }) => (checked ? 'scale(1)' : 'scale(0)')};
+
+    // 애니메이션 효과
+    transition-duration: 0.4s;
+  }
 `;
 
 const SelectPetName = styled.div`
@@ -789,40 +817,22 @@ const CheckBoxInput = styled.input`
   appearance: none;
   transform: scale(0.9);
   right: 1px;
-
-  &:checked::after {
-    content: '✓';
-
-    color: white;
-    background-color: ${({ theme }) => theme.colors.mainBlue};
-
-    text-align: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%; /* Make the checkmark a circle */
-
-    position: absolute;
-
-    transform: translate(-50%, -50%);
-    transition:
-      width 0.3s ease,
-      height 0.3s ease;
-  }
-
-  /* Add hover styles if needed */
-  &:checked + label:hover::after {
-    width: 1.5em; /* Increase the size of the checkmark on hover */
-    height: 1.5em; /* Increase the size of the checkmark on hover */
-  }
 `;
 
 const PetImg = styled.img`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  object-position: center; /* 이미지를 가운데 정렬하기 위해 필요 */
+  border-radius: 50%;
+
+  ${CheckBoxInput}:checked + ${PetImgLabel} & {
+    // 체크된 상태에서 적용할 스타일...
+    transform: scale(0.9);
+    border-color: #ddd;
+    // 여기에 추가적인 스타일을 적용할 수 있습니다.
+    filter: brightness(0.8);
+  }
 `;
 
 const AddPetImg = styled.img`

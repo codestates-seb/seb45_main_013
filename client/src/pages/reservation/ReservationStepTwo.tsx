@@ -110,7 +110,7 @@ const ReservationStepTwo = () => {
               }
             } catch (refreshError) {
               console.log(refreshError);
-              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
               dispatch(deleteUser());
               dispatch(deleteReservation());
               deleteCookie('access_token');
@@ -121,21 +121,11 @@ const ReservationStepTwo = () => {
         }
       };
       getFavoritePetsitters();
-    } else if (filterType === '새로 온 펫시터') {
-      const getNewPetsitters = async () => {
-        try {
-          const response = await axios.get(`${apiUrl}/members/search`);
-          setProperPetsitters(response.data);
-        } catch (error) {
-          setProperPetsitters([]);
-        }
-      };
-      getNewPetsitters();
     } else if (filterType === '별점이 높은 펫시터') {
       const getHighPetsitters = async () => {
         try {
           const response = await axios.get(`${apiUrl}/members/search?star=0`);
-          setProperPetsitters(response.data);
+          setProperPetsitters(response.data.data);
         } catch (error) {
           setProperPetsitters([]);
         }
@@ -145,12 +135,22 @@ const ReservationStepTwo = () => {
       const getManyReviewsPetsitters = async () => {
         try {
           const response = await axios.get(`${apiUrl}/members/search?reveiwCount=0`);
-          setProperPetsitters(response.data);
+          setProperPetsitters(response.data.data);
         } catch (error) {
           setProperPetsitters([]);
         }
       };
       getManyReviewsPetsitters();
+    } else if (filterType === '새로 온 펫시터') {
+      const getNewPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search`);
+          setProperPetsitters(response.data.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getNewPetsitters();
     }
   }, [filterType]);
 
@@ -173,6 +173,32 @@ const ReservationStepTwo = () => {
           </TitleWrap>
           <FilterIcon src="/icons/FilterIcon.svg" alt="FilterIcon" onClick={handleFilterOpen} />
         </TitleBox>
+        {filteredPetsitters().map((item) => (
+          <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+            <FilterBodyBox key={item.id}>
+              <PetsitterContainer>
+                <PetsitterImg src="/imgs/PetsitterPhoto.svg" alt="PetsitterPhoto" />
+                <PetsitterBody>
+                  <PetsitterWrap>
+                    <NameText>{item.name}</NameText>
+                    <Possiblebox>예약가능</Possiblebox>
+                  </PetsitterWrap>
+                  <TimeWrap>
+                    <TimgImg src="/icons/TimeIcon.svg" alt="TimeIcon" />
+                    <TimeText>{item.possibleTime}</TimeText>
+                  </TimeWrap>
+                  <RatingReviewContainer>
+                    <RatingImg src={item.ratingImg} alt="ratingImg" />
+                    {item.rating}
+                    <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                    {item.review}
+                  </RatingReviewContainer>
+                </PetsitterBody>
+                <ContainerArrow src="/icons/PetsitterContainerArrow.svg" alt="ArrowIcon" />
+              </PetsitterContainer>
+            </FilterBodyBox>
+          </StyledLink>
+        ))}
       </FilterContainer>
 
       <Box>

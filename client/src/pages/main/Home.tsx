@@ -4,56 +4,76 @@ import Rating from '@mui/material/Rating';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import axios from 'axios';
+import { getCookieValue } from 'hooks/getCookie';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
+import { useDispatch } from 'react-redux';
+import StarIcon from '@mui/icons-material/Star';
+import { styled as styledMui } from '@mui/material/styles';
 
-// 추후 UseEffect로 데이터 받아올 데이터 (내가 자주 이용하는 펫시터)
-const OftenPetsitterItem = [
-  {
-    id: 1,
-    name: '도희',
-    describe: '안녕하세요! 도희입니다. 펫시터를 시작한지 3년이 되었어요.',
-    rating: `5.0`,
-    review: `1,630`,
-    profileImg: '/imgs/PetsitterPhoto.svg',
-    ratingImg: '/imgs/Star.svg',
-    reviewImg: '/imgs/ReviewIcon.svg',
-  },
-];
-
-// 추후 UseEffect로 데이터 받아올 데이터 (실시간 리뷰)
-const RealtimeReviewItem = [
-  {
-    id: 1,
-    location: '서울시 강남구',
-    rating: `5.0`,
-    shortContent: `강아지가 너무 귀여워요!`,
-    profileImg: '/imgs/PetsitterPhoto.svg',
-    ratingImg: '/imgs/Star.svg',
-    describe: `진짜 매일같이 정성스럽게돌봐주시는 덕분에 사람을더 좋아하게 되는거 같아요ㅜㅜ`,
-  },
-  {
-    id: 2,
-    location: '경기 수원시',
-    rating: `4.0`,
-    shortContent: `제가 너무 귀여워요!`,
-    profileImg: '/imgs/PetsitterPhoto.svg',
-    ratingImg: '/imgs/Star.svg',
-    describe: `조금 케어가 부족한거 같아요`,
-  },
-  {
-    id: 3,
-    location: '전라도 광주시',
-    rating: `2.0`,
-    shortContent: `펫시터님이 너무 귀여워요!`,
-    profileImg: '/imgs/PetsitterPhoto.svg',
-    ratingImg: '/imgs/Star.svg',
-    describe: `펫시터님이 잘 케어해주세요!`,
-  },
-];
+const apiUrl = process.env.REACT_APP_API_URL;
+const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 const Home = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [favoritePetsitter, setFavoritePetsitter] = useState<any>('');
+  const [newestReviews, setNewestReviews] = useState<any[]>([]);
+
+  const onErrorImg = (e: SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = '/imgs/DefaultUser.svg';
+  };
+
+  // 내가 자주 이용하는 펫시터
+  useEffect(() => {
+    const getFavoritePetsitter = async () => {
+      const accessToken = getCookieValue('access_token');
+      try {
+        const response = await axios.get(`${apiUrl}/members/favorite`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        setFavoritePetsitter(response.data[0]);
+      } catch (error: any) {
+        setFavoritePetsitter('');
+        console.log(error);
+        if (error.response.status === 401 && error.response.status === 500) {
+          try {
+            const newAccessToken = await refreshAccessToken();
+            if (newAccessToken) {
+              const response = await axios.get(`${apiUrl}/members/favorite`, {
+                headers: { Authorization: `Bearer ${newAccessToken}` },
+              });
+              console.log(response.data[0]);
+              setFavoritePetsitter(response.data[0]);
+            }
+          } catch (refreshError) {
+            console.log(refreshError);
+            // alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
+            // dispatch(deleteUser());
+            // deleteCookie('access_token');
+            // deleteCookie('refresh_token');
+          }
+        }
+      }
+    };
+    getFavoritePetsitter();
+  }, []);
+
+  useEffect(() => {
+    const getNewestReview = async () => {
+      try {
+        const response = await axios(`${apiUrl}/reviews?page=1&size=10`);
+
+        setNewestReviews(response.data.reviews);
+      } catch (error) {
+        setNewestReviews([]);
+      }
+    };
+    getNewestReview();
+  }, []);
 
   return (
     <HomeContainer>
@@ -84,49 +104,77 @@ const Home = () => {
         <img src="/imgs/HomeSubAd.svg" alt="Advertising" />
       </AdSubContainer>
       <OftenPetsitterText>내가 자주 이용하는 펫시터</OftenPetsitterText>
-      {OftenPetsitterItem.map((item) => (
-        <OftenPetsitterContainer key={item.id}>
-          <ProfileImg src={item.profileImg} alt="OftenPetsitterImg" />
-          <OftenPetsitterbox>
-            <Nameox>{item.name}</Nameox>
-            <DiscriptionText>{item.describe}</DiscriptionText>
-            <RatingReviewContainer>
-              <RatingImg src={item.ratingImg} alt="ratingImg" />
-              {item.rating}
-              <ReviewImg src={item.reviewImg} alt="reviewImg" />
-              {item.review}
-            </RatingReviewContainer>
-          </OftenPetsitterbox>
-          <ReservationButton>예약하기</ReservationButton>
-        </OftenPetsitterContainer>
-      ))}
+      <OftenPetsitterContainer>
+        {favoritePetsitter ? (
+          <>
+            <ImageContainer>
+              {favoritePetsitter.photo ? (
+                <ProfileImg
+                  src={favoritePetsitter.photo.replace('https://bucketUrl', bucketUrl)}
+                  alt="OftenPetsitterImg"
+                />
+              ) : (
+                <img src="/imgs/PetsitterPhoto" alt="petsitterPhoto" />
+              )}
+            </ImageContainer>
+
+            <OftenPetsitterbox>
+              <Nameox>{favoritePetsitter.name}</Nameox>
+              <DiscriptionText>{favoritePetsitter.body}</DiscriptionText>
+              <RatingReviewContainer>
+                <RatingContainer>
+                  <RatingImg src="/imgs/Star.svg" alt="star" />
+                  <div>{favoritePetsitter.star}</div>
+                </RatingContainer>
+                <ReviewContainer>
+                  <ReviewImg src="/imgs/ReviewIcon.svg" alt="review" />
+                  <div>{favoritePetsitter.reviewCount}</div>
+                </ReviewContainer>
+              </RatingReviewContainer>
+            </OftenPetsitterbox>
+          </>
+        ) : (
+          <div style={{ margin: '20px' }}>
+            <div>펫시터를 찜해보세요!</div>
+            <button>펫시터 찜하러 가기</button>
+          </div>
+        )}
+      </OftenPetsitterContainer>
       <OftenPetsitterText>실시간 리뷰</OftenPetsitterText>
       <RealtimeReviewContainer>
         <CustomCarousel
           showThumbs={false}
           showStatus={false}
-          autoPlay={false}
+          autoPlay={true}
           emulateTouch={true}
           stopOnHover={true}
           infiniteLoop={true}
           showArrows={false}
           useKeyboardArrows={false}
         >
-          {RealtimeReviewItem.map((item) => (
-            <RealtimeReviewWrap key={item.id}>
-              <RealtimeImg src={item.profileImg} alt="Profile" />
-              <RealtimeBox>
-                <OnelineWrap>
-                  <RealtimeLocation>{item.location}</RealtimeLocation>
-                  <StyledRating name="read-only" value={Number(item.rating)} size="small" readOnly />
-                </OnelineWrap>
-                <RealtimeDescription>
-                  {item.describe.length > 20
-                    ? item.describe.substring(0, 19) + '\n' + item.describe.substring(19)
-                    : item.describe}
-                </RealtimeDescription>
-              </RealtimeBox>
-            </RealtimeReviewWrap>
+          {newestReviews.map((review) => (
+            <ReviewCard key={review.reviewId}>
+              <ImageContainer>
+                {review.memberPhoto ? (
+                  <MemberPhotoImage
+                    src={review.memberPhoto.replace('https:/bucketUrl', bucketUrl)}
+                    alt="client"
+                    onError={onErrorImg}
+                  />
+                ) : (
+                  <img src="/imgs/DefaultUser.svg" alt="clientPhoto" />
+                )}
+              </ImageContainer>
+              <RemainContainer>
+                <AddressRatingContainer>
+                  <AddressText>
+                    {review.reservationAddress.split(' ')[1] + ' ' + review.reservationAddress.split(' ')[2]}
+                  </AddressText>
+                  <StyledRating value={review.star} precision={1} icon={<StarIcon />} readOnly />
+                </AddressRatingContainer>
+                <ReviewText>{review.body}</ReviewText>
+              </RemainContainer>
+            </ReviewCard>
           ))}
         </CustomCarousel>
       </RealtimeReviewContainer>
@@ -203,7 +251,6 @@ const OftenPetsitterText = styled.h2`
 const OftenPetsitterContainer = styled.div`
   display: flex;
   margin-top: 16px;
-  cursor: pointer;
   padding: 8px 12px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
   border-radius: 8px;
@@ -215,11 +262,68 @@ const OftenPetsitterbox = styled.div`
   margin-right: 8px;
   margin-left: 24px;
 `;
+const ImageContainer = styled.div`
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+`;
+
+const RemainContainer = styled.div`
+  padding: 8px;
+
+  flex-grow: 1;
+  /* overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; */
+`;
+
+const AddressRatingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+`;
+
+const AddressText = styled.div`
+  ${({ theme }) => theme.fontSize.s18h27}
+  font-weight: ${({ theme }) => theme.fontWeights.bold};
+`;
+
+const StyledRating = styledMui(Rating)({
+  '& .MuiRating-iconFilled': {
+    color: '#279EFF',
+  },
+});
+
+const ReviewText = styled.div`
+  text-align: left;
+  padding-top: 12px;
+  padding-bottom: 36px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`;
 
 const ProfileImg = styled.img`
-  width: 79px;
-  height: 77px;
-  border-radius: 79px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const MemberPhotoImage = styled.img`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const Nameox = styled.div`
@@ -259,11 +363,20 @@ const RatingReviewContainer = styled.div`
   display: flex;
   align-items: center;
   margin-top: 8px;
+  gap: 8px;
+`;
+
+const RatingContainer = styled.div`
+  display: flex;
+  gap: 4px;
 `;
 
 const RatingImg = styled.img`
-  width: 14px;
-  margin-right: 4px;
+  width: 16px;
+`;
+
+const ReviewContainer = styled.div`
+  display: flex;
 `;
 
 const ReviewImg = styled.img`
@@ -276,46 +389,14 @@ const ReviewImg = styled.img`
 const RealtimeReviewContainer = styled.div`
   margin-top: 16px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
-`;
-
-const RealtimeReviewWrap = styled.div`
-  display: flex;
-  padding: 12px;
   border-radius: 8px;
 `;
 
-const RealtimeBox = styled.div`
+const ReviewCard = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-left: 12px;
-`;
-
-const OnelineWrap = styled.div`
-  display: flex;
+  justify-content: space-between;
   gap: 8px;
-`;
-
-const RealtimeImg = styled.img`
-  width: 80px !important;
-  height: 80px;
-`;
-
-const RealtimeDescription = styled.div`
-  ${(props) => props.theme.fontSize.s14h21};
-  margin-top: 8px;
-  text-align: left;
-  display: box;
-  overflow: hidden;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-  flex-wrap: wrap;
-`;
-
-const RealtimeLocation = styled.div`
-  font-weight: ${(props) => props.theme.fontWeights.bold};
-  white-space: nowrap;
+  padding: 12px;
 `;
 
 const CustomCarousel = styled(Carousel)`
@@ -324,7 +405,7 @@ const CustomCarousel = styled(Carousel)`
   }
 
   .control-dots {
-    bottom: -30px !important;
+    bottom: -4px !important;
   }
 
   .dot {
@@ -332,12 +413,4 @@ const CustomCarousel = styled(Carousel)`
   }
 `;
 
-const StyledRating = styled(Rating)`
-  & .MuiRating-iconFilled {
-    color: #279eff;
-  }
-  & .MuiRating-iconHover {
-    color: #1d8ce7;
-  }
-`;
 export default Home;
