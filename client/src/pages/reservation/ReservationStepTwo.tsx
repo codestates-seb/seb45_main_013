@@ -110,7 +110,7 @@ const ReservationStepTwo = () => {
               }
             } catch (refreshError) {
               console.log(refreshError);
-              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              alert('로그인 세션이 만료되었습니다. 다시 로그인해 주시기 바랍니다.');
               dispatch(deleteUser());
               dispatch(deleteReservation());
               deleteCookie('access_token');

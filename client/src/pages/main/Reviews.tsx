@@ -4,9 +4,11 @@ import axios from 'axios';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Rating from '@mui/material/Rating';
+import { useInView } from 'react-intersection-observer';
+import { CircularProgress } from '@mui/material';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
+const bucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 
 type ReviewType = {
   memberId: number;
@@ -35,26 +37,38 @@ type Page = {
 const userDefaultImage = '/imgs/DefaultUser.svg';
 
 const Reviews = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState<Page | null>(null);
+  const [page, setPage] = useState(1);
   const [reviews, setReviews] = useState<ReviewType[]>([]);
+  const [isEnd, setIsEnd] = useState(false);
 
+  const { ref, inView } = useInView();
+
+  // ref로 연결된 엘리먼트가 보일때마다 이 useEffect를 실행한다.
+  // 한 페이지 응답이 끝날때 마다 page + 1
+  // 서버에서 응답 받은 totalPages와 page의 수가 같을 때 통신이 중단  => isEnd = true
   useEffect(() => {
-    const fetchReview = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/reviews?page=1&size=10`);
-        if (response.data && response.data.reviews) {
-          setReviews(response.data.reviews);
-          setPage(response.data.pageInfo);
-          setIsLoading(false);
+    if (inView) {
+      const fetchReview = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/reviews?page=${page}&size=8`);
+
+          if (response.data && response.data.reviews) {
+            setReviews((prev) => [...prev, ...response.data.reviews]);
+            setPage((page) => page + 1);
+            if (response.data.pageInfo.totalPages === page || response.data.pageInfo.totalPages === 0) {
+              setIsEnd(true);
+            }
+          }
+        } catch (error) {
+          console.error(error);
+          if (error) {
+            setIsEnd(true);
+          }
         }
-      } catch (error) {
-        console.error(error);
-        setIsLoading(false);
-      }
-    };
-    fetchReview();
-  }, []);
+      };
+      fetchReview();
+    }
+  }, [inView]);
 
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -66,9 +80,10 @@ const Reviews = () => {
 
   return (
     <>
-      {!isLoading && (
-        <ReviewPage>
-          <Title>펫밀리 이용 후기</Title>
+      <ReviewPage>
+        <Title>펫밀리 이용 후기</Title>
+
+        <ReviewCard>
           {Array.isArray(reviews) &&
             reviews.map((review, index) => (
               <Reviewwrapper key={index}>
@@ -76,12 +91,11 @@ const Reviews = () => {
                   <Review>
                     <ImageContainer>
                       {review.memberPhoto ? (
-                        <UserProfile bgImage={review.memberPhoto.replace(/https:\/\/bucketUrl/g, BucketUrl)} />
+                        <UserProfile bgImage={review.memberPhoto.replace('https://bucketUrl', bucketUrl)} />
                       ) : (
                         <UserProfile bgImage={userDefaultImage} />
                       )}
                     </ImageContainer>
-
                     <ReviewInfo>
                       <First>
                         <NickName>{review.memberNickName}</NickName>
@@ -93,14 +107,12 @@ const Reviews = () => {
                     </ReviewInfo>
                   </Review>
                   <CarouselContainer>
-                    <StyledCarousel showThumbs={false}>
+                    <StyledCarousel showThumbs={false} showStatus={false}>
                       {review.reviewPhotos && review.reviewPhotos.length > 0
                         ? review.reviewPhotos.map((photo, photoIndex) => (
-                            <div key={photoIndex}>
-                              {photo && (
-                                <img src={photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="Review Photos" />
-                              )}
-                            </div>
+                            <ImageWrapper key={photoIndex}>
+                              {photo && <img src={photo.replace('https://bucketUrl', bucketUrl)} alt="Review Photos" />}
+                            </ImageWrapper>
                           ))
                         : [
                             <div key="no photos">
@@ -113,34 +125,47 @@ const Reviews = () => {
                 </ReviewContainer>
               </Reviewwrapper>
             ))}
-        </ReviewPage>
-      )}
+        </ReviewCard>
+
+        {!isEnd ? (
+          <LoadingContainer ref={ref}>
+            <CircularProgress />
+          </LoadingContainer>
+        ) : null}
+      </ReviewPage>
     </>
   );
 };
+
+export default Reviews;
 
 const ReviewPage = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-top: 36px;
+  padding: 12px;
 `;
 
 const Title = styled.div`
-  font-weight: 900;
-  font-size: 18px;
+  margin-top: 24px;
+  font-size: ${({ theme }) => theme.fontSize.s18h27};
+  font-weight: ${({ theme }) => theme.fontWeights.bold};
+`;
+
+const ReviewCard = styled.div`
+  margin-top: 24px;
 `;
 
 const Reviewwrapper = styled.div`
   width: 100%;
   margin-bottom: 36px;
+  border-radius: 8px;
 `;
 
 const ReviewContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-top: 72px;
 `;
 
 const Review = styled.div`
@@ -220,6 +245,17 @@ const StyledCarousel = styled(Carousel)`
       margin: 0 auto;
     }
   }
+
+  .dot {
+    background: #279eff !important;
+  }
+`;
+
+const ImageWrapper = styled.div`
+  border: 1px solid #279eff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: ${({ theme }) => theme.shadow.dp04};
 `;
 
 const BodyContainer = styled.div`
@@ -233,4 +269,7 @@ const StyledImage = styled.img`
   height: auto;
 `;
 
-export default Reviews;
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;

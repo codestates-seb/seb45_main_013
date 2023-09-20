@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { IUser } from 'store/userSlice';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CareCard from '@components/Carecard';
 import { getCookieValue } from 'hooks/getCookie';
 import { useInView } from 'react-intersection-observer';
 import jwt_decode from 'jwt-decode';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
+
+import { CircularProgress } from '@mui/material';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -19,15 +21,14 @@ const filters = [
 ];
 
 const Cares = () => {
+  const navigate = useNavigate();
   const accessToken = getCookieValue('access_token');
+
+  const { ref, inView } = useInView();
 
   const [filter, setFilter] = useState('최신순');
   const [page, setPage] = useState(1);
-  const [isEnd, setEnd] = useState(false);
-
-  const navigate = useNavigate();
-
-  const { ref, inView } = useInView();
+  const [isEnd, setIsEnd] = useState(false);
 
   const { isLogin, memberId, email, petsitterBoolean } = useSelector((state: IUser) => state.user);
   const [reservations, setReservations] = useState<any[]>([]);
@@ -35,7 +36,7 @@ const Cares = () => {
   const handleFilter = (e: any) => {
     setFilter(e);
     setReservations([]);
-    setEnd(false);
+    setIsEnd(false);
     setPage(1);
   };
   useEffect(() => {
@@ -77,9 +78,12 @@ const Cares = () => {
           );
           setReservations((prev) => [...prev, ...response.data.reservations]);
           setPage((page) => page + 1);
+          if (response.data.pageInfo.totalPages === page || response.data.pageInfo.totalPages === 0) {
+            setIsEnd(true);
+          }
         } catch (error: any) {
           if (error) {
-            setEnd(true);
+            setIsEnd(true);
           }
           if (error.response.status === 401) {
             try {
@@ -125,12 +129,16 @@ const Cares = () => {
         <CareCardContainer>
           {Array.isArray(reservations) && reservations.length > 0 ? (
             reservations.map((reservation) => <CareCard key={reservation.reservationId} reservation={reservation} />)
-          ) : (
+          ) : !isEnd ? null : (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <div>등록된 예약이 없습니다.</div>
             </div>
           )}
-          {!isEnd || reservations.length === 0 ? <div ref={ref}>Loading...</div> : null}
+          {!isEnd ? (
+            <LoadingContainer ref={ref}>
+              <CircularProgress />
+            </LoadingContainer>
+          ) : null}
         </CareCardContainer>
       </CareContainer>
     </MainContainer>
@@ -170,4 +178,9 @@ const CareCardContainer = styled.div`
   flex-direction: column;
   padding-top: 16px;
   gap: 16px;
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `;
