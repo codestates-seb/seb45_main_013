@@ -69,4 +69,13 @@ public class FavoriteService {
                 })
                 .collect(Collectors.toList());
     }
+
+    // 특정 펫시터가 찜 되었는지 확인
+    public boolean findFavoriteBoolean(Long memberId, Long petsitterId) {
+        Member member = memberService.findVerifiedMember(memberId);
+        Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
+        MemberFavoritePetsitter favorite = favoriteRepository.findByMemberAndPetsitter(member, petsitter);
+
+        return favorite != null;
+    }
 }
