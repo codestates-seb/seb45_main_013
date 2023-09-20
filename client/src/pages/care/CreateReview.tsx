@@ -280,6 +280,7 @@ const CreateReview = () => {
           placeholder="케어는 어떠셨나요?"
           defaultValue={review?.body && review.body}
           onChange={(e) => setReviewText(e.target.value)}
+          maxLength={255}
         />
       </TextContainer>
       <ButtonContainer>
