@@ -156,8 +156,8 @@ public class MemberController {
     @PatchMapping("/favorite")
     public ResponseEntity favoritePetsitter(@LoginMemberId Long memberId,
                                             @RequestParam Long petsitterId) {
-        favoriteService.toggleFavorite(memberId, petsitterId);
-        return new ResponseEntity<>(new SingleResponseDto<>("해당 펫시터가 찜 선택(취소) 되었습니다"), HttpStatus.OK);
+        boolean response  = favoriteService.toggleFavorite(memberId, petsitterId);
+        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
     }
 
     // 찜한 펫시터 목록 조회

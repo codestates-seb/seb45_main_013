@@ -22,7 +22,7 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
 
     // 찜 기능
-    public void toggleFavorite(Long memberId, Long petsitterId) {
+    public boolean toggleFavorite(Long memberId, Long petsitterId) {
         Member member = memberService.findVerifiedMember(memberId);
         Petsitter petsitter = petsitterService.findVerifiedPetsitter(petsitterId);
 
@@ -34,8 +34,10 @@ public class FavoriteService {
             favorite.setPetsitter(petsitter);
             member.getFavoritePetsitters().add(favorite);
             favoriteRepository.save(favorite);
+            return true;
         }
         favoriteRepository.delete(favorite);
+        return false;
     }
 
     // 찜한 펫시터 목록 조회
