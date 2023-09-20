@@ -1,70 +1,31 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import axios from 'axios';
+
 import { getCookieValue } from 'hooks/getCookie';
-import { useSelector } from 'react-redux';
-import { IUser } from 'store/userSlice';
+import { refreshAccessToken } from 'hooks/refreshAcessToken';
+import { IReservation, deleteReservation } from 'store/reservationSlice';
+import { deleteUser } from 'store/userSlice';
+import { deleteCookie } from 'hooks/deleteCookie';
+import { useDispatch, useSelector } from 'react-redux';
+import PetsitterCard from '@components/PetsitterCard';
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Divider, Drawer, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import { Box, Divider, Drawer, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { FormatListBulleted } from '@mui/icons-material';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-const bucketUrl = process.env.REACT_APP_BUCKET_URL;
-
-interface Petsitters {
-  petsitterId: number;
-  name: string;
-  photo: string;
-  rating: number;
-  review: number;
-  possibleTimeStart: string;
-  possibleTimeEnd: string;
-}
-
-const onErrorImg = (e: any) => {
-  e.target.src = '/imgs/PetProfile.png';
-};
-
-// const HotPetsitterItem = [
-//   // 추후 DB에서 받아올 예정
-//   {
-//     id: 1,
-//     name: '홍길동',
-//     location: '서울시 강남구',
-//     profileImg: '/imgs/PetsitterPhoto.svg',
-//     describe: `자신있습니다 맡겨주세요자신있습니다 맡겨주세요자신있습니다 맡겨주세요자신있습니다 맡겨주세요`,
-//   },
-//   {
-//     id: 2,
-//     name: '펫당근',
-//     location: '경기 수원시',
-//     profileImg: '/imgs/PetsitterPhoto.svg',
-//     describe: `사실 케어에 자신이 없습니다. 사실 케어에 자신이 없습니다. 사실 케어에 자신이 없습니다. 사실 케어에 자신이 없습니다.`,
-//   },
-//   {
-//     id: 3,
-//     name: '문단속',
-//     location: '전라도 광주시',
-//     profileImg: '/imgs/PetsitterPhoto.svg',
-//     describe: `펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!펫시터님이 잘 케어해주세요!`,
-//   },
-// ];
 
 const ViewPetsitters = () => {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterType, setFilterType] = useState('전체 펫시터'); // 필터 타입 상태 관리
-  const [petsitters, setPetsitters] = useState<Petsitters[]>([]); // 전체 펫시터 데이터 상태 관리
-  // const [starPetsitters, setStarPetsitters] = useState([]); // 인기 펫시터 데이터 상태 관리
-  // const [newPetsitters, setNewPetsitters] = useState([]); // 새로 온 펫시터 데이터 상태 관리
-  // const [reviewPetsitters, setReviewPetsitters] = useState([]); // 리뷰가 많은 펫시터 데이터 상태 관리
+  const [properPetsitters, setProperPetsitters] = useState<number[]>([]);
 
-  //submit state
-  const { isLogin } = useSelector((state: IUser) => state.user);
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId } = useSelector(
+    (state: IReservation) => state.reservation,
+  );
 
   const handleFilterOpen = () => {
     setIsFilterOpen(true);
@@ -79,77 +40,92 @@ const ViewPetsitters = () => {
     setIsFilterOpen(false);
   };
 
-  const formattedStartTime = (petsitter: Petsitters) =>
-    new Date(petsitter.possibleTimeStart).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  // const formattedStartTime = (petsitter: Petsitters) =>
+  //   new Date(petsitter.possibleTimeStart).toLocaleTimeString([], {
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //   });
 
-  const formattedEndTime = (petsitter: Petsitters) =>
-    new Date(petsitter.possibleTimeEnd).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-  const getTitleText = () => {
-    switch (filterType) {
-      case '전체 펫시터':
-        return '전체 펫시터';
-      case '내가 찜한 펫시터':
-        return '내가 찜한 펫시터';
-      case '새로 온 펫시터':
-        return '새로 온 펫시터';
-      case '리뷰가 많은 펫시터':
-        return '리뷰가 많은 펫시터';
-      default:
-        return '펫시터 보기';
-    }
-  };
-
-  const filteredPetsitters = (petsitters: Petsitters[]) => {
-    // DB에서 받기 전 임시 필터링
-    if (!filterType) {
-      return petsitters;
-    }
-
-    switch (filterType) {
-      case '내가 찜한 펫시터':
-        return petsitters.filter((petsitter) => petsitter.petsitterId === 1);
-        break;
-      case '새로 온 펫시터':
-        return petsitters.filter((petsitter) => petsitter.petsitterId === 2);
-        break;
-      case '리뷰가 많은 펫시터':
-        return petsitters.filter((petsitter) => petsitter.petsitterId === 3);
-        break;
-      default:
-        return petsitters;
-    }
-  };
+  // const formattedEndTime = (petsitter: Petsitters) =>
+  //   new Date(petsitter.possibleTimeEnd).toLocaleTimeString([], {
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //   });
 
   useEffect(() => {
-    if (!isLogin) {
-      alert('로그인을 해주세요.');
-      navigate('/login');
-    }
-
-    const accessToken = getCookieValue('access_token');
-
-    if (isLogin && accessToken) {
-      try {
-        axios
-          .get(`${apiUrl}/members/search`, { headers: { Authorization: `Bearer ${accessToken}` } })
-          .then((res) => {
-            setPetsitters(res.data);
-          })
-          .catch((error) => {
-            console.error('펫시터 정보를 불러오는 데 실패했습니다.', error);
+    if (filterType === '전체 펫시터') {
+      const getAllPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search`);
+          setProperPetsitters(response.data.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getAllPetsitters();
+    } else if (filterType === '내가 찜한 펫시터') {
+      const getFavoritePetsitters = async () => {
+        const accessToken = getCookieValue('access_token');
+        try {
+          const response = await axios.get(`${apiUrl}/members/favorite`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
           });
-      } catch (error: any) {
-        console.error('펫시터 정보를 불러오는 데 실패했습니다.', error);
-      }
+          setProperPetsitters(response.data);
+        } catch (error: any) {
+          if (error.response.status === 401) {
+            try {
+              const newAccessToken = await refreshAccessToken();
+              if (newAccessToken) {
+                const response = await axios.get(`${apiUrl}/members/favorite`, {
+                  headers: { Authorization: `Bearer ${newAccessToken}` },
+                });
+                setProperPetsitters(response.data);
+              }
+            } catch (refreshError) {
+              console.log(refreshError);
+              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              dispatch(deleteUser());
+              dispatch(deleteReservation());
+              deleteCookie('access_token');
+              deleteCookie('refresh_token');
+            }
+          }
+          setProperPetsitters([]);
+        }
+      };
+      getFavoritePetsitters();
+    } else if (filterType === '새로 온 펫시터') {
+      const getNewPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search`);
+          setProperPetsitters(response.data.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getNewPetsitters();
+    } else if (filterType === '별점이 높은 펫시터') {
+      const getHighPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search?star=0`);
+          setProperPetsitters(response.data.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getHighPetsitters();
+    } else if (filterType === '리뷰가 많은 펫시터') {
+      const getManyReviewsPetsitters = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/members/search?reveiwCount=0`);
+          setProperPetsitters(response.data.data);
+        } catch (error) {
+          setProperPetsitters([]);
+        }
+      };
+      getManyReviewsPetsitters();
     }
-  }, []);
+  }, [filterType]);
 
   return (
     <MainContainer>
@@ -196,71 +172,49 @@ const ViewPetsitters = () => {
       <FilterContainer>
         <TitleBox>
           <TitleWrap>
-            <TitleText>{getTitleText()}</TitleText>
-            <ItemCountbox>{petsitters.length}</ItemCountbox>
+            <TitleText>{filterType}</TitleText>
+            <ItemCountbox>{properPetsitters.length}</ItemCountbox>
           </TitleWrap>
           <FilterIcon src="/icons/FilterIcon.svg" alt="FilterIcon" onClick={handleFilterOpen} />
         </TitleBox>
-
-        {Array.isArray(petsitters) &&
-          petsitters.length > 0 &&
-          filteredPetsitters(petsitters).map((petsitters: any) => (
-            <FilterBodyBox key={petsitters.petsitterId}>
-              <PetsitterContainer>
-                <PetsitterImg
-                  src={
-                    petsitters.photo ? (
-                      petsitters.photo.replace('https://bucketUrl', bucketUrl)
-                    ) : (
-                      <div style={{ width: '80px', height: '80px', backgroundColor: 'gray' }}>사진을 등록해 주세요</div>
-                    )
-                  }
-                  onError={onErrorImg}
-                  alt="PetsitterPhoto"
-                />
-                <PetsitterBody>
-                  <PetsitterWrap>
-                    <NameText>{petsitters.name}</NameText>
-                    <Possiblebox>예약가능</Possiblebox>
-                  </PetsitterWrap>
-                  <TimeWrap>
-                    <TimgImg src="/icons/TimeIcon.svg" alt="TimeIcon" />
-                    <TimeText>{`${formattedStartTime(petsitters)} ~ ${formattedEndTime(petsitters)}`}</TimeText>
-                  </TimeWrap>
-                  <RatingReviewContainer>
-                    <RatingImg src="/imgs/Star.svg" alt="ratingImg" />
-                    {petsitters.star}
-                    <ReviewImg src="/imgs/ReviewIcon.svg" alt="reviewImg" />
-                    {petsitters.reviewCount}
-                  </RatingReviewContainer>
-                </PetsitterBody>
-                <ContainerArrow src="/icons/PetsitterContainerArrow.svg" alt="ArrowIcon" />
-              </PetsitterContainer>
-            </FilterBodyBox>
-          ))}
       </FilterContainer>
 
-      <FilterDrawer anchor="bottom" open={isFilterOpen} onClose={handleFilterClose}>
+      <Box>
+        {Array.isArray(properPetsitters) &&
+          properPetsitters.length > 0 &&
+          properPetsitters.map((petsitter: any) => <PetsitterCard key={petsitter.petsitterId} petsitter={petsitter} />)}
+      </Box>
+
+      <Drawer
+        anchor="bottom"
+        open={isFilterOpen}
+        onClose={handleFilterClose}
+        ModalProps={{ container: document.getElementById('steptwo-main'), style: { position: 'absolute' } }}
+      >
         <List>
           <ListSubheader sx={{ fontSize: '20px', display: 'flex', alignItems: 'center', color: 'primary.main' }}>
             <FormatListBulleted sx={{ mr: 2 }} />
             <span>필터</span>
           </ListSubheader>
           <Divider />
-          <ListItem button onClick={() => handleFilterButtonClick('전체 펫시터')}>
-            <ListItemText primary="전체" sx={{ ml: 5 }} />
+
+          <ListItem onClick={() => handleFilterButtonClick('전체 펫시터')}>
+            <ListItemText primary="전체 펫시터" sx={{ ml: 5 }} />
           </ListItem>
-          <ListItem button onClick={() => handleFilterButtonClick('내가 찜한 펫시터')}>
+          <ListItem onClick={() => handleFilterButtonClick('내가 찜한 펫시터')}>
             <ListItemText primary="내가 찜한 펫시터" sx={{ ml: 5 }} />
           </ListItem>
-          <ListItem button onClick={() => handleFilterButtonClick('새로 온 펫시터')}>
-            <ListItemText primary="새로 온 펫시터" sx={{ ml: 5 }} />
+          <ListItem onClick={() => handleFilterButtonClick('별점이 높은 펫시터')}>
+            <ListItemText primary="별점이 높은 펫시터" sx={{ ml: 5 }} />
           </ListItem>
-          <ListItem button onClick={() => handleFilterButtonClick('리뷰가 많은 펫시터')}>
+          <ListItem onClick={() => handleFilterButtonClick('리뷰가 많은 펫시터')}>
             <ListItemText primary="리뷰가 많은 펫시터" sx={{ ml: 5 }} />
           </ListItem>
+          <ListItem onClick={() => handleFilterButtonClick('새로 온 펫시터')}>
+            <ListItemText primary="새로 온 펫시터" sx={{ ml: 5 }} />
+          </ListItem>
         </List>
-      </FilterDrawer>
+      </Drawer>
     </MainContainer>
   );
 };
