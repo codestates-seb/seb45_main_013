@@ -11,6 +11,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import PetsIcon from '@mui/icons-material/Pets';
+import CircularProgress from '@mui/joy/CircularProgress';
 
 // 디자인 수정
 
@@ -20,7 +21,7 @@ const token = getCookieValue('access_token');
 type InfoType = {
   petsitterId: number;
   possiblePetType: string;
-  possibleLocation: string;
+  possibleLocation: string[];
   possibleDay: string;
   possibleTimeStart: string;
   possibleTimeEnd: string;
@@ -34,10 +35,12 @@ const MySchedule = () => {
   console.log(memberId);
 
   const [info, setInfo] = useState<InfoType>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   //   일정 확인용
   useEffect(() => {
     const fetchPetData = async () => {
+      setIsLoading(true);
       console.log(token);
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters`, {
@@ -51,6 +54,8 @@ const MySchedule = () => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchPetData();
@@ -108,7 +113,9 @@ const MySchedule = () => {
     <Container>
       <Text>나의 스케쥴</Text>
 
-      {info && info.possibleDay ? (
+      {isLoading ? (
+        <CircularProgress variant="soft" sx={{ color: '#279eff' }} />
+      ) : info && info.possibleDay ? (
         <PetmilyCard>
           <ContentContainer>
             <InfoWrapper>
@@ -123,7 +130,7 @@ const MySchedule = () => {
               <Location />
               <Info>
                 <InfoText>케어 가능 지역 </InfoText>
-                <UserText>{info.possibleLocation.replace(/[[\]]/g, '')}</UserText>
+                <UserText>{info.possibleLocation}</UserText>
               </Info>
             </InfoWrapper>
 

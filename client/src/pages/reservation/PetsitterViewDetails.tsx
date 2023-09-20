@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { IUser } from 'store/userSlice';
 
 import Button from '@mui/material/Button';
@@ -13,6 +13,8 @@ import Button from '@mui/material/Button';
 import Reviews from '@components/Reviews';
 import PossibleReservationTime from '@components/PossibleReservationTime';
 import dayjs from 'dayjs';
+
+import { setPetsitterId } from 'store/reservationSlice';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
@@ -65,13 +67,23 @@ const convertTo12Hour = (time: string) => {
 
 const PetsitterViewDetails = () => {
   const navigate = useNavigate();
+
+  // 리덕스 펫시터 Id 저장
+
+  const { petsitterId } = useParams();
+  console.log(petsitterId);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setPetsitterId(petsitterId));
+  }, [petsitterId, dispatch]);
+
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState(NavItem[0].link);
   const [selectedDates, setSelectedDates] = useState<dayjs.Dayjs | null>(null);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
   const [petsitterData, setPetsitterData] = useState<any>({});
-  const { petsitterId } = useParams();
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
 

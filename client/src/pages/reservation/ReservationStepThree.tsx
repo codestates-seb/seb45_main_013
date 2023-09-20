@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -10,18 +10,8 @@ import { notice, verificationNotice, impossibleNotice1, impossibleNotice2 } from
 import { useSelector, useDispatch } from 'react-redux';
 import { IReservation, addBody } from 'store/reservationSlice';
 import { IUser } from 'store/userSlice';
-
-const PetsitterItem = [
-  // 펫시터 정보 DB 받아올 예정
-  {
-    id: 1,
-    name: '리나',
-    location: '서울시 성북구',
-    rating: 4.9,
-    review: 10,
-    photo: '/imgs/PetsitterPhoto.svg',
-  },
-];
+import { getCookieValue } from 'hooks/getCookie';
+import axios from 'axios';
 
 const PetItem = [
   {
@@ -54,10 +44,67 @@ type PetItem = {
   photo: string;
 };
 
-const ReservationStepThree = () => {
+const apiUrl = process.env.REACT_APP_API_URL;
+const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
+
+interface IPetsitter {
+  name: string;
+  star: number;
+  reviewCount: number;
+  photo: string;
+  possibleLocation: string[];
+}
+
+const ReservationStepFour = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [petsitter, setPetsitter] = useState<IPetsitter | null>(null);
   const [isConfirmEnabled, setIsConfirmEnabled] = useState(false); //예약하기 버튼 활성화 상태
+  const {
+    register,
+    formState: { errors },
+  } = useForm<IFormInput>();
+
+  // 예약 정보 가져오기
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, detailAddress, body, petId } = useSelector(
+    (state: IReservation) => state.reservation,
+  );
+  const { name, nickName, phone } = useSelector((state: IUser) => state.user);
+  const dispatch = useDispatch();
+
+  console.log(reservationDay);
+  console.log(reservationTimeStart);
+  console.log(reservationTimeEnd);
+  console.log(address);
+  console.log(detailAddress);
+  console.log(body);
+  console.log(petId);
+  console.log(phone);
+
+  // 폰번호 자르기
+  const phoneNum = `010-${phone.substring(3, 7)}-${phone.substring(7)}`;
+  console.log(phoneNum);
+
+  // 펫 정보 상태값
+  const [petData, setPetData] = useState<IPet[]>([]);
+  // const petNum = pets.length;
+
+  //  펫시터 정보 가져오기
+  const { petsitterId } = useSelector((state: IReservation) => state.reservation);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/members/petsitters/${petsitterId}`);
+        setPetsitter(response.data as IPetsitter);
+        console.log(petsitter);
+      } catch (error) {
+        console.error('error', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // useEffect -> 펫 정보 가져오기
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -80,28 +127,16 @@ const ReservationStepThree = () => {
     body: string;
   }
 
-  const {
-    register,
-    formState: { errors },
-  } = useForm<IFormInput>();
+  interface IPet {
+    name: string;
+    species: string;
+    age: number;
+  }
 
-  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, body, petId } = useSelector(
-    (state: IReservation) => state.reservation,
-  );
-  const { name, nickName, phone } = useSelector((state: IUser) => state.user);
-  const dispatch = useDispatch();
+  // useEffect(() => {
+  //   const token = getCookieValue('access_token');
 
-  console.log(reservationDay);
-  console.log(reservationTimeStart);
-  console.log(reservationTimeEnd);
-  console.log(address);
-  console.log(body);
-  console.log(petId);
-  console.log(phone);
-
-  // 폰번호 자르기
-  const phoneNum = `010-${phone.substring(3, 7)}-${phone.substring(7)}`;
-  console.log(phoneNum);
+  // }, []);
 
   return (
     <MainContainer>
@@ -118,25 +153,27 @@ const ReservationStepThree = () => {
           <CheckTitleIcon src="/imgs/ReservationCheckList.svg" alt="CheckListIcon" />
         </CheckTitle>
 
-        {PetsitterItem.map((item) => (
-          <PetsitterCard key={item.id}>
-            <CardWrap>
-              <PetsitterName>{item.name}</PetsitterName>
-              <Petsitter>펫시터</Petsitter>
-            </CardWrap>
-            <PetsitterImg src={item.photo} alt="PetsitterPhoto" />
-            <PetsitterCardBody>
-              <RatingImg src="/imgs/Star.svg" alt="Star" />
-              <RatingCount>{item.rating}</RatingCount>
-              <ReviewImg src="/imgs/ReviewIcon.svg" alt="ReviewIcon" />
-              <ReviewCount>{item.review}</ReviewCount>
-            </PetsitterCardBody>
-            <DividerWrap>
-              <StyledDivider />
-            </DividerWrap>
-            <PetsitterLocation>{item.location}</PetsitterLocation>
-          </PetsitterCard>
-        ))}
+        <PetsitterCard>
+          {petsitter && (
+            <>
+              <CardWrap>
+                <PetsitterName>{petsitter.name}</PetsitterName>
+                <Petsitter>펫시터</Petsitter>
+              </CardWrap>
+              <PetsitterImg src={petsitter.photo.replace(/https:\/\/bucketUrl/g, BucketUrl)} alt="PetsitterPhoto" />
+              <PetsitterCardBody>
+                <RatingImg src="/imgs/Star.svg" alt="Star" />
+                <RatingCount>{petsitter.star}</RatingCount>
+                <ReviewImg src="/imgs/ReviewIcon.svg" alt="ReviewIcon" />
+                <ReviewCount>{petsitter.reviewCount}</ReviewCount>
+              </PetsitterCardBody>
+              <DividerWrap>
+                <StyledDivider />
+              </DividerWrap>
+              <PetsitterLocation>{petsitter.possibleLocation}</PetsitterLocation>
+            </>
+          )}
+        </PetsitterCard>
 
         <ReservationResult>
           <TitleWrap>
@@ -266,7 +303,7 @@ const ReservationStepThree = () => {
   );
 };
 
-export default ReservationStepThree;
+export default ReservationStepFour;
 
 const MainContainer = styled.div`
   display: flex;
