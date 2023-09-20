@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.petmily.domain.member.entity.Member;
 import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.global.utils.validation.ValidLocalTime;
 
 import java.sql.Time;
 import java.time.LocalTime;
@@ -23,8 +24,10 @@ public class PetsitterPatchRequestDto {
 
     private String possibleDay;
 
+    @ValidLocalTime
     private LocalTime possibleTimeStart;
 
+    @ValidLocalTime
     private LocalTime possibleTimeEnd;
 
     public void setPetsitterId(long petsitterId) {
