@@ -29,6 +29,7 @@ public interface ReviewMapper {
         response.setMemberNickName(review.getMember().getNickName());
         response.setMemberPhoto(review.getMember().getPhoto());
         response.setReservationId(review.getReservation().getReservationId());
+        response.setReservationAddress(review.getReservation().getAddress());
         response.setPetsitterId(review.getPetsitter().getPetsitterId());
 
         response.setCreatedAt(review.getCreatedAt());

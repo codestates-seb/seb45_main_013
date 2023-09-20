@@ -23,6 +23,8 @@ public class ReviewResponseDto {
 
     private Long reservationId;
 
+    private String reservationAddress;
+
     private List<String> petNames;
 
     private List<String> petPhotos;
