@@ -4,10 +4,10 @@ import axios from 'axios';
 
 import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
-import { IReservation, deleteReservation } from 'store/reservationSlice';
+import { deleteReservation } from 'store/reservationSlice';
 import { deleteUser } from 'store/userSlice';
 import { deleteCookie } from 'hooks/deleteCookie';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PetsitterCard from '@components/PetsitterCard';
 
 import { Carousel } from 'react-responsive-carousel';
@@ -16,16 +16,29 @@ import { Box, Divider, Drawer, List, ListItem, ListItemText, ListSubheader } fro
 import { FormatListBulleted } from '@mui/icons-material';
 
 const apiUrl = process.env.REACT_APP_API_URL;
+const bucketUrl = process.env.REACT_APP_BUCKET_URL;
+
+interface Petsitter {
+  petsitterId: number;
+  name: string;
+  photo?: string;
+  body: string;
+  possibleLocation: string;
+}
 
 const ViewPetsitters = () => {
   const dispatch = useDispatch();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterType, setFilterType] = useState('전체 펫시터'); // 필터 타입 상태 관리
-  const [properPetsitters, setProperPetsitters] = useState<number[]>([]);
+  const [properPetsitters, setProperPetsitters] = useState<Petsitter[]>([]);
 
-  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId } = useSelector(
-    (state: IReservation) => state.reservation,
-  );
+  // const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId } = useSelector(
+  //   (state: IReservation) => state.reservation,
+  // );
+
+  const onErrorImg = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = '/imgs/DefaultUser.svg';
+  };
 
   const handleFilterOpen = () => {
     setIsFilterOpen(true);
@@ -132,7 +145,7 @@ const ViewPetsitters = () => {
       <StatusHeader>
         <StatusTitleText>펫시터 보기</StatusTitleText>
       </StatusHeader>
-      {/* <HotPetsitterText>별점이 높은 펫시터</HotPetsitterText>
+      <HotPetsitterText>별점이 높은 펫시터</HotPetsitterText>
       <HotIntroContainer>
         <StyledCarousel
           showThumbs={false}
@@ -145,29 +158,37 @@ const ViewPetsitters = () => {
           useKeyboardArrows={false}
           showIndicators={false}
         >
-          {HotPetsitterItem.map((item) => (
-            <HotWrap key={item.id}>
+          {properPetsitters.map((petsitter) => (
+            <HotWrap key={petsitter.petsitterId}>
               <TitleContainer>
                 <OnelineWrap>
-                  <TitleName>{item.name}</TitleName>
+                  <TitleName>{petsitter.name}</TitleName>
                   <PetsitterText>펫시터</PetsitterText>
                 </OnelineWrap>
               </TitleContainer>
               <DobleQuotationImg src="/imgs/DoubleQuotationMark.svg" alt="DobleQuotation" />
-              <HotPetsitterImg src={item.profileImg} alt="Profile" />
+              {petsitter.photo ? (
+                <HotPetsitterImg
+                  src={petsitter.photo ? petsitter.photo.replace('https:/bucketUrl', bucketUrl || '') : undefined}
+                  alt="ProfileImg"
+                  onError={onErrorImg}
+                />
+              ) : (
+                <img src="/imgs/DefaultUser.svg" alt="ProfileImg" />
+              )}
               <HotFaceBox>
                 <HotPetsitterReview>
-                  {item.describe.length > 20
-                    ? item.describe.substring(0, 19) + '\n' + item.describe.substring(19)
-                    : item.describe}
+                  {petsitter.body.length > 20
+                    ? petsitter.body.substring(0, 19) + '\n' + petsitter.body.substring(19)
+                    : petsitter.body}
                 </HotPetsitterReview>
                 <Divider />
-                <NewPetsitterLocation>{item.location}</NewPetsitterLocation>
+                <NewPetsitterLocation>{petsitter.possibleLocation}</NewPetsitterLocation>
               </HotFaceBox>
             </HotWrap>
           ))}
         </StyledCarousel>
-      </HotIntroContainer> */}
+      </HotIntroContainer>
 
       <FilterContainer>
         <TitleBox>
