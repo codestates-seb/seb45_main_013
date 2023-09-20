@@ -167,7 +167,7 @@ public class MemberController {
         return new ResponseEntity<>(favoritePetsitters, HttpStatus.OK);
     }
 
-    // 해당 펫이터가 찜이 되어있는지 조회
+    // 해당 펫시터가 찜이 되어있는지 조회
     @GetMapping("/favoriteTrue")
     public ResponseEntity<Boolean> getFavoriteBoolean(@LoginMemberId Long memberId,
                                                       @RequestParam Long petsitterId) {
