@@ -32,18 +32,6 @@ interface IEditSchedule {
   possibleLocation?: string[];
 }
 
-type InfoType = {
-  petsitterId: number;
-  possiblePetType: string;
-  possibleLocation: string;
-  possibleDay: string;
-  possibleTimeStart: string;
-  possibleTimeEnd: string;
-  star: number;
-  reviewCount: number;
-  monthTotalReservation: number | null;
-} | null;
-
 const apiUrl = process.env.REACT_APP_API_URL;
 const token = getCookieValue('access_token');
 
