@@ -55,7 +55,6 @@ const Reviews = () => {
     };
     fetchReview();
   }, []);
-  console.log(reviews);
 
   function formatDate(dateString: string): string {
     const date = new Date(dateString);

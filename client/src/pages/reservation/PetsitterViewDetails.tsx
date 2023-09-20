@@ -2,12 +2,11 @@ import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setReservation } from 'store/reservationSlice';
+import { setReservation, setPetsitterId } from 'store/reservationSlice';
 import axios from 'axios';
 
 import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
-import { useSelector, useDispatch } from 'react-redux';
 import { IUser } from 'store/userSlice';
 
 import Button from '@mui/material/Button';
@@ -15,8 +14,6 @@ import Button from '@mui/material/Button';
 import Reviews from '@components/Reviews';
 import PossibleReservationTime from '@components/PossibleReservationTime';
 import dayjs from 'dayjs';
-
-import { setPetsitterId } from 'store/reservationSlice';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
@@ -69,7 +66,7 @@ const PetsitterViewDetails = () => {
   // 리덕스 펫시터 Id 저장
 
   const { petsitterId } = useParams();
-  console.log(petsitterId);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -84,7 +81,6 @@ const PetsitterViewDetails = () => {
   const [petsitterData, setPetsitterData] = useState<any>({});
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
-  const dispatch = useDispatch();
 
   const handleResetReservationClick = () => {
     setSelectedDates(null);
@@ -105,7 +101,7 @@ const PetsitterViewDetails = () => {
             },
           },
         );
-        console.log(response.data);
+
         setIsBookmarked(response.data.data);
       } catch (error) {
         console.error(error);
@@ -158,8 +154,6 @@ const PetsitterViewDetails = () => {
 
     fetchPetsitterData();
   }, [petsitterId]);
-
-  console.log(petsitterData);
 
   return (
     <MainContainer>

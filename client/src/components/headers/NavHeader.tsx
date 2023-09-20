@@ -19,7 +19,7 @@ const NavHeader = () => {
   const dispatch = useDispatch();
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
-  console.log('로그인: ', isLogin);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 

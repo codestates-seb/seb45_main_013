@@ -56,7 +56,6 @@ const CareCard = ({ reservation }: any) => {
           const newAccessToken = await refreshAccessToken();
           if (newAccessToken) {
             const response = await axios.patch(`${apiUrl}/reservations/${reservation.reservationId}/petsittercancel`);
-            console.log(response);
           }
         } catch (error) {}
       }

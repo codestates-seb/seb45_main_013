@@ -212,9 +212,6 @@ const CreateJournal = () => {
     fetchData();
   }, [reservation]);
 
-  // console.log(reservation);
-  console.log(journal);
-
   return (
     <MainContainer>
       <TitleReservationContainer>

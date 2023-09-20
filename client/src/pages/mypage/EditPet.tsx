@@ -54,7 +54,6 @@ const EditPet = () => {
 
   // 펫아이디 나오는지 확인
   const { petId } = useParams();
-  console.log(petId);
 
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -87,7 +86,7 @@ const EditPet = () => {
         if (response.data) {
           setPet(response.data);
           setIsLoaded(true);
-          console.log(response.data);
+
           setValue('name', response.data.name);
           setValue('species', response.data.species);
           setValue('weight', response.data.weight);
@@ -110,7 +109,6 @@ const EditPet = () => {
   };
 
   const onSubmit = async (data: IEditPet) => {
-    console.log(data);
     const token = getCookieValue('access_token');
 
     const formData = new FormData();
@@ -133,10 +131,6 @@ const EditPet = () => {
       formData.append('neutering', 'true');
     }
 
-    formData.forEach((value, key) => {
-      console.log(`key: ${key} value: ${value}`);
-    });
-
     try {
       const response = await axios.patch(`${apiUrl}/pets/${petId}`, formData, {
         headers: {
@@ -158,7 +152,6 @@ const EditPet = () => {
     const isConfirmed = window.confirm('정말 펫을 삭제하시겠습니까?');
     if (!isConfirmed) return;
     else {
-      console.log(token);
       try {
         const response = await axios.patch(
           `${apiUrl}/pets/${petId}/disable`,

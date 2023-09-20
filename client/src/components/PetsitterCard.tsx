@@ -24,8 +24,8 @@ const PetsitterCard = ({ petsitter }: PetsitterProps) => {
     (state: IReservation) => state.reservation,
   );
 
-  const startTime = petsitter.possibleTimeStart.split(':')[0] + ':' + petsitter.possibleTimeStart.split(':')[1];
-  const endTime = petsitter.possibleTimeEnd.split(':')[0] + ':' + petsitter.possibleTimeStart.split(':')[1];
+  const startTime = petsitter?.possibleTimeStart.split(':')[0] + ':' + petsitter?.possibleTimeStart.split(':')[1];
+  const endTime = petsitter?.possibleTimeEnd.split(':')[0] + ':' + petsitter?.possibleTimeStart.split(':')[1];
 
   return (
     <StyledLink to={`/petsitters/${petsitter.petsitterId}`} key={petsitter.petsitterId}>

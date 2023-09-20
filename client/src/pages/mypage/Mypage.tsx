@@ -14,15 +14,10 @@ const Mypage = () => {
   //  수정
   const { isLogin, name, petsitterBoolean, photo } = useSelector((state: IUser) => state.user);
 
-  console.log(petsitterBoolean);
-
   let PhotoUrl = 'imgs/DefaultUser.svg';
   if (photo) {
     PhotoUrl = photo.replace(/https:\/\/bucketUrl/g, BucketUrl);
   }
-  useEffect(() => {
-    console.log(petsitterBoolean);
-  }, [photo]);
 
   return (
     <MypageContainer>

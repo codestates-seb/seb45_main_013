@@ -66,24 +66,14 @@ const ReservationStepFour = () => {
   } = useForm<IFormInput>();
 
   // 예약 정보 가져오기
-  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, detailAddress, body, petId } = useSelector(
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, body, petId } = useSelector(
     (state: IReservation) => state.reservation,
   );
   const { name, nickName, phone } = useSelector((state: IUser) => state.user);
   const dispatch = useDispatch();
 
-  console.log(reservationDay);
-  console.log(reservationTimeStart);
-  console.log(reservationTimeEnd);
-  console.log(address);
-  console.log(detailAddress);
-  console.log(body);
-  console.log(petId);
-  console.log(phone);
-
   // 폰번호 자르기
   const phoneNum = `010-${phone.substring(3, 7)}-${phone.substring(7)}`;
-  console.log(phoneNum);
 
   // 펫 정보 상태값
   const [petData, setPetData] = useState<IPet[]>([]);
@@ -96,7 +86,6 @@ const ReservationStepFour = () => {
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters/${petsitterId}`);
         setPetsitter(response.data as IPetsitter);
-        console.log(petsitter);
       } catch (error) {
         console.error('error', error);
       }

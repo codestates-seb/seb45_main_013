@@ -64,7 +64,6 @@ const ViewJournal = () => {
     const token = getCookieValue('access_token');
 
     const fetchJournal = async () => {
-      console.log(token);
       try {
         const response = await axios.get(`${apiUrl}/journals/14`, {
           headers: {
@@ -74,7 +73,6 @@ const ViewJournal = () => {
         setJournal(response.data);
 
         if (response.data) {
-          console.log(response.data);
           setJournal(response.data);
         }
       } catch (error) {

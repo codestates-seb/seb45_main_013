@@ -25,7 +25,7 @@ const MyPetmily = () => {
     const fetchData = async () => {
       try {
         const getPets = await axios.get(`${apiUrl}/pets`, { headers });
-        console.log(getPets);
+
         const petmily = getPets.data;
         setPetmily(petmily);
       } catch (error) {
@@ -34,8 +34,6 @@ const MyPetmily = () => {
     };
     fetchData();
   }, []);
-
-  console.log(petmily);
 
   return (
     <PetmilyContainer>

@@ -32,7 +32,6 @@ type InfoType = {
 
 const MySchedule = () => {
   const { memberId } = useSelector((state: IUser) => state.user);
-  console.log(memberId);
 
   const [info, setInfo] = useState<InfoType>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +40,7 @@ const MySchedule = () => {
   useEffect(() => {
     const fetchPetData = async () => {
       setIsLoading(true);
-      console.log(token);
+
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters`, {
           headers: {
@@ -49,7 +48,6 @@ const MySchedule = () => {
           },
         });
         if (response.data) {
-          // console.log(response.data);
           setInfo(response.data);
         }
       } catch (error) {
@@ -60,7 +58,6 @@ const MySchedule = () => {
     };
     fetchPetData();
   }, []);
-  console.log(info);
 
   // 케어가능 펫
   const getPetTypeDisplayText = (type: string) => {

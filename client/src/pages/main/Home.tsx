@@ -46,7 +46,7 @@ const Home = () => {
               const response = await axios.get(`${apiUrl}/members/favorite`, {
                 headers: { Authorization: `Bearer ${newAccessToken}` },
               });
-              console.log(response.data[0]);
+
               setFavoritePetsitter(response.data[0]);
             }
           } catch (refreshError) {

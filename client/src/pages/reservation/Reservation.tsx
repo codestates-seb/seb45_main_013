@@ -69,7 +69,8 @@ const Reservation = () => {
   const [reservationDay, setReservationDay] = useState<any>('');
   const [reservationTimeStart, setReservationTimeStart] = useState<any>('');
   const [reservationTimeEnd, setReservationTimeEnd] = useState('');
-  const [checkedPets, setCheckedPets] = useState<number[]>([]);
+  const [checkedPetId, setCheckedPetId] = useState<any[]>([]);
+  const [checkedPets, setCheckedPets] = useState<any[]>([]);
 
   // Modal 동물 등록
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -151,16 +152,35 @@ const Reservation = () => {
   };
 
   // Pet Check handler
-  const handlePetCheck = (petId: number) => {
-    if (checkedPets.includes(petId)) {
-      setCheckedPets(checkedPets.filter((id) => id !== petId));
+  const handlePetCheck = (pet: any) => {
+    if (checkedPetId.includes(pet.petId)) {
+      setCheckedPetId(checkedPetId.filter((id) => id !== pet.petId));
     } else {
-      if (checkedPets.length < 3) {
-        setCheckedPets([...checkedPets, petId]);
+      if (checkedPetId.length < 3) {
+        setCheckedPetId([...checkedPetId, pet.petId]);
       } else {
         alert('최대 3마리까지만 선택할 수 있습니다.');
       }
     }
+    if (checkedPets.includes(pet)) {
+      setCheckedPetId(checkedPets.filter((pet) => pet.petId !== pet.petId));
+    } else {
+      if (checkedPets.length < 3) {
+        setCheckedPets([...checkedPets, pet]);
+      } else {
+        alert('최대 3마리까지만 선택할 수 있습니다.');
+      }
+    }
+
+    // if (checkedPets.includes(petId)) {
+    //   setCheckedPets(checkedPets.filter((id) => id !== petId));
+    // } else {
+    //   if (checkedPets.length < 3) {
+    //     setCheckedPets([...checkedPets, petId]);
+    //   } else {
+    //     alert('최대 3마리까지만 선택할 수 있습니다.');
+    //   }
+    // }
   };
 
   // 펫등록 모달 handler
@@ -259,7 +279,7 @@ const Reservation = () => {
 
     if (!reservationTimeStart || !reservationTimeEnd) {
       alert('시간을 확인해주세요.');
-    } else if (checkedPets.length === 0) {
+    } else if (checkedPetId.length === 0) {
       alert('맡기실 반려동물을 선택해주세요.');
     } else if (
       reservationDay &&
@@ -267,15 +287,15 @@ const Reservation = () => {
       reservationTimeEnd &&
       address &&
       detailAddress &&
-      checkedPets.length > 0
+      checkedPetId.length > 0
     ) {
-      // console.log({ reservationDay, reservationTimeStart, reservationTimeEnd, address, detailAddress, checkedPets });
       dispatch(
         setReservation({
           reservationDay,
           reservationTimeStart,
           reservationTimeEnd,
           address: `${address} ${detailAddress}`,
+          petId: checkedPetId,
           pets: checkedPets,
         }),
       );
@@ -448,10 +468,10 @@ const Reservation = () => {
                         type="checkbox"
                         id={pet.petId}
                         name={pet.petId}
-                        checked={checkedPets.includes(pet.petId)}
-                        onChange={() => handlePetCheck(pet.petId)}
+                        checked={checkedPetId.includes(pet.petId)}
+                        onChange={() => handlePetCheck(pet)}
                       />
-                      <PetImgLabel htmlFor={pet.petId} checked={checkedPets.includes(pet.petId)}>
+                      <PetImgLabel htmlFor={pet.petId} checked={checkedPetId.includes(pet.petId)}>
                         <PetImg
                           src={
                             pet.photo ? (

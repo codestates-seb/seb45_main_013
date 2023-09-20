@@ -49,7 +49,6 @@ const SitterSchedule = () => {
 
   useEffect(() => {
     const fetchPetData = async () => {
-      console.log(token);
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters`, {
           headers: {
@@ -58,7 +57,7 @@ const SitterSchedule = () => {
         });
         if (response.data) {
           const data = response.data;
-          console.log(data);
+
           // 케어 가능한 펫
           setValue('possiblePetType', data.possiblePetType || '');
           // 케어 가능 요일
@@ -144,7 +143,7 @@ const SitterSchedule = () => {
     data.possibleTimeStart = possibleStartTime?.format('HH:mm') || '';
     data.possibleTimeEnd = possibleEndTime?.format('HH:mm') || '';
     data.possibleLocation = possibleLocation;
-    console.log(data);
+
     try {
       const response = await axios.patch(`${apiUrl}/members/petsitters/${memberId}`, data, {
         headers: {
@@ -155,7 +154,6 @@ const SitterSchedule = () => {
         alert('일정이 저장되었습니다.');
         navigate('/mypage');
       }
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }

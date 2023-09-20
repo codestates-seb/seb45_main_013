@@ -84,8 +84,6 @@ const EditUserProfile = () => {
   const onSubmit = async (data: IEditUser) => {
     const token = getCookieValue('access_token');
 
-    console.log(JSON.stringify(data));
-
     const formData = new FormData();
     if (imageFile) {
       formData.append('file', imageFile);
@@ -102,10 +100,6 @@ const EditUserProfile = () => {
     if (data.body !== undefined) {
       formData.append('body', data.body);
     }
-
-    formData.forEach((value, key) => {
-      console.log(`key: ${key} value: ${value}`);
-    });
 
     try {
       const response = await axios.patch(`${apiUrl}/members/${memberId}`, formData, {
@@ -135,7 +129,7 @@ const EditUserProfile = () => {
     const token = getCookieValue('access_token');
     const isConfirmed = window.confirm('정말 탈퇴하시겠습니까?');
     if (!isConfirmed) return;
-    console.log(token);
+
     try {
       const response = await axios.patch(
         `${apiUrl}/members/${memberId}/disable`,

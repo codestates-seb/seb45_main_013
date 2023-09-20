@@ -141,7 +141,6 @@ const ViewPetsitters = () => {
           .get(`${apiUrl}/members/search`, { headers: { Authorization: `Bearer ${accessToken}` } })
           .then((res) => {
             setPetsitters(res.data);
-            console.log(res.data);
           })
           .catch((error) => {
             console.error('펫시터 정보를 불러오는 데 실패했습니다.', error);

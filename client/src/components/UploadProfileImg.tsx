@@ -31,7 +31,6 @@ const UploadProfileImg = ({ petId, setImageFile, currentImageUrl, defaultProfile
       setPreviewImage(currentImageUrl.replace(/https:\/\/bucketUrl/g, BucketUrl));
       setImageOnServer(true);
     } else {
-      console.log(defaultProfileImg);
       setPreviewImage(defaultProfileImg);
       setImageOnServer(false);
     }

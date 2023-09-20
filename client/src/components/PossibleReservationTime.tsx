@@ -112,8 +112,6 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
     const fetchBookedTimes = async () => {
       try {
         const response = await axios.get(`${apiUrl}/reservations/schedule/${petsitterId}`);
-        console.log(response);
-        console.log(response.data);
 
         //HH:MM형태로 변환
         const schedulesOnSelectedDate = response.data.filter(
@@ -135,7 +133,6 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
           setBookedTimes(times);
 
           // bookedTimes 배열 출력
-          console.log(`Booked Times: ${times}`);
         } else setBookedTimes([]);
       } catch (error) {
         console.error(error);
@@ -173,12 +170,6 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
                       selectedDate.isSame(currentDate, 'day') &&
                       parseInt(time.split(':')[0]) <= currentDate.hour()) ||
                     bookedTimes.includes(time);
-                  console.log(`Time: ${time}`);
-                  console.log(`Current Hour: ${currentDate.hour()}`);
-                  console.log(`Is Disabled? ${isDisabled}`);
-
-                  console.log(`Current Date: ${currentDate.format('YYYY-MM-DD')}`);
-                  console.log(`Selected Date: ${selectedDate?.format('YYYY-MM-DD')}`);
 
                   return (
                     <Button
@@ -202,12 +193,7 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
                       selectedDate.isSame(currentDate, 'day') &&
                       parseInt(time.split(':')[0]) <= currentDate.hour()) ||
                     bookedTimes.includes(time);
-                  console.log(`Time: ${time}`);
-                  console.log(`Current Hour: ${currentDate.hour()}`);
-                  console.log(`Is Disabled? ${isDisabled}`);
 
-                  console.log(`Current Date: ${currentDate.format('YYYY-MM-DD')}`);
-                  console.log(`Selected Date: ${selectedDate?.format('YYYY-MM-DD')}`);
                   return (
                     <Button
                       key={time}
