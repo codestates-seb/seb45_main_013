@@ -173,6 +173,32 @@ const ReservationStepTwo = () => {
           </TitleWrap>
           <FilterIcon src="/icons/FilterIcon.svg" alt="FilterIcon" onClick={handleFilterOpen} />
         </TitleBox>
+        {filteredPetsitters().map((item) => (
+          <StyledLink to={`/petsitters/${item.id}`} key={item.id}>
+            <FilterBodyBox key={item.id}>
+              <PetsitterContainer>
+                <PetsitterImg src="/imgs/PetsitterPhoto.svg" alt="PetsitterPhoto" />
+                <PetsitterBody>
+                  <PetsitterWrap>
+                    <NameText>{item.name}</NameText>
+                    <Possiblebox>예약가능</Possiblebox>
+                  </PetsitterWrap>
+                  <TimeWrap>
+                    <TimgImg src="/icons/TimeIcon.svg" alt="TimeIcon" />
+                    <TimeText>{item.possibleTime}</TimeText>
+                  </TimeWrap>
+                  <RatingReviewContainer>
+                    <RatingImg src={item.ratingImg} alt="ratingImg" />
+                    {item.rating}
+                    <ReviewImg src={item.reviewImg} alt="reviewImg" />
+                    {item.review}
+                  </RatingReviewContainer>
+                </PetsitterBody>
+                <ContainerArrow src="/icons/PetsitterContainerArrow.svg" alt="ArrowIcon" />
+              </PetsitterContainer>
+            </FilterBodyBox>
+          </StyledLink>
+        ))}
       </FilterContainer>
 
       <Box>
