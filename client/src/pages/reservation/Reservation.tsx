@@ -319,7 +319,7 @@ const Reservation = () => {
               console.error(refreshError);
               // Refresh Token을 사용하여 새로운 Access Token을 얻는 동안 오류가 발생했을 때 처리
 
-              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
               dispatch(deleteUser());
               dispatch(deleteReservation());
               deleteCookie('access_token');
@@ -331,7 +331,7 @@ const Reservation = () => {
     };
 
     getPets();
-  }, [isModalOpen]);
+  }, [isPetModalOpen]);
 
   return (
     <MainContainer>

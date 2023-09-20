@@ -1,10 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 
 import BackHeader from '@components/headers/BackHeader';
-import Header from './components/headers/Header';
 import LoadingFallback from '@components/LoadingFallback';
 import NavHeader from '@components/headers/NavHeader';
 
@@ -57,15 +55,6 @@ const AddNavHeaderLayout = () => {
   );
 };
 
-// const HeaderLayout = () => {
-//   return (
-//     <>
-//       <Header />
-//       <Outlet />
-//     </>
-//   );
-// };
-
 const BackHeaderLayout = () => {
   return (
     <>
@@ -87,7 +76,7 @@ const App = () => {
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="mypage" element={<Mypage />} />
                 <Route path="reservation" element={<Reservation />} />
-                <Route path="reservation/step2" element={<ReservationStepTwo />}></Route>
+                <Route path="reservation/step2" element={<ReservationStepTwo />} />
                 <Route path="cares" element={<Cares />} />
                 <Route path="cares/:reservationId/review" element={<CreateReview />} />
                 <Route path="cares/:reservationId/journal" element={<CreateJournal />} />
@@ -98,14 +87,14 @@ const App = () => {
                 <Route path="signup/branch" element={<OAuthBranch />} />
                 <Route path="mypage/edit" element={<EditUserProfile />} />
                 <Route path="mypage/register" element={<RegisterPet />} />
-                <Route path="mypage/:petId/edit" element={<EditPet />}></Route>
+                <Route path="mypage/:petId/edit" element={<EditPet />} />
                 <Route path="search" element={<Search />} />
                 <Route path="qna" element={<QnA />} />
-                <Route path="petsitters" element={<ViewPetsitters />}></Route>
-                <Route path="reservation/step3" element={<ReservationStepThree />}></Route>
-                <Route path="cares/journal/:journalId" element={<ViewJournal />}></Route>
-                <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />}></Route>
-                <Route path="petsitters/:memberId/schedule" element={<SitterSchedule />}></Route>
+                <Route path="petsitters" element={<ViewPetsitters />} />
+                <Route path="reservation/step3" element={<ReservationStepThree />} />
+                <Route path="cares/journal/:journalId" element={<ViewJournal />} />
+                <Route path="petsitters/:petsitterId" element={<PetsitterViewDetails />} />
+                <Route path="petsitters/:memberId/schedule" element={<SitterSchedule />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

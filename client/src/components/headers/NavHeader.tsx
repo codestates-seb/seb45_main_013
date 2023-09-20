@@ -80,7 +80,8 @@ const NavHeader = () => {
           dispatch(login());
           dispatch(setUser(response.data));
         } catch (error: any) {
-          if (error.response && error.response.data.status === 401) {
+          console.log(error);
+          if (error.response.data.status === 401 || error.response.data.status === 500) {
             try {
               const newAccessToken = await refreshAccessToken();
               if (newAccessToken) {
@@ -94,7 +95,7 @@ const NavHeader = () => {
               }
             } catch (refreshError) {
               console.error(refreshError);
-              alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
+              alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
               dispatch(deleteUser());
               deleteCookie('access_token');
               deleteCookie('refresh_token');
