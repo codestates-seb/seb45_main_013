@@ -223,9 +223,8 @@ public class PetsitterService {
 
     @Transactional
     public PetsitterGetResponseDto mapToPetsitterGetResponseDto(Member member) {
-        Petsitter petsitter = findPetsitter(member);
         return PetsitterGetResponseDto.builder()
-                .petsitterId(petsitter.getPetsitterId())
+                .petsitterId(member.getPetsitter().getPetsitterId())
                 .email(member.getEmail())
                 .name(member.getName())
                 .nickName(member.getNickName())
@@ -233,13 +232,13 @@ public class PetsitterService {
                 .address(member.getAddress())
                 .photo(member.getPhoto())
                 .body(member.getBody())
-                .possiblePetType(petsitter.getPossiblePetType())
-                .possibleLocation(petsitter.getPossibleLocation())
-                .possibleDay(petsitter.getPossibleDay())
-                .possibleTimeStart(petsitter.getPossibleTimeStart())
-                .possibleTimeEnd(petsitter.getPossibleTimeEnd())
-                .star(petsitter.getStar())
-                .reviewCount(petsitter.getReviewCount())
+                .possiblePetType(member.getPetsitter().getPossiblePetType())
+                .possibleLocation(member.getPetsitter().getPossibleLocation())
+                .possibleDay(member.getPetsitter().getPossibleDay())
+                .possibleTimeStart(member.getPetsitter().getPossibleTimeStart())
+                .possibleTimeEnd(member.getPetsitter().getPossibleTimeEnd())
+                .star(member.getPetsitter().getStar())
+                .reviewCount(member.getPetsitter().getReviewCount())
                 .build();
     }
 }
