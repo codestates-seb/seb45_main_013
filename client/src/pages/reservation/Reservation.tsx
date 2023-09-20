@@ -36,19 +36,19 @@ import isBetween from 'dayjs/plugin/isBetween';
 import { getCookieValue } from 'hooks/getCookie';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { addPets, setReservation } from 'store/reservationSlice';
+import { deleteReservation, setReservation } from 'store/reservationSlice';
 import { IUser, deleteUser } from 'store/userSlice';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { deleteCookie } from 'hooks/deleteCookie';
-
-const apiUrl = process.env.REACT_APP_API_URL;
-const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 interface IFormInput {
   address: string;
   detailAddress: string;
   error: boolean;
 }
+
+const apiUrl = process.env.REACT_APP_API_URL;
+const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 const Reservation = () => {
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ const Reservation = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // submit state
-  const { isLogin } = useSelector((state: IUser) => state.user);
+  const { isLogin, petsitterBoolean } = useSelector((state: IUser) => state.user);
   const [reservationDay, setReservationDay] = useState<any>('');
   const [reservationTimeStart, setReservationTimeStart] = useState<any>('');
   const [reservationTimeEnd, setReservationTimeEnd] = useState('');
@@ -95,7 +95,7 @@ const Reservation = () => {
 
   // Address
   const [sido, setSido] = useState('');
-  const [sigungu, setSigugu] = useState('');
+  const [sigungu, setSigungu] = useState('');
   const [remainAddress, setRemainAddress] = useState('');
   const [zonecode, setZonecode] = useState('');
 
@@ -130,12 +130,13 @@ const Reservation = () => {
     // 시.도 저장
     setSido(data.sido);
     // 구.군 저장
-    setSigugu(data.sigungu.length > 3 ? data.sigungu.split('').splice(0, 3).join('') : data.sigungu);
+    setSigungu(data.sigungu);
     // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
     const splitAddress = data.address.split(' ').splice(2).join(' ');
     if (data) {
       clearErrors('address');
     }
+
     setRemainAddress(splitAddress);
     setIsModalOpen(false);
   };
@@ -222,7 +223,7 @@ const Reservation = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log(response);
+
       if (response.status === 201) {
         alert('펫 등록되었습니다.');
         setIsPetModalOpen(false);
@@ -278,7 +279,7 @@ const Reservation = () => {
           pets: checkedPets,
         }),
       );
-      dispatch(addPets(pets));
+
       navigate('/reservation/step2');
     }
   };
@@ -286,6 +287,10 @@ const Reservation = () => {
   useEffect(() => {
     if (!isLogin) {
       alert('로그인을 해주세요.');
+      navigate('/');
+    }
+    if (petsitterBoolean) {
+      alert('고객만 이용 가능한 서비스입니다.');
       navigate('/');
     }
   });
@@ -316,6 +321,7 @@ const Reservation = () => {
 
               alert('로그인이 만료되었습니다. 다시 로그인 해주세요');
               dispatch(deleteUser());
+              dispatch(deleteReservation());
               deleteCookie('access_token');
               deleteCookie('refresh_token');
             }
@@ -366,7 +372,18 @@ const Reservation = () => {
                     minTime={dayjs(new Date(0, 0, 0, 8))}
                     maxTime={dayjs(new Date(0, 0, 0, 22))}
                     ampm={false}
-                    shouldDisableTime={(value, view) => view === 'hours' && value.hour() < +nowTime.split(':')[0] + 2}
+                    shouldDisableTime={(value, view) => {
+                      const currentTime = dayjs();
+                      if (!currentTime.isSame(dayjs(reservationDay), 'date')) {
+                        return false;
+                      }
+                      if (view === 'hours') {
+                        if (value.hour() < currentTime.hour() + 2) {
+                          return true;
+                        }
+                      }
+                      return false;
+                    }}
                     onChange={handleStartTime}
                     onError={handleStartError}
                   />
@@ -827,24 +844,6 @@ const AddPetImg = styled.img`
   cursor: pointer;
 `;
 
-const UploadPetImgbox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 16px;
-`;
-
-const PetButtonContainer = styled.div`
-  display: flex;
-  /* flex-direction: column; */
-  justify-content: center;
-  height: 32px;
-  border-radius: 8px;
-  overflow: hidden;
-  width: 100%;
-  margin: 16px 0 4px 0;
-`;
-
 const PetButton = styledMui(Button)(({ value }) => ({
   width: '100%',
   backgroundColor: value === 'true' ? '#279EFF' : '#A6A6A6',
@@ -854,34 +853,10 @@ const PetButton = styledMui(Button)(({ value }) => ({
   },
 }));
 
-// display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   cursor: pointer;
-//   width: 100%;
-//   border: none;
-//   background-color: ${(props) => (props.iscat ? props.theme.textColors.gray50 : props.theme.colors.mainBlue)};
-
 const ButtonContainer = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const FormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const GenderContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 80px;
-`;
-
-const GenderRadio = styled.div`
-  display: flex;
-  gap: 12px;
 `;
 
 const StyledButton = styled.button`

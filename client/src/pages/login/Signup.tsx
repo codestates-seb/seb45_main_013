@@ -58,7 +58,7 @@ const Signup = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [sido, setSido] = useState('');
-  const [sigungu, setSigugu] = useState('');
+  const [sigungu, setSigungu] = useState('');
   const [remainAddress, setRemainAddress] = useState('');
   const [zonecode, setZonecode] = useState('');
 
@@ -72,7 +72,7 @@ const Signup = () => {
     // 시.도 저장
     setSido(data.sido);
     // 구.군 저장
-    setSigugu(data.sigungu.length > 3 ? data.sigungu.split('').splice(0, 3).join('') : data.sigungu);
+    setSigungu(data.sigungu);
     // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
     const splitAddress = data.address.split(' ').splice(2).join(' ');
     if (data) {
@@ -255,7 +255,7 @@ const TitleContainer = styled.div`
   text-align: left;
 
   div:nth-child(1) {
-    ${(props) => props.theme.fontSize.s12h18}
+    ${(props) => props.theme.fontSize.s20h30}
   }
 
   div:nth-child(2) {

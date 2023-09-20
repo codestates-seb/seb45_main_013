@@ -85,7 +85,7 @@ const ReservationStepThree = () => {
     formState: { errors },
   } = useForm<IFormInput>();
 
-  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, detailAddress, body, pets } = useSelector(
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, body, petId } = useSelector(
     (state: IReservation) => state.reservation,
   );
   const { name, nickName, phone } = useSelector((state: IUser) => state.user);
@@ -95,9 +95,8 @@ const ReservationStepThree = () => {
   console.log(reservationTimeStart);
   console.log(reservationTimeEnd);
   console.log(address);
-  console.log(detailAddress);
   console.log(body);
-  console.log(pets);
+  console.log(petId);
   console.log(phone);
 
   // 폰번호 자르기

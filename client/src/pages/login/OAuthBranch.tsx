@@ -12,6 +12,29 @@ const OAuthBranch = () => {
   const expirationDate = new Date();
   expirationDate.setDate(expirationDate.getDate() + 1);
 
+  const handleMemberOAuth = async () => {
+    const refreshToken = getCookieValue('refresh_token');
+    try {
+      const response = await axios.post(
+        `${apiUrl}/refreshToken/memberToken`,
+        {},
+        { headers: { Refresh: refreshToken } },
+      );
+
+      if (response.status === 200) {
+        document.cookie = `access_token=${response.data.accessToken}; path=/;`;
+        document.cookie = `refresh_token=${
+          response.data.refreshToken
+        }; path=/; expires=${expirationDate.toUTCString()};`;
+
+        alert('회원가입이 완료되었습니다!');
+        navigate('/');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // 펫시터는 다른 token으로 교체
   const handlePetsitterOAuth = async () => {
     const refreshToken = getCookieValue('refresh_token');
@@ -25,14 +48,16 @@ const OAuthBranch = () => {
           },
         },
       );
+
       if (response.status === 200) {
         document.cookie = `access_token=${response.data.accessToken}; path=/;`;
-        document.cookie = `refresh_token=${response.data.refreshToken}; path=/;`;
+        document.cookie = `refresh_token=${
+          response.data.refreshToken
+        }; path=/; expires=${expirationDate.toUTCString()};`;
 
         alert('회원가입이 완료되었습니다!');
         navigate('/');
       }
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +73,7 @@ const OAuthBranch = () => {
       const refreshToken = search.split('=')[2];
 
       document.cookie = `access_token=${accessToken}; path=/;`;
-      document.cookie = `refresh_token=${refreshToken};  path=/;`;
+      document.cookie = `refresh_token=${refreshToken};  path=/; expires=${expirationDate.toUTCString()};`;
 
       if (accessToken) {
         axios
@@ -57,20 +82,24 @@ const OAuthBranch = () => {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          .then((res) => console.log(res));
+          .then((res) => {
+            if (res.data.petsitterBoolean) {
+              navigate('/', { replace: true });
+            } else if (!res.data.petsitterBoolean) {
+              navigate('/signup/branch', { replace: true });
+            }
+          });
       }
-
-      navigate('/signup/branch', { replace: true });
     }
   }, []);
 
   return (
     <MainContainer>
       <ImgContainer>
-        <ImageLink to="/">
+        <ImageButton onClick={handleMemberOAuth}>
           <Image src="/imgs/Signupforclient.png" alt="보호자로 가입하기" />
           <ClientSign>보호자로 가입하기</ClientSign>
-        </ImageLink>
+        </ImageButton>
         <ImageButton onClick={handlePetsitterOAuth}>
           <Image src="/imgs/Signupforpetsitter.png" alt="펫시터로 가입하기" />
           <PetsitterSign>펫시터로 가입하기</PetsitterSign>
@@ -97,19 +126,19 @@ const ImgContainer = styled.div`
   gap: 32px;
 `;
 
-const ImageLink = styled(Link)`
-  position: relative;
-  transition: all 0.2s linear;
+// const ImageLink = styled(Link)`
+//   position: relative;
+//   transition: all 0.2s linear;
 
-  &:hover {
-    transform: scale(1.01);
-    & > div {
-      color: ${({ theme }) => theme.colors.mainBlue};
-      transition: all 0.2s linear;
-      ${({ theme }) => theme.fontSize.s20h30}
-    }
-  }
-`;
+//   &:hover {
+//     transform: scale(1.01);
+//     & > div {
+//       color: ${({ theme }) => theme.colors.mainBlue};
+//       transition: all 0.2s linear;
+//       ${({ theme }) => theme.fontSize.s20h30}
+//     }
+//   }
+// `;
 
 const ClientSign = styled.div`
   width: 100%;
