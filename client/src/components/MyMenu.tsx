@@ -17,7 +17,7 @@ const MyMenu = () => {
   //    링크 수정하기
   const menuItems = [
     {
-      id: '/reservation',
+      id: '/cares',
       originalImage: 'imgs/Calendar.svg',
       hoveredImage: 'imgs/CalendarBlue.svg',
       title: '나의 예약',

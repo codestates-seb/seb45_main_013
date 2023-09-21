@@ -1,4 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { RootState } from 'store';
+
+export interface IPet {
+  name: string;
+  age: number;
+  petId: number;
+  male: boolean;
+  photo: string;
+  species: string;
+}
 
 export interface IReservation {
   reservation: {
@@ -10,6 +20,7 @@ export interface IReservation {
     body: string;
     petId: number[];
     petsitterId: string;
+    pets: IPet[];
   };
 }
 

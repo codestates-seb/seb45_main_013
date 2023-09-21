@@ -8,41 +8,12 @@ import { TextField, Divider, Checkbox, Dialog, DialogTitle, DialogContent, Dialo
 import { notice, verificationNotice, impossibleNotice1, impossibleNotice2 } from 'util/noticeText';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { IReservation, addBody } from 'store/reservationSlice';
+import { IReservation, addBody, deleteReservation } from 'store/reservationSlice';
 import { IUser } from 'store/userSlice';
 import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
-
-const PetItem = [
-  {
-    petId: 28,
-    memberId: 34,
-    name: '코코',
-    age: 13,
-    species: '푸들',
-    male: true,
-    photo: '/imgs/PetImg.svg',
-  },
-  {
-    petId: 29,
-    memberId: 34,
-    name: '두부',
-    age: 4,
-    species: '보스턴 테리어',
-    male: false,
-    photo: '/imgs/PetImg.svg',
-  },
-];
-
-type PetItem = {
-  petId: number;
-  memberId: number;
-  name: string;
-  age: number;
-  species: string;
-  male: boolean;
-  photo: string;
-};
+import { log } from 'console';
+import { useNavigate } from 'react-router';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
@@ -55,7 +26,18 @@ interface IPetsitter {
   possibleLocation: string[];
 }
 
+export interface IPet {
+  name: string;
+  age: number;
+  petId: number;
+  male: boolean;
+  photo: string;
+  species: string;
+}
+
 const ReservationStepFour = () => {
+  const navigate = useNavigate();
+
   const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [petsitter, setPetsitter] = useState<IPetsitter | null>(null);
@@ -66,7 +48,7 @@ const ReservationStepFour = () => {
   } = useForm<IFormInput>();
 
   // 예약 정보 가져오기
-  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, body, petId } = useSelector(
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, body, petId, pets } = useSelector(
     (state: IReservation) => state.reservation,
   );
   const { name, nickName, phone } = useSelector((state: IUser) => state.user);
@@ -74,10 +56,6 @@ const ReservationStepFour = () => {
 
   // 폰번호 자르기
   const phoneNum = `010-${phone.substring(3, 7)}-${phone.substring(7)}`;
-
-  // 펫 정보 상태값
-  const [petData, setPetData] = useState<IPet[]>([]);
-  // const petNum = pets.length;
 
   //  펫시터 정보 가져오기
   const { petsitterId } = useSelector((state: IReservation) => state.reservation);
@@ -116,16 +94,43 @@ const ReservationStepFour = () => {
     body: string;
   }
 
-  interface IPet {
-    name: string;
-    species: string;
-    age: number;
-  }
+  // 시간 형식
+  const timeFormat = (time: any) => {
+    const [hours, minutes] = time.split(':');
+    return `${hours}:${minutes}:00`;
+  };
 
-  // useEffect(() => {
-  //   const token = getCookieValue('access_token');
+  const reservationTimeStartFormat = timeFormat(reservationTimeStart);
+  const reservationTimeEndFormat = timeFormat(reservationTimeEnd);
 
-  // }, []);
+  const SendReservation = async () => {
+    const token = getCookieValue('access_token');
+    const petsitterIdNumber = parseInt(petsitterId, 10);
+    const requestBody = {
+      body,
+      reservationDay,
+      reservationTimeStart: reservationTimeStartFormat,
+      reservationTimeEnd: reservationTimeEndFormat,
+      address,
+      phone,
+      petId,
+      petsitterId: petsitterIdNumber,
+    };
+    try {
+      const response = await axios.post(`${apiUrl}/reservations/`, requestBody, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data === 'Reservation Created') {
+        alert('예약 신청이 완료되었습니다!');
+        dispatch(deleteReservation());
+        navigate('/cares');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <MainContainer>
@@ -189,18 +194,21 @@ const ReservationStepFour = () => {
             showArrows={false}
             useKeyboardArrows={false}
           >
-            {PetItem.map((item) => (
-              <DividerContainer key={item.petId}>
+            {pets.map((pet) => (
+              <DividerContainer key={pet.petId}>
                 <PetWrap>
-                  <PetImg src={item.photo} alt="PetImg" />
+                  <PetImg
+                    src={pet.photo?.replace(/https:\/\/bucketUrl/g, BucketUrl) || '/imgs/PawPaw.svg'}
+                    alt="PetImg"
+                  />
                   <PetInfo>
-                    <PetName>{item.name}</PetName>
+                    <PetName>{pet.name}</PetName>
                     <WrapText>
-                      <PetSpecies>{`${item.species} /`}</PetSpecies>
-                      <PetAge>{`${item.age}살`}</PetAge>
+                      <PetSpecies>{`${pet.species} /`}</PetSpecies>
+                      <PetAge>{`${pet.age}살`}</PetAge>
                     </WrapText>
                   </PetInfo>
-                  <MaleIcon isMale={item.male} />
+                  <MaleIcon isMale={pet.male} />
                 </PetWrap>
               </DividerContainer>
             ))}
@@ -284,7 +292,7 @@ const ReservationStepFour = () => {
         </Dialog>
       </ConfirmContainer>
       <ButtonContainer>
-        <StyledButton type="submit" disabled={!isChecked || !isConfirmEnabled}>
+        <StyledButton type="submit" disabled={!isChecked || !isConfirmEnabled} onClick={SendReservation}>
           예약하기
         </StyledButton>
       </ButtonContainer>
@@ -518,8 +526,8 @@ const PetWrap = styled.div`
 `;
 
 const PetImg = styled.img`
-  width: 70px;
-  height: 70px;
+  width: 70px !important;
+  height: 70px !important;
   margin: 8px 16px 0 0;
   border-radius: 50%;
 `;

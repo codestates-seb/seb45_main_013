@@ -60,6 +60,15 @@ const ViewJournal = () => {
     return `${names.join(', ')} ${connector} ${lastWord}`;
   };
 
+  function formatDate(dateString: any) {
+    const parts = dateString.split('T')[0].split('-');
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      return `${year}-${month}-${day}`;
+    }
+    return 'Invalid Date';
+  }
+
   useEffect(() => {
     const token = getCookieValue('access_token');
 
@@ -73,6 +82,7 @@ const ViewJournal = () => {
         setJournal(response.data);
 
         if (response.data) {
+          console.log(response.data);
           setJournal(response.data);
         }
       } catch (error) {
@@ -97,7 +107,7 @@ const ViewJournal = () => {
                     alt={`Pet ${index + 1}`}
                   />
                 ))}
-                <Name>이름 {AndNames(journal.petNames)}</Name>
+                <Name>{AndNames(journal.petNames)}</Name>
               </Profile>
             ) : (
               <Profile>
@@ -112,7 +122,10 @@ const ViewJournal = () => {
                 <Name>이름 {AndNames(journal.petNames)}</Name>
               </Profile>
             )}
-            <Date>{journal.createdAt}</Date>
+            <DateWrapper>
+              <Date>{formatDate(journal.createdAt)} 작성</Date>
+              <Date>{formatDate(journal.lastModifiedAt)} 수정</Date>
+            </DateWrapper>
           </Head>
           <StyledCarousel>
             {journal.photos && journal.photos.length > 0
@@ -126,18 +139,21 @@ const ViewJournal = () => {
                 ))
               : [
                   <ImgWrapper key="default">
-                    <JournalImg src={journalDefaultImage} alt="default journal" isDefault={true} />
+                    <JournalImg src="{journalDefaultImage}" alt="default journal" isDefault={true} />
                   </ImgWrapper>,
                 ]}
           </StyledCarousel>
           <JournalContent>
-            <Profile>
-              <SitterImage
-                src={journal.petsitterPhoto.replace(/https:\/\/bucketUrl/g, BucketUrl)}
-                alt="petsitter image"
-              />
-              <Name>{journal.petsitterName} 펫시터님</Name>
-            </Profile>
+            <SitterContainer>
+              <Profile>
+                <SitterImage
+                  // src={journal.petsitterPhoto.replace(/https:\/\/bucketUrl/g, BucketUrl)}
+                  src="/imgs/Talk.svg"
+                  alt="petsitter image"
+                />
+                <Name>{journal.petsitterName} 펫시터님</Name>
+              </Profile>
+            </SitterContainer>
             <Content>{journal.body}</Content>
           </JournalContent>
         </Journal>
@@ -157,7 +173,7 @@ const Head = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 `;
 
 const Profile = styled.div`
@@ -173,31 +189,39 @@ const PetImage = styled.img`
 `;
 
 const Name = styled.div`
-  font-weight: 800;
+  font-weight: bolder;
   font-size: 18px;
+  color: #279eff;
+`;
+
+const DateWrapper = styled.div`
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Date = styled.div`
   color: #959595;
   font-weight: 800;
-  font-size: 18px;
+  font-size: 14px;
+  margin-bottom: 4px;
 `;
 
 const StyledCarousel = styled(Carousel)`
-  height: 500px;
+  height: 400px;
 
   .carousel .slider-wrapper.axis-horizontal .slider .slide {
     overflow: visible !important;
-    height: 500px;
+    height: 400px;
   }
 
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 `;
 
 const ImgWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 400px;
   margin: 0;
 `;
 
@@ -214,17 +238,27 @@ const JournalContent = styled.div`
   width: 100%;
 `;
 
+const SitterContainer = styled.div`
+  background-color: white;
+  padding: 4px 8px;
+  border: 2px solid ${(props) => props.theme.colors.mainBlue};
+  border-radius: 4px;
+  font-family: inherit;
+  ${(props) => props.theme.fontSize.s14h21}
+`;
 const SitterImage = styled.img`
-  width: 90px;
-  height: 90px;
+  width: 30px;
+  height: 30px;
   margin-right: 8px;
-  border-radius: 50%;
+  /* border-radius: 50%; */
 `;
 
 const Content = styled.div`
   display: flex;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 8px;
   line-height: 1.5;
+  word-spacing: 0.2px;
+  /* letter-spacing: 0.2px; */
 `;
 export default ViewJournal;

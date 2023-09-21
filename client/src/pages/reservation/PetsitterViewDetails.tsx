@@ -2,13 +2,12 @@ import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setReservation, setPetsitterId } from 'store/reservationSlice';
+import { setReservation, setPetsitterId, IReservation } from 'store/reservationSlice';
 import axios from 'axios';
 
 import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { IUser } from 'store/userSlice';
-
 import Button from '@mui/material/Button';
 
 import Reviews from '@components/Reviews';
@@ -81,6 +80,9 @@ const PetsitterViewDetails = () => {
   const [petsitterData, setPetsitterData] = useState<any>({});
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId, pets } = useSelector(
+    (state: IReservation) => state.reservation,
+  );
 
   const handleResetReservationClick = () => {
     setSelectedDates(null);
@@ -134,6 +136,9 @@ const PetsitterViewDetails = () => {
         reservationDay: selectedDates ? selectedDates.format('YYYY-MM-DD') : '',
         reservationTimeStart: selectedTimes.length > 0 ? selectedTimes[0] : '',
         reservationTimeEnd: selectedTimes.length > 0 ? selectedTimes[selectedTimes.length - 1] : '',
+        address,
+        petId,
+        pets,
       }),
     );
 

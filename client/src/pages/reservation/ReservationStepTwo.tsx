@@ -19,7 +19,7 @@ const ReservationStepTwo = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId } = useSelector(
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId, pets } = useSelector(
     (state: IReservation) => state.reservation,
   );
 
