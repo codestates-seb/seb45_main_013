@@ -20,9 +20,7 @@ import DaumPostcode from 'react-daum-postcode';
 import { Modal, Sheet } from '@mui/joy';
 import { TextField } from '@mui/material';
 
-// 가능한 시간 설정
-// 주소 추가 기능
-// 등록되어있으면 미리 get
+//  주소가 바뀌어야 수정 가능
 
 interface IEditSchedule {
   possiblePetType?: 'PET_DOG' | 'PET_CAT' | 'PET_ALL';
@@ -31,6 +29,18 @@ interface IEditSchedule {
   possibleTimeEnd?: string;
   possibleLocation?: string[];
 }
+
+type InfoType = {
+  petsitterId: number;
+  possiblePetType: string;
+  possibleLocation: string;
+  possibleDay: string;
+  possibleTimeStart: string;
+  possibleTimeEnd: string;
+  star: number;
+  reviewCount: number;
+  monthTotalReservation: number | null;
+} | null;
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const token = getCookieValue('access_token');
@@ -44,11 +54,11 @@ const SitterSchedule = () => {
 
   const { register, handleSubmit, setValue } = useForm<IEditSchedule>();
 
-  // 등록 일정 조회
-  const [previousAddress, setPreviousAddress] = useState<string | null>(null);
+  const [possibleLocation, setPossibleLocation] = useState('');
 
   useEffect(() => {
     const fetchPetData = async () => {
+      console.log(token);
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters`, {
           headers: {
@@ -57,7 +67,7 @@ const SitterSchedule = () => {
         });
         if (response.data) {
           const data = response.data;
-
+          console.log(data);
           // 케어 가능한 펫
           setValue('possiblePetType', data.possiblePetType || '');
           // 케어 가능 요일
@@ -69,7 +79,7 @@ const SitterSchedule = () => {
           setPossibleStartTime(startTime);
           setPossibleEndTime(endTime);
           // 케어 가능 지역
-          setPossibleLocation([data.possibleLocation || previousAddress]);
+          setPossibleLocation(data.possibleLocation[0]);
         }
       } catch (error) {
         console.error(error);
@@ -97,22 +107,63 @@ const SitterSchedule = () => {
     setValue('possibleDay', trimmedValue);
   };
 
-  // 시간 설정
+  //   시간 설정
   const [possibleStartTime, setPossibleStartTime] = useState<Dayjs | null>(null);
   const [possibleEndTime, setPossibleEndTime] = useState<Dayjs | null>(null);
+  const [timeError, setTimeError] = useState<string | null>(null);
+
+  const validateTime = (timeValue: Dayjs | null) => {
+    if (!timeValue) {
+      setTimeError('시간을 선택해주세요. 🕖');
+      return false;
+    }
+
+    const minute = timeValue.minute();
+
+    if (minute !== 0 && minute !== 30) {
+      setTimeError('시간은 30분 단위로 입력해주세요  🕖');
+      return false;
+    }
+
+    setTimeError(null);
+    return true;
+  };
+
+  const [possibleStartTimeError, setPossibleStartTimeError] = useState<string | null>(null);
 
   const handleTimeChange = (key: keyof IEditSchedule, dayjsObj: Dayjs | null) => {
     if (!dayjsObj) return;
 
-    const hours = String(dayjsObj.hour()).padStart(2, '0');
-    const minutes = String(dayjsObj.minute()).padStart(2, '0');
-    const timeString = `${hours}:${minutes}`;
+    const hours = dayjsObj.hour();
+    const minutes = dayjsObj.minute();
+
+    if (hours < 8 || hours > 22 || (hours === 22 && minutes > 0)) {
+      setTimeError('서비스는 8:00부터 22:00까지 제공됩니다.');
+      return;
+    }
+
+    if (minutes !== 0 && minutes !== 30) {
+      setTimeError('시간은 30분 단위로 입력해주세요.');
+      return;
+    }
+
+    setPossibleStartTimeError(null);
+    setTimeError(null);
+
+    if (key === 'possibleTimeEnd') {
+      const startTime = possibleStartTime;
+
+      if (startTime && dayjsObj.isBefore(startTime)) {
+        setPossibleStartTimeError('활동 가능 시작시간 이후의 시간을 선택해주세요.');
+        return;
+      }
+    }
 
     if (key === 'possibleTimeStart') {
       setPossibleStartTime(dayjsObj);
+    } else if (key === 'possibleTimeEnd') {
+      setPossibleEndTime(dayjsObj);
     }
-
-    setValue(key, timeString);
   };
 
   // 시군구
@@ -121,29 +172,33 @@ const SitterSchedule = () => {
   const [sigungu, setSigugu] = useState('');
   const [selectedAddress, setSelectedAddress] = useState('');
 
-  // 주소
-  const [possibleLocation, setPossibleLocation] = useState<string[]>([]);
-
   const handleComplete = (data: { sido: string; sigungu: string; address: string }) => {
     // 시.도 저장
     setSido(data.sido);
     // 구.군 저장
     setSigugu(data.sigungu); // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
+
     const address = `${data.sigungu}`;
-    setSelectedAddress(data.address);
-    setPossibleLocation([address]);
+
+    setPossibleLocation(address);
     setIsModalOpen(false);
   };
 
   const onSubmit = async (data: IEditSchedule) => {
+    const orderedDays = ['월', '화', '수', '목', '금'];
+    const reorderedDays = orderedDays.filter((day) => selectedDays.includes(day)).join('');
+    if (reorderedDays) {
+      data.possibleDay = reorderedDays;
+    } else {
+      data.possibleDay = '';
+    }
     if (data.possibleDay && data.possibleDay.startsWith(',' || ' ')) {
       data.possibleDay = data.possibleDay.substring(1);
     }
-
-    data.possibleTimeStart = possibleStartTime?.format('HH:mm') || '';
-    data.possibleTimeEnd = possibleEndTime?.format('HH:mm') || '';
-    data.possibleLocation = possibleLocation;
-
+    data.possibleTimeStart = possibleStartTime?.format('HH:mm:ss') || '';
+    data.possibleTimeEnd = possibleEndTime?.format('HH:mm:ss') || '';
+    data.possibleLocation = [possibleLocation];
+    console.log(data);
     try {
       const response = await axios.patch(`${apiUrl}/members/petsitters/${memberId}`, data, {
         headers: {
@@ -154,6 +209,7 @@ const SitterSchedule = () => {
         alert('일정이 저장되었습니다.');
         navigate('/mypage');
       }
+      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -297,6 +353,8 @@ const SitterSchedule = () => {
                   onChange={(dayjsObj) => handleTimeChange('possibleTimeEnd', dayjsObj)}
                 />
               </TimePickerWrapper>
+              {timeError && <ErrorMessage>{timeError}</ErrorMessage>}
+              {possibleStartTimeError && <ErrorMessage>{possibleStartTimeError}</ErrorMessage>}
             </LocalizationProvider>
           </RegisterInputWrapper>
 
@@ -306,7 +364,7 @@ const SitterSchedule = () => {
               id="possibleLocation"
               placeholder="주소"
               variant="outlined"
-              value={possibleLocation.join(', ').replace(/[[\]]/g, '') || previousAddress}
+              value={possibleLocation}
               sx={{
                 width: '100%',
                 mt: '12px',
@@ -358,7 +416,7 @@ const MainContainer = styled.main`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 0 60px;
+  padding: 0px 60px;
 `;
 
 const InputContainer = styled.form`
@@ -373,6 +431,7 @@ const InputContainer = styled.form`
 const RegisterInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
+
   justify-content: space-between;
   width: 100%;
   margin-top: 20px;
@@ -380,41 +439,44 @@ const RegisterInputWrapper = styled.div`
 
 const RadioContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   width: 100%;
+  justify-content: space-between;
   margin-top: 12px;
 `;
 
 const RadioWrapper = styled.div`
   display: flex;
   align-items: center;
-
   & > input[type='radio'] {
     margin-right: 8px;
   }
-
   /* &:last-child {
-margin-right: 16px;
-} */
+    margin-right: 16px;
+  } */
 `;
 
 const CheckboxWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 100%;
-  margin-top: 20px;
+  justify-content: space-between;
   gap: 20px;
+  margin-top: 20px;
 `;
 
 const TimePickerWrapper = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   width: 100%;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 12px;
 `;
 
 const Text = styled.div``;
 
+const ErrorMessage = styled.div`
+  font-size: 14px;
+  color: red;
+  margin-top: 8px;
+`;
 export default SitterSchedule;

@@ -1,17 +1,14 @@
 import styled from 'styled-components';
 import { useEffect } from 'react';
-import MyPetmily from '@components/MyPetmily';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { IUser } from 'store/userSlice';
-import MyMenu from '@components/MyMenu';
-import MyPetsitterMenu from '@components/MyPetsitterMenu';
 import MySchedule from '@components/MySchedule';
+import MyPetmily from '@components/MyPetmily';
 
-// petsitterBoolean -> 펫시터 링크 설정
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 
 const Mypage = () => {
-  //  수정
   const { isLogin, name, petsitterBoolean, photo } = useSelector((state: IUser) => state.user);
 
   let PhotoUrl = 'imgs/DefaultUser.svg';
@@ -35,8 +32,12 @@ const Mypage = () => {
         </MyProfile>
       </MyProfileContianer>
 
-      {/* 펫시터 불른 ->메뉴 컴포넌트 */}
-      {petsitterBoolean ? <MyPetsitterMenu /> : <MyMenu />}
+      <LinkContainer>
+        <StyledLink to="/mypage/edit">
+          <Title>회원정보 수정</Title>
+        </StyledLink>
+      </LinkContainer>
+
       {petsitterBoolean ? <MySchedule /> : <MyPetmily />}
     </MypageContainer>
   );
@@ -88,4 +89,24 @@ const HelloText = styled.div`
   justify-content: space-between;
 `;
 
+const LinkContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+`;
+
+const StyledLink = styled(Link)`
+  font-size: 16px;
+  text-decoration: none;
+  color: #000;
+
+  &:hover {
+    color: ${(props) => props.theme.colors.mainBlue};
+  }
+`;
+
+const Title = styled.span`
+  margin-top: 10px;
+  font-size: 14px;
+`;
 export default Mypage;
