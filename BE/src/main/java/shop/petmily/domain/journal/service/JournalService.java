@@ -117,7 +117,7 @@ public class JournalService {
 
     // 접근자가 케어일지에 권한이 있는지 확인
     public void verifiedJournalOwner(long id, Journal verifiedJournal){
-        if (id != verifiedJournal.getReservation().getPetsitter().getPetsitterId()
+        if (id != verifiedJournal.getReservation().getPetsitter().getMember().getMemberId()
                 && (id != verifiedJournal.getMember().getMemberId())) {
                     throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
@@ -129,7 +129,6 @@ public class JournalService {
 //     케어일지 삭제(펫시터만)
 //    public void deleteJournal(long journalId) {
 //        Journal findJournal = findVerifiedJournal(journalId);
-////        verifiedJournalOwner(petsitterId, findJournal);
 //
 //        journalRepository.delete(findJournal);
 //    }
