@@ -36,7 +36,7 @@ const Footer = () => {
         <LinkImg href="https://github.com/codestates-seb/seb45_main_013" target="_blank">
           <Img src="/imgs/GithubMarkWhite.svg" alt="GithubIcon" />
         </LinkImg>
-        <LinkImg href="https://www.notion.so/codestates/0878f85841044d3aa2ed5d752e2eebac" target="_blank">
+        <LinkImg href="https://sideways-marten-d2e.notion.site/3a33fb8b322343958ef24f97ee973787" target="_blank">
           <Img src="/imgs/NotionLogo.png" alt="NotionIcon" />
         </LinkImg>
       </LinkImgContainer>
