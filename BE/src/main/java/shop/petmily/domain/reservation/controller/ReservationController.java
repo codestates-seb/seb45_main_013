@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import shop.petmily.domain.journal.service.JournalService;
 import shop.petmily.domain.reservation.dto.*;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.mapper.ReservationMapper;
@@ -25,12 +26,15 @@ import java.util.stream.Collectors;
 public class ReservationController {
     private final ReservationMapper mapper;
     private final ReservationService service;
+    private final JournalService journalService;
 
 
     public ReservationController(ReservationMapper mapper,
-                                 ReservationService service) {
+                                 ReservationService service,
+                                 JournalService journalService) {
         this.mapper = mapper;
         this.service = service;
+        this.journalService = journalService;
     }
 
     //예약가능 펫시터 list 보여주기
@@ -78,8 +82,12 @@ public class ReservationController {
         PageInfo pageInfo = new PageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
-        List<ReservationsDto.MemberResponse> responses =
-                reservations.stream().map(mapper::reservationToReservationMemberResponseDto).collect(Collectors.toList());
+        List<ReservationsDto.MemberResponse> responses = reservations.stream()
+                .map(reservation -> {
+                    ReservationsDto.MemberResponse response = mapper.reservationToReservationMemberResponseDto(reservation);
+                    response.setJournalId(journalService.findJournalIdByReservationId(response.getReservationId()));
+                    return response;})
+                .collect(Collectors.toList());
 
         return new ResponseEntity<>(new ReservationMultiDto.MemberResponse(responses, pageInfo), HttpStatus.OK);
     }
@@ -95,8 +103,12 @@ public class ReservationController {
         PageInfo pageInfo = new PageInfo(page, size, (int) reservationPage.getTotalElements(), reservationPage.getTotalPages());
 
         List<Reservation> reservations = reservationPage.getContent();
-        List<ReservationsDto.PetsitterResponse> responses =
-                reservations.stream().map(mapper::reservationToReservationPetsitterResponseDto).collect(Collectors.toList());
+        List<ReservationsDto.PetsitterResponse> responses = reservations.stream()
+                .map(reservation -> {
+                    ReservationsDto.PetsitterResponse response = mapper.reservationToReservationPetsitterResponseDto(reservation);
+                    response.setJournalId(journalService.findJournalIdByReservationId(response.getReservationId()));
+                    return response;})
+                .collect(Collectors.toList());
 
         return new ResponseEntity<>(new ReservationMultiDto.PetsitterResponse(responses, pageInfo), HttpStatus.OK);
     }
