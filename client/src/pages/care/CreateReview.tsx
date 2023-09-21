@@ -59,7 +59,7 @@ const CreateReview = () => {
     }
   };
 
-  // 리뷰 등록
+  // 후기 등록
   const handleSubmit = async () => {
     const accessToken = getCookieValue('access_token');
     setIsRegisterLoading(true);
@@ -72,7 +72,7 @@ const CreateReview = () => {
     }
 
     formData.append('star', String(star));
-    formData.append('reservationId', reservation.reservationId);
+    formData.append('reservationId', String(reservation.reservationId));
     formData.append('body', reviewText);
 
     try {
@@ -284,7 +284,7 @@ const CreateReview = () => {
         />
       </TextContainer>
       <ButtonContainer>
-        <button onClick={review ? handleEditSubmit : handleSubmit}>{review !== 0 ? '후기 수정' : '후기 등록'}</button>
+        <button onClick={review ? handleEditSubmit : handleSubmit}>{review ? '후기 수정' : '후기 등록'}</button>
         {isRegisterLoading && (
           <LoadingContainer>
             <Spinner />

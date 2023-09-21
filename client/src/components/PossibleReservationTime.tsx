@@ -156,7 +156,6 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
     const getpetsitterpossibleTime = async () => {
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters/${petsitterId}`);
-        console.log(response.data);
 
         // 펫시터 가능시간
         const { possibleTimeStart, possibleTimeEnd } = response.data;
