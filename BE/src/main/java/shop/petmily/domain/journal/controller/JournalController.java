@@ -39,7 +39,7 @@ public class JournalController {
     @PostMapping
     public ResponseEntity<JournalResponseDto> postJournal( @ModelAttribute JournalPostDto journalPostDto,
                                                           @LoginMemberId Long memberId){
-        journalPostDto.setPetsitterId(memberService.findVerifiedMember(memberId).getPetsitter().getPetsitterId());
+        journalPostDto.setPetsitterId(memberId);
         Journal createdJournal = service.createJournal(mapper.JournalPostDtoToJournal(journalPostDto), journalPostDto.getFile());
         JournalResponseDto response = mapper.JournalToResponse(createdJournal);
 
@@ -85,10 +85,10 @@ public class JournalController {
         return new ResponseEntity<>(new JournalMultiResponseDto(response, pageInfo), HttpStatus.OK);
     }
 
-    // 케어일지 1개 삭제
+//     케어일지 1개 삭제
 //    @DeleteMapping("/{journal-id}")
 //    public HttpStatus deleteJournal(@PathVariable("journal-id") @Positive long journalId) {
-//        service.deleteJournal(journalId, memberService.findVerifiedMember(jwtUtils.getMemberId()).getPetsitter().getPetsitterId());
+//        service.deleteJournal(journalId);
 //        return HttpStatus.NO_CONTENT;
 //    }
 }

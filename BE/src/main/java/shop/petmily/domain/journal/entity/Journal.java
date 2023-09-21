@@ -19,7 +19,7 @@ import java.util.List;
 public class Journal extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long journalId;
+    private Long journalId;
 
     @Column(length = 10000, nullable = false)
     private String body;

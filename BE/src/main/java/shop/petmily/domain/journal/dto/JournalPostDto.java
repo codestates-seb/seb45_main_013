@@ -13,7 +13,7 @@ public class JournalPostDto {
     private Long reservationId;
 
     private Long petsitterId;
-    public void setPetsitterId(long petsitterId) {
+    public void setPetsitterId(Long petsitterId) {
         this.petsitterId = petsitterId;
     }
 

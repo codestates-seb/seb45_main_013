@@ -10,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.journal.entity.Journal;
 import shop.petmily.domain.journal.repository.JournalRepository;
+import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.member.repository.PetsitterRepository;
+import shop.petmily.domain.member.service.MemberService;
+import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
 import shop.petmily.domain.reservation.service.ReservationUtils;
@@ -28,19 +32,25 @@ public class JournalService {
     private final JournalRepository journalRepository;
     private final ReservationUtils reservationUtils;
     private final S3UploadService uploadService;
+    private final PetsitterRepository petsitterRepository;
 
     // 케어일지 등록
     public Journal createJournal(Journal journal, List<MultipartFile> files){
-        Reservation reservation = reservationUtils.verificationReservation(journal.getReservation().getReservationId());
-        journal.setReservation(reservation);
-        journal.setMember(reservation.getMember());
+        Reservation verifiedreservation = reservationUtils.verificationReservation(journal.getReservation().getReservationId());
+        journal.setReservation(verifiedreservation);
+        journal.setMember(verifiedreservation.getMember());
+        journal.setPetsitter(petsitterRepository.findByMember_MemberId(journal.getPetsitter().getPetsitterId()));
 
-        if (journalRepository.existsByReservation(reservation)) {
+        if(journal.getPetsitter().getPetsitterId() != verifiedreservation.getPetsitter().getPetsitterId()){
+            throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
+        }
+
+        if (journalRepository.existsByReservation(verifiedreservation)) {
             throw new BusinessLogicException(ExceptionCode.JOURNAL_ALREADY_EXISTS);
         }
 
-        if (!reservation.getProgress().equals(Progress.FINISH_CARING)) {
-            if (reservation.getProgress().equals(Progress.RESERVATION_CONFIRMED)) {
+        if (!verifiedreservation.getProgress().equals(Progress.FINISH_CARING)) {
+            if (verifiedreservation.getProgress().equals(Progress.RESERVATION_CONFIRMED)) {
                 throw new BusinessLogicException(ExceptionCode.BEFORE_FINISH_CARING);
             }
             throw new BusinessLogicException(ExceptionCode.BEFORE_CONFIRMED);
@@ -117,9 +127,9 @@ public class JournalService {
         return journalRepository.findJournalIdByReservationId(reservationId);
     }
 //     케어일지 삭제(펫시터만)
-//    public void deleteJournal(long journalId, long petsitterId) {
+//    public void deleteJournal(long journalId) {
 //        Journal findJournal = findVerifiedJournal(journalId);
-//        verifiedJournalOwner(petsitterId, findJournal);
+////        verifiedJournalOwner(petsitterId, findJournal);
 //
 //        journalRepository.delete(findJournal);
 //    }
