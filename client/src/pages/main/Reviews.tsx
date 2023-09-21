@@ -26,13 +26,6 @@ type ReviewType = {
   star: number;
 };
 
-type Page = {
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-};
-
 //   <Rating name="half-rating-read" defaultValue={2.5} precision={0.5} readOnly />
 const userDefaultImage = '/imgs/DefaultUser.svg';
 
@@ -86,7 +79,7 @@ const Reviews = () => {
         <ReviewCard>
           {Array.isArray(reviews) &&
             reviews.map((review, index) => (
-              <Reviewwrapper key={index}>
+              <ReviewWrapper key={index}>
                 <ReviewContainer>
                   <Review>
                     <ImageContainer>
@@ -123,7 +116,7 @@ const Reviews = () => {
                   </CarouselContainer>
                   <BodyContainer>{review.body}</BodyContainer>
                 </ReviewContainer>
-              </Reviewwrapper>
+              </ReviewWrapper>
             ))}
         </ReviewCard>
 
@@ -156,7 +149,7 @@ const ReviewCard = styled.div`
   margin-top: 24px;
 `;
 
-const Reviewwrapper = styled.div`
+const ReviewWrapper = styled.div`
   width: 100%;
   margin-bottom: 36px;
   border-radius: 8px;

@@ -46,6 +46,13 @@ const ReservationStepTwo = () => {
   };
 
   useEffect(() => {
+    if (!reservationDay || !reservationTimeStart || !reservationTimeEnd || !address || !petId) {
+      alert('예약을 처음부터 해주세요.');
+      navigate('/reservation');
+    }
+  }, []);
+
+  useEffect(() => {
     if (filterType === '요청한 예약 날짜에 맞는 펫시터') {
       const getProperPetsitters = async () => {
         const accessToken = getCookieValue('access_token');

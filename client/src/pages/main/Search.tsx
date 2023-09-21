@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
+import axios from 'axios';
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Search = () => {
-  const [, /*searchTerm*/ setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [showResults, setShowResults] = useState(false);
 
   const handlekeyPress = (e: any) => {
@@ -25,6 +28,16 @@ const Search = () => {
   const handleInputChange = (e: any) => {
     setSearchTerm(e.target.value);
   };
+
+  useEffect(() => {
+    try {
+      const getSearchResults = async () => {
+        const response = await axios.post(`${apiUrl}/`);
+      };
+    } catch (error) {}
+  }, []);
+
+  console.log(searchTerm);
 
   return (
     <SearchContainer>
@@ -75,7 +88,7 @@ const Search = () => {
             onClick={handleButtonClick}
             sx={{ marginRight: '8px', borderRadius: '20px' }}
           >
-            리뷰
+            후기가 많은 펫시터
           </Button>
         </InputContainer>
       </SearchHeader>
