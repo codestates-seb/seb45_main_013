@@ -95,7 +95,8 @@ const NavHeader = () => {
               }
             } catch (refreshError) {
               console.error(refreshError);
-              alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
+              alert('로그인 세션이 만료되었습니다. 다시 로그인해 주시기 바랍니다.');
+              navigate('/');
               dispatch(deleteUser());
               deleteCookie('access_token');
               deleteCookie('refresh_token');

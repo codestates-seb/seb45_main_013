@@ -302,8 +302,8 @@ const ReviewText = styled.div`
   display: box;
   overflow: hidden;
   padding-top: 12px;
-  padding-bottom: 36px;
   line-height: 1.2;
+  padding-bottom: 16px;
   text-align: left;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;

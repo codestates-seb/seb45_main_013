@@ -83,9 +83,9 @@ const OAuthBranch = () => {
             },
           })
           .then((res) => {
-            if (res.data.petsitterBoolean) {
+            if (res.data.petsitterBoolean === true || res.data.petsitterBoolean === false) {
               navigate('/', { replace: true });
-            } else if (!res.data.petsitterBoolean) {
+            } else if (res.data.petsitterBoolean === null) {
               navigate('/signup/branch', { replace: true });
             }
           });
