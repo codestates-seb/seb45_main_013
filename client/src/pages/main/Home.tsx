@@ -3,22 +3,24 @@ import styled from 'styled-components';
 import Rating from '@mui/material/Rating';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import StarIcon from '@mui/icons-material/Star';
 import { styled as styledMui } from '@mui/material/styles';
+import { IUser } from 'store/userSlice';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
 
 const Home = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
+  const { isLogin } = useSelector((state: IUser) => state.user);
 
   const [favoritePetsitter, setFavoritePetsitter] = useState<any>('');
   const [newestReviews, setNewestReviews] = useState<any[]>([]);
@@ -29,37 +31,39 @@ const Home = () => {
 
   // 내가 자주 이용하는 펫시터
   useEffect(() => {
-    const getFavoritePetsitter = async () => {
-      const accessToken = getCookieValue('access_token');
-      try {
-        const response = await axios.get(`${apiUrl}/members/favorite`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        setFavoritePetsitter(response.data[0]);
-      } catch (error: any) {
-        setFavoritePetsitter('');
-        console.log(error);
-        if (error.response.status === 401 && error.response.status === 500) {
-          try {
-            const newAccessToken = await refreshAccessToken();
-            if (newAccessToken) {
-              const response = await axios.get(`${apiUrl}/members/favorite`, {
-                headers: { Authorization: `Bearer ${newAccessToken}` },
-              });
+    if (isLogin) {
+      const getFavoritePetsitter = async () => {
+        const accessToken = getCookieValue('access_token');
+        try {
+          const response = await axios.get(`${apiUrl}/members/favorite`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          setFavoritePetsitter(response.data[0]);
+        } catch (error: any) {
+          setFavoritePetsitter('');
+          console.log(error);
+          if (error.response.status === 401 && error.response.status === 500) {
+            try {
+              const newAccessToken = await refreshAccessToken();
+              if (newAccessToken) {
+                const response = await axios.get(`${apiUrl}/members/favorite`, {
+                  headers: { Authorization: `Bearer ${newAccessToken}` },
+                });
 
-              setFavoritePetsitter(response.data[0]);
+                setFavoritePetsitter(response.data[0]);
+              }
+            } catch (refreshError) {
+              console.log(refreshError);
+              // alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
+              // dispatch(deleteUser());
+              // deleteCookie('access_token');
+              // deleteCookie('refresh_token');
             }
-          } catch (refreshError) {
-            console.log(refreshError);
-            // alert('로그인 세션이 만료되었습니다. 안전한 서비스 이용을 위해 다시 로그인해 주시기 바랍니다.');
-            // dispatch(deleteUser());
-            // deleteCookie('access_token');
-            // deleteCookie('refresh_token');
           }
         }
-      }
-    };
-    getFavoritePetsitter();
+      };
+      getFavoritePetsitter();
+    }
   }, []);
 
   useEffect(() => {
@@ -90,7 +94,7 @@ const Home = () => {
         <meta property="og:image:type" content="image/svg+xml" />
       </Helmet>
       <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
-      <CustomLink to={'/search'}>펫시터 검색</CustomLink>
+      {/* <CustomLink to={'/search'}>펫시터 검색</CustomLink> */}
       <LinkContainer>
         <PetsitterLink onClick={() => navigate('/petsitters')}>
           <StyledLink>펫시터 보기</StyledLink>
@@ -119,25 +123,26 @@ const Home = () => {
             </ImageContainer>
 
             <OftenPetsitterbox>
-              <Nameox>{favoritePetsitter.name}</Nameox>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Nameox>{favoritePetsitter.name}</Nameox>
+                <RatingReviewContainer>
+                  <RatingContainer>
+                    <RatingImg src="/imgs/Star.svg" alt="star" />
+                    <div>{favoritePetsitter.star}</div>
+                  </RatingContainer>
+                  <ReviewContainer>
+                    <ReviewImg src="/imgs/ReviewIcon.svg" alt="review" />
+                    <div>{favoritePetsitter.reviewCount}</div>
+                  </ReviewContainer>
+                </RatingReviewContainer>
+              </div>
               <DiscriptionText>{favoritePetsitter.body}</DiscriptionText>
-              <RatingReviewContainer>
-                <RatingContainer>
-                  <RatingImg src="/imgs/Star.svg" alt="star" />
-                  <div>{favoritePetsitter.star}</div>
-                </RatingContainer>
-                <ReviewContainer>
-                  <ReviewImg src="/imgs/ReviewIcon.svg" alt="review" />
-                  <div>{favoritePetsitter.reviewCount}</div>
-                </ReviewContainer>
-              </RatingReviewContainer>
             </OftenPetsitterbox>
           </>
         ) : (
-          <div style={{ margin: '20px' }}>
+          <NotLoginPetsitter style={{ margin: '20px', display: 'flex', justifyContent: 'space-around', gap: '4px' }}>
             <div>펫시터를 찜해보세요!</div>
-            <button>펫시터 찜하러 가기</button>
-          </div>
+          </NotLoginPetsitter>
         )}
       </OftenPetsitterContainer>
       <OftenPetsitterText>실시간 리뷰</OftenPetsitterText>
@@ -257,11 +262,15 @@ const OftenPetsitterContainer = styled.div`
 `;
 
 const OftenPetsitterbox = styled.div`
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   margin-right: 8px;
   margin-left: 24px;
 `;
+
+const NotLoginPetsitter = styled.div``;
+
 const ImageContainer = styled.div`
   overflow: hidden;
   position: relative;
@@ -274,11 +283,6 @@ const ImageContainer = styled.div`
 const RemainContainer = styled.div`
   padding: 8px;
   flex-grow: 1;
-
-  /* overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical; */
 `;
 
 const AddressRatingContainer = styled.div`
@@ -303,7 +307,7 @@ const ReviewText = styled.div`
   overflow: hidden;
   padding-top: 12px;
   line-height: 1.2;
-  padding-bottom: 16px;
+  padding-bottom: 8px;
   text-align: left;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -362,29 +366,28 @@ const DiscriptionText = styled.div`
 
 const RatingReviewContainer = styled.div`
   display: flex;
-  align-items: center;
-  margin-top: 8px;
   gap: 8px;
 `;
 
 const RatingContainer = styled.div`
   display: flex;
+  align-items: center;
   gap: 4px;
 `;
 
 const RatingImg = styled.img`
-  width: 16px;
+  width: 20px;
 `;
 
 const ReviewContainer = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
 `;
 
 const ReviewImg = styled.img`
-  width: 14px;
-  margin-right: 4px;
-  margin-left: 12px;
-  padding-top: 2px;
+  width: 20px;
 `;
 
 const RealtimeReviewContainer = styled.div`
@@ -397,7 +400,7 @@ const ReviewCard = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  padding: 12px;
+  padding: 8px;
 `;
 
 const CustomCarousel = styled(Carousel)`

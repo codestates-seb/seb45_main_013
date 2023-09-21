@@ -72,6 +72,9 @@ const Reservation = () => {
   const [checkedPetId, setCheckedPetId] = useState<any[]>([]);
   const [checkedPets, setCheckedPets] = useState<any[]>([]);
 
+  // submit state error
+  const [pickerError, setPickerError] = useState();
+
   // Modal 동물 등록
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isCat, setIsCat] = useState('DOG');
@@ -130,10 +133,7 @@ const Reservation = () => {
     if (data) {
       clearErrors('address');
     }
-    setValue(
-      'address',
-      data.zonecode + ' ' + data.sido + ' ' + data.sigungu + ' ' + data.address.split(' ').splice(2).join(' '),
-    );
+    setValue('address', data.zonecode + ' ' + data.sido + ' ' + data.sigungu + ' ' + splitAddress);
     setIsModalOpen(false);
   };
 
@@ -177,8 +177,9 @@ const Reservation = () => {
     setIsNeutering(e.target.value);
   };
 
-  const handleStartError = (newError: any) => {
-    console.log(newError);
+  // picker 에러 핸들
+  const handleError = (error: any) => {
+    setPickerError(error);
   };
 
   const handleImageClick = () => {
@@ -266,6 +267,16 @@ const Reservation = () => {
       alert('시간을 확인해주세요.');
     } else if (checkedPetId.length === 0) {
       alert('맡기실 반려동물을 선택해주세요.');
+    } else if (pickerError === 'invalidDate') {
+      alert('날짜를 확인해주세요.');
+    } else if (pickerError === 'shouldDisableDate') {
+      alert('과거 날짜와 주말은 선택할 수 없습니다.');
+    } else if (pickerError === 'minTime' || pickerError === 'maxTime') {
+      alert('시간은 8시부터 22시까지입니다');
+    } else if (pickerError === 'shouldDisableTime-hours') {
+      alert('완료 시간은 시작 시간 이후여야 합니다.');
+    } else if (pickerError === 'shouldDisableTime-minutes' || pickerError === 'minutesStep') {
+      alert('예약 시간은 정시 또는 30분 단위로 선택해야 합니다.');
     } else if (
       reservationDay &&
       reservationTimeStart &&
@@ -364,6 +375,7 @@ const Reservation = () => {
                     isWeekend
                   );
                 }}
+                onError={handleError}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -377,10 +389,10 @@ const Reservation = () => {
                   <TimePicker
                     label="Check In"
                     sx={{ flex: 1 }}
-                    minutesStep={6}
+                    minutesStep={30}
                     skipDisabled={true}
                     minTime={dayjs(new Date(0, 0, 0, 8))}
-                    maxTime={dayjs(new Date(0, 0, 0, 22))}
+                    maxTime={dayjs(new Date(0, 0, 0, 21))}
                     ampm={false}
                     shouldDisableTime={(value, view) => {
                       const currentTime = dayjs();
@@ -392,10 +404,13 @@ const Reservation = () => {
                           return true;
                         }
                       }
+                      if (view === 'minutes' && value.minute() % 30 !== 0) {
+                        return false;
+                      }
                       return false;
                     }}
                     onChange={handleStartTime}
-                    onError={handleStartError}
+                    onError={handleError}
                   />
                 </StyledTimePicker>
               </DemoContainer>
@@ -406,15 +421,22 @@ const Reservation = () => {
                   <TimePicker
                     label="Check Out"
                     sx={{ flex: 1 }}
-                    minutesStep={6}
+                    minutesStep={30}
                     skipDisabled={true}
-                    minTime={dayjs(new Date(0, 0, 0, 8))}
+                    minTime={dayjs(new Date(0, 0, 0, 9))}
                     maxTime={dayjs(new Date(0, 0, 0, 22))}
                     ampm={false}
-                    shouldDisableTime={(value, view) =>
-                      view === 'hours' && value.hour() < +reservationTimeStart.split(':')[0] + 1
-                    }
+                    shouldDisableTime={(value, view) => {
+                      if (view === 'hours' && value.hour() < +reservationTimeStart.split(':')[0] + 1) {
+                        return true;
+                      }
+                      if (view === 'minutes' && value.minute() % 30 !== 0) {
+                        return false;
+                      }
+                      return false;
+                    }}
                     onChange={handleEndTime}
+                    onError={handleError}
                   />
                 </StyledTimePicker>
               </DemoContainer>

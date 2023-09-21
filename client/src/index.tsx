@@ -18,7 +18,7 @@ const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <React.StrictMode>
+  <>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider theme={defaultTheme}>
@@ -30,5 +30,5 @@ root.render(
       </PersistGate>
     </Provider>
     <Analytics />
-  </React.StrictMode>,
+  </>,
 );
