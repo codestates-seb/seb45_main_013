@@ -44,7 +44,7 @@ const CareCard = ({ reservation }: any) => {
       });
       if (response.status === 200) {
         alert('예약이 취소되었습니다.');
-        navigate('/cares');
+        window.location.reload();
       }
     } catch (error: any) {
       console.log(error);
@@ -58,6 +58,10 @@ const CareCard = ({ reservation }: any) => {
             const response = await axios.patch(`${apiUrl}/reservations/${reservation.reservationId}/petsittercancel`, {
               headers: { Authorization: `Bearer ${newAccessToken}` },
             });
+            if (response.status === 200) {
+              alert('예약이 취소되었습니다.');
+              window.location.reload();
+            }
           }
         } catch (error) {}
       }
@@ -77,7 +81,7 @@ const CareCard = ({ reservation }: any) => {
 
       if (response.status === 200) {
         alert('예약이 취소 되었습니다.');
-        navigate('/cares');
+        window.location.reload();
       }
     } catch (error: any) {
       console.log(error);
@@ -94,7 +98,7 @@ const CareCard = ({ reservation }: any) => {
             );
             if (response) {
               alert('예약이 취소 되었습니다.');
-              navigate('/cares');
+              window.location.reload();
             }
           }
         } catch (error) {
@@ -110,7 +114,7 @@ const CareCard = ({ reservation }: any) => {
         <div>
           <PetsitterContainer>
             <PetsitterInfo>
-              <div>{petsitterBoolean ? reservation.name : reservation.petsitterName}</div>
+              <div>{petsitterBoolean ? reservation.memberName : reservation.petsitterName}</div>
               <div>{petsitterBoolean ? '고객님' : '펫시터님'}</div>
             </PetsitterInfo>
           </PetsitterContainer>
@@ -159,7 +163,7 @@ const CareCard = ({ reservation }: any) => {
             </>
           ) : petsitterBoolean && reservation.progress === 'RESERVATION_CANCELLED' ? (
             <>
-              <InActiveButton>고객에 의해 취소</InActiveButton>
+              <InActiveButton>취소된 예약</InActiveButton>
             </>
           ) : petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
@@ -171,17 +175,21 @@ const CareCard = ({ reservation }: any) => {
               <InActiveButton>예약신청</InActiveButton>
               <ActiveButton onClick={handleClientCancel}>취소하기</ActiveButton>
             </>
-          ) : !petsitterBoolean && reservation.progress === 'RESERVATION_CONFIRM' ? (
+          ) : !petsitterBoolean && reservation.progress === 'RESERVATION_CONFIRMED' ? (
             <>
               <InActiveButton>예약확정</InActiveButton>
             </>
           ) : !petsitterBoolean && reservation.progress === 'RESERVATION_CANCELLED' ? (
             <>
-              <InActiveButton>펫시터에 의해 취소</InActiveButton>
+              <InActiveButton>취소된 예약</InActiveButton>
             </>
           ) : !petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
-              <ActiveLink to={`/cares/${memberId}`}>케어일지</ActiveLink>
+              {reservation.journalId ? (
+                <ActiveLink to={`/cares/journal/${reservation.journalId}`}>케어일지</ActiveLink>
+              ) : (
+                <InActiveButton>케어일지</InActiveButton>
+              )}
               <ActiveLink to={`/cares/${reservation.reservationId}/review`}>후기</ActiveLink>
             </>
           ) : null}

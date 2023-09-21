@@ -94,7 +94,7 @@ const ViewJournal = () => {
 
   // 이름 지우기
   return (
-    <>
+    <MainContainer>
       {journal && (
         <Journal>
           <Head>
@@ -127,7 +127,7 @@ const ViewJournal = () => {
               <Date>{formatDate(journal.lastModifiedAt)} 수정</Date>
             </DateWrapper>
           </Head>
-          <StyledCarousel>
+          <StyledCarousel showStatus={false}>
             {journal.photos && journal.photos.length > 0
               ? journal.photos.map((photo, index) => (
                   <ImgWrapper key={index}>
@@ -158,9 +158,13 @@ const ViewJournal = () => {
           </JournalContent>
         </Journal>
       )}
-    </>
+    </MainContainer>
   );
 };
+
+const MainContainer = styled.div`
+  padding: 12px;
+`;
 
 const Journal = styled.div`
   display: flex;
@@ -213,6 +217,10 @@ const StyledCarousel = styled(Carousel)`
   .carousel .slider-wrapper.axis-horizontal .slider .slide {
     overflow: visible !important;
     height: 400px;
+  }
+
+  .dot {
+    background: #279eff !important;
   }
 
   margin-bottom: 8px;

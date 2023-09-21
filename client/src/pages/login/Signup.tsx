@@ -15,7 +15,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const schema = yup.object().shape({
   name: yup
     .string()
-    .min(2, '2자 이상이어야 합니다.')
+    .min(2, '이름은 2자 이상이어야 합니다.')
     .matches(/[가-힣]+/, '한글만 가능합니다.')
     .required('이름은 필수입니다.'),
   phone: yup
@@ -27,7 +27,7 @@ const schema = yup.object().shape({
   email: yup.string().email('이메일 형식을 지켜주세요.').required('ID는 필수입니다.'),
   nickName: yup
     .string()
-    .min(4, '4자 이상부터 가능합니다.')
+    .min(2, '닉네임은 2자 이상부터 가능합니다.')
     .matches(/^[^!@#$%^&*()_+{}[\]:;<>,.?~|]+$/, '특수문자가 없어야 합니다.')
     .required('닉네임은 필수입니다.'),
   password: yup
