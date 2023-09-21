@@ -69,7 +69,7 @@ server:
       force-response: true
 jwt:
   key: ${JWT_SECRET_KEY}                             # 시스템 환경 변수
-  access-token-expiration-minutes: 600              # 30분
+  access-token-expiration-minutes: 3600              # 30분
   refresh-token-expiration-minutes: 86400            # 1일
   main_ec2_url : ${MAIN_EC2_URL}
   main_buket_url : ${MAIN_BUKET_URL}
