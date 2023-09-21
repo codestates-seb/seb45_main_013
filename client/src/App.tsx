@@ -74,7 +74,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<AddNavHeaderLayout />}>
                 <Route path="" element={<Home />} />
-                <Route path="/petsitter/" element={<PetSitterHome />} />
+                <Route path="/petsitter" element={<PetSitterHome />} />
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="mypage" element={<Mypage />} />
                 <Route path="reservation" element={<Reservation />} />

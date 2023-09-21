@@ -19,7 +19,7 @@ const CreateJournal = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
-  const [reservation, setReservation] = useState<any>({});
+  const [reservation, setReservation] = useState<any>();
   const [journal, setJournal] = useState<any>();
   const [journalImages, setJournalImages] = useState([]);
 
@@ -77,10 +77,31 @@ const CreateJournal = () => {
       });
       if (response.data.status === 201) {
         alert('일지가 등록 되었습니다.');
-        navigate(`/cares/${memberId}`);
+        navigate('/cares');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error.response.status == 401) {
+        try {
+          const newAccessToken = await refreshAccessToken();
+          if (newAccessToken) {
+            try {
+              const response = await axios.post(`${apiUrl}/journals`, formData, {
+                headers: { Authorization: `Bearer ${newAccessToken}`, 'Content-Type': 'multipart/form-data' },
+              });
+              if (response) {
+                alert('일지가 등록 되었습니다.');
+                navigate('/cares');
+              }
+            } catch (refreshError) {}
+          }
+        } catch (error) {
+          alert('일지 등록에 실패 했습니다. 다시 시도해 주세요.');
+        }
+      }
+      if (error) {
+        alert('일지 등록에 실패 했습니다. 다시 시도해 주세요.');
+      }
     }
 
     setIsRegisterLoading(false);
@@ -105,16 +126,18 @@ const CreateJournal = () => {
       selectedFiles.map((file) => formData.append('file', file));
     }
 
-    try {
-      const response = await axios.patch(`${apiUrl}/journals/${journal?.journalId}`, formData, {
-        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
-      });
-      if (response.status === 200) {
-        alert('일지가 수정되었습니다.');
-        navigate(-1);
+    if (journal.journalId) {
+      try {
+        const response = await axios.patch(`${apiUrl}/journals/${journal?.journalId}`, formData, {
+          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
+        });
+        if (response.status === 200) {
+          alert('일지가 수정되었습니다.');
+          navigate(-1);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
 
     setIsRegisterLoading(false);
@@ -129,87 +152,61 @@ const CreateJournal = () => {
       try {
         axios.get(`${apiUrl}/reservations/${reservationId}`).then((res) => {
           setReservation(res.data);
-
-          // const photos = res.data.journal?.photos;
-
-          // if (journal) {
-          //   setJournal(journal);
-          //   setJournalText(journal.body);
-
-          //   if (photos) {
-          //     const modifiedJournalImages = photos.map((photoUrl: any) => {
-          //       if (photoUrl.includes('https://bucketUrl')) {
-          //         return photoUrl.replace('https://bucketUrl', bucketUrl);
-          //       }
-          //       return '';
-          //     });
-
-          //     setJournalImages(modifiedJournalImages);
-          //   }
-          // }
         });
       } catch (error: any) {
         console.log(error);
         if (error.response.status === 404) {
           alert(error.response.data.message);
-          navigate('/');
         }
       }
     }
   }, []);
 
-  // const accessToken = getCookieValue('access_token');
-  // if (reservation.journalId) {
-  //   try {
-  //     axios
-  //       .get(`${apiUrl}/journals/${reservation.journalId}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       })
-  //       .then((res) => setJournal(res.data));
-  //   } catch (error) {
-  //     console.log(error);
-  //     refreshAccessToken();
-  //     if (accessToken) {
-  //       try {
-  //         const newAccessToken = await refreshAccessToken();
-  //       } catch (error) {}
-  //     }
-  //   }
-  // }
+  // 일지 조회
   useEffect(() => {
-    const fetchData = async () => {
-      const accessToken = getCookieValue('access_token');
-      if (reservation.journalId) {
-        try {
-          const response = await axios.get(`${apiUrl}/journals/${reservation.journalId}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-          setJournal(response.data);
-        } catch (error) {
-          console.error(error);
+    if (reservation.journalId) {
+      const fetchData = async () => {
+        const accessToken = getCookieValue('access_token');
+        if (reservation.journalId) {
           try {
-            const newAccessToken = await refreshAccessToken();
-            if (newAccessToken) {
-              const response = await axios.get(`${apiUrl}/journals/${reservation.journalId}`, {
-                headers: {
-                  Authorization: `Bearer ${newAccessToken}`,
-                },
+            const response = await axios.get(`${apiUrl}/journals/${reservation.journalId}`, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setJournal(response.data);
+            setJournalText(response.data.body);
+
+            if (response.data.petPhotos) {
+              const modifiedJournalImages = response.data.petPhotos.map((photo: any) => {
+                if (photo.includes('https://bucketUrl')) {
+                  return photo.replace('https://bucketUrl', bucketUrl);
+                }
               });
-              setJournal(response.data);
+              setJournalImages(modifiedJournalImages);
             }
-          } catch (refreshError) {
-            console.error(refreshError);
-            // Handle refresh error
+          } catch (error) {
+            console.error(error);
+            try {
+              const newAccessToken = await refreshAccessToken();
+              if (newAccessToken) {
+                const response = await axios.get(`${apiUrl}/journals/${reservation.journalId}`, {
+                  headers: {
+                    Authorization: `Bearer ${newAccessToken}`,
+                  },
+                });
+                setJournal(response.data);
+              }
+            } catch (refreshError) {
+              console.error(refreshError);
+              // Handle refresh error
+            }
           }
         }
-      }
-    };
+      };
 
-    fetchData();
+      fetchData();
+    }
   }, [reservation]);
 
   return (
@@ -219,7 +216,7 @@ const CreateJournal = () => {
         <ReservationContainer>
           <FirstLine>
             <InfoContainer>
-              {reservation.petsitter?.photo ? (
+              {reservation?.petsitter?.photo ? (
                 <Photo src={reservation?.petsitter?.photo.replace('https://bucketUrl', bucketUrl)} alt="client" />
               ) : (
                 <DefaultImg src="/imgs/User.svg" alt="default img" />
