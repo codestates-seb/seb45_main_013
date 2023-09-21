@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { IUser } from 'store/userSlice';
 import MySchedule from '@components/MySchedule';
@@ -9,12 +9,20 @@ import MyPetmily from '@components/MyPetmily';
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 
 const Mypage = () => {
+  const navigate = useNavigate();
   const { isLogin, name, petsitterBoolean, photo } = useSelector((state: IUser) => state.user);
 
   let PhotoUrl = 'imgs/DefaultUser.svg';
   if (photo) {
     PhotoUrl = photo.replace(/https:\/\/bucketUrl/g, BucketUrl);
   }
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate('/');
+      alert('로그인 해주세요.');
+    }
+  }, [isLogin]);
 
   return (
     <MypageContainer>

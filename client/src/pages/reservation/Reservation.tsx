@@ -302,14 +302,14 @@ const Reservation = () => {
 
   useEffect(() => {
     if (!isLogin) {
-      alert('로그인을 해주세요.');
       navigate('/');
+      alert('로그인을 해주세요.');
     }
     if (petsitterBoolean) {
-      alert('고객만 이용 가능한 서비스입니다.');
       navigate('/');
+      alert('고객만 이용 가능한 서비스입니다.');
     }
-  });
+  }, []);
 
   // 펫 정보 가져오기 (accessToken 재발급 설정 완료)
   useEffect(() => {

@@ -127,7 +127,6 @@ const Signup = () => {
           <div>We&apos;re Petmily!</div>
           <div>회원가입</div>
         </TitleContainer>
-        <ImgContainer>{/* <UploadProfileImg /> */}</ImgContainer>
         <InputFormContainer onSubmit={handleSubmit(onSubmit)}>
           <InputFormWrapper>
             <SignupInputStyle
@@ -263,13 +262,8 @@ const TitleContainer = styled.div`
   }
 `;
 
-const ImgContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 36px;
-`;
-
 const InputFormContainer = styled.form`
+  margin-top: 36px;
   display: flex;
   flex-direction: column;
   gap: 16px;
