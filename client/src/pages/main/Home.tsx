@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import StarIcon from '@mui/icons-material/Star';
 import { styled as styledMui } from '@mui/material/styles';
 import { IUser } from 'store/userSlice';
+import Footer from '@components/footer/Footer';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
@@ -80,110 +81,113 @@ const Home = () => {
   }, []);
 
   return (
-    <HomeContainer>
-      <Helmet>
-        <title>Petmily - Home</title>
-        <meta name="description" content="펫시터 방문 돌봄 서비스, 우리는 펫밀리입니다." />
-        <link rel="canonical" href="https://petmily.shop" />
-        <meta property="og:title" content="Petmily - Home" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://petmily.shop" />
-        <meta property="og:description" content="펫시터를 찾으시나요? 지금 바로 만나보세요." />
-        <meta property="og:image" content="https://petmily.shop/imgs/Logo.svg" />
-        <meta property="og:image:secure_url" content="https://petmily.shop/imgs/Logo.svg" />
-        <meta property="og:image:type" content="image/svg+xml" />
-      </Helmet>
-      <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
-      {/* <CustomLink to={'/search'}>펫시터 검색</CustomLink> */}
-      <LinkContainer>
-        <PetsitterLink onClick={() => navigate('/petsitters')}>
-          <StyledLink>펫시터 보기</StyledLink>
-        </PetsitterLink>
-        <PetsitterLink onClick={() => navigate('/qna')}>
-          <StyledLink>펫시터QnA</StyledLink>
-        </PetsitterLink>
-      </LinkContainer>
-      <AdSubContainer>
-        <AdSubText>{'첫 만남\n 50% 할인 쿠폰'}</AdSubText>
-        <img src="/imgs/HomeSubAd.svg" alt="Advertising" />
-      </AdSubContainer>
-      <OftenPetsitterText>내가 자주 이용하는 펫시터</OftenPetsitterText>
-      <OftenPetsitterContainer>
-        {favoritePetsitter ? (
-          <>
-            <ImageContainer>
-              {favoritePetsitter.photo ? (
-                <ProfileImg
-                  src={favoritePetsitter.photo.replace('https://bucketUrl', bucketUrl)}
-                  alt="OftenPetsitterImg"
-                />
-              ) : (
-                <img src="/imgs/PetsitterPhoto" alt="petsitterPhoto" />
-              )}
-            </ImageContainer>
-
-            <OftenPetsitterbox>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Nameox>{favoritePetsitter.name}</Nameox>
-                <RatingReviewContainer>
-                  <RatingContainer>
-                    <RatingImg src="/imgs/Star.svg" alt="star" />
-                    <div>{favoritePetsitter.star}</div>
-                  </RatingContainer>
-                  <ReviewContainer>
-                    <ReviewImg src="/imgs/ReviewIcon.svg" alt="review" />
-                    <div>{favoritePetsitter.reviewCount}</div>
-                  </ReviewContainer>
-                </RatingReviewContainer>
-              </div>
-              <DiscriptionText>{favoritePetsitter.body}</DiscriptionText>
-            </OftenPetsitterbox>
-          </>
-        ) : (
-          <NotLoginPetsitter style={{ margin: '20px', display: 'flex', justifyContent: 'space-around', gap: '4px' }}>
-            <div>펫시터를 찜해보세요!</div>
-          </NotLoginPetsitter>
-        )}
-      </OftenPetsitterContainer>
-      <OftenPetsitterText>실시간 리뷰</OftenPetsitterText>
-      <RealtimeReviewContainer>
-        <CustomCarousel
-          showThumbs={false}
-          showStatus={false}
-          autoPlay={true}
-          emulateTouch={true}
-          stopOnHover={true}
-          infiniteLoop={true}
-          showArrows={false}
-          useKeyboardArrows={false}
-        >
-          {newestReviews.map((review) => (
-            <ReviewCard key={review.reviewId}>
+    <>
+      <HomeContainer>
+        <Helmet>
+          <title>Petmily - Home</title>
+          <meta name="description" content="펫시터 방문 돌봄 서비스, 우리는 펫밀리입니다." />
+          <link rel="canonical" href="https://petmily.shop" />
+          <meta property="og:title" content="Petmily - Home" />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://petmily.shop" />
+          <meta property="og:description" content="펫시터를 찾으시나요? 지금 바로 만나보세요." />
+          <meta property="og:image" content="https://petmily.shop/imgs/Logo.svg" />
+          <meta property="og:image:secure_url" content="https://petmily.shop/imgs/Logo.svg" />
+          <meta property="og:image:type" content="image/svg+xml" />
+        </Helmet>
+        <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
+        {/* <CustomLink to={'/search'}>펫시터 검색</CustomLink> */}
+        <LinkContainer>
+          <PetsitterLink onClick={() => navigate('/petsitters')}>
+            <StyledLink>펫시터 보기</StyledLink>
+          </PetsitterLink>
+          <PetsitterLink onClick={() => navigate('/qna')}>
+            <StyledLink>펫시터QnA</StyledLink>
+          </PetsitterLink>
+        </LinkContainer>
+        <AdSubContainer>
+          <AdSubText>{'첫 만남\n 50% 할인 쿠폰'}</AdSubText>
+          <img src="/imgs/HomeSubAd.svg" alt="Advertising" />
+        </AdSubContainer>
+        <OftenPetsitterText>내가 자주 이용하는 펫시터</OftenPetsitterText>
+        <OftenPetsitterContainer>
+          {favoritePetsitter ? (
+            <>
               <ImageContainer>
-                {review.memberPhoto ? (
-                  <MemberPhotoImage
-                    src={review.memberPhoto.replace('https:/bucketUrl', bucketUrl)}
-                    alt="client"
-                    onError={onErrorImg}
+                {favoritePetsitter.photo ? (
+                  <ProfileImg
+                    src={favoritePetsitter.photo.replace('https://bucketUrl', bucketUrl)}
+                    alt="OftenPetsitterImg"
                   />
                 ) : (
-                  <img src="/imgs/DefaultUser.svg" alt="clientPhoto" />
+                  <img src="/imgs/PetsitterPhoto" alt="petsitterPhoto" />
                 )}
               </ImageContainer>
-              <RemainContainer>
-                <AddressRatingContainer>
-                  <AddressText>
-                    {review.reservationAddress.split(' ')[1] + ' ' + review.reservationAddress.split(' ')[2]}
-                  </AddressText>
-                  <StyledRating value={review.star} precision={1} icon={<StarIcon />} readOnly />
-                </AddressRatingContainer>
-                <ReviewText>{review.body}</ReviewText>
-              </RemainContainer>
-            </ReviewCard>
-          ))}
-        </CustomCarousel>
-      </RealtimeReviewContainer>
-    </HomeContainer>
+
+              <OftenPetsitterbox>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Nameox>{favoritePetsitter.name}</Nameox>
+                  <RatingReviewContainer>
+                    <RatingContainer>
+                      <RatingImg src="/imgs/Star.svg" alt="star" />
+                      <div>{favoritePetsitter.star}</div>
+                    </RatingContainer>
+                    <ReviewContainer>
+                      <ReviewImg src="/imgs/ReviewIcon.svg" alt="review" />
+                      <div>{favoritePetsitter.reviewCount}</div>
+                    </ReviewContainer>
+                  </RatingReviewContainer>
+                </div>
+                <DiscriptionText>{favoritePetsitter.body}</DiscriptionText>
+              </OftenPetsitterbox>
+            </>
+          ) : (
+            <NotLoginPetsitter style={{ margin: '20px', display: 'flex', justifyContent: 'space-around', gap: '4px' }}>
+              <div>펫시터를 찜해보세요!</div>
+            </NotLoginPetsitter>
+          )}
+        </OftenPetsitterContainer>
+        <OftenPetsitterText>실시간 리뷰</OftenPetsitterText>
+        <RealtimeReviewContainer>
+          <CustomCarousel
+            showThumbs={false}
+            showStatus={false}
+            autoPlay={true}
+            emulateTouch={true}
+            stopOnHover={true}
+            infiniteLoop={true}
+            showArrows={false}
+            useKeyboardArrows={false}
+          >
+            {newestReviews.map((review) => (
+              <ReviewCard key={review.reviewId}>
+                <ImageContainer>
+                  {review.memberPhoto ? (
+                    <MemberPhotoImage
+                      src={review.memberPhoto.replace('https:/bucketUrl', bucketUrl)}
+                      alt="client"
+                      onError={onErrorImg}
+                    />
+                  ) : (
+                    <img src="/imgs/DefaultUser.svg" alt="clientPhoto" />
+                  )}
+                </ImageContainer>
+                <RemainContainer>
+                  <AddressRatingContainer>
+                    <AddressText>
+                      {review.reservationAddress.split(' ')[1] + ' ' + review.reservationAddress.split(' ')[2]}
+                    </AddressText>
+                    <StyledRating value={review.star} precision={1} icon={<StarIcon />} readOnly />
+                  </AddressRatingContainer>
+                  <ReviewText>{review.body}</ReviewText>
+                </RemainContainer>
+              </ReviewCard>
+            ))}
+          </CustomCarousel>
+        </RealtimeReviewContainer>
+      </HomeContainer>
+      <Footer />
+    </>
   );
 };
 
