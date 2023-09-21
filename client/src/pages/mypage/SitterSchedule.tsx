@@ -129,7 +129,7 @@ const SitterSchedule = () => {
     setSido(data.sido);
     // 구.군 저장
     setSigugu(data.sigungu); // 상세주소 앞 2단어 제외하고 저장 ('서울 강남구' 제외하고 저장)
-    const address = `${data.sido} ${data.sigungu}`;
+    const address = `${data.sigungu}`;
     setSelectedAddress(data.address);
     setPossibleLocation([address]);
     setIsModalOpen(false);
