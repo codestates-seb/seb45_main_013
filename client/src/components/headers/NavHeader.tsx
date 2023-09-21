@@ -53,7 +53,7 @@ const NavHeader = () => {
     dispatch(deleteUser());
 
     alert('로그아웃 되었습니다.');
-    navigate('/');
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -119,11 +119,12 @@ const NavHeader = () => {
             <img src="/imgs/Logo.svg" alt="logo"></img>
           </Link>
           <NotiUserContainer>
-            <NotiButton>
-              <img src="/icons/Notification.svg" alt="notification_icon" width="24"></img>
-            </NotiButton>
             <UserButton onClick={(e) => handleUserButton(e)}>
-              <img src="/icons/User.svg" alt="user_icon" width="24"></img>
+              {isLogin ? (
+                <img src="/icons/User.svg" alt="user_icon" width="24" />
+              ) : (
+                <LoginNavLink to="/login">로그인/회원가입</LoginNavLink>
+              )}
             </UserButton>
           </NotiUserContainer>
           {isModalOpen && isLogin && (
@@ -181,18 +182,35 @@ const NotiUserContainer = styled.nav`
   gap: 12px;
 `;
 
-const NotiButton = styled.button`
-  width: 24px;
-  height: 24px;
-  border: none;
-  background-color: white;
-  cursor: pointer;
-`;
+// const NotiButton = styled.button`
+//   width: 24px;
+//   height: 24px;
+//   border: none;
+//   background-color: white;
+//   cursor: pointer;
+// `;
 
 const UserButton = styled.button`
   border: none;
   background-color: white;
   cursor: pointer;
+`;
+
+const LoginNavLink = styled(Link)`
+  background-color: ${({ theme }) => theme.colors.mainBlue};
+  ${({ theme }) => theme.fontSize.s14h21}
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: white;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.subBlue};
+  }
+
+  &:active {
+    background-color: ${({ theme }) => theme.colors.darkBlue};
+    box-shadow: ${({ theme }) => theme.shadow.inset};
+  }
 `;
 
 const LoginNavModal = styled.nav`
