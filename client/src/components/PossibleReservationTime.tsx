@@ -86,7 +86,8 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
   setSelectedTimes,
 }) => {
   const [bookedTimes, setBookedTimes] = useState<string[]>([]);
-
+  const [possibleTimeStart, setPossibleTimeStart] = useState<number>(0); // 펫시터 가능시간
+  const [possibleTimeEnd, setPossibleTimeEnd] = useState<number>(24); // 펫시터 가능시간
   const { petsitterId } = useParams();
 
   const handleTimeSelect = (time: string) => {
@@ -122,11 +123,20 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
           const times: string[] = [];
           for (const schedule of schedulesOnSelectedDate) {
             const startHour = parseInt(schedule.reservationTimeStart.slice(0, 2));
-            const endHour = parseInt(schedule.reservationTimeEnd.slice(0, 2));
+            let endHour = parseInt(schedule.reservationTimeEnd.slice(0, 2));
 
-            for (let hour = startHour; hour < endHour; hour++) {
+            // Add an extra half hour to the end time
+            const endDate = new Date();
+            endDate.setHours(endHour);
+            endDate.setMinutes(30); // add extra 30 minutes
+            endHour = endDate.getHours();
+
+            for (let hour = startHour; hour <= endHour; hour++) {
+              // <= instead of <
               times.push(`${hour.toString().padStart(2, '0')}:00`);
-              times.push(`${hour.toString().padStart(2, '0')}:30`);
+              if (hour !== endHour) {
+                times.push(`${hour.toString().padStart(2, '0')}:30`);
+              }
             }
           }
 
@@ -141,6 +151,26 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
 
     if (selectedDate) fetchBookedTimes();
   }, [selectedDate]);
+
+  useEffect(() => {
+    const getpetsitterpossibleTime = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/members/petsitters/${petsitterId}`);
+        console.log(response.data);
+
+        // 펫시터 가능시간
+        const { possibleTimeStart, possibleTimeEnd } = response.data;
+
+        // HH:MM형태로 변환
+        setPossibleTimeStart(parseInt(possibleTimeStart.slice(0, 2)));
+        setPossibleTimeEnd(parseInt(possibleTimeEnd.slice(0, 2)));
+      } catch (error) {
+        console.error('펫시터 가능시간이 제대로 들어오고 있지 않습니다');
+      }
+    };
+
+    getpetsitterpossibleTime();
+  }, []);
 
   return (
     <MainContainer>
@@ -165,7 +195,12 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
             <AccordionDetails>
               <StyledButtonGroup color="primary" aria-label="outlined primary button group">
                 {amTimeSlots.map((time) => {
+                  const [hour] = time.split(':');
+
+                  // Disable if outside of possible times or if time is already booked
                   const isDisabled =
+                    parseInt(hour) < possibleTimeStart ||
+                    parseInt(hour) >= possibleTimeEnd ||
                     (selectedDate &&
                       selectedDate.isSame(currentDate, 'day') &&
                       parseInt(time.split(':')[0]) <= currentDate.hour()) ||
@@ -188,7 +223,12 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
 
               <StyledButtonGroup color="primary" aria-label="outlined primary button group">
                 {pmTimeSlots.map((time) => {
+                  const [hour] = time.split(':');
+
+                  // Disable if outside of possible times or if time is already booked
                   const isDisabled =
+                    parseInt(hour) < possibleTimeStart ||
+                    parseInt(hour) >= possibleTimeEnd ||
                     (selectedDate &&
                       selectedDate.isSame(currentDate, 'day') &&
                       parseInt(time.split(':')[0]) <= currentDate.hour()) ||
