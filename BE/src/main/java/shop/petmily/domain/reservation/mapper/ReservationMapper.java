@@ -120,7 +120,7 @@ public interface ReservationMapper {
         response.setMemberName(reservation.getMember().getName());
         response.setMemberNickName(reservation.getMember().getNickName());
         response.setMemberPhoto(reservation.getMember().getPhoto());
-        response.setMemberPhoto(reservation.getMember().getBody());
+        response.setMemberPhone(reservation.getMember().getPhone());
 
         List<ReservationsDto.PetResponse> pets = reservation.getReservationPets().stream()
                 .map(reservationPet -> {
