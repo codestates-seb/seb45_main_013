@@ -122,11 +122,20 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
           const times: string[] = [];
           for (const schedule of schedulesOnSelectedDate) {
             const startHour = parseInt(schedule.reservationTimeStart.slice(0, 2));
-            const endHour = parseInt(schedule.reservationTimeEnd.slice(0, 2));
+            let endHour = parseInt(schedule.reservationTimeEnd.slice(0, 2));
 
-            for (let hour = startHour; hour < endHour; hour++) {
+            // Add an extra half hour to the end time
+            const endDate = new Date();
+            endDate.setHours(endHour);
+            endDate.setMinutes(30); // add extra 30 minutes
+            endHour = endDate.getHours();
+
+            for (let hour = startHour; hour <= endHour; hour++) {
+              // <= instead of <
               times.push(`${hour.toString().padStart(2, '0')}:00`);
-              times.push(`${hour.toString().padStart(2, '0')}:30`);
+              if (hour !== endHour) {
+                times.push(`${hour.toString().padStart(2, '0')}:30`);
+              }
             }
           }
 
