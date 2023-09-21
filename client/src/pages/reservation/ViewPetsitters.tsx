@@ -114,7 +114,7 @@ const ViewPetsitters = () => {
     } else if (filterType === '리뷰가 많은 펫시터') {
       const getManyReviewsPetsitters = async () => {
         try {
-          const response = await axios.get(`${apiUrl}/members/search?reveiwCount=0`);
+          const response = await axios.get(`${apiUrl}/members/search?reviewCount=0`);
           setProperPetsitters(response.data.data);
         } catch (error) {
           setProperPetsitters([]);
