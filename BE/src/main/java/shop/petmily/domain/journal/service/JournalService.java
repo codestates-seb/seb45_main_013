@@ -72,7 +72,7 @@ public class JournalService {
     // 케어일지 수정
     public Journal updateJournal(Journal journal, List<MultipartFile> files){
         Journal findJournal = findVerifiedJournal(journal.getJournalId());
-        verifiedJournalOwner(journal.getPetsitter().getPetsitterId(), findJournal);
+        verifiedJournalOwnerByPetsitterId(journal.getPetsitter().getPetsitterId(), findJournal);
 
         if(journal.getBody() != null) findJournal.setBody(journal.getBody());
 
@@ -120,6 +120,12 @@ public class JournalService {
         if (id != verifiedJournal.getReservation().getPetsitter().getMember().getMemberId()
                 && (id != verifiedJournal.getMember().getMemberId())) {
                     throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
+        }
+    }
+
+    public void verifiedJournalOwnerByPetsitterId(long id, Journal verifiedJournal){
+        if (id != verifiedJournal.getReservation().getPetsitter().getPetsitterId()) {
+            throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
     }
 
