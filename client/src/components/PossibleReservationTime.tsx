@@ -232,6 +232,7 @@ const StyledButtonGroup = styled.div`
     width: calc((100% - (3 * 8px)) / 4);
     margin: 0 8px 16px 0;
     text-align: center;
+    white-space: nowrap;
   }
 
   &:last-of-type {
