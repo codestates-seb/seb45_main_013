@@ -18,8 +18,8 @@ const CreateReview = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
-  const [reservation, setReservation] = useState<any>({});
-  const [review, setReview] = useState<any>({});
+  const [reservation, setReservation] = useState<any>();
+  const [review, setReview] = useState<any>();
   const [reviewImages, setReviewImages] = useState([]);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -121,7 +121,7 @@ const CreateReview = () => {
       const response = await axios.patch(`${apiUrl}/reviews/${review?.reviewId}`, formData, {
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
       });
-
+      console.log(response);
       if (response.status === 200) {
         alert('리뷰가 수정되었습니다.');
         navigate(-1);
@@ -178,8 +178,9 @@ const CreateReview = () => {
     }
   }, []);
 
+  // 리뷰 1개 조회
   useEffect(() => {
-    if (reservation.reviewId) {
+    if (reservation?.reviewId) {
       try {
         axios.get(`${apiUrl}/reviews/${reservation.reviewId}`).then((res) => {
           if (res.status === 200) {
@@ -204,6 +205,8 @@ const CreateReview = () => {
     }
   }, [reservation]);
 
+  console.log(review);
+
   return (
     <MainContainer>
       <TitleReservationContainer>
@@ -218,7 +221,7 @@ const CreateReview = () => {
               )}
               <PetSitterInfo>
                 <div>예약번호: {reservation?.reservationId}</div>
-                <div>{reservation.petsitter && reservation?.petsitter.name} 펫시터님</div>
+                <div>{reservation?.petsitter && reservation?.petsitter.name} 펫시터님</div>
               </PetSitterInfo>
             </Info>
             <PetName>{reservation?.pets?.map((pet: any) => <div key={pet.petId}>{pet.name}</div>)}</PetName>
@@ -281,7 +284,7 @@ const CreateReview = () => {
         />
       </TextContainer>
       <ButtonContainer>
-        <button onClick={review ? handleEditSubmit : handleSubmit}>{review ? '후기 수정' : '후기 등록'}</button>
+        <button onClick={review ? handleEditSubmit : handleSubmit}>{review !== 0 ? '후기 수정' : '후기 등록'}</button>
         {isRegisterLoading && (
           <LoadingContainer>
             <Spinner />
