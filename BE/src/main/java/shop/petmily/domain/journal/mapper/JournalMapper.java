@@ -33,8 +33,10 @@ public interface JournalMapper {
         response.setLastModifiedAt(journal.getLastModifiedAt());
         response.setBody(journal.getBody());
         response.setPhotos(journal.getPhotos());
-        response.setPetsitterName(journal.getReservation().getPetsitter().getMember().getName());
-        response.setPetsitterPhoto(journal.getReservation().getPetsitter().getMember().getPhoto());
+        if(journal.getPetsitter() != null) {
+            response.setPetsitterName(journal.getPetsitter().getMember().getName());
+            response.setPetsitterPhoto(journal.getPetsitter().getMember().getPhoto());
+        }
 
         List<String> petNames = new ArrayList<>();
         List<String> petPhotos = new ArrayList<>();

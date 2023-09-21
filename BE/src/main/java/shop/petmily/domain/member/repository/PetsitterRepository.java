@@ -12,6 +12,8 @@ public interface PetsitterRepository extends JpaRepository<Petsitter, Long> {
 
     Optional<Petsitter> findByMember(Member member);
 
+    Petsitter findByMember_MemberId(Long memberId);
+
 //    @Query("SELECT m FROM Member m WHERE m.petsitterBoolean = true")
         @Query("SELECT DISTINCT m FROM Member m " +
         "JOIN m.petsitter p " +
