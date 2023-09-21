@@ -7,6 +7,7 @@ import LoadingFallback from '@components/LoadingFallback';
 import NavHeader from '@components/headers/NavHeader';
 
 const Home = lazy(() => import('@pages/main/Home'));
+const PetSitterHome = lazy(() => import('@pages/main/PetSitterHome'));
 const Login = lazy(() => import('@pages/login/Login'));
 const Signup = lazy(() => import('@pages/login/Signup'));
 const Reviews = lazy(() => import('@pages/main/Reviews'));
@@ -73,6 +74,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<AddNavHeaderLayout />}>
                 <Route path="" element={<Home />} />
+                <Route path="/petsitter/" element={<PetSitterHome />} />
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="mypage" element={<Mypage />} />
                 <Route path="reservation" element={<Reservation />} />
