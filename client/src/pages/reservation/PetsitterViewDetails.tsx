@@ -9,6 +9,8 @@ import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { IUser } from 'store/userSlice';
 import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import Divider from '@mui/material/Divider';
 
 import Reviews from '@components/Reviews';
 import PossibleReservationTime from '@components/PossibleReservationTime';
@@ -245,7 +247,7 @@ const PetsitterViewDetails = () => {
         </TabContentContainer>
         {selectedDates && selectedTimes && (
           <ConfirmationSection>
-            <ConfirmationText>예약확인</ConfirmationText>
+            <Divider>선택 내역</Divider>
             <ConfirmationDate>
               예약 날짜: {selectedDates ? selectedDates.format('YYYY-MM-DD') : '날짜를 선택하세요'}
             </ConfirmationDate>
@@ -462,23 +464,17 @@ const ConfirmationSection = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  margin-bottom: 16px;
-`;
-
-const ConfirmationText = styled.div`
-  color: ${(props) => props.theme.colors.white};
-  background-color: ${(props) => props.theme.colors.mainBlue};
-  margin-bottom: 48px;
-  padding: 12px;
-  border-radius: 8px;
+  gap: 20px;
+  border-radius: 0 0 8px 8px;
 `;
 
 const ConfirmationDate = styled.div`
-  margin-bottom: 16px;
+  margin-top: 12px;
+  margin-bottom: 8px;
 `;
 
 const ConfirmationTime = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 `;
 
 const StyledCancelButton = styled(Button)``;
