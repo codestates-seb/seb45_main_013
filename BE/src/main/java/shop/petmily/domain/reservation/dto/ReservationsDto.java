@@ -42,6 +42,8 @@ public class ReservationsDto {
         private String petsitterPhoto;
 
         private List<ReservationsDto.PetResponse> pets;
+
+        private Long journalId;
     }
 
     @Getter
@@ -74,6 +76,8 @@ public class ReservationsDto {
         private String memberPhoto;
 
         private List<ReservationsDto.PetResponse> pets;
+
+        private Long journalId;
     }
 
     @Getter

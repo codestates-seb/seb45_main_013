@@ -113,6 +113,9 @@ public class JournalService {
         }
     }
 
+    public Long findJournalIdByReservationId(Long reservationId){
+        return journalRepository.findJournalIdByReservationId(reservationId);
+    }
 //     케어일지 삭제(펫시터만)
 //    public void deleteJournal(long journalId, long petsitterId) {
 //        Journal findJournal = findVerifiedJournal(journalId);
