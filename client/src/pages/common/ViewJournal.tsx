@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { getCookieValue } from 'hooks/getCookie';
 import AddIcon from '@mui/icons-material/Add';
+import { useParams } from 'react-router-dom';
 
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -35,6 +36,8 @@ interface JournalImgProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 const ViewJournal = () => {
   const [journal, setJournal] = useState<JournalType | null>(null);
   const [showAll, setShowAll] = useState(false);
+
+  const { journalId } = useParams();
 
   const toggleAvatar = () => {
     setShowAll(!showAll);
@@ -74,7 +77,7 @@ const ViewJournal = () => {
 
     const fetchJournal = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/journals/14`, {
+        const response = await axios.get(`${apiUrl}/journals/${journalId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
