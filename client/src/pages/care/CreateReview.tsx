@@ -212,7 +212,7 @@ const CreateReview = () => {
           <FirstLine>
             <Info>
               {reservation?.photo ? (
-                <Photo src={reservation.member.photo.replace('https://bucketUrl', bucketUrl)} alt="petsitter" />
+                <Photo src={reservation.petsitter.photo.replace('https://bucketUrl', bucketUrl)} alt="petsitter" />
               ) : (
                 <DefaultImg src="/imgs/User.svg" alt="default img" />
               )}

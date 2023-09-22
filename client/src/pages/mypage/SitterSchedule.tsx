@@ -197,7 +197,7 @@ const SitterSchedule = () => {
     data.possibleTimeStart = possibleStartTime?.format('HH:mm:ss') || '';
     data.possibleTimeEnd = possibleEndTime?.format('HH:mm:ss') || '';
     data.possibleLocation = [possibleLocation];
-    console.log(data);
+
     try {
       const response = await axios.patch(`${apiUrl}/members/petsitters/${memberId}`, data, {
         headers: {

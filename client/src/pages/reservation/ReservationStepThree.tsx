@@ -58,7 +58,7 @@ const ReservationStepFour = () => {
 
   //  펫시터 정보 가져오기
   const { petsitterId } = useSelector((state: IReservation) => state.reservation);
-  console.log(petsitterId);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
