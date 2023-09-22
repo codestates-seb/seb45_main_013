@@ -121,7 +121,6 @@ const CreateReview = () => {
       const response = await axios.patch(`${apiUrl}/reviews/${review?.reviewId}`, formData, {
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
       });
-      console.log(response);
       if (response.status === 200) {
         alert('리뷰가 수정되었습니다.');
         navigate(-1);

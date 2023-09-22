@@ -75,7 +75,7 @@ const CreateJournal = () => {
       const response = await axios.post(`${apiUrl}/journals`, formData, {
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'multipart/form-data' },
       });
-      if (response.data.status === 201) {
+      if (response.data.journalId) {
         alert('일지가 등록 되었습니다.');
         navigate('/cares');
       }
@@ -89,7 +89,7 @@ const CreateJournal = () => {
               const response = await axios.post(`${apiUrl}/journals`, formData, {
                 headers: { Authorization: `Bearer ${newAccessToken}`, 'Content-Type': 'multipart/form-data' },
               });
-              if (response) {
+              if (response.data.journalId) {
                 alert('일지가 등록 되었습니다.');
                 navigate('/cares');
               }
@@ -173,11 +173,12 @@ const CreateJournal = () => {
               Authorization: `Bearer ${accessToken}`,
             },
           });
+
           setJournal(response.data);
           setJournalText(response.data.body);
 
-          if (response.data.petPhotos) {
-            const modifiedJournalImages = response.data.petPhotos.map((photo: any) => {
+          if (response.data.photos) {
+            const modifiedJournalImages = response.data.photos.map((photo: any) => {
               if (photo.includes('https://bucketUrl')) {
                 return photo.replace('https://bucketUrl', bucketUrl);
               }
@@ -195,6 +196,14 @@ const CreateJournal = () => {
                 },
               });
               setJournal(response.data);
+              if (response.data.photos) {
+                const modifiedJournalImages = response.data.photos.map((photoUrl: any) => {
+                  if (photoUrl.includes('https://bucketUrl')) {
+                    return photoUrl.replace('https://bucketUrl', bucketUrl);
+                  }
+                });
+                setJournalImages(modifiedJournalImages);
+              }
             }
           } catch (refreshError) {
             console.error(refreshError);

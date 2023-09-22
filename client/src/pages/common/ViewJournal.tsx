@@ -89,7 +89,6 @@ const ViewJournal = () => {
         setJournal(response.data);
 
         if (response.data) {
-          console.log(response.data);
           setJournal(response.data);
         }
       } catch (error) {
@@ -201,22 +200,22 @@ const PetImage = styled.img`
 `;
 
 const Name = styled.div`
+  color: #279eff;
   font-weight: bolder;
   font-size: 18px;
-  color: #279eff;
 `;
 
 const DateWrapper = styled.div`
-  padding-top: 8px;
   display: flex;
   flex-direction: column;
+  padding-top: 8px;
 `;
 
 const Date = styled.div`
+  margin-bottom: 4px;
   color: #959595;
   font-weight: 800;
   font-size: 14px;
-  margin-bottom: 4px;
 `;
 
 const StyledCarousel = styled(Carousel)`
@@ -266,6 +265,7 @@ const SitterImage = styled.img`
   width: 30px;
   height: 30px;
   margin-right: 8px;
+
   /* border-radius: 50%; */
 `;
 
@@ -275,6 +275,7 @@ const Content = styled.div`
   margin-top: 8px;
   line-height: 1.5;
   word-spacing: 0.2px;
+
   /* letter-spacing: 0.2px; */
 `;
 export default ViewJournal;
