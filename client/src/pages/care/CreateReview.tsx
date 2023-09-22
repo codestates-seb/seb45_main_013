@@ -188,7 +188,7 @@ const CreateReview = () => {
             setReviewText(res.data.body);
             setStar(res.data.star);
 
-            const photos = res.data.photos;
+            const photos = res.data.reviewPhotos;
             if (photos) {
               const modifiedReviewImages = photos.map((photoUrl: any) => {
                 if (photoUrl.includes('https://bucketUrl')) {
@@ -204,8 +204,6 @@ const CreateReview = () => {
       }
     }
   }, [reservation]);
-
-  console.log(review);
 
   return (
     <MainContainer>

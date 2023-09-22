@@ -108,8 +108,6 @@ const CareCard = ({ reservation }: any) => {
     }
   };
 
-  console.log(reservation);
-
   return (
     <CareCardContainer>
       <FirstLine>

@@ -37,7 +37,7 @@ const ViewJournal = () => {
   const [journal, setJournal] = useState<JournalType | null>(null);
   const [showAll, setShowAll] = useState(false);
 
-  const { journalId } = useParams();
+  const { journalId } = useParams<{ journalId: string }>();
 
   const toggleAvatar = () => {
     setShowAll(!showAll);
