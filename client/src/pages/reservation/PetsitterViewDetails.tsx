@@ -70,9 +70,9 @@ const PetsitterViewDetails = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(setPetsitterId(petsitterId));
-  }, [petsitterId, dispatch]);
+  // useEffect(() => {
+  //   dispatch(setPetsitterId(petsitterId));
+  // }, [petsitterId, dispatch]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState(NavItem[0].link);
@@ -143,6 +143,7 @@ const PetsitterViewDetails = () => {
         pets,
       }),
     );
+    dispatch(setPetsitterId(petsitterId));
 
     navigate('/reservation/step3');
   };

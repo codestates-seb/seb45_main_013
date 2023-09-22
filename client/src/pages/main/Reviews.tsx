@@ -245,7 +245,7 @@ const StyledCarousel = styled(Carousel)`
 `;
 
 const ImageWrapper = styled.div`
-  border: 1px solid #279eff;
+  /* border: 1px solid #279eff; */
   border-radius: 8px;
   overflow: hidden;
   box-shadow: ${({ theme }) => theme.shadow.dp04};
