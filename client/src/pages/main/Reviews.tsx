@@ -141,8 +141,8 @@ const ReviewPage = styled.div`
 
 const Title = styled.div`
   margin-top: 24px;
-  font-size: ${({ theme }) => theme.fontSize.s18h27};
   font-weight: ${({ theme }) => theme.fontWeights.bold};
+  font-size: ${({ theme }) => theme.fontSize.s18h27};
 `;
 
 const ReviewCard = styled.div`
@@ -245,9 +245,11 @@ const StyledCarousel = styled(Carousel)`
 `;
 
 const ImageWrapper = styled.div`
-  /* border: 1px solid #279eff; */
+
   border-radius: 8px;
+
   overflow: hidden;
+  border-radius: 8px;
   box-shadow: ${({ theme }) => theme.shadow.dp04};
 `;
 

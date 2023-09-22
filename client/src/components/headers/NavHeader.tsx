@@ -52,6 +52,7 @@ const NavHeader = () => {
     deleteCookie('refresh_token');
     dispatch(deleteUser());
 
+    navigate('/');
     alert('로그아웃 되었습니다.');
     window.location.reload();
   };

@@ -37,8 +37,6 @@ const Search = () => {
     } catch (error) {}
   }, []);
 
-  console.log(searchTerm);
-
   return (
     <SearchContainer>
       <SearchHeader>

@@ -52,14 +52,13 @@ const MainContainer = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  margin-top: 36px;
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => props.theme.colors.mainBlue};
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  background-color: ${(props) => props.theme.colors.mainBlue};
 `;
-
 const ContactUs = styled.div`
   color: ${(props) => props.theme.colors.white};
   ${(props) => props.theme.fontSize.s16h24};

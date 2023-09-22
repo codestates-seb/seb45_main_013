@@ -4,9 +4,10 @@ import AvatarGroup from '@mui/joy/AvatarGroup';
 import { Avatar } from '@mui/material';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { getCookieValue } from 'hooks/getCookie';
 import AddIcon from '@mui/icons-material/Add';
+import { useParams } from 'react-router-dom';
 
 const BucketUrl = process.env.REACT_APP_BUCKET_URL || '';
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -36,8 +37,14 @@ const ViewJournal = () => {
   const [journal, setJournal] = useState<JournalType | null>(null);
   const [showAll, setShowAll] = useState(false);
 
+  const { journalId } = useParams<{ journalId: string }>();
+
   const toggleAvatar = () => {
     setShowAll(!showAll);
+  };
+
+  const onErrorImg = (e: SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = '/imgs/Signupforpetsitter.png';
   };
 
   // journalId 수정
@@ -74,7 +81,7 @@ const ViewJournal = () => {
 
     const fetchJournal = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/journals/14`, {
+        const response = await axios.get(`${apiUrl}/journals/${journalId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -82,7 +89,6 @@ const ViewJournal = () => {
         setJournal(response.data);
 
         if (response.data) {
-          console.log(response.data);
           setJournal(response.data);
         }
       } catch (error) {
@@ -132,14 +138,15 @@ const ViewJournal = () => {
               ? journal.photos.map((photo, index) => (
                   <ImgWrapper key={index}>
                     <JournalImg
-                      src={photo ? photo.replace(/https:\/\/bucketUrl/g, BucketUrl) : journalDefaultImage}
+                      src={photo ? photo.replace(/https:\/\/bucketUrl/g, BucketUrl) : '/imgs/Signupforpetsitter.png'}
                       alt="journal photo"
+                      onError={onErrorImg}
                     />
                   </ImgWrapper>
                 ))
               : [
                   <ImgWrapper key="default">
-                    <JournalImg src="{journalDefaultImage}" alt="default journal" isDefault={true} />
+                    <JournalImg src="/imgs/Signupforpetsitter.png" alt="default journal" isDefault={true} />
                   </ImgWrapper>,
                 ]}
           </StyledCarousel>
@@ -193,22 +200,22 @@ const PetImage = styled.img`
 `;
 
 const Name = styled.div`
+  color: #279eff;
   font-weight: bolder;
   font-size: 18px;
-  color: #279eff;
 `;
 
 const DateWrapper = styled.div`
-  padding-top: 8px;
   display: flex;
   flex-direction: column;
+  padding-top: 8px;
 `;
 
 const Date = styled.div`
+  margin-bottom: 4px;
   color: #959595;
   font-weight: 800;
   font-size: 14px;
-  margin-bottom: 4px;
 `;
 
 const StyledCarousel = styled(Carousel)`
@@ -258,6 +265,7 @@ const SitterImage = styled.img`
   width: 30px;
   height: 30px;
   margin-right: 8px;
+
   /* border-radius: 50%; */
 `;
 
@@ -267,6 +275,7 @@ const Content = styled.div`
   margin-top: 8px;
   line-height: 1.5;
   word-spacing: 0.2px;
+
   /* letter-spacing: 0.2px; */
 `;
 export default ViewJournal;

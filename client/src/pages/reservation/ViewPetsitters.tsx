@@ -162,7 +162,7 @@ const ViewPetsitters = () => {
               )}
               <HotFaceBox>
                 <HotPetsitterReview>
-                  {petsitter.body.length > 20
+                  {petsitter.body?.length > 20
                     ? petsitter.body.substring(0, 19) + '\n' + petsitter.body.substring(19)
                     : petsitter.body}
                 </HotPetsitterReview>
@@ -186,7 +186,7 @@ const ViewPetsitters = () => {
 
       <Box>
         {Array.isArray(properPetsitters) &&
-          properPetsitters.length > 0 &&
+          properPetsitters?.length > 0 &&
           properPetsitters.map((petsitter: any) => <PetsitterCard key={petsitter.petsitterId} petsitter={petsitter} />)}
       </Box>
 
@@ -205,9 +205,6 @@ const ViewPetsitters = () => {
 
           <ListItem onClick={() => handleFilterButtonClick('전체 펫시터')}>
             <ListItemText primary="전체 펫시터" sx={{ ml: 5 }} />
-          </ListItem>
-          <ListItem onClick={() => handleFilterButtonClick('내가 찜한 펫시터')}>
-            <ListItemText primary="내가 찜한 펫시터" sx={{ ml: 5 }} />
           </ListItem>
           <ListItem onClick={() => handleFilterButtonClick('별점이 높은 펫시터')}>
             <ListItemText primary="별점이 높은 펫시터" sx={{ ml: 5 }} />

@@ -9,7 +9,6 @@ import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { IUser } from 'store/userSlice';
 import Button from '@mui/material/Button';
-import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
 
 import Reviews from '@components/Reviews';
@@ -63,23 +62,14 @@ const convertTo12Hour = (time: string) => {
 
 const PetsitterViewDetails = () => {
   const navigate = useNavigate();
-
-  // 리덕스 펫시터 Id 저장
-
-  const { petsitterId } = useParams();
-
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(setPetsitterId(petsitterId));
-  // }, [petsitterId, dispatch]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState(NavItem[0].link);
   const [selectedDates, setSelectedDates] = useState<dayjs.Dayjs | null>(null);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
-  const [petsitterData, setPetsitterData] = useState<any>({});
+  const [petsitterData, setPetsitterData] = useState<any>();
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
   const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId, pets } = useSelector(
@@ -105,7 +95,7 @@ const PetsitterViewDetails = () => {
             },
           },
         );
-        console.log(response.data.data);
+
         setIsBookmarked(response.data.data);
       } catch (error) {
         console.error(error);
@@ -173,7 +163,6 @@ const PetsitterViewDetails = () => {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-          console.log(response.data);
           setIsBookmarked(response.data);
         } catch (error) {
           console.error(error);
@@ -198,20 +187,20 @@ const PetsitterViewDetails = () => {
       </ImgContainer>
       <CareablePetContainer>
         <CareablePet>
-          {(petsitterData.possiblePetType === 'PET_ALL' || petsitterData.possiblePetType === 'PET_DOG') && (
+          {(petsitterData?.possiblePetType === 'PET_ALL' || petsitterData?.possiblePetType === 'PET_DOG') && (
             <img src="/icons/DogIcon.svg" alt="dogIcon" />
           )}
-          {(petsitterData.possiblePetType === 'PET_ALL' || petsitterData.possiblePetType === 'PET_CAT') && (
+          {(petsitterData?.possiblePetType === 'PET_ALL' || petsitterData?.possiblePetType === 'PET_CAT') && (
             <img src="/icons/CatIcon.svg" alt="catIcon" />
           )}
         </CareablePet>
       </CareablePetContainer>
       <PetsitterTextContainer>
         <LogoImg src="/imgs/Logo.svg" alt="Logo" />
-        <PetsitterName>{petsitterData.name}</PetsitterName>
+        <PetsitterName>{petsitterData?.name}</PetsitterName>
       </PetsitterTextContainer>
       <Introbox>
-        <PetsitterIntroText>{petsitterData.body}</PetsitterIntroText>
+        <PetsitterIntroText>{petsitterData?.body}</PetsitterIntroText>
       </Introbox>
       <CareerContainer>
         <CareerText>{careerone()}</CareerText>
@@ -219,7 +208,7 @@ const PetsitterViewDetails = () => {
       </CareerContainer>
       <BookmarkContainer>
         <RatingImg src="/imgs/Star.svg" alt="ratingImg" />
-        {petsitterData.star}
+        {petsitterData?.star}
         <MiddleLineImg src="/imgs/MiddleLine.svg" alt="middleLine" />
         <StyledButton variant="text" onClick={handleBookmarkClick}>
           <BookmarkIcon src={isBookmarked ? '/icons/Bookmark.svg' : '/imgs/BeforeBookmark.svg'} alt="bookmarkIcon" />

@@ -12,7 +12,6 @@ import { IReservation, addBody, deleteReservation } from 'store/reservationSlice
 import { IUser } from 'store/userSlice';
 import { getCookieValue } from 'hooks/getCookie';
 import axios from 'axios';
-import { log } from 'console';
 import { useNavigate } from 'react-router';
 
 const apiUrl = process.env.REACT_APP_API_URL;
