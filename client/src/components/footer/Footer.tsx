@@ -47,14 +47,18 @@ const Footer = () => {
 export default Footer;
 
 const MainContainer = styled.div`
+  width: 100%;
+  height: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   background-color: ${(props) => props.theme.colors.mainBlue};
-  margin-top: 20px;
   justify-content: center;
   align-items: center;
 `;
-
 const ContactUs = styled.div`
   color: ${(props) => props.theme.colors.white};
   ${(props) => props.theme.fontSize.s16h24};

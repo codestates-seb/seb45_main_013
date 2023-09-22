@@ -4,7 +4,7 @@ import AvatarGroup from '@mui/joy/AvatarGroup';
 import { Avatar } from '@mui/material';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { getCookieValue } from 'hooks/getCookie';
 import AddIcon from '@mui/icons-material/Add';
 import { useParams } from 'react-router-dom';
@@ -41,6 +41,10 @@ const ViewJournal = () => {
 
   const toggleAvatar = () => {
     setShowAll(!showAll);
+  };
+
+  const onErrorImg = (e: SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = '/imgs/Signupforpetsitter.png';
   };
 
   // journalId 수정
@@ -135,14 +139,15 @@ const ViewJournal = () => {
               ? journal.photos.map((photo, index) => (
                   <ImgWrapper key={index}>
                     <JournalImg
-                      src={photo ? photo.replace(/https:\/\/bucketUrl/g, BucketUrl) : journalDefaultImage}
+                      src={photo ? photo.replace(/https:\/\/bucketUrl/g, BucketUrl) : '/imgs/Signupforpetsitter.png'}
                       alt="journal photo"
+                      onError={onErrorImg}
                     />
                   </ImgWrapper>
                 ))
               : [
                   <ImgWrapper key="default">
-                    <JournalImg src="{journalDefaultImage}" alt="default journal" isDefault={true} />
+                    <JournalImg src="/imgs/Signupforpetsitter.png" alt="default journal" isDefault={true} />
                   </ImgWrapper>,
                 ]}
           </StyledCarousel>

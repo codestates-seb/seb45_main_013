@@ -108,6 +108,8 @@ const CareCard = ({ reservation }: any) => {
     }
   };
 
+  console.log(reservation);
+
   return (
     <CareCardContainer>
       <FirstLine>
@@ -167,7 +169,7 @@ const CareCard = ({ reservation }: any) => {
             </>
           ) : petsitterBoolean && reservation.progress === 'FINISH_CARING' ? (
             <>
-              <ActiveLink to={`/cares/journal/${reservation.journalId}`}>케어일지</ActiveLink>
+              <ActiveLink to={`/cares/${reservation.reservationId}/journal`}>케어일지</ActiveLink>
             </>
           ) : null}
           {!petsitterBoolean && reservation.progress == 'RESERVATION_REQUEST' ? (
