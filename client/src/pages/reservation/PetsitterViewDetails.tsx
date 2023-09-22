@@ -9,7 +9,6 @@ import { getCookieValue } from 'hooks/getCookie';
 import { refreshAccessToken } from 'hooks/refreshAcessToken';
 import { IUser } from 'store/userSlice';
 import Button from '@mui/material/Button';
-import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
 
 import Reviews from '@components/Reviews';
