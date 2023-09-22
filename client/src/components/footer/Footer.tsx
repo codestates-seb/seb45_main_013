@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const Footer = () => {
   return (
     <MainContainer>
-      <ContactUs>ContactUs</ContactUs>
+      <ContactUs>Contact Us</ContactUs>
       <MemberContainer>
         <BE>
           BE
@@ -47,15 +47,15 @@ const Footer = () => {
 export default Footer;
 
 const MainContainer = styled.div`
+  width: 100%;
+  height: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
   margin-top: auto;
   background-color: ${(props) => props.theme.colors.mainBlue};
 `;
@@ -63,7 +63,8 @@ const ContactUs = styled.div`
   color: ${(props) => props.theme.colors.white};
   ${(props) => props.theme.fontSize.s16h24};
   font-weight: bold;
-  margin: 20px 0 12px;
+  margin-top: 20px;
+  margin-bottom: 12px;
 `;
 
 const MemberContainer = styled.div`

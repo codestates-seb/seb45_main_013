@@ -14,6 +14,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { styled as styledMui } from '@mui/material/styles';
 import { IUser } from 'store/userSlice';
 import Footer from '@components/footer/Footer';
+import HomeAd from '@components/HomeAd';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const bucketUrl = process.env.REACT_APP_BUCKET_URL;
@@ -83,20 +84,8 @@ const Home = () => {
   return (
     <>
       <HomeContainer>
-        <Helmet>
-          <title>Petmily - Home</title>
-          <meta name="description" content="펫시터 방문 돌봄 서비스, 우리는 펫밀리입니다." />
-          <link rel="canonical" href="https://petmily.shop" />
-          <meta property="og:title" content="Petmily - Home" />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://petmily.shop" />
-          <meta property="og:description" content="펫시터를 찾으시나요? 지금 바로 만나보세요." />
-          <meta property="og:image" content="https://petmily.shop/imgs/Logo.svg" />
-          <meta property="og:image:secure_url" content="https://petmily.shop/imgs/Logo.svg" />
-          <meta property="og:image:type" content="image/svg+xml" />
-        </Helmet>
-        <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
         {/* <CustomLink to={'/search'}>펫시터 검색</CustomLink> */}
+        <HomeAd />
         <LinkContainer>
           <PetsitterLink onClick={() => navigate('/petsitters')}>
             <StyledLink>펫시터 보기</StyledLink>
@@ -105,10 +94,12 @@ const Home = () => {
             <StyledLink>펫시터QnA</StyledLink>
           </PetsitterLink>
         </LinkContainer>
-        <AdSubContainer>
+        {/* <AdSubContainer>
           <AdSubText>{'첫 만남\n 50% 할인 쿠폰'}</AdSubText>
           <img src="/imgs/HomeSubAd.svg" alt="Advertising" />
-        </AdSubContainer>
+        </AdSubContainer> */}
+        <img src="/imgs/HomeTitleAd.svg" alt="Advertising" width="100%" />
+
         <OftenPetsitterText>내가 자주 이용하는 펫시터</OftenPetsitterText>
         <OftenPetsitterContainer>
           {favoritePetsitter ? (
@@ -197,6 +188,7 @@ const HomeContainer = styled.div`
   width: 100%;
   margin-top: 16px;
   padding: 12px;
+  gap: 20px;
 `;
 
 const CustomLink = styled(Link)`
@@ -232,6 +224,11 @@ const PetsitterLink = styled.a`
 const StyledLink = styled.div`
   text-decoration: none;
   color: inherit;
+  font-weight: ${(props) => props.theme.fontWeights.extrabold};
+
+  &:hover {
+    color: #279eff;
+  }
 `;
 
 const AdSubContainer = styled.div`
@@ -395,7 +392,6 @@ const ReviewImg = styled.img`
 `;
 
 const RealtimeReviewContainer = styled.div`
-  margin-top: 16px;
   box-shadow: ${(props) => props.theme.shadow.dp01};
   border-radius: 8px;
 `;
@@ -413,7 +409,7 @@ const CustomCarousel = styled(Carousel)`
   }
 
   .control-dots {
-    bottom: -4px !important;
+    bottom: -8px !important;
   }
 
   .dot {

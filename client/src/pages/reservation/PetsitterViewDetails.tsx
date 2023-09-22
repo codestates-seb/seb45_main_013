@@ -63,7 +63,6 @@ const convertTo12Hour = (time: string) => {
 const PetsitterViewDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { petsitterId } = useParams();
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState(NavItem[0].link);
@@ -134,6 +133,7 @@ const PetsitterViewDetails = () => {
         pets,
       }),
     );
+    dispatch(setPetsitterId(petsitterId));
 
     navigate('/reservation/step3');
   };
