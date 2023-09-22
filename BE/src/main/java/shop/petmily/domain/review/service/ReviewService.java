@@ -1,6 +1,7 @@
 package shop.petmily.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.petmily.domain.member.entity.Petsitter;
+import shop.petmily.domain.member.repository.PetsitterRepository;
 import shop.petmily.domain.member.service.PetsitterService;
 import shop.petmily.domain.reservation.entity.Progress;
 import shop.petmily.domain.reservation.entity.Reservation;
@@ -20,7 +22,9 @@ import shop.petmily.global.exception.ExceptionCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,11 +34,21 @@ public class ReviewService {
     private final ReservationUtils reservationUtils;
     private final PetsitterService petsitterService;
     private final S3UploadService uploadService;
+    private final PetsitterRepository petsitterRepository;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String originBucketName;
+
 
     // 후기 등록
     public Review createReview(Review review, List<MultipartFile> files){
         Reservation reservation = reservationUtils.verificationReservation(review.getReservation().getReservationId());
         review.setReservation(reservation);
+
+        if (!Objects.equals(reservation.getMember().getMemberId(), review.getMember().getMemberId())){
+            throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
+        }
+        review.setMember(reservation.getMember());
 
         if (reviewRepository.existsByReservation(reservation)) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_ALREADY_EXISTS);
@@ -72,7 +86,10 @@ public class ReviewService {
         if(review.getBody() != null) findReview.setBody(review.getBody());
 
         if(review.getPhotos().size() != 0) {
-            findReview.setPhotos(review.getPhotos());
+            List<String> replacedPhoto = review.getPhotos().stream()
+                    .map(photo -> photo.replace(originBucketName, "bucketUrl"))
+                    .collect(Collectors.toList());
+            findReview.setPhotos(replacedPhoto);
         } else {
             List<String> photos = new ArrayList<>();
             findReview.setPhotos(photos);
