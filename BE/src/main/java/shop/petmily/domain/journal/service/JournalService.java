@@ -1,6 +1,7 @@
 package shop.petmily.domain.journal.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,9 @@ import shop.petmily.global.exception.ExceptionCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,16 +37,24 @@ public class JournalService {
     private final S3UploadService uploadService;
     private final PetsitterRepository petsitterRepository;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String originBucketName;
+
     // 케어일지 등록
     public Journal createJournal(Journal journal, List<MultipartFile> files){
         Reservation verifiedreservation = reservationUtils.verificationReservation(journal.getReservation().getReservationId());
         journal.setReservation(verifiedreservation);
         journal.setMember(verifiedreservation.getMember());
-        journal.setPetsitter(petsitterRepository.findByMember_MemberId(journal.getPetsitter().getPetsitterId()));
 
-        if(journal.getPetsitter().getPetsitterId() != verifiedreservation.getPetsitter().getPetsitterId()){
+        System.out.println("여기"+verifiedreservation.getPetsitter().getMember().getMemberId());
+        System.out.println("여기"+journal.getPetsitter().getPetsitterId());
+
+
+        if(!Objects.equals(journal.getPetsitter().getPetsitterId(), verifiedreservation.getPetsitter().getMember().getMemberId())){
             throw new BusinessLogicException(ExceptionCode.NOT_ALLOW_MEMBER);
         }
+
+        journal.setPetsitter(journal.getReservation().getPetsitter());
 
         if (journalRepository.existsByReservation(verifiedreservation)) {
             throw new BusinessLogicException(ExceptionCode.JOURNAL_ALREADY_EXISTS);
@@ -77,7 +88,10 @@ public class JournalService {
         if(journal.getBody() != null) findJournal.setBody(journal.getBody());
 
         if(journal.getPhotos().size() != 0) {
-            findJournal.setPhotos(journal.getPhotos());
+            List<String> replacedPhoto = journal.getPhotos().stream()
+                    .map(photo -> photo.replace(originBucketName, "bucketUrl"))
+                    .collect(Collectors.toList());
+            findJournal.setPhotos(replacedPhoto);
         } else {
             List<String> photos = new ArrayList<>();
             findJournal.setPhotos(photos);
