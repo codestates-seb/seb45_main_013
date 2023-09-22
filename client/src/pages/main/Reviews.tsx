@@ -245,7 +245,6 @@ const StyledCarousel = styled(Carousel)`
 `;
 
 const ImageWrapper = styled.div`
-
   border-radius: 8px;
 
   overflow: hidden;

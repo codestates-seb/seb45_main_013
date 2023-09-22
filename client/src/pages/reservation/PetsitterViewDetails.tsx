@@ -72,7 +72,7 @@ const PetsitterViewDetails = () => {
   const [petsitterData, setPetsitterData] = useState<any>();
 
   const { isLogin, memberId, petsitterBoolean } = useSelector((state: IUser) => state.user);
-  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId, pets } = useSelector(
+  const { reservationDay, reservationTimeStart, reservationTimeEnd, address, petId, pets, petsitterId } = useSelector(
     (state: IReservation) => state.reservation,
   );
 
