@@ -1,0 +1,75 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
+      settings:
+        web-allow-others: true
+  datasource:
+    # RDS 관련설정
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYRDS_SECRET_URL}:3306/mainproject
+    username: ${MYRDS_SECRET_ID}
+    password: ${MYRDS_SECRET_PASSWORD}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+#    url: jdbc:h2:mem:test
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#  sql:
+#    init:
+#      data-locations: classpath*:db/h2/data.sql
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${G_CLIENT_ID}                   # 시스템 환경 변수
+            client-secret: ${G_CLIENT_SECRET}           # 시스템 환경 변수
+            scope:
+              - email
+              - profile
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+cloud:
+  aws:
+    s3:
+      bucket: ${MAINPROJECT_S3_NAME}
+    credentials:
+      access-key: ${MAINPROJECT_S3_ACCESSKEY}
+      secret-key: ${MAINPROJECT_S3_SECRETKEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
+server:
+  servlet:
+    encoding:
+      force-response: true
+jwt:
+  key: ${JWT_SECRET_KEY}                             # 시스템 환경 변수
+  access-token-expiration-minutes: 3600              # 30분
+  refresh-token-expiration-minutes: 86400            # 1일
+  main_ec2_url : ${MAIN_EC2_URL}
+  main_buket_url : ${MAIN_BUKET_URL}
