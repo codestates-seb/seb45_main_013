@@ -123,21 +123,21 @@ const PetsitterViewDetails = () => {
     }
   };
 
-  // const handleOnSubmitButtonClick = () => {
-  //   // 선택된 날짜와 시간을 스토어에 저장
-  //   dispatch(
-  //     setReservation({
-  //       reservationDay: selectedDates ? selectedDates.format('YYYY-MM-DD') : '',
-  //       reservationTimeStart: selectedTimes.length > 0 ? selectedTimes[0] : '',
-  //       reservationTimeEnd: selectedTimes.length > 0 ? selectedTimes[selectedTimes.length - 1] : '',
-  //       address,
-  //       petId,
-  //       pets,
-  //     }),
-  //   );
+  const handleOnSubmitButtonClick = () => {
+    // 선택된 날짜와 시간을 스토어에 저장
+    dispatch(
+      setReservation({
+        reservationDay: selectedDates ? selectedDates.format('YYYY-MM-DD') : '',
+        reservationTimeStart: selectedTimes.length > 0 ? selectedTimes[0] : '',
+        reservationTimeEnd: selectedTimes.length > 0 ? selectedTimes[selectedTimes.length - 1] : '',
+        address,
+        petId,
+        pets,
+      }),
+    );
 
-  //   navigate('/reservation/step3');
-  // };
+    navigate('/reservation/step3');
+  };
   //펫시터 데이터 가져오기
   useEffect(() => {
     const fetchPetsitterData = async () => {
@@ -236,7 +236,7 @@ const PetsitterViewDetails = () => {
           )}
           {activeTab === '/reviews' && <Reviews />}
         </TabContentContainer>
-        {/* {selectedDates && selectedTimes && (
+        {selectedDates && selectedTimes && (
           <ConfirmationSection>
             <Divider>선택 내역</Divider>
             <ConfirmationDate>
@@ -254,9 +254,9 @@ const PetsitterViewDetails = () => {
               취소
             </StyledCancelButton>
           </ConfirmationSection>
-        )} */}
+        )}
       </ViewDetailsContainer>
-      {/* <ButtonContainer>
+      <ButtonContainer>
         <StyledSubmitButton
           type="submit"
           disabled={!selectedDates || selectedTimes.length === 0}
@@ -264,7 +264,7 @@ const PetsitterViewDetails = () => {
         >
           다음단계
         </StyledSubmitButton>
-      </ButtonContainer> */}
+      </ButtonContainer>
     </MainContainer>
   );
 };
