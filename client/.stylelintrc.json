@@ -1,0 +1,82 @@
+{
+  "extends": [
+    "stylelint-order",
+    "stylelint-prettier",
+    "stylelint-config-standard",
+    "stylelint-config-styled-components",
+    "stylelint-processor-styled-components"
+  ],
+  "processors": ["stylelint-processor-styled-components"],
+  "plugins": ["stylelint-order"],
+  "overrides": [
+    {
+      "files": ["**/*.tsx"],
+      "customSyntax": "postcss-styled-syntax"
+    }
+  ],
+  "rules": {
+    "order/order": ["custom-properties", "declarations"],
+    "order/properties-order": [
+      {
+        "groupName": "Box",
+        "emptyLineBefore": "always",
+        "noEmptyLineBetween": true,
+        "properties": [
+          "display",
+          "flex-direction",
+          "align-items",
+          "justify-content",
+          "flex",
+          "visibility",
+          "overflow",
+          "float",
+          "clear",
+          "position",
+          "top",
+          "right",
+          "bottom",
+          "left",
+          "z-index",
+          "width",
+          "height",
+          "margin",
+          "margin-top",
+          "margin-right",
+          "margin-bottom",
+          "margin-left",
+          "padding",
+          "padding-top",
+          "padding-right",
+          "padding-bottom",
+          "padding-left",
+          "background",
+          "background-color",
+          "border",
+          "border-radius",
+          "color",
+          "font-style",
+          "font-weight",
+          "font-size",
+          "line-height",
+          "letter-spacing",
+          "text-align",
+          "text-indent",
+          "vertical-align",
+          "white-space"
+        ]
+      },
+      {
+        "groupName": "Background",
+        "emptyLineBefore": "always",
+        "noEmptyLineBetween": true,
+        "properties": ["background-color"]
+      },
+      {
+        "groupName": "Animation",
+        "emptyLineBefore": "always",
+        "noEmptyLineBetween": true,
+        "properties": ["animation"]
+      }
+    ]
+  }
+}

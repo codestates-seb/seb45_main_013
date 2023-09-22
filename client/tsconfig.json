@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true, // TypeScript 컴파일러가 JavaScript 파일도 컴파일
+    "jsx": "react-jsx", // JSX 구문을 사용
+    "lib": ["dom", "es2017"], // 사용할 라이브러리
+    "module": "esnext", // 사용할 모듈 시스템
+    "moduleResolution": "node", // 모듈 해석 방식
+    "noEmit": true, // 컴파일 결과를 출력하지 않도록 지정
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true, // 선언 파일 (.d.ts 파일)의 타입 체크를 비활성화. 컴파일 시간이 더 빨라짐
+    "outDir": "dist",
+    "strict": true,
+    "target": "ES6",
+    "incremental": true, // 증분 컴파일을 활성화하여 컴파일 속도를 높임
+    "baseUrl": "src"
+  },
+  "extends": "./tsconfig.paths.json",
+  "exclude": ["node_modules"], // 컴파일하지 않을 파일 또는 디렉토리를 지정
+  "include": ["src/**/*"] // 컴파일 할 파일 또는 디렉토리를 지정
+}
