@@ -63,14 +63,6 @@ const pmTimeSlots = timeSlots.filter((time) => parseInt(time.split(':')[0]) >= 1
 
 const currentDate = dayjs();
 
-const disableSpecificDates = (date: dayjs.Dayjs) => {
-  // 예약 불가능한 특정날짜 설정
-  // if (date.format('YYYY-MM-DD') === "2023-10-01") return true;
-
-  const dayOfWeek = date.day(); // 주말 예약 불가
-  return dayOfWeek === 0 || dayOfWeek === 6;
-};
-
 interface PossibleReservationTimeProps {
   selectedDate: dayjs.Dayjs | null;
   // eslint-disable-next-line no-unused-vars
@@ -88,7 +80,36 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
   const [bookedTimes, setBookedTimes] = useState<string[]>([]);
   const [possibleTimeStart, setPossibleTimeStart] = useState<number>(0); // 펫시터 가능시간
   const [possibleTimeEnd, setPossibleTimeEnd] = useState<number>(24); // 펫시터 가능시간
+  const [possibleDaysOfWeek, setPossibleDaysOfWeek] = useState<number[]>([]); // 펫시터 가능요일 (숫자 배열)
   const { petsitterId } = useParams();
+
+  const disableSpecificDates = (date: dayjs.Dayjs) => {
+    const dayOfWeek = date.day();
+
+    return !possibleDaysOfWeek.includes(dayOfWeek);
+  };
+
+  function convertPossibleDayToNumbers(days: string[]): number[] {
+    return days.map((day) => {
+      switch (day) {
+        case '월':
+          return 1;
+        case '화':
+          return 2;
+        case '수':
+          return 3;
+        case '목':
+          return 4;
+        case '금':
+          return 5;
+        case '토':
+          return 6;
+        default:
+          // 일요일
+          return 0;
+      }
+    });
+  }
 
   const handleTimeSelect = (time: string) => {
     //12시간제로 변환 후 선택한 시간을 selectedTimes에 추가
@@ -157,14 +178,17 @@ const PossibleReservationTime: React.FC<PossibleReservationTimeProps> = ({
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters/${petsitterId}`);
 
-        // 펫시터 가능시간
-        const { possibleTimeStart, possibleTimeEnd } = response.data;
+        // 펫시터 가능시간과 가능요일
+        const { possibleTimeStart, possibleTimeEnd, possibleDay } = response.data;
 
         // HH:MM형태로 변환
         setPossibleTimeStart(parseInt(possibleTimeStart.slice(0, 2)));
         setPossibleTimeEnd(parseInt(possibleTimeEnd.slice(0, 2)));
+
+        // 가능한 요일을 숫자 배열로 변환하여 저장
+        setPossibleDaysOfWeek(convertPossibleDayToNumbers(Array.from(possibleDay)));
       } catch (error) {
-        console.error('펫시터 가능시간이 제대로 들어오고 있지 않습니다');
+        console.error('펫시터 정보가 제대로 들어오지 않았습니다');
       }
     };
 
