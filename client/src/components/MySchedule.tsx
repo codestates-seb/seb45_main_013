@@ -48,7 +48,6 @@ const MySchedule = () => {
           },
         });
         if (response.data) {
-          console.log(response.data);
           setInfo(response.data);
         }
       } catch (error) {

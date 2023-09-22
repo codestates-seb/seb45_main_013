@@ -263,9 +263,9 @@ const TitleContainer = styled.div`
 `;
 
 const InputFormContainer = styled.form`
-  margin-top: 36px;
   display: flex;
   flex-direction: column;
+  margin-top: 36px;
   gap: 16px;
 `;
 

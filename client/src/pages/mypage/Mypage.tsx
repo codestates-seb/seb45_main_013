@@ -99,14 +99,14 @@ const HelloText = styled.div`
 
 const LinkContainer = styled.div`
   display: flex;
-  width: 100%;
   justify-content: flex-end;
+  width: 100%;
 `;
 
 const StyledLink = styled(Link)`
+  color: #000;
   font-size: 16px;
   text-decoration: none;
-  color: #000;
 
   &:hover {
     color: ${(props) => props.theme.colors.mainBlue};

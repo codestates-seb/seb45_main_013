@@ -310,8 +310,8 @@ const ReviewText = styled.div`
   display: box;
   overflow: hidden;
   padding-top: 12px;
-  line-height: 1.2;
   padding-bottom: 8px;
+  line-height: 1.2;
   text-align: left;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -385,8 +385,8 @@ const RatingImg = styled.img`
 
 const ReviewContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 4px;
 `;
 

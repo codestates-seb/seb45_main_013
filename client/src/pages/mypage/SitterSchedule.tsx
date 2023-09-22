@@ -58,7 +58,6 @@ const SitterSchedule = () => {
 
   useEffect(() => {
     const fetchPetData = async () => {
-      console.log(token);
       try {
         const response = await axios.get(`${apiUrl}/members/petsitters`, {
           headers: {
@@ -209,7 +208,6 @@ const SitterSchedule = () => {
         alert('일정이 저장되었습니다.');
         navigate('/mypage');
       }
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -416,7 +414,7 @@ const MainContainer = styled.main`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 0px 60px;
+  padding: 0 60px;
 `;
 
 const InputContainer = styled.form`
@@ -431,7 +429,6 @@ const InputContainer = styled.form`
 const RegisterInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
-
   justify-content: space-between;
   width: 100%;
   margin-top: 20px;
@@ -439,17 +436,19 @@ const RegisterInputWrapper = styled.div`
 
 const RadioContainer = styled.div`
   display: flex;
-  width: 100%;
   justify-content: space-between;
+  width: 100%;
   margin-top: 12px;
 `;
 
 const RadioWrapper = styled.div`
   display: flex;
   align-items: center;
+
   & > input[type='radio'] {
     margin-right: 8px;
   }
+
   /* &:last-child {
     margin-right: 16px;
   } */
@@ -458,25 +457,25 @@ const RadioWrapper = styled.div`
 const CheckboxWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   justify-content: space-between;
-  gap: 20px;
+  width: 100%;
   margin-top: 20px;
+  gap: 20px;
 `;
 
 const TimePickerWrapper = styled.div`
   display: flex;
-  width: 100%;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   margin-top: 12px;
 `;
 
 const Text = styled.div``;
 
 const ErrorMessage = styled.div`
-  font-size: 14px;
-  color: red;
   margin-top: 8px;
+  color: red;
+  font-size: 14px;
 `;
 export default SitterSchedule;
